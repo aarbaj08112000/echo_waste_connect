@@ -29,7 +29,7 @@ class Welcome extends CommonController
 		$this->load->model('CustomerPart');
 	}
 	public function test_tpl(){
-		$data["test"] = "ok";
+		$data["test"] = "ok1";
 		$this->smarty->view("test.tpl",$data);
 	}
 	private function getPage($viewPage, $viewData)
