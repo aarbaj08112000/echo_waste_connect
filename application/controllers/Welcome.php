@@ -29,7 +29,9 @@ class Welcome extends CommonController
 		$this->load->model('CustomerPart');
 	}
 	public function test_tpl(){
-		$data["test"] = "ok1";
+
+		$data["test"] = "ok;
+
 		$this->smarty->view("test.tpl",$data);
 	}
 	private function getPage($viewPage, $viewData)
