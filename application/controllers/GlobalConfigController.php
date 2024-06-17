@@ -113,7 +113,7 @@ class GlobalConfigController extends CommonController
 
 	        }
 
-	        if($upload_error == 1){
+	        if($upload_error == 0){
 	        	$value = $upload_data['file_name'];
 	        }else{
 	        	$value = $this->input->post("old_val");

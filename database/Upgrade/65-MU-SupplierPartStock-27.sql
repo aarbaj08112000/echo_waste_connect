@@ -23,7 +23,7 @@ CREATE TABLE `child_part_stock` (
   `clientId` int(11) NOT NULL,
   `stock` DECIMAL(15,2) NOT NULL,
   `store_stock_rate` DECIMAL(15,2) DEFAULT NULL, 
-  `safty_buffer_stk` varchar(255) DEFAULT NULL,		-- CURRENTLY NOT USED FROM HERE	BUT FROM MASTER child_part
+  `safty_buffer_stk` varchar(255) DEFAULT NULL,   -- CURRENTLY NOT USED FROM HERE BUT FROM MASTER child_part
   `onhold_stock` DECIMAL(15,2) NOT NULL,
   `production_qty` DECIMAL(15,2) NOT NULL,
   `rejection_prodcution_qty` DECIMAL(15,2) NOT NULL,
@@ -108,23 +108,30 @@ CHANGE `c_d` `c_d` TEXT CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFA
 COMMIT;
 
 -- Migration of existing stock
-INSERT INTO child_part_stock (`childPartId`,`stock`,`store_stock_rate`,`safty_buffer_stk`,`onhold_stock`,`production_qty`,`rejection_prodcution_qty`,`sub_con_stock`,`rejection_stock`,`sharing_qty` ,`machine_mold_issue_stock`,`production_scrap`,`production_rejection`,`deflashing_stock`, created_id, date, time, timestamp)
-SELECT `id`,`stock`,`store_stock_rate`,`safty_buffer_stk`,`onhold_stock`,`production_qty`,`rejection_prodcution_qty`,`sub_con_stock`,`rejection_stock`,`sharing_qty` ,`machine_mold_issue_stock`,`production_scrap`,`production_rejection`,
+INSERT INTO child_part_stock (clientId,`childPartId`,`stock`,`store_stock_rate`,`safty_buffer_stk`,`onhold_stock`,`production_qty`,`rejection_prodcution_qty`,`sub_con_stock`,`rejection_stock`,`sharing_qty` ,`machine_mold_issue_stock`,`production_scrap`,`production_rejection`,`deflashing_stock`, created_id, date, time, timestamp)
+SELECT 1,`id`,`stock`,`store_stock_rate`,`safty_buffer_stk`,`onhold_stock`,`production_qty`,`rejection_prodcution_qty`,`sub_con_stock`,`rejection_stock`,`sharing_qty` ,`machine_mold_issue_stock`,`production_scrap`,`production_rejection`,
 `deflashing_stock`, created_id, date, time, timestamp
 FROM child_part
 
 COMMIT;
 
-UPDATE child_part_stock
-SET clientId = 1
-WHERE clientId = 0;
+-- Migration of existing stock for 2nd Unit
+INSERT INTO child_part_stock (clientId,`childPartId`,`stock`,`store_stock_rate`,`safty_buffer_stk`,`onhold_stock`,`production_qty`,`rejection_prodcution_qty`,`sub_con_stock`,`rejection_stock`,`sharing_qty` ,`machine_mold_issue_stock`,`production_scrap`,`production_rejection`,`deflashing_stock`, created_id, date, time, timestamp)
+SELECT 2, `id`,`stock2`,`store_stock_rate`,`safty_buffer_stk`,`onhold_stock`,`production_qty2`,`rejection_prodcution_qty`,`sub_con_stock`,`rejection_stock`,`sharing_qty` ,`machine_mold_issue_stock2`,`production_scrap`,`production_rejection`,
+`deflashing_stock`, created_id, date, time, timestamp
+FROM child_part
+
+
+COMMIT;
+
+
+ALTER TABLE `child_part` CHANGE `stock` `old_stock` FLOAT NOT NULL, CHANGE `stock2` `old_stock2` FLOAT NOT NULL, CHANGE `stock3` `old_stock3` FLOAT NOT NULL, CHANGE `production_qty` `old_production_qty` FLOAT NOT NULL, CHANGE `production_qty2` `old_production_qty2` FLOAT NOT NULL, CHANGE `production_qty3` `old_production_qty3` FLOAT NOT NULL, CHANGE `machine_mold_issue_stock` `old_machine_mold_issue_stock` FLOAT NOT NULL DEFAULT '0', CHANGE `machine_mold_issue_stock2` `old_machine_mold_issue_stock2` FLOAT NOT NULL DEFAULT '0', CHANGE `machine_mold_issue_stock3` `old_machine_mold_issue_stock3` FLOAT NOT NULL DEFAULT '0';
 
 COMMIT;
 
 -- removed this field to avoid confusion as of now.
 ALTER TABLE `child_part_stock`
 DROP `store_stock_rate`;
-
 
 COMMIT;
   

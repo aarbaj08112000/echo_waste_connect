@@ -125,7 +125,7 @@
                                                                     <input type="checkbox" name="is_PDI" id="is_PDI">
                                                                 </div>
                                                             </div>
-                                                            <div class="col-2">
+                                                            <!-- <div class="col-2">
                                                                 <div class="form-group">
                                                                     <label>Setup &nbsp;</label>
                                                                     <input type="checkbox" name="is_setup" id="is_setup">
@@ -142,7 +142,7 @@
                                                                     <label>In Process Inspection &nbsp;</label>
                                                                     <input type="checkbox" name="is_inprocess_inspection" id="is_inprocess_inspection">
                                                                 </div>
-                                                            </div>
+                                                            </div> -->
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>

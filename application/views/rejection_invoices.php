@@ -124,7 +124,7 @@
                                     </div>
                                     <div class="col-lg-2">
                                         <div class="form-group">
-                                            <button type="submit" class="btn btn-danger mt-4">Generate Request</button>
+                                            <button type="submit" class="btn btn-primary mt-4">Generate Request</button>
                                         </div>
                                         </form>
                                     </div>

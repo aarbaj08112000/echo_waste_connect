@@ -58,11 +58,14 @@ class PlanningController extends CommonController
 			$arr = array(
 				"financial_year" => $financial_year,
 				"month" => $month,
+				"clientId" =>  $this->Unit->getSessionClientId()
 			);
 			$data['planing_data'] = $this->Crud->get_data_by_id_multiple("planing", $arr);
 		} else {
-			$data['planing_data'] = $this->Crud->customQuery('SELECT p.* FROM planing p, customer_part cp
-			WHERE cp.customer_id = '.$customer_id.' AND cp.id = p.customer_part_id AND p.financial_year = "'.$financial_year.'" AND p.month = "'.$month.'"');
+			$data['planing_data'] = $this->Crud->customQuery("SELECT p.* FROM planing p, customer_part cp
+			WHERE p.clientId = ".$this->Unit->getSessionClientId()."
+			AND cp.customer_id = ".$customer_id." 
+			AND cp.id = p.customer_part_id AND p.financial_year = '".$financial_year."' AND p.month = '".$month."'");
 		}
 		
 		$data['customer_id'] = $customer_id;
@@ -95,10 +98,10 @@ class PlanningController extends CommonController
 		$data1 = array(
 			"financial_year" => $financial_year,
 			"month" => $month_id,
-			"customer_part_id" => $customer_part_id
+			"customer_part_id" => $customer_part_id,
+			"clientId" => $this->Unit->getSessionClientId()
 		);
 
-		
 		$planing_data = $this->Crud->get_data_by_id_multiple("planing", $data1);
 		if ($planing_data) {
 			$this->addWarningMessage('<br>Plan already added for this month and year, please try with another part.');
@@ -198,9 +201,9 @@ class PlanningController extends CommonController
 		$data1 = array(
 			"financial_year" => $financial_year,
 			"month" => $month_id,
-			"customer_part_id" => $customer_part_id
+			"customer_part_id" => $customer_part_id,
+			"clientId" =>  $this->Unit->getSessionClientId()
 		);
-		//$data['customer_id'] = $customer_id;
 		$planing_data = $this->Crud->get_data_by_id_multiple("planing", $data1);
 		if ($planing_data) {
 			$arr = array(
@@ -258,7 +261,14 @@ class PlanningController extends CommonController
 		$data['financial_year'] = $financial_year;
 		$data['month'] = $month;
 		
-		$data['planing_data'] = $this->Crud->get_data_by_id("planing", $financial_year, "financial_year");
+		$arr = array(
+				"financial_year" => $financial_year,
+				//"month" => $month,
+				"clientId" =>  $this->Unit->getSessionClientId()
+			);
+			
+		$data['planing_data'] = $this->Crud->get_data_by_id_multiple("planing", $arr);
+		//$data['planing_data'] = $this->Crud->get_data_by_id("planing", $financial_year, "financial_year");
 		$data['customer_part'] = $this->Crud->read_data("customer_part");
 		$data['customer'] = $this->Crud->read_data("customer");
 
@@ -398,7 +408,8 @@ class PlanningController extends CommonController
 												$plan_update = array(
 													"financial_year" => $po_item['financialYear_data'],
 													"month" => $po_item['month_data'],
-													"customer_part_id" => $customer_part[0]->id
+													"customer_part_id" => $customer_part[0]->id,
+													"clientId" =>  $this->Unit->getSessionClientId()
 												);
 												
 												$planing_data = $this->Crud->get_data_by_id_multiple("planing", $plan_update);
@@ -563,6 +574,7 @@ class PlanningController extends CommonController
 					customer_part cp, customer c
 					WHERE cp.id = p.customer_part_id
 					AND cp.customer_id = c.id
+					AND p.clientId = ".$this->Unit->getSessionClientId()." 
 					AND EXTRACT(MONTH FROM shop_date) = ".$filter_month."
 					AND EXTRACT(YEAR FROM shop_date) = ".$filter_year);
 
@@ -571,8 +583,10 @@ class PlanningController extends CommonController
 				EXTRACT(YEAR FROM shop_date) as shop_year
 				FROM planning_shop_order p, 
 					customer_part cp, customer c
-					WHERE cp.customer_id = ".$selected_customer." AND cp.id = p.customer_part_id
+					WHERE cp.customer_id = ".$selected_customer." 
+					AND cp.id = p.customer_part_id
 					AND cp.customer_id = c.id
+					AND p.clientId = ".$this->Unit->getSessionClientId()." 
 					AND EXTRACT(MONTH FROM shop_date) = ".$filter_month."
 					AND EXTRACT(YEAR FROM shop_date) = ".$filter_year);
 			}

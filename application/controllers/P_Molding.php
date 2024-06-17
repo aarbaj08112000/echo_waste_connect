@@ -236,22 +236,49 @@ class P_Molding extends CommonController
 	}
 	
 	public function p_q_molding_production()
+
 	{
+
 		// $data['molding_production'] = $this->Crud->read_data("molding_production");
-		$data['molding_production'] = $this->Crud->get_data_by_id("molding_production", "pending", "status");
+
+		$criteria = array(
+
+					"status" => "pending",
+
+					"clientId" => $this->Unit->getSessionClientId()
+
+		);
+
+
+
+		$data['molding_production'] = $this->Crud->get_data_by_id_multiple("molding_production", $criteria);
+
+
 
 		$data['shifts'] = $this->Crud->read_data("shifts");
+
 		$data['operator'] = $this->Crud->read_data("operator");
+
 		$data['machine'] = $this->Crud->read_data("machine");
-		$data['mold_maintenance'] = $this->Crud->customQuery("SELECT m.*,p.part_number,p.part_description 
+
+		$data['mold_maintenance'] = $this->Crud->customQuery("SELECT m.*, p.part_number,p.part_description 
+
 			FROM mold_maintenance m, customer_part p
+
 			WHERE m.customer_part_id = p.id group by customer_part_id, mold_name order by id asc");
+
 		$data['customer_part_new'] = $this->Crud->customQuery("SELECT p.id, p.part_number,p.part_description,c.customer_name 
+
 			FROM customer_part p, customer c WHERE p.customer_id = c.id");
+
 		//$data['downtime_master'] = $this->Crud->read_data("downtime_master");
+
 		$data['reject_remark'] = $this->Crud->read_data("reject_remark");
 
+
+
 		$this->getPage('p_q_molding_production', $data);
+
 	}
 
 	public function view_p_q_molding_production()
@@ -270,7 +297,9 @@ class P_Molding extends CommonController
 		$data['created_year'] = $created_year;
 		$data['created_month'] = $created_month;
 		$data['molding_production'] = $this->Crud->customQuery("SELECT * from molding_production
-			WHERE status = 'completed' AND month = ". $created_month . " AND year = " . $created_year);
+			WHERE clientId  = ".$this->Unit->getSessionClientId()." 
+			AND status = 'completed' 
+			AND month = ". $created_month . " AND year = " . $created_year);
 		$this->getPage('view_p_q_molding_production', $data);
 	}
 
@@ -711,14 +740,19 @@ class P_Molding extends CommonController
 	}
 
 	public function issue_material_request_qty()
+
 	{
+
 		$id = $this->input->post('id');
+
 		$machine_request_id = $this->input->post('machine_request_id');
 
 		$qty = (int)$this->input->post('qty');
 		$accepted_qty = (int)$this->input->post('accepted_qty');
 		$part_number = $this->input->post('part_number');
 		$rejected_qty = (int)$qty - (int)$accepted_qty;
+
+
 
 		$data = array(
 			'accepted_qty' => $accepted_qty,
@@ -727,49 +761,56 @@ class P_Molding extends CommonController
 		);
 
 		$update = $this->Crud->update_data("machine_request_parts", $data, $id);
+
 		if (false && $update != 0) {
 			echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
+
 			if ($update) {
-				$stockField = $this->Crud->getStockDBColumnName("stock");
-				$machine_mold_issue_stockField = $this->Crud->getStockDBColumnName("machine_mold_issue_stock");
 
-				$child_part = $this->Crud->get_data_by_id('child_part', $part_number, 'part_number');
-				$old_stock = $child_part[0]->$stockField;
-
-				$old_machine_mold_issue_stock = (int)$child_part[0]->$machine_mold_issue_stockField;
+				$child_part = $this->SupplierParts->getSupplierPartByPartNumber($part_number);
+				$old_stock = $child_part[0]->stock;
+				$old_machine_mold_issue_stock = (int)$child_part[0]->machine_mold_issue_stock;
 				$new_stock = $old_stock - $accepted_qty;
-
 				$new_machine_mold_issue_stock = $old_machine_mold_issue_stock + $accepted_qty;
 
 				$data23333 = array(
-					$stockField => $new_stock,
-					$machine_mold_issue_stockField => $new_machine_mold_issue_stock
+
+					"stock" => $new_stock,
+					"machine_mold_issue_stock" => $new_machine_mold_issue_stock
+
 				);
+
+
 
 				$update = $this->SupplierParts->updateStockById($data23333, $child_part[0]->id);
 				$child_part[0]->id;
-
 				//update the status
+
 				$custom_query = "select count(*) as pendingItems from machine_request_parts where machine_request_id = " . $machine_request_id . " and status ='pending'";
 				$result = $this->Crud->customQuery($custom_query);
 				$isPending = $result[0]->pendingItems;
 
+
+
 				$status = "pending";
+
 				if ($isPending == 0) {
 					$status = "Completed";
 				}
+
 				$update_machine_request = array(
 					"status" => $status,
 				);
 
 				$machine_status_update_result = $this->Crud->update_data("machine_request", $update_machine_request, $machine_request_id);
-
 				echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
 				echo "<script>alert(' Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
+
 		}
+
 	}
 
 	public function add_molding_stock_transfer()
@@ -865,8 +906,7 @@ class P_Molding extends CommonController
 		//echo "<br> DONE ====>";
 
 		$data['new_part_selection'] = $this->Crud->customQuery("SELECT DISTINCT part.id, part.part_number, part.part_description, cust.customer_name FROM
-		customer_part part, customer cust, mold_maintenance mold
-		WHERE cust.id = part.customer_id");
+		customer_part part, customer cust WHERE cust.id = part.customer_id");
 		$data['filter_child_part_id'] = $filter_part; 
 
 		$this->getPage('mold_maintenance', $data);
@@ -893,7 +933,7 @@ class P_Molding extends CommonController
 	public function machine_request($clientUnit=null)
 	{
 		
-		$clientUnit = $this->session->userdata['clientUnit'];
+		$clientUnit = $this->Unit->getSessionClientId();
 		$data['filter_client'] = $clientUnit;
 
 		$data['machine_request'] = $this->Crud->customQuery("SELECT m_req.id as id, m.name as machine_name, o.name as operator_name, 
@@ -977,7 +1017,10 @@ class P_Molding extends CommonController
 
 
 	public function machine_request_details()
+
 	{
+
+
 
 		$machine_request_id = $this->uri->segment('2');
 		$data['child_part'] = $this->Crud->customQuery("SELECT c.id,c.part_number, c.part_description 
@@ -986,15 +1029,15 @@ class P_Molding extends CommonController
 		AND m.id = ".$machine_request_id."
 		AND b.child_part_id = c.id");
 
-		$data['machine_request_parts'] = $this->Crud->customQuery("SELECT parts.id,c.part_number,c.part_description, u.uom_name,parts.qty, 
-		c.machine_mold_issue_stock, parts.status, parts.remark, c.stock, c.stock2, c.stock3, parts.accepted_qty, req.status as request_status
-		FROM machine_request req, machine_request_parts parts, child_part c, uom u
-		WHERE req.id = ".$machine_request_id."
-		AND parts.machine_request_id = req.id
-		AND parts.child_part_id = c.id
-		AND c.uom_id = u.id order by parts.id desc");
-
+		$data['machine_request_parts'] = $this->Crud->customQuery("SELECT parts.id,c.part_number,c.part_description, u.uom_name,parts.qty, s.machine_mold_issue_stock, parts.status, parts.remark, s.stock, parts.accepted_qty, req.status as request_status FROM machine_request req
+				INNER JOIN machine_request_parts parts ON parts.machine_request_id = req.id
+				INNER JOIN child_part c ON parts.child_part_id = c.id
+				INNER JOIN child_part_stock s ON s.childPartId = c.id
+				INNER JOIN uom u ON c.uom_id = u.id
+				WHERE req.id = ".$machine_request_id." 
+				AND s.clientId = ".$this->Unit->getSessionClientId()." order by parts.id desc");
 		$this->getPage('machine_request_details', $data);
+
 	}
 
 
@@ -1257,39 +1300,44 @@ class P_Molding extends CommonController
 		$data['grn_details'] = $role_management_data->result();
 		*/
 
-		$data['report_prod_rejection'] = $this->Crud->customQuery('SELECT 
+		$data['report_prod_rejection'] = $this->Crud->customQuery("SELECT 
 		c.customer_name, cp.part_number , r.name as rejection_reason, d.rejection_qty,
 		p.date as prod_date, s.shift_type, s.name as shift_name, 
 		m.name as machine_name, o.name as operator_name
 		FROM molding_production p, mold_production_rejection_details d, reject_remark r, machine m, shifts s
 		, customer_part cp, customer c, operator o
-		WHERE d.molding_productionKy = p.id
+		WHERE p.clientId = ".$this->Unit->getSessionClientId()."
+		AND d.molding_productionKy = p.id
 		AND r.id = d.rejection_reasonKy
 		AND p.customer_part_id = cp.id
 		AND c.id =  cp.customer_id
 		AND p.machine_id = m.id 
 		AND p.shift_id = s.id
 		AND p.operator_id = o.id 
-		order by d.rejection_qty desc, c.customer_name asc');
+		order by d.rejection_qty desc, c.customer_name asc");
 
 		//total rejection quantity
-		$data['total_rejection'] = $this->Crud->customQuery('select sum(d.rejection_qty) as total_rejection_qty
+		$data['total_rejection'] = $this->Crud->customQuery("select sum(d.rejection_qty) as total_rejection_qty
 		FROM molding_production p, mold_production_rejection_details d, reject_remark r, machine m, shifts s
 		, customer_part cp, customer c, operator o
-		WHERE d.molding_productionKy = p.id
+		WHERE 
+		p.clientId = ".$this->Unit->getSessionClientId()."
+		AND d.molding_productionKy = p.id
 		AND r.id = d.rejection_reasonKy
 		AND p.customer_part_id = cp.id
 		AND c.id =  cp.customer_id
 		AND p.machine_id = m.id 
 		AND p.shift_id = s.id
 		AND p.operator_id = o.id 
-		group by p.customer_part_id');
+		group by p.customer_part_id");
 
 		//max Rejection Qty by reason
-		$data['max_rejection_reason'] = $this->Crud->customQuery('SELECT r.name, sum(d.rejection_qty) as total_rejection_qty
+		$data['max_rejection_reason'] = $this->Crud->customQuery("SELECT r.name, sum(d.rejection_qty) as total_rejection_qty
 		FROM molding_production p, mold_production_rejection_details d, reject_remark r, machine m, shifts s
 		, customer_part cp, customer c, operator o
-		WHERE d.molding_productionKy = p.id
+		WHERE 
+		p.clientId = ".$this->Unit->getSessionClientId()."
+		AND d.molding_productionKy = p.id
 		AND r.id = d.rejection_reasonKy
 		AND p.customer_part_id = cp.id
 		AND c.id =  cp.customer_id
@@ -1297,13 +1345,15 @@ class P_Molding extends CommonController
 		AND p.shift_id = s.id
 		AND p.operator_id = o.id 
 		group by r.name
-		order by total_rejection_qty desc limit 3');
+		order by total_rejection_qty desc limit 3");
 
 		//Issue on machine:
-		$data['machine_analysis'] = $this->Crud->customQuery('SELECT m.name as machine_name, r.name, sum(d.rejection_qty) as total_rejection_qty
+		$data['machine_analysis'] = $this->Crud->customQuery("SELECT m.name as machine_name, r.name, sum(d.rejection_qty) as total_rejection_qty
 		FROM molding_production p, mold_production_rejection_details d, reject_remark r, machine m, shifts s
 		, customer_part cp, customer c, operator o
-		WHERE d.molding_productionKy = p.id
+		WHERE 
+		p.clientId = ".$this->Unit->getSessionClientId()." 
+		AND d.molding_productionKy = p.id
 		AND r.id = d.rejection_reasonKy
 		AND p.customer_part_id = cp.id
 		AND c.id =  cp.customer_id
@@ -1311,7 +1361,7 @@ class P_Molding extends CommonController
 		AND p.shift_id = s.id
 		AND p.operator_id = o.id 
 		group by m.name, r.name
-		order by total_rejection_qty desc limit 3');
+		order by total_rejection_qty desc limit 3");
 
 		/* Total Rejection Qty by Operator
 		$data['operator_analysis'] = $this->Crud->customQuery('SELECT o.name as operator_name, r.name, sum(d.rejection_qty) as total_rejection_qty

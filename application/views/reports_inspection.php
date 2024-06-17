@@ -90,69 +90,10 @@
                                         </form>
                                     </div>
                                 </div>
-                                <!-- Button trigger modal -->
-                                <!-- <button type="button" class="btn btn-primary float-left" data-toggle="modal" data-target="#exampleModal">
-                                    Add </button> -->
+                                
                             </div>
                             <!-- Modal -->
-                            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-lg" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Add </h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form action="<?php echo base_url('add_job_card') ?>" method="POST" enctype='multipart/form-data'>
-                                                <div class="row">
-                                                    <div class="col-lg-12">
-
-
-
-
-                                                        <div class="form-group">
-                                                            <label for="po_num">Select Customer Name / Customer Code / Part Number / Description </label><span class="text-danger">*</span>
-                                                            <select name="customer_part_id" id="" class="from-control select2">
-                                                                <?php
-                                                                if ($customer_part) {
-                                                                    foreach ($customer_part as $c) {
-                                                                        if (true) {                                                                        // $data['toolList'] = $this->Crud->get_data_by_id("tools", "insert", "type");
-                                                                            $customer = $this->Crud->get_data_by_id("customer", $c->customer_id, "id");
-
-                                                                ?>
-                                                                            <option value="<?php echo $c->id ?>"><?php echo $customer[0]->customer_name . "/" . $customer[0]->customer_code . "/" . $c->part_number . "/" . $c->part_description ?></option>
-                                                                <?php
-                                                                        }
-                                                                    }
-                                                                }
-                                                                ?>
-                                                            </select>
-
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="po_num">Required Quantity </label><span class="text-danger">*</span>
-                                                            <input type="number" name="req_qty" placeholder="Enter Quantity" min="1" value="" class="form-control">
-
-                                                        </div>
-                                                    </div>
-
-
-                                                </div>
-
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-primary">Save changes</button>
-                                        </div>
-                                        </form>
-
-                                    </div>
-
-                                </div>
-                            </div>
-
+                           
 
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -172,20 +113,7 @@
                                         
                                         </tr>
                                     </thead>
-                                    <tfoot>
-                                        <tr>
-                                        <th>Sr. No.</th>
-                                            <th>Supplier name</th>
-                                            <th>Part No</th>
-                                            <th>Part Description</th>
-                                            <th>GRN No</th>
-                                            <th>GRN Date</th>
-                                            
-                                            <th>Received QTY</th>
-                                            <th>Validation QTY</th>
                                         
-                                        </tr>
-                                    </tfoot>
                                     <tbody>
                                         <?php
                                         $i = 1;

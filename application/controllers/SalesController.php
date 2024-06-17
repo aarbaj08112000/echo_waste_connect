@@ -55,8 +55,8 @@ class SalesController extends CommonController
 		$data['customer_part'] = $this->Crud->read_data("customer_part");
 		//$data['new_sales'] = $this->Crud->read_data("new_sales");
 
-		$sql = "SELECT * FROM new_sales WHERE created_month =" . $created_month . " AND created_year =" . $created_year . " order by id desc";
-		$data['new_sales']  = $this->db->query($sql)->result();
+		$sql = "SELECT * FROM new_sales WHERE clientId = ".$this->Unit->getSessionClientId()." AND created_month = " . $created_month . " AND created_year = " . $created_year . " order by id desc";
+		$data['new_sales']  = $this->Crud->customQuery($sql);
 		$data['created_year'] = $created_year;
 		$data['created_month'] = $created_month;
 
@@ -572,9 +572,9 @@ class SalesController extends CommonController
 			$searchYear = $this->input->post('search_year');
 			$searchMonth = $this->input->post('search_month');
 			$sales_ids = $this->input->post('sale_numbers');
-
+			$where_condition = "AND sales.clientId = ".$this->Unit->getSessionClientId()."  ";
 			if(!empty($searchYear)) {
-					$where_condition = " 
+					$where_condition = $where_condition."
 					AND ((sales.created_year = ".$searchYear." AND sales.created_month >= 4)
 					OR
 					(sales.created_year = ".($searchYear + 1)." AND sales.created_month <= 3)) ";
@@ -698,7 +698,7 @@ class SalesController extends CommonController
 			$created_month = $this->month;
 		}
 
-		$data['sales_parts'] = $this->Crud->customQuery('
+		$data['sales_parts'] = $this->Crud->customQuery("
 		SELECT 
 			cp.part_number, 
 			cp.part_description, 
@@ -716,12 +716,13 @@ class SalesController extends CommonController
 		INNER JOIN 
 			customer_part AS cp ON parts.part_id = cp.id
 		WHERE 
-			sales.sales_number NOT LIKE "TEMP%" 
-			AND sales.status NOT IN ("pending")
-			AND sales.created_month = ' . $created_month . '
-			AND sales.created_year = ' . $created_year . '
+			sales.clientId = ".$this->Unit->getSessionClientId()."
+			AND sales.sales_number NOT LIKE 'TEMP%' 
+			AND sales.status NOT IN ('pending')
+			AND sales.created_month = " . $created_month . "
+			AND sales.created_year = " . $created_year . "
 		ORDER BY 
-			parts.id DESC');
+			parts.id DESC");
 
 		$data['created_year'] = $created_year;
 		$data['created_month'] = $created_month;
@@ -1425,15 +1426,13 @@ class SalesController extends CommonController
 		$customer_part_id  = $this->input->post("customer_part_id");
 		if(!empty($customer_part_id))
 		{
-			$role_management_data = $this->db->query('SELECT *,SUM(gst_amount) as gst,SUM(total_rate) as ttlrt, SUM(gst_amount) as gstamnt, SUM(tcs_amount) as tcsamnt FROM `sales_parts` WHERE customer_id = '.$customer_part_id.' group by sales_number ORDER BY id DESC');
-			$data['sales_parts'] = $role_management_data->result();
+			$data['sales_parts']  = $this->Crud->customQuery(
+			"SELECT s.*, SUM(s.gst_amount) as gst, SUM(s.total_rate) as ttlrt, SUM(s.gst_amount) as gstamnt, SUM(s.tcs_amount) as tcsamnt 
+			FROM `sales_parts` s 
+			INNER JOIN new_sales n ON s.sales_id = n.id AND n.clientId = ".$this->Unit->getSessionClientId()." 
+			WHERE s.customer_id = ".$customer_part_id." group by s.sales_number ORDER BY s.id DESC");
 		}
-		/*else
-		{
-			$role_management_data = $this->db->query('SELECT *,SUM(gst_amount) as gst,SUM(total_rate) as ttlrt, SUM(gst_amount) as gstamnt, SUM(tcs_amount) as tcsamnt FROM `sales_parts` group by sales_number ORDER BY id DESC');
-		}
-		$data['sales_parts'] = $role_management_data->result();
-		*/
+
 		$data['customers'] = $this->Crud->read_data("customer");
 		$data['selected_customer_part_id'] = $customer_part_id;
 		$this->load->view('header.php');
@@ -1458,7 +1457,7 @@ class SalesController extends CommonController
 						"amount_received" => $amount_received,
 						"transaction_details" => $transaction_details,
 					);
-					$result = $this->Common_admin_model->insert("receivable_report", $data, "sales_number", $sales_number);
+					$result = $this->Crud->insert_data("receivable_report", $data);
 			echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} 
 		else 
@@ -1470,7 +1469,7 @@ class SalesController extends CommonController
 						"transaction_details" => $transaction_details,
 						
 					);
-					$result = $this->Common_admin_model->update("receivable_report", $data, "sales_number", $sales_number);
+					$result = $this->Crud->update_data_column("receivable_report", $data, $sales_number, "sales_number",);
 				echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			
 		}

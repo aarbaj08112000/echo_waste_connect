@@ -7,14 +7,6 @@ $CI->load->model('SupplierParts');
 ?>
 
 <div class="wrapper">
-    <!-- Navbar -->
-
-    <!-- /.navbar -->
-
-    <!-- Main Sidebar Container -->
-
-
-    <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
@@ -32,7 +24,6 @@ $CI->load->model('SupplierParts');
                 </div>
             </div><!-- /.container-fluid -->
         </section>
-
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
@@ -42,47 +33,7 @@ $CI->load->model('SupplierParts');
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title"></h3>
-                                <a class="btn btn-dark" href="<?php echo base_url('planing_data/').$financial_year.'/'.$month.'/'.$customer_id ; ?>">< Back </a>
-                               
-                                <!-- <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#exampleModal">
-                                    Update Schedule Qty 2 </button>
-
-                                <div class="modal fade" id="exampleModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role=" document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">Update</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form action="<?php echo base_url('update_schedule_qty') ?>" method="POST">
-                                                    <div class="row">
-                                                        <div class="col-lg-12">
-                                                            <div class="col-lg-12">
-                                                                <div class="form-group">
-                                                                    <label for="contractorName">Enter Schedule 2 Qty </label><span class="text-danger">*</span>
-                                                                    <input type="number" name="schedule_qty_2" placeholder="Enter Schedule 2 QTY" class="form-control" required name="schedule_qty" class="form-control">
-                                                                    <input type="hidden" required name="id" value="<?php echo $planing_id; ?>" class="form-control">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                            <button type="submit" class="btn btn-primary">Save changes</button>
-                                                        </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> -->
-                                <!-- Button trigger modal -->
-                                <!-- <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#exampleModal">
-                                    Add Planing</button> -->
-
-                                <!-- Modal -->
-                              
+                                <!-- a class="btn btn-dark" href="<?php echo base_url('planing_data/').$financial_year.'/'.$month.'/'.$customer_id ; ?>">< Back </a> -->
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">

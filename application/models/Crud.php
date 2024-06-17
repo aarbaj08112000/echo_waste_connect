@@ -124,8 +124,8 @@ class Crud extends CI_Model
 	
     public function insert_data($table_name, $array,$clientWiseEntry = false)    {
 		$dateTime = time();
-		$data = $this->getDBCriteria($table_name, $array,false);
-		// pr($data,1);
+		$data = $this->getDBCriteria($table_name, $array,false);//for insert we don't want to insert with admin_approval as accept.
+		
 		if ($this->db->insert($table_name, $data)) {
 			$this->logSQLExecuted($dateTime);
 			$insert_id = $this->db->insert_id();

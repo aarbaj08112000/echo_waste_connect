@@ -1,10 +1,5 @@
 <?php  
 $machine_request_id = $this->uri->segment('2');  
-$clientUnit = $this->session->userdata['clientUnit'];
-$stockUnit = "stock";
-if($clientUnit > 1) {
-    $stockUnit = $stockUnit.$clientUnit;
-}
 ?>
 <div class="wrapper">
     <div class="content-wrapper">
@@ -166,11 +161,11 @@ if($clientUnit > 1) {
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label for="on click url">Enter Accept Qty
-                                                                        (Current Stock:<?php echo $req->$stockUnit; ?>)<span
+                                                                        (Current Stock:<?php echo $req->stock; ?>)<span
                                                                             class="text-danger">*</span></label>
                                                                     <br>
                                                                     <?php
-                                                                            if ($req->$stockUnit > 0 && $req->qty <= $req->$stockUnit) {
+                                                                            if ($req->stock > 0 && $req->qty <= $req->stock) {
                                                                     ?>
                                                                     <input required type="number" name="accepted_qty"
                                                                         placeholder="Enter Accept Qty"

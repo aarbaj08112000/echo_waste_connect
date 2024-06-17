@@ -30,7 +30,7 @@ class Welcome extends CommonController
 	}
 	public function test_tpl(){
 
-		$data["test"] = "ok;
+		$data["test"] = "ok";
 
 		$this->smarty->view("test.tpl",$data);
 	}
@@ -41,39 +41,39 @@ class Welcome extends CommonController
 	}
 
 	public function reports_po_balance_qty()
+
 	{
+
 		$created_month  = $this->input->post("created_month");
 		$created_year  = $this->input->post("created_year");
-
 
 		if (empty($created_year)) {
 			$created_year = $this->year;
 		}
+
 		if (empty($created_month)) {
 			$created_month = $this->month;
 		}
 
-		$role_management_data = $this->db->query('SELECT * FROM `po_parts` WHERE created_month = ' . $created_month . ' AND created_year = ' . $created_year . ' ORDER BY id DESC ');
-		
 		$data['po_data'] = $this->Crud->customQuery("SELECT po.po_number, po.created_date, po.expiry_po_date, po.status, s.supplier_name, c.part_number,c.part_description, parts.qty, parts.pending_qty
 		FROM supplier s, new_po po
-		LEFT JOIN po_parts parts ON po.id = parts.po_id
-		LEFT JOIN child_part c ON parts.part_id = c.id
-		WHERE po.created_month =" . $created_month . "
+		LEFT JOIN po_parts parts ON po.id = parts.po_id 
+		LEFT JOIN child_part c ON parts.part_id = c.id 
+		WHERE po.clientId = ".$this->Unit->getSessionClientId()." 
+		AND po.created_month = " . $created_month . "
 		AND po.created_year = " . $created_year . "
 		AND po.supplier_id = s.id
-		group by po.id desc");
+		group by po.id ");
 
 		$data['created_year'] = $created_year;
 		$data['created_month'] = $created_month;
-		
-		$data['title'] = "PO Summary Report";
 
+		$data['title'] = "PO Summary Report";
 		$this->load->view('header.php',$data);
 		$this->load->view('reports_po_balance_qty.php', $data);
 		$this->load->view('footer.php');
-	}
 
+	}
 	public function filter_date($first_date, $second_date, $table, $column)
 	{
 		$this->db->where("$column >=", $first_date);
@@ -84,25 +84,6 @@ class Welcome extends CommonController
 	public function reports_inspection()
 	{
 
-		// $from_date_convert  = strtotime($this->input->post("from_date"));
-		// $from_date = date("d-m-Y", $from_date_convert);
-		// $to_date_convert  = strtotime($this->input->post("to_date"));
-		// $to_date = date("d-m-Y", $to_date_convert);
-
-
-		// if (empty($this->input->post("from_date"))) {
-
-		// 	$role_management_data = $this->db->query('SELECT * FROM `grn_details` LIMIT 20');
-		// 	$data['grn_details'] = $role_management_data->result();
-		// } else {
-		// 	// echo "btee";
-
-		// 	$data['from_date'] = $this->input->post("from_date");
-		// 	// echo "<br>";
-		// 	$data['to_date'] = $this->input->post("to_date");
-		// 	$role_management_data = $this->db->query('SELECT * FROM `grn_details` WHERE  created_date >= "' . $from_date . '" AND  created_date <= "' . $to_date . '" ');
-		// 	$data['grn_details'] = $role_management_data->result();
-		// }
 		$created_month  = $this->input->post("created_month");
 		$created_year  = $this->input->post("created_year");
 
@@ -118,7 +99,10 @@ class Welcome extends CommonController
 			$created_month = $this->month;
 		}
 
-		$role_management_data = $this->db->query('SELECT * FROM `grn_details` WHERE created_month = ' . $created_month . ' AND created_year = ' . $created_year . ' ORDER BY id DESC ');
+		$role_management_data = $this->db->query("SELECT * FROM `grn_details` grn
+		INNER JOIN new_po po ON po.id = grn.po_number 
+		WHERE po.clientId = ".$this->Unit->getSessionClientId()." 
+		AND grn.created_month = " . $created_month . " AND grn.created_year = " . $created_year . " ORDER BY grn.id DESC ");
 		$data['grn_details'] = $role_management_data->result();
 		// pr($data,1);
 		if ($data['grn_details']) {
@@ -2583,13 +2567,11 @@ class Welcome extends CommonController
 
 		$data['supplier_list'] = $this->Crud->read_data("supplier");
 		$data['gst_structure'] = $this->Crud->read_data("gst_structure");
-		$data['child_part_list'] = $this->SupplierParts->readSupplierParts();
-
+		
 		$child_part_master = $this->Crud->read_data_where_result("child_part_master", array("admin_approve" => "accept"));
 		$data['child_part_master'] = $child_part_master->result();
 
-		$child_part_list_filter = $this->db->query('SELECT DISTINCT part_number,child_part_id,part_description FROM `child_part_master`');
-		$data['child_part_list_filter'] = $child_part_list_filter->result();
+		
 
 		$this->load->view('header');
 		$this->load->view('child_part_supplier_report', $data);
@@ -2825,11 +2807,7 @@ class Welcome extends CommonController
 			$data['customer_id'] = $this->uri->segment('4');
 			$customer_id = $this->uri->segment('4');
 		}
-		// $data['financial_year'] = $this->uri->segment('2');
-		// $data['month'] = $this->uri->segment('3');
-		// $financial_year = $this->uri->segment('2');
-		// $month = $this->uri->segment('3');
-		// $data['planing_data'] = $this->Crud->get_data_by_id("planing", $financial_year, "financial_year");
+		
 		$data['customer_part'] = $this->Crud->read_data("customer_part");
 		$data['customer'] = $this->Crud->read_data("customer");
 
