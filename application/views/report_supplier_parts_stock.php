@@ -1,6 +1,3 @@
-<?php
-$isMultiClient = $this->session->userdata['isMultipleClientUnits'];
-?>
 <div style="width:100%" class="wrapper">
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -29,27 +26,6 @@ $isMultiClient = $this->session->userdata['isMultipleClientUnits'];
                             <div class="card-body">
                             <form action="<?php echo base_url('parts_stock_report') ?>" method="POST" enctype="multipart/form-data">
                                     <div class="row">
-                                        <?php if($isMultiClient == "true") { ?>
-                                        <div class="col-lg-2">
-                                            <div style="">
-                                                <div class="form-group">
-                                                    <label>Client Unit</label> <br>
-                                                    <select name="clientUnit" id="clientId" class="form-control select2" id="">
-                                                        <?php
-                                                            foreach ($client_list as $cl) {
-                                                            ?>
-                                                                <option <?php if ($filter_client === $cl->id) echo 'selected' ?> 
-                                                                        value="<?php echo $cl->id ?>"><?php echo $cl->client_unit; ?>
-                                                                </option>
-                                                            <?php
-                                                            }
-                                                        ?>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <?php } ?>
-
                                         <div class="col-lg-2">
                                             <div style="">
                                                 <div class="form-group">
@@ -94,8 +70,7 @@ $isMultiClient = $this->session->userdata['isMultipleClientUnits'];
                                     </thead>
                                     <tbody>
                                     <?php
-                                        
-                                       
+                                                                               
                                         $i = 1;
                                         if ($customer_part_list) {
                                             foreach ($customer_part_list as $po) {
@@ -111,16 +86,16 @@ $isMultiClient = $this->session->userdata['isMultipleClientUnits'];
                                                         }
                                                     }
                                                 }
-                                                //$uom_data = $this->Crud->get_data_by_id("uom", $child_part_data[0]->uom_id, "id");
+                                                $uom_data = $this->Crud->get_data_by_id("uom", $po->uom_id, "id");
                                                 ?>
                                                 <tr>
                                                     <td><?php echo $i; ?></td>
                                                     <td><?php echo $po->part_number ?></td>
                                                     <td><?php echo $po->part_description ?></td>
-                                                    <td><?php echo $po->uom_name ?></td>
-                                                    <td><?php echo $po->stock_qty; ?></td>
+                                                    <td><?php echo $uom_data[0]->uom_name ?></td>
+                                                    <td><?php echo $po->stock; ?></td>
                                                     <td><?php echo $po->store_stock_rate ?></td>
-                                                    <td><?php echo ($po->stock_qty) * ($po->store_stock_rate) ?></td>
+                                                    <td><?php echo ($po->stock) * ($po->store_stock_rate) ?></td>
                                                     <td><?php echo $underinspection_stock ?></td>
                                                     <td><?php echo $po->production_qty; ?></td>
                                                 </tr>
@@ -130,14 +105,6 @@ $isMultiClient = $this->session->userdata['isMultipleClientUnits'];
                                             }
                                         ?>
                                     </tbody>
-                                    <!-- <tfoot>
-                                        <tr>
-                                            <td colspan="9">Total</td>
-                                            <td colspan=""><?php echo $main_total; ?></td>
-                                            <td colspan=""><?php echo $main_total_2; ?></td>
-                                        </tr>
-                                    </tfoot>-->
-
                                 </table>
                             </div>
                             <!-- /.card-body -->

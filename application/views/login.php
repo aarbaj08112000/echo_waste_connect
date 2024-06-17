@@ -46,7 +46,7 @@
           </div>
           <?php if($isMultipleClientUnits == "true") { ?>
           <div class="input-group mb-3">
-            <select name="clientUnit" id="clientId" class="form-control select2" id="client">
+            <select name="clientUnit" id="clientId" class="form-control select2" id="client" required>
                 <?php foreach ($client_list as $cl) { ?>
                     <option value="<?php echo $cl->id ?>">
                             <?php echo $cl->client_unit; ?>

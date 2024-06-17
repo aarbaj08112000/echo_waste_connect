@@ -12,7 +12,7 @@
                 </div>
                 <div class="row mb-2">
                     <div class="col-sm-1">
-                        <a style="marign-right:" class="btn btn-danger" href="<?php echo base_url('sales_invoice_released') ?>">
+                        <a style="marign-right:" class="btn btn-dark" href="<?php echo base_url('sales_invoice_released') ?>">
                             < Back</a>
                     </div>
                 </div>

@@ -1,4 +1,27 @@
-<div class="wrapper">
+<?php
+/* Smarty version 4.3.2, created on 2024-06-17 10:56:09
+  from '/var/www/html/extra_work/erp_converted/application/views/templates/purchase/approved_supplier.tpl' */
+
+/* @var Smarty_Internal_Template $_smarty_tpl */
+if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
+  'version' => '4.3.2',
+  'unifunc' => 'content_666fc8f1bfb407_69405022',
+  'has_nocache_code' => false,
+  'file_dependency' => 
+  array (
+    'd3164e1492f6a21f605aa70615b1f3ea418cae63' => 
+    array (
+      0 => '/var/www/html/extra_work/erp_converted/application/views/templates/purchase/approved_supplier.tpl',
+      1 => 1718600285,
+      2 => 'file',
+    ),
+  ),
+  'includes' => 
+  array (
+  ),
+),false)) {
+function content_666fc8f1bfb407_69405022 (Smarty_Internal_Template $_smarty_tpl) {
+?><div class="wrapper">
   <!-- Navbar -->
   <!-- /.navbar -->
   <!-- Main Sidebar Container -->
@@ -36,7 +59,8 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <form action="<%base_url('view_supplier_by_filter') %>" method="POST" enctype="multipart/form-data">
+                <form action="<?php echo base_url('view_supplier_by_filter');?>
+" method="POST" enctype="multipart/form-data">
                   <div class="row">
                     <div class="col-lg-4">
                       <div style="width: 400px;">
@@ -45,7 +69,16 @@
                           </label>
                           <br>
                           <select name="supplier_id" class="form-control select2" id="">
-                            <option value="All"> All </option><%foreach from=$supplier_list item=$s%> <option <%if ($filter_supplier_id === $s->id) %>selected <%/if%> value="<%$s->id %>"><%$s->supplier_name %> </option><%/foreach%>
+                            <option value="All"> All </option><?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['supplier_list']->value, 's');
+$_smarty_tpl->tpl_vars['s']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['s']->value) {
+$_smarty_tpl->tpl_vars['s']->do_else = false;
+?> <option <?php if (($_smarty_tpl->tpl_vars['filter_supplier_id']->value === $_smarty_tpl->tpl_vars['s']->value->id)) {?>selected <?php }?> value="<?php echo $_smarty_tpl->tpl_vars['s']->value->id;?>
+"><?php echo $_smarty_tpl->tpl_vars['s']->value->supplier_name;?>
+ </option><?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                           </select>
                         </div>
                       </div>
@@ -80,34 +113,64 @@
                       <th>Action</th>
                     </tr>
                   </thead>
-                  <tbody><%assign var=i value=1%><%if ($supplier_list) %>
-                  	  <%foreach from=$supplier_list  item=$s %>
-                  	  <%if (isset($filter_supplier_id) && $filter_supplier_id != "All" && $filter_supplier_id != $s->id) && $filter_supplier_id != "" %>
-                  	  <%continue %>
-                  	  <%/if%> 
+                  <tbody><?php $_smarty_tpl->_assignInScope('i', 1);
+if (($_smarty_tpl->tpl_vars['supplier_list']->value)) {?>
+                  	  <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['supplier_list']->value, 's');
+$_smarty_tpl->tpl_vars['s']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['s']->value) {
+$_smarty_tpl->tpl_vars['s']->do_else = false;
+?>
+                  	  <?php if (((isset($_smarty_tpl->tpl_vars['filter_supplier_id']->value)) && $_smarty_tpl->tpl_vars['filter_supplier_id']->value != "All" && $_smarty_tpl->tpl_vars['filter_supplier_id']->value != $_smarty_tpl->tpl_vars['s']->value->id) && $_smarty_tpl->tpl_vars['filter_supplier_id']->value != '') {?>
+                  	  <?php continue 1;?>
+                  	  <?php }?> 
                   	  <tr>
-                      <td><%$i %> </td>
-                      <td><%$s->supplier_name %> </td>
-                      <td><%$s->supplier_number %> </td>
-                      <td><%$s->location %> </td>
-                      <td><%$s->email %> </td>
-                      <td><%$s->mobile_no %> </td>
-                      <td><%$s->pan_card %> </td>
-                      <td><%$s->gst_number %> </td>
-                      <td><%$s->state %> </td>
-                      <td><%$s->payment_terms %> </td>
-                      <td><%if (!empty($s->nda_document)) %> <a href="<%base_url('documents/') %><%$s->nda_document %>" download>Download </a><%/if%> </td>
-                      <td><%if (!empty($s->registration_document)) %> <a href="<%base_url('documents/') %><%$s->registration_document %>" download>Download </a><%/if%> </td>
-                      <td><%if (!empty($s->other_document_1)) %> <a href="<%base_url('documents/') %><%$s->other_document_1 %>" download>Download </a><%/if%> </td>
-                      <td><%if (!empty($s->other_document_2)) %> <a href="<%base_url('documents/') %><%$s->other_document_2 %>" download>Download </a><%/if%> </td>
-                      <td><%if (!empty($s->other_document_3)) %> <a href="<%base_url('documents/')%><%$s->other_document_3 %>" download>Download </a><%/if%> </td>
-                      <td><%$s->admin_approve %> </td>
-                      <td><%$s->with_in_state %> </td>
+                      <td><?php echo $_smarty_tpl->tpl_vars['i']->value;?>
+ </td>
+                      <td><?php echo $_smarty_tpl->tpl_vars['s']->value->supplier_name;?>
+ </td>
+                      <td><?php echo $_smarty_tpl->tpl_vars['s']->value->supplier_number;?>
+ </td>
+                      <td><?php echo $_smarty_tpl->tpl_vars['s']->value->location;?>
+ </td>
+                      <td><?php echo $_smarty_tpl->tpl_vars['s']->value->email;?>
+ </td>
+                      <td><?php echo $_smarty_tpl->tpl_vars['s']->value->mobile_no;?>
+ </td>
+                      <td><?php echo $_smarty_tpl->tpl_vars['s']->value->pan_card;?>
+ </td>
+                      <td><?php echo $_smarty_tpl->tpl_vars['s']->value->gst_number;?>
+ </td>
+                      <td><?php echo $_smarty_tpl->tpl_vars['s']->value->state;?>
+ </td>
+                      <td><?php echo $_smarty_tpl->tpl_vars['s']->value->payment_terms;?>
+ </td>
+                      <td><?php if ((!empty($_smarty_tpl->tpl_vars['s']->value->nda_document))) {?> <a href="<?php echo base_url('documents/');
+echo $_smarty_tpl->tpl_vars['s']->value->nda_document;?>
+" download>Download </a><?php }?> </td>
+                      <td><?php if ((!empty($_smarty_tpl->tpl_vars['s']->value->registration_document))) {?> <a href="<?php echo base_url('documents/');
+echo $_smarty_tpl->tpl_vars['s']->value->registration_document;?>
+" download>Download </a><?php }?> </td>
+                      <td><?php if ((!empty($_smarty_tpl->tpl_vars['s']->value->other_document_1))) {?> <a href="<?php echo base_url('documents/');
+echo $_smarty_tpl->tpl_vars['s']->value->other_document_1;?>
+" download>Download </a><?php }?> </td>
+                      <td><?php if ((!empty($_smarty_tpl->tpl_vars['s']->value->other_document_2))) {?> <a href="<?php echo base_url('documents/');
+echo $_smarty_tpl->tpl_vars['s']->value->other_document_2;?>
+" download>Download </a><?php }?> </td>
+                      <td><?php if ((!empty($_smarty_tpl->tpl_vars['s']->value->other_document_3))) {?> <a href="<?php echo base_url('documents/');
+echo $_smarty_tpl->tpl_vars['s']->value->other_document_3;?>
+" download>Download </a><?php }?> </td>
+                      <td><?php echo $_smarty_tpl->tpl_vars['s']->value->admin_approve;?>
+ </td>
+                      <td><?php echo $_smarty_tpl->tpl_vars['s']->value->with_in_state;?>
+ </td>
                       <td>
-                        <button type="submit" data-toggle="modal" class="btn btn-sm btn-primary" data-target="#exampleModal2<%$i %>">
+                        <button type="submit" data-toggle="modal" class="btn btn-sm btn-primary" data-target="#exampleModal2<?php echo $_smarty_tpl->tpl_vars['i']->value;?>
+">
                           <i class="fas fa-edit"></i>
                         </button>
-                        <div class="modal fade" id="exampleModal2<%$i %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="exampleModal2<?php echo $_smarty_tpl->tpl_vars['i']->value;?>
+" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                           <div class="modal-dialog modal-xl" role="document">
                             <div class="modal-content">
                               <div class="modal-header">
@@ -119,12 +182,15 @@
                               <div class="modal-body">
                                 <div class="row">
                                   <div class="col-lg-6">
-                                    <form action="<%base_url('updateSupplier') %>" method="POST" enctype="multipart/form-data">
+                                    <form action="<?php echo base_url('updateSupplier');?>
+" method="POST" enctype="multipart/form-data">
                                       <div class="form-group">
                                         <label for="machine_name">Supplier Name</label>
                                         <span class="text-danger">*</span>
-                                        <input value="<%$s->id %>" name="id" type="hidden" required class="form-control" id="updateName" aria-describedby="emailHelp" placeholder="Enter Supplier Name">
-                                        <input value="<%$s->supplier_name %>" readonly name="updateName" type="text" required class="form-control" id="updateName" aria-describedby="emailHelp" placeholder="Enter Supplier Name">
+                                        <input value="<?php echo $_smarty_tpl->tpl_vars['s']->value->id;?>
+" name="id" type="hidden" required class="form-control" id="updateName" aria-describedby="emailHelp" placeholder="Enter Supplier Name">
+                                        <input value="<?php echo $_smarty_tpl->tpl_vars['s']->value->supplier_name;?>
+" readonly name="updateName" type="text" required class="form-control" id="updateName" aria-describedby="emailHelp" placeholder="Enter Supplier Name">
                                       </div>
                                       <div class="form-group">
                                         <label for="machine_name">Approve Supplier</label>
@@ -137,39 +203,45 @@
                                       <div class="form-group">
                                         <label for="machine_name">Supplier Number</label>
                                         <span class="text-danger">*</span>
-                                        <input value="<%$s->supplier_number %>" readonly name="updateNumber" type="text" required class="form-control" id="updateName" aria-describedby="emailHelp" placeholder="Enter Supplier Number">
+                                        <input value="<?php echo $_smarty_tpl->tpl_vars['s']->value->supplier_number;?>
+" readonly name="updateNumber" type="text" required class="form-control" id="updateName" aria-describedby="emailHelp" placeholder="Enter Supplier Number">
                                       </div>
                                       <div class="form-group">
                                         <label for="machine_name">Supplier Address</label>
                                         <span class="text-danger">*</span>
-                                        <input type="text" value="<%$s->location %>" name="updatesupplierlocation" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Number">
+                                        <input type="text" value="<?php echo $_smarty_tpl->tpl_vars['s']->value->location;?>
+" name="updatesupplierlocation" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Number">
                                       </div>
                                       <div class="form-group">
                                         <label for="machine_name">Supplier Mobile Number</label>
                                         <span class="text-danger">*</span>
-                                        <input type="number" value="<%$s->mobile_no %>" name="updatesupplierMnumber" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Number">
+                                        <input type="number" value="<?php echo $_smarty_tpl->tpl_vars['s']->value->mobile_no;?>
+" name="updatesupplierMnumber" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Number">
                                       </div>
                                       <div class="form-group">
                                         <label for="machine_name">Other Document 2</label>
                                         <input type="file" name="other_document_2" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Mobile Number">
-                                        <input type="hidden" name="other_document_2_old" value="<%$s->other_document_2 %>" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Mobile Number">
+                                        <input type="hidden" name="other_document_2_old" value="<?php echo $_smarty_tpl->tpl_vars['s']->value->other_document_2;?>
+" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Mobile Number">
                                       </div>
                                       <div class="form-group">
                                         <label for="machine_name">Other Document 3</label>
                                         <input type="file" name="other_document_3" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Mobile Number">
-                                        <input type="hidden" name="other_document_3_old" value="<%$s->other_document_3 %>" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Mobile Number">
+                                        <input type="hidden" name="other_document_3_old" value="<?php echo $_smarty_tpl->tpl_vars['s']->value->other_document_3;?>
+" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Mobile Number">
                                       </div>
                                       <div class="form-group">
                                         <label for="machine_name">Upload NDA Document</label>
                                         <input type="file" name="nda_document" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Mobile Number">
-                                        <input type="hidden" name="nda_document_old" class="form-control" value="<%$s->nda_document %>" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Mobile Number">
+                                        <input type="hidden" name="nda_document_old" class="form-control" value="<?php echo $_smarty_tpl->tpl_vars['s']->value->nda_document;?>
+" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Mobile Number">
                                       </div>
                                       <div class="form-group">
                                         <label>With in State </label>
                                         <span class="text-danger">*</span>
                                         <select class="form-control select2" name="with_in_state" style="width: 100%;">
-                                          <option <%if ($s->with_in_state == "yes") %>selected<%/if%> value="yes"> Yes </option>
-                                          <option <%if ($s->with_in_state == "no") %>selected <%/if%> value="no">No </option>
+                                          <option <?php if (($_smarty_tpl->tpl_vars['s']->value->with_in_state == "yes")) {?>selected<?php }?> value="yes"> Yes </option>
+                                          <option <?php if (($_smarty_tpl->tpl_vars['s']->value->with_in_state == "no")) {?>selected <?php }?> value="no">No </option>
                                         </select>
                                       </div>
                                   </div>
@@ -177,32 +249,38 @@
                                     <div class="form-group">
                                       <label for="machine_name">Supplier Email</label>
                                       <span class="text-danger">*</span>
-                                      <input type="email" value="<%$s->email %>" name="updatesupplierEmail" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Number">
+                                      <input type="email" value="<?php echo $_smarty_tpl->tpl_vars['s']->value->email;?>
+" name="updatesupplierEmail" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Number">
                                     </div>
                                     <div class="form-group">
                                       <label for="customer_location">Add State</label>
                                       <span class="text-danger">*</span>
-                                      <input type="text" name="ustate" required value="<%$s->state %>" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Add State">
+                                      <input type="text" name="ustate" required value="<?php echo $_smarty_tpl->tpl_vars['s']->value->state;?>
+" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Add State">
                                     </div>
                                     <div class="form-group">
                                       <label for="customer_location">Add GST Number</label>
                                       <span class="text-danger">*</span>
-                                      <input type="text" name="ugst_no" required value="<%$s->gst_number %>" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Add GST Number">
+                                      <input type="text" name="ugst_no" required value="<?php echo $_smarty_tpl->tpl_vars['s']->value->gst_number;?>
+" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Add GST Number">
                                     </div>
                                     <div class="form-group">
                                       <label for="machine_name">Other Document 1</label>
                                       <input type="file" name="other_document_1" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Mobile Number">
-                                      <input type="hidden" name="other_document_1_old" value="<%$s->other_document_1 %>" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Mobile Number">
+                                      <input type="hidden" name="other_document_1_old" value="<?php echo $_smarty_tpl->tpl_vars['s']->value->other_document_1;?>
+" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Mobile Number">
                                     </div>
                                     <div class="form-group">
                                       <label for="payment_terms">Payment Terms</label>
                                       <span class="text-danger">*</span>
-                                      <input type="text" value="<%$s->payment_terms %>" name="upaymentTerms" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Payment Terms">
+                                      <input type="text" value="<?php echo $_smarty_tpl->tpl_vars['s']->value->payment_terms;?>
+" name="upaymentTerms" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Payment Terms">
                                     </div>
                                     <div class="form-group">
                                       <label for="machine_name">Upload Registration Document</label>
                                       <input type="file" name="registration_document" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Mobile Number">
-                                      <input type="hidden" name="registration_document_old" value="<%$s->registration_document %>" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Mobile Number">
+                                      <input type="hidden" name="registration_document_old" value="<?php echo $_smarty_tpl->tpl_vars['s']->value->registration_document;?>
+" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Supplier Mobile Number">
                                     </div>
                                   </div>
                                   <div class="modal-footer">
@@ -220,7 +298,8 @@
                                     Launch demo modal
                                     </button> -->
                         <!-- Modal -->
-                        <div class="modal fade" id="exampleModal<%$i %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="exampleModal<?php echo $_smarty_tpl->tpl_vars['i']->value;?>
+" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                           <div class="modal-dialog" role="document">
                             <div class="modal-content">
                               <div class="modal-header">
@@ -230,8 +309,10 @@
                                 </button>
                               </div>
                               <div class="modal-body">
-                                <form action="<%base_url('delete') %>" method="POST">
-                                  <input value="<%$s->id %>" name="id" type="hidden" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Machine Name">
+                                <form action="<?php echo base_url('delete');?>
+" method="POST">
+                                  <input value="<?php echo $_smarty_tpl->tpl_vars['s']->value->id;?>
+" name="id" type="hidden" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Machine Name">
                                   <input value="supplier" name="table_name" type="hidden" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Machine Name"> Are you sure you want to delete
                               </div>
                               <div class="modal-footer">
@@ -243,7 +324,10 @@
                           </div>
                         </div>
                       </td>
-                    </tr><%assign var=i value=$i+1%><%/foreach%><%/if%> </tbody>
+                    </tr><?php $_smarty_tpl->_assignInScope('i', $_smarty_tpl->tpl_vars['i']->value+1);
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);
+}?> </tbody>
                 </table>
               </div>
               <!-- /.card-body -->
@@ -258,4 +342,5 @@
     </section>
     <!-- /.content -->
   </div>
-  <!-- /.content-wrapper -->
+  <!-- /.content-wrapper --><?php }
+}

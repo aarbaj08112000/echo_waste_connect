@@ -247,7 +247,9 @@ class ExportController extends CommonController
                         INNER JOIN new_po po ON po.id = inward.po_id
 						INNER JOIN supplier s ON po.supplier_id = s.id ".
                         $innerJoinClient.
-                        " WHERE inward.status = 'accept'  AND ";
+                        " WHERE  po.clientid = ".$this->Unit->getSessionClientId()." 
+
+                        AND inward.status = 'accept'  AND ";
 
         $query = $query . $where_condition . ' ) AS grn_view ';
 
@@ -330,7 +332,7 @@ class ExportController extends CommonController
 
     private function getTAXQueryData($grn_details)
     {
-        $grn_part_details = $this->Crud->customQuery('SELECT grn.inwarding_id, inward.grn_number, grn.po_part_id, grn.po_number, inward.grn_date,
+        $grn_part_details = $this->Crud->customQuery("SELECT grn.inwarding_id, inward.grn_number, grn.po_part_id, grn.po_number, inward.grn_date,
 		 po.po_number as poNumber, po.supplier_id,s.supplier_name, po.expiry_po_date, po.po_date, part.part_number, part.part_description, part.hsn_code, u.uom_name,
 			po_parts.tax_id, po_parts.part_id, po_parts.rate, grn.accept_qty,tax.igst, tax.sgst, tax.cgst,tax.tcs,tax.tcs_on_tax,
 			ROUND(((grn.accept_qty * po_parts.rate) * tax.cgst) / 100,2) as cgst_amount,
@@ -346,7 +348,9 @@ class ExportController extends CommonController
 					INNER JOIN uom u ON u.id = po_parts.uom_id
 					INNER JOIN gst_structure tax ON tax.id = po_parts.tax_id
 					INNER JOIN supplier s ON s.id = po.supplier_id
-					WHERE inward.id = ' . $grn_details->inward_id);
+					WHERE  po.clientId = ".$this->Unit->getSessionClientId()." 
+
+                    AND inward.id = " . $grn_details->inward_id);
 
         return $grn_part_details;
 

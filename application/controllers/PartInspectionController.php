@@ -408,7 +408,7 @@ class PartInspectionController extends CommonController
     {
         $sales_id = $this->uri->segment('2');
 
-        $client_data = $this->Crud->read_data("client");
+        $client_data  = $this->Unit->getClientUnitDetails();
         $sales_data = $this->Crud->customQuery(
             "SELECT c.customer_name, c.vendor_code, n.sales_number, n.created_date, p.part_number, 
 			p.part_description, s.qty as quantity, n.customer_part_id 

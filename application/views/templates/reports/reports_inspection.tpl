@@ -133,18 +133,7 @@
                                             <th>Validation QTY</th>
                                         </tr>
                                     </thead>
-                                    <%*<tfoot>
-                                        <tr>
-                                            <th>Sr. No.</th>
-                                            <th>Supplier name</th>
-                                            <th>Part No</th>
-                                            <th>Part Description</th>
-                                            <th>GRN No</th>
-                                            <th>GRN Date</th>
-                                            <th>Received QTY</th>
-                                            <th>Validation QTY</th>
-                                        </tr>
-                                    </tfoot>*%>
+                                    
                                     <tbody>
                                     <%assign var="i" value=1%>
                                         <%foreach from=$grn_details item=g%>

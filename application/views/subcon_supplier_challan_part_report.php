@@ -1,12 +1,4 @@
 <div style="width:100%" class="wrapper">
-    <!-- Navbar -->
-
-    <!-- /.navbar -->
-
-    <!-- Main Sidebar Container -->
-
-
-    <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
@@ -14,7 +6,6 @@
                 <div class="row mb-2">
                     <div class="col-sm-6">
                         <!-- <h1></h1> -->
-
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -31,18 +22,11 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-
-                        <!-- /.card -->
-
-                        <div class="card">
+                       <div class="card">
                             <div class="card-header">
                                 <form action="<?php echo base_url('subcon_supplier_challan_part_report') ?>" method="POST">
-
-
                                     <div class="row">
                                         <div class="col-lg-4">
-
-
                                             <label for="">Select Part Number / Description</label>
                                             <select name="selected_customer_part_number" required id="" class="form-control select2">
                                                 <option <?php
@@ -53,7 +37,6 @@
                                                 <?php
                                                 if ($customer_parts_data) {
                                                     foreach ($customer_parts_data as $c) {
-
 
                                                 ?>
                                                         <option <?php
@@ -70,10 +53,8 @@
 
                                         </div>
                                         <div class="col-lg-4">
-
-
                                             <label for="">Select Supplier</label>
-                                            <select name="selected_supplier_id" required id="" class="form-control select2">
+                                            <select name="selected_supplier_id" required class="form-control select2">
                                                 <option <?php
                                                         if ($selected_supplier_id ==  0) {
                                                             echo "selected";
@@ -82,8 +63,6 @@
                                                 <?php
                                                 if ($supplier) {
                                                     foreach ($supplier as $c) {
-
-
                                                 ?>
                                                         <option <?php
                                                                 if ($selected_supplier_id ==  $c->id) {
@@ -91,14 +70,11 @@
                                                                 }
                                                                 ?> value="<?php echo $c->id; ?>"><?php echo $c->supplier_name; ?></option>
                                                 <?php
-
                                                     }
                                                 }
                                                 ?>
                                             </select>
-
                                         </div>
-
                                         <div class="col-lg-2">
                                             <div class="form-group mt-1">
                                                 <button class="btn btn-danger mt-4">
@@ -109,9 +85,7 @@
 
                                     </div>
                                 </form>
-
                             </div>
-
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-striped">
@@ -128,10 +102,8 @@
                                             <th>Process</th>
                                             <th>Value (Challan Qty)</th>
                                             <th>Value (Remaining Qty)</th>
-
                                         </tr>
                                     </thead>
-
                                     <tbody>
                                         <?php
                                         $main_total = 0;
@@ -145,8 +117,6 @@
                                                 $child_part_data = $this->Crud->get_data_by_id("child_part", $c->part_id, "id");
                                                 $customer_data = $this->Crud->get_data_by_id("customer", $c->customer_id, "id");
                                                 $challan_data = $this->Crud->get_data_by_id("challan", $c->challan_id, "id");
-                                                // $customer_part_data = $this->Crud->get_data_by_id("customer_part", $c->customer_part_number, "id");
-
                                                 $challan_number = $challan_data[0]->challan_number;
                                                 $created_date = $challan_data[0]->created_date;
                                                 $supplier_id = $challan_data[0]->supplier_id;
@@ -156,13 +126,10 @@
                                                 $date2 = date_create($challan_data[0]->created_date);
                                                 $diff = date_diff($date1, $date2);
                                                 $aging = $diff->format("%R%a");
-
                                                 $array_main = array(
                                                     "supplier_id" => $supplier_id,
                                                     "child_part_id" => $c->part_id,
-
                                                 );
-
                                                 $value_qty = 0;
                                                 $value_qty_remaning = 0;
                                                 $child_part_master_data = $this->Crud->get_data_by_id_multiple_condition("child_part_master", $array_main);
@@ -191,7 +158,6 @@
                                                 {
                                                     $show="yes";
                                                 }
-
                                                 // echo $show;
                                                 if( $show == "yes")
                                                 {
@@ -210,11 +176,6 @@
                                                     <td><?php echo $c->process ?></td>
                                                     <td><?php echo $value_qty ?></td>
                                                     <td><?php echo $value_qty_remaning ?></td>
-
-
-
-
-
                                                 </tr>
                                         <?php
                                                 $i++;
@@ -230,7 +191,6 @@
                                             <td colspan=""><?php echo $main_total_2; ?></td>
                                         </tr>
                                     </tfoot>
-
                                 </table>
                             </div>
                             <!-- /.card-body -->

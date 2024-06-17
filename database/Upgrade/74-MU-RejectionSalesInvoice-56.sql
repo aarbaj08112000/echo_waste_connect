@@ -23,6 +23,16 @@ WHERE `clientId` = 0;
 
 COMMIT;
 
+ALTER TABLE `rejection_sales_invoice` ADD `clientId` INT(11) NOT NULL AFTER `id`;
+
+COMMIT;
+
+UPDATE `rejection_sales_invoice` 
+SET `clientId` = 1
+WHERE `clientId` = 0;
+
+COMMIT;
+
 INSERT INTO `DB_Upgrade` (`Script_name`, `updated_time`) 
 VALUES ('74-MU-RejectionSalesInvoice-56.sql', CURRENT_TIMESTAMP);
 

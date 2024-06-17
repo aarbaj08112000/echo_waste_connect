@@ -1,19 +1,11 @@
 <div class="wrapper">
-    <!-- Navbar -->
-
-    <!-- /.navbar -->
-
-    <!-- Main Sidebar Container -->
-
-
-    <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <a class="btn btn-danger" href="<?php echo base_url('rejection_invoices') ?>">
+                        <a class="btn btn-dark" href="<?php echo base_url('rejection_invoices') ?>">
                             < Back </a>
                     </div>
                     <div class="col-sm-6">
@@ -25,7 +17,6 @@
                 </div>
             </div><!-- /.container-fluid -->
         </section>
-
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
@@ -135,7 +126,7 @@
                                     </div>
                                     <div class="col-md-1">
                                         <div class="form-group">
-                                            <button type="submit" class="btn btn-danger mt-4">Update</button>
+                                            <button type="submit" class="btn btn-primary mt-4">Update</button>
                                         </div>
                                     </div>    
                                 </div>
@@ -188,8 +179,7 @@
                                                     <form action="<?php echo base_url('lock_parts_rejection_sales_invoice'); ?>" method="POST">
                                                         <div class="col-lg-12">
                                                             <div class="form-group">
-                                                                <label for=""><b>Are You Sure Want To Lock This
-                                                                        Invoice?</b> </label>
+                                                                <label for=""><b>Are You Sure Want To Lock This Invoice?</b> </label>
                                                                 <input type="hidden" name="id" value="<?php echo $new_sales[0]->id ?>" required class="form-control">
                                                                 <input type="hidden" name="status" value="lock" required class="form-control">
                                                             </div>

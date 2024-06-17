@@ -51,15 +51,21 @@ ADD UNIQUE `unique_customer_parts_master_stock` (`customer_parts_master_id`, `cl
 COMMIT;
 
 -- Migration of existing stock
-INSERT INTO customer_parts_master_stock (customer_parts_master_id, fg_stock, fg_rate, molding_production_qty, production_rejection ,production_scrap  ,semi_finished_location  ,deflashing_assembly_location ,final_inspection_location)
-SELECT id,fg_stock, fg_rate, molding_production_qty, production_rejection ,production_scrap  ,semi_finished_location  ,deflashing_assembly_location ,final_inspection_location
+INSERT INTO customer_parts_master_stock (clientId, customer_parts_master_id, fg_stock, fg_rate, molding_production_qty, production_rejection ,production_scrap  ,semi_finished_location  ,deflashing_assembly_location ,final_inspection_location)
+SELECT 1, id,fg_stock, fg_rate, molding_production_qty, production_rejection ,production_scrap  ,semi_finished_location  ,deflashing_assembly_location ,final_inspection_location
 FROM customer_parts_master;
 
 COMMIT;
 
-UPDATE customer_parts_master_stock
-SET clientId = 1
-WHERE clientId = 0;
+-- Migration of existing stock to second unit
+INSERT INTO customer_parts_master_stock (clientId, customer_parts_master_id, fg_stock, fg_rate, molding_production_qty, production_rejection ,production_scrap  ,semi_finished_location  ,deflashing_assembly_location ,final_inspection_location)
+SELECT 2, id,fg_stock2, fg_rate, molding_production_qty, production_rejection ,production_scrap  ,semi_finished_location  ,deflashing_assembly_location ,final_inspection_location
+FROM customer_parts_master;
+
+
+COMMIT;
+
+ALTER TABLE `customer_parts_master` CHANGE `fg_stock` `old_fg_stock` FLOAT NOT NULL DEFAULT '0', CHANGE `fg_stock2` `old_fg_stock2` FLOAT NOT NULL DEFAULT '0', CHANGE `fg_stock3` `old_fg_stock3` FLOAT NOT NULL DEFAULT '0';
 
 COMMIT;
 
@@ -82,9 +88,9 @@ COMMIT;
   `id` int(11) NOT NULL,
   `part_number` varchar(255) NOT NULL,
   `part_description` varchar(250) NOT NULL,
-  `supplier_id` int(30) DEFAULT NULL,									
-  `part_rate` int(11) DEFAULT NULL,										 
-  `revision_date` varchar(50) DEFAULT NULL,								 
+  `supplier_id` int(30) DEFAULT NULL,                 
+  `part_rate` int(11) DEFAULT NULL,                    
+  `revision_date` varchar(50) DEFAULT NULL,                
   `revision_no` varchar(50) DEFAULT NULL,
   `revision_remark` varchar(20) DEFAULT NULL,
   `uom_id` int(11) NOT NULL,

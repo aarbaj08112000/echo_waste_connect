@@ -35,18 +35,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="row">
-                                    <!-- <div class="col-lg-1">
-                                        <a readonly href="<?php echo base_url('new_po_list_supplier'); ?>" type="text" class="btn btn-danger mt-4" required>
-                                            < Back </a>
-                                    </div>
-                                    <div class="col-lg-2">
-                                        <label for="">Supplier Name</label>
-                                        <input readonly value="<?php echo $supplier_data[0]->supplier_name; ?>" type="text" class="form-control" required>
-                                    </div>
-                                    <div class="col-lg-2">
-                                        <label for="">Supplier Number</label>
-                                        <input readonly value="<?php echo $supplier_data[0]->supplier_number; ?>" type="text" class="form-control" required>
-                                    </div> -->
+                                    
                                 </div>
                                 <h3 class="card-title"></h3>
 
@@ -68,20 +57,7 @@
                                             <th>Close PO</th>
                                         </tr>
                                     </thead>
-                                    <tfoot>
-                                        <tr>
-                                            <th>Sr. No.</th>
-                                            <th>Supplier Name</th>
-                                            <th>PO Number</th>
-                                            <th>PO Expiry Date</th>
-                                            <th>PO Date</th>
-                                            <th>Created Date</th>
-                                            <th>Download PDF PO</th>
-                                            <th>Status</th>
-                                            <th>View PO Details</th>
-                                            <th>Close PO</th>
-                                        </tr>
-                                    </tfoot>
+                                   
                                     <tbody>
 
                                         <?php
