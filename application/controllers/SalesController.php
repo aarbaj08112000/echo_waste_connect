@@ -777,16 +777,18 @@ class SalesController extends CommonController
 	public function rejection_invoices()  
 	{
 		$data['customer'] = $this->Crud->read_data("customer");
-		$data['rejection_sales_invoice'] = $this->Crud->read_data("rejection_sales_invoice");
+		$data['rejection_sales_invoice'] = $this->Crud->customQuery("
+			SELECT r.*,c.customer_name as customer_name
+			FROM `rejection_sales_invoice` as r
+			LEFT JOIN customer as c On c.id = r.customer_id
+			WHERE r.clientId = '".$this->Unit->getSessionClientId()."'
+			ORDER BY r.id DESC
+		");
 		$data['reject_remark'] = $this->Crud->read_data_acc("reject_remark");
-
-		foreach ($data['rejection_sales_invoice'] as $u) {
-			$data['customer_data'][$u->customer_id] = $this->Crud->get_data_by_id("customer", $u->customer_id, "id");
-		}
 		// $this->load->view('header');
-		// $this->load->view('rejection_invoices', $data);
+		$this->loadView('quality/rejection_invoices', $data);
 		// $this->load->view('footer');	
-		$this->loadView('sales/rejection_invoices',$data);
+
 	}
 
 	public function generate_rejection_sales_invoice()
@@ -856,18 +858,17 @@ class SalesController extends CommonController
 		$arr = array(
 			"rejection_sales_id" => $sales_id,
 		);
-		$data['parts_rejection_sales_invoice'] = $this->Crud->get_data_by_id_multiple("parts_rejection_sales_invoice", $arr);
 
-		foreach ($data['parts_rejection_sales_invoice'] as $p) {
-			
-			$data['child_part_data'][$p->part_id] = $this->Crud->get_data_by_id("customer_part", $p->part_id, "id");
-		}
-
-		// pr($data['child_part_data'],1);
-		$this->loadView('sales/view_rejection_sales_invoice_by_id',$data);
+		$data['parts_rejection_sales_invoice'] = $this->Crud->customQuery("
+			SELECT prs.*,c.part_number as part_number,c.part_description as part_description,c.id as customer_part_id
+			FROM parts_rejection_sales_invoice as prs
+			LEFT JOIN customer_part as c ON c.id = prs.part_id
+			WHERE prs.rejection_sales_id = '$sales_id'
+		");	
+		$data['user_type'] = $this->session->userdata['type'];
+		// pr($data['parts_rejection_sales_invoice'],1);
 		// $this->load->view('header');
-		// $this->load->view('view_rejection_sales_invoice_by_id', $data);
-		// $this->load->view('footer');
+		$this->loadView('quality/view_rejection_sales_invoice_by_id', $data);
 	}
 
 

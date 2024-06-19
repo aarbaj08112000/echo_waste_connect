@@ -26,7 +26,6 @@
                         <div class="card">
                             <div class="card-header">
                             <?php 
-                             $e_invoice_status = $this->Crud->get_data_by_id("einvoice_res", $this->uri->segment('2'), "new_sales_id");
                              if(empty($e_invoice_status) && ($new_sales[0]->status == "lock" || $new_sales[0]->status == "pending")) { ?>
                                 <form action="<?Php echo base_url('generate_new_sales_update') ?>" method="POST">  
                                 <div class="row">                     
@@ -130,9 +129,7 @@
 								<div class="col-lg-1">
                                         <div class="form-group">
                                             <label for="">E Invoice Status</label>
-                                            <?php
-                                    $e_invoice_status = $this->Crud->get_data_by_id("einvoice_res", $this->uri->segment('2'), "new_sales_id");
-                                    ?>
+                                           
                                             <input type="text" readonly value="<?php echo $e_invoice_status[0]->Status; ?>" class="form-control">
                                         </div>
                                     </div>
@@ -595,10 +592,7 @@
                                             $final_po_amount = 0;
                                             $srNo = 1;
                                             foreach ($po_parts as $p) {
-                                                $child_part_data = $this->Crud->get_data_by_id("customer_part", $p->part_id, "id");
-                                               
                                                 $subtotal =  $p->total_rate - $p->gst_amount;
-                                                $gst_structure2 = $this->Crud->get_data_by_id("gst_structure", $p->tax_id, "id");
                                                 $row_total =(float) $p->total_rate+(float)$p->tcs_amount;
                                                
                                                 $final_po_amount = (float)$final_po_amount + (float)$row_total;                                          
@@ -613,9 +607,9 @@
                                         ?>
                                                 <tr>
                                                     <td><?php echo $srNo; ?></td>
-                                                    <td><?php echo $child_part_data[0]->part_number; ?></td>
-                                                    <td><?php echo $child_part_data[0]->part_description; ?></td>
-                                                    <td><?php echo $gst_structure2[0]->code; ?></td>
+                                                    <td><?php echo $p->part_number; ?></td>
+                                                    <td><?php echo $p->part_description; ?></td>
+                                                    <td><?php echo $p->code; ?></td>
                                                     <td><?php echo $p->uom_id; ?></td>
                                                     <td><?php echo $p->qty; ?></td>
                                                     <td><?php echo number_format($rate,2); ?></td>

@@ -123,13 +123,13 @@ class PartInspectionController extends CommonController
         $sales_id = $this->uri->segment('2');
         $data['sales_parts_for_PDI'] = $this->Crud->customQuery(
             "SELECT DISTINCT s.id as sales_part_id, c.customer_name, n.sales_number, n.created_date, 
-				p.id as customer_part_id, p.part_number, p.part_description
-		 FROM new_sales n
-		 LEFT JOIN customer c ON n.customer_id = c.id
-		 LEFT JOIN sales_parts s ON n.id = s.sales_id
-		 LEFT JOIN customer_part p ON s.part_id = p.id
+                p.id as customer_part_id, p.part_number, p.part_description
+         FROM new_sales n
+         LEFT JOIN customer c ON n.customer_id = c.id
+         LEFT JOIN sales_parts s ON n.id = s.sales_id
+         LEFT JOIN customer_part p ON s.part_id = p.id
          LEFT JOIN cust_part_inspection_master m ON m.customer_partKy = p.id
-		 WHERE n.id = " . $sales_id . " 
+         WHERE n.id = " . $sales_id . " 
          AND m.is_PDI = 1"
         );
 
