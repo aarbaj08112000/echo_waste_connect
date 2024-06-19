@@ -69,9 +69,15 @@ class Welcome extends CommonController
 		$data['created_month'] = $created_month;
 
 		$data['title'] = "PO Summary Report";
-		$this->load->view('header.php',$data);
-		$this->load->view('reports_po_balance_qty.php', $data);
-		$this->load->view('footer.php');
+		
+		for ($i = 1; $i <= 12; $i++) {
+			$data['month_data'][$i] = $this->Common_admin_model->get_month($i);
+			$data['month_number'][$i] = $this->Common_admin_model->get_month_number($data['month_data'][$i]);
+		}
+		// $this->load->view('header.php',$data);
+		// $this->load->view('reports_po_balance_qty.php', $data);
+		// $this->load->view('footer.php');
+		$this->loadView('reports/reports_po_balance_qty',$data);
 
 	}
 	public function filter_date($first_date, $second_date, $table, $column)
@@ -165,7 +171,7 @@ class Welcome extends CommonController
 			$series [] = $str;
 			
 		}
-		$data['series'] = $series;
+		$data['series'] = json_encode($series);
 		$this->getPage('reports/pei_chart_sales_values_in_rs',$data);
 		// $this->load->view('header.php');
 		// $this->load->view('pei_chart_sales_values_in_rs.php', $data);
@@ -504,15 +510,17 @@ class Welcome extends CommonController
 	public function customer()
 	{
 		$data['customers'] = $this->Crud->read_data("customer");
-
-		$this->load->view('header');
-		$this->load->view('customer', $data);
-		$this->load->view('footer');
+		
+		// $this->load->view('header');
+		// $this->load->view('customer', $data);
+		// $this->load->view('footer');
+		$this->loadView('customer/customer',$data);
 	}
 	public function customer_master()
 	{
 		$data['customers'] = $this->Crud->read_data("customer");
-		$this->loadView('customer_master', $data);
+		$data['entitlements'] = $this->session->userdata('entitlements');
+		$this->loadView('customer/customer_master', $data);
 	}
 	public function inwarding()
 	{
@@ -2249,7 +2257,7 @@ class Welcome extends CommonController
 	{
 		$child_part_list = $this->db->query("SELECT * FROM `stock_report` WHERE clientId =".$this->Unit->getSessionClientId());
 		$data['stock_report'] = $child_part_list->result();
-		$this->loadView('report_stock_transfer', $data);
+		$this->loadView('reports/report_stock_transfer', $data);
 	}
 
 	public function operation_bom_add()
@@ -2631,6 +2639,7 @@ class Welcome extends CommonController
 
 	private function _view_child_part_supplier($filter_supplier_id)
 	{
+		
 		$data['filter_supplier_id'] = $filter_supplier_id;
 
 		$data['uom'] = $this->Crud->read_data("uom");
@@ -2641,21 +2650,37 @@ class Welcome extends CommonController
 		
 		$child_part_master = $this->Crud->read_data_where_result("child_part_master", array("admin_approve" => "accept"));
 		$data['child_part_master'] = $child_part_master->result();
-
-		
-
-		$this->load->view('header');
-		$this->load->view('child_part_supplier_report', $data);
-		$this->load->view('footer');
+		// pr($data['child_part_master'],1);
+		if ($data['child_part_master']) {
+			foreach($data['child_part_master'] as $poo){
+				if (isset($filter_supplier_id) && $filter_supplier_id != "All" && $filter_supplier_id != $poo->supplier_id)
+					continue;
+					$array = array(
+						"part_number" => $poo->part_number,
+						"supplier_id" => $poo->supplier_id,
+					);
+				
+				$data['po'][$poo->part_number][] = $this->Crud->get_data_by_id_multiple_condition("child_part_master", $array);	
+				$data['supplier_data'][$poo->supplier_id][] = $this->Crud->get_data_by_id("supplier", $poo->supplier_id, "id");
+				$data['gst_structure2'][$poo->part_number][] = $this->Crud->get_data_by_id("gst_structure", $data['po'][$poo->part_number][0][0]->gst_id, "id");
+			}
+		}
+		// pr($data['po'],1);
+		// $this->load->view('header');
+		// $this->load->view('child_part_supplier_report', $data);
+		// $this->load->view('footer');
+		$this->loadView('reports/child_part_supplier_report',$data);
 	}
 
 	public function child_part_supplier_report()
 	{
+		
 		$this->_view_child_part_supplier('');
 	}
 
 	public function view_child_part_supplier_by_filter()
 	{
+		
 		$this->_view_child_part_supplier($this->input->post("supplier_id"));
 	}
 
@@ -2664,6 +2689,7 @@ class Welcome extends CommonController
 
 	private function _view_view_child_part_supplier($filter_child_part_id)
 	{
+		
 		// if (isset($filter_child_part_id) && !$filter_child_part_id == '') {
 			$data['filter_child_part_id'] = (int) $filter_child_part_id;
 			$data['gst_structure'] = $this->Crud->read_data("gst_structure");
@@ -3246,8 +3272,15 @@ class Welcome extends CommonController
 
 		$data['customer_parts_master'] = $this->CustomerPart->readCustomerParts();
 		$data['grades'] = $this->Crud->read_data("grades");
+		$data['flash_err'] = $this->session->flashdata('errors');
+		$data['flash_suc'] = $this->session->flashdata('success');
+		$data['entitlements'] = $this->session->userdata['entitlements'];
 
-		$this->getPage('customer_parts_master', $data);
+		foreach ($data['customer_parts_master'] as $u) {
+			$data['grades_data'][$u->grade_id]  = $this->Crud->get_data_by_id("grades", $u->grade_id, "id");
+		}
+		
+		$this->getPage('customer/customer_parts_master', $data);
 	}
 
 	public function downtime_master()
@@ -6266,7 +6299,7 @@ class Welcome extends CommonController
 		);
 
 		$child_part_data = $this->Crud->get_data_by_id_multiple_condition("child_part_master", $array);
-
+		
 		// print_r($child_part_data);
 		$part_number = $child_part_data[0]->part_number;
 		$part_desc = $child_part_data[0]->part_description;
@@ -7934,9 +7967,10 @@ class Welcome extends CommonController
 		$data['id'] = $this->uri->segment('2');
 		$data['customer'] = $this->Crud->read_data("customer");
 
-		$this->load->view('header');
-		$this->load->view('rejection_flow', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		// $this->load->view('rejection_flow', $data);
+		// $this->load->view('footer');
+		$this->loadView('sales/rejection_flow',$data);
 	}
 	public function addbom()
 	{
