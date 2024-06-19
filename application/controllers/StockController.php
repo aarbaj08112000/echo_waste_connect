@@ -37,11 +37,10 @@ class StockController extends CommonController
 
 		if ($filter_part_id !='ALL' && $filter_part_id != '') {
 			$data['child_part_list'] = $this->SupplierParts->getSupplierPartById($filter_part_id);
-		} else if ($filter_part_id == 'ALL' || $filter_part_id == '') {
+		} else if ($filter_part_id == 'ALL') {
 			$data['child_part_list'] = $this->SupplierParts->readSupplierParts();
 			$fetchedList = true;
 		} 
-
 
 
 		// pr($this->db->last_query(),1);

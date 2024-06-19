@@ -39,6 +39,7 @@
                                             <%/foreach%>
                                                 </select>
                                             </div>
+                                            
                                     </div>
                                     <div class="col-lg-1">
                                         <div class="form-group">
@@ -53,6 +54,7 @@
                                     <div class="col-lg-2">
                                         <input type="submit" class="btn btn-primary mt-4" value="Search">
                                     </div>
+                                    </form>
                                     <div class="col-lg-3">
                                         <button type="button" class="btn btn-dark mt-4" data-toggle="modal" data-target="#exportForTally">Export For Tally</button>
                                     </div>
@@ -68,56 +70,56 @@
                             </div>
 
                             <div class="modal fade" id="exportForTally" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Export Criteria</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Export Criteria</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form action="<%$base_url%>grn_excel_export" method="POST">
                                         <div class="modal-body">
                                             <div class="form-group">
                                                 <label for="">Only Accepted Status GRN will be exported.</label>
                                             </div>
-                                            <form action="<%$base_url%>grn_excel_export" method="POST">
-                                                <div class="form-group">
-                                                    <label for="">Year:</label>
-                                                    <select required name="search_year" id="" class="form-control select2">
-                                                        <%foreach $fincYears as $fyear%>
-                                                            <option <%if $fyear->startYear == $created_year%>selected<%/if%> value="<%$fyear->startYear%>"><%$fyear->displayName%></option>
-                                                        <%/foreach%>
-                                                    </select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="">Month:</label>
-                                                    <span class="small"><br>Month will be ignored if GRN Number field is provided.</span>
-                                                    <select required name="search_month" id="" class="form-control select2">
+                                            <div class="form-group">
+                                                <label for="">Year:</label>
+                                                <select required name="search_year" id="" class="form-control select2">
+                                                    <%foreach $fincYears as $fyear%>
+                                                        <option <%if $fyear->startYear == $created_year%>selected<%/if%> value="<%$fyear->startYear%>"><%$fyear->displayName%></option>
+                                                    <%/foreach%>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="">Month:</label>
+                                                <span class="small"><br>Month will be ignored if GRN Number field is provided.</span>
+                                                <select required name="search_month" id="" class="form-control select2">
                                                     <%foreach $month_data as $key => $val%>
-                                                    <option <%if $month_number[$key] eq $created_month%>selected<%/if%>
-                                                        value="<%$month_number[$key]%>"><%$val%></option>
-                                                <%/foreach%>
-                                                    </select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>GRN Number/Range:</label>
-                                                    <span class="small">
-                                                        <br>For Individual GRN: Use only <b>number</b>, example: <b>21</b>
-                                                        <br>For GRN number range : Use <b>hypen</b>, example: <b>23-27</b>
-                                                        <br>For Specific GRN : Use <b>comma</b>, example: <b>11,15,17,18</b>
-                                                        <br>&nbsp;
-                                                    </span>&nbsp;<br>
-                                                    <input type="text" value="" name="grn_numbers" class="form-control" id="grn_id" aria-describedby="emailHelp">
-                                                </div>
+                                                        <option <%if $month_number[$key] eq $created_month%>selected<%/if%> value="<%$month_number[$key]%>"><%$val%></option>
+                                                    <%/foreach%>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>GRN Number/Range:</label>
+                                                <span class="small">
+                                                    <br>For Individual GRN: Use only <b>number</b>, example: <b>21</b>
+                                                    <br>For GRN number range: Use <b>hyphen</b>, example: <b>23-27</b>
+                                                    <br>For Specific GRN: Use <b>comma</b>, example: <b>11,15,17,18</b>
+                                                    <br>&nbsp;
+                                                </span>&nbsp;<br>
+                                                <input type="text" value="" name="grn_numbers" class="form-control" id="grn_id" aria-describedby="emailHelp">
+                                            </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                             <button type="submit" name="export" class="btn btn-primary" value="XML Export">Export</button>
-                                            </form>
                                         </div>
-                                    </div>
-                                </div>
+                                        </div>
+                                        </form>
                             </div>
+                        </div>
+                        
 
                             <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
@@ -205,7 +207,7 @@
                                                 <td><%$g->hsn_code%></td>
                                                 <td><%$g->uom_name%></td>
                                                 <td style="white-space: nowrap;"><%$g->poNumber%></td>
-                                                <td style="white-space: nowrap;"><%$po_date[g->po_date]%></td>
+                                                <td style="white-space: nowrap;"><%$po_date[$g->poNumber]%></td>
                                                 <td style="white-space: nowrap;"><%$g->grn_number%></td>
                                                 <td style="white-space: nowrap;"><%$g->grn_created_date%></td>
                                                 <td><%$g->invoice_number%></td>

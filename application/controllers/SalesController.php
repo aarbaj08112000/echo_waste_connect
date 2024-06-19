@@ -55,16 +55,40 @@ class SalesController extends CommonController
 		$data['customer_part'] = $this->Crud->read_data("customer_part");
 		//$data['new_sales'] = $this->Crud->read_data("new_sales");
 
-		$sql = "SELECT * FROM new_sales WHERE clientId = ".$this->Unit->getSessionClientId()." AND created_month = " . $created_month . " AND created_year = " . $created_year . " order by id desc";
+		$sql = "SELECT new_sales.*,cus.customer_name,eres.Status,eres.EwbStatus FROM new_sales 
+		left join customer cus on new_sales.customer_id = cus.id
+		left join einvoice_res eres on new_sales.id = eres.new_sales_id 
+		WHERE clientId = ".$this->Unit->getSessionClientId()." AND created_month = " . $created_month . " AND created_year = " . $created_year . " order by id desc";
 		$data['new_sales']  = $this->Crud->customQuery($sql);
 		$data['created_year'] = $created_year;
 		$data['created_month'] = $created_month;
-
+		
 		// $role_management_data = $this->db->query('SELECT DISTINCT part_number FROM `customer_part` ');
 		// $data['customer_part_list'] = $role_management_data->result();
 
-		// print_r($data['customer_part_list']);
-		$this->getPage('sales_invoice_released', $data);
+		
+		if($data['new_sales']){
+			foreach ($data['new_sales'] as $c) {
+				$sales_id = $c->id;
+				$po_parts = $this->Crud->get_data_by_id("sales_parts", $sales_id, "sales_id");
+				$final_po_amount[$sales_id] = 0;
+				if ($po_parts) {
+					foreach ($po_parts as $p) {
+						$data['subtotal'][$sales_id] =  $p->total_rate - $p->gst_amount;
+						$data['row_total'][$sales_id] =(float) $p->total_rate+(float)$p->tcs_amount;
+						$data['final_po_amount'][$sales_id] = (float)$final_po_amount[$sales_id] + (float)$row_total[$sales_id];
+					}
+				}
+	
+			}
+		}
+		
+		
+		for ($i = 1; $i <= 12; $i++) {
+			$data['month_data'][$i] = $this->Common_admin_model->get_month($i);
+			$data['month_number'][$i] = $this->Common_admin_model->get_month_number($data['month_data'][$i]);
+		}
+		$this->loadView('sales/sales_invoice_released', $data);
 	}
 
 	public function new_sales()
@@ -84,7 +108,7 @@ class SalesController extends CommonController
 		//$data['new_po'] = $child_part_list->result();
 		//$data['client_list'] = $this->Crud->read_data_acc("client");
 		$data['consignee_list'] = $this->Crud->read_data_acc("consignee");
-		$this->getPage('new_sales', $data);
+		$this->loadView('sales/new_sales', $data);
 	}
 
 	public function generate_new_sales()
@@ -233,11 +257,12 @@ class SalesController extends CommonController
 	public function view_new_sales_by_id()
 	{
 		$sales_id = $this->uri->segment('2');
-
+		$data['uri_segment_2'] = $sales_id;
 		$data['new_sales'] = $this->Crud->get_data_by_id("new_sales", $sales_id, "id");
+		
 		$data['customer'] = $this->Crud->get_data_by_id("customer", $data['new_sales'][0]->customer_id, "id");
 		$data['customer_part_details'] = $this->Crud->get_data_by_id("customer_part", $data['new_sales'][0]->customer_part_id, "id");
-
+		$data['session_type'] = $this->session->userdata['type'];
 		//$data['gst_structure'] = $this->Crud->read_data("gst_structure");
 		//$data['uom'] = $this->Crud->read_data("uom");
 		$data['customer_tracking'] = $this->Crud->customQuery('SELECT po.* FROM customer_po_tracking as po, 
@@ -249,14 +274,21 @@ class SalesController extends CommonController
 
 		
 		$data['einvoice_res_data'] = $this->Crud->get_data_by_id("einvoice_res", $sales_id, "new_sales_id");
-
 		$data['po_parts'] = $this->Crud->get_data_by_id("sales_parts", $sales_id, "sales_id");
+		
 		$data['child_part'] = $this->Crud->get_data_by_id("customer_part", $data['new_sales'][0]->customer_id, "customer_id");
 		$data['transporter'] = $this->Crud->read_data("transporter");
 		// $child_part_list = $this->db->query('SELECT DISTINCT part_number,supplier_id FROM `customer_part` where supplier_id = ' . $data['supplier'][0]->id . '');
 		// $data['child_part'] = $child_part_list->result();
+		$data['e_invoice_status'] = $this->Crud->get_data_by_id("einvoice_res", $this->uri->segment('2'), "new_sales_id");
+		// pr($data['e_invoice_status'],1);
+		foreach ($variable as $p) {
+			$data['child_part_data'][$p->part_id] = $this->Crud->get_data_by_id("customer_part", $p->part_id, "id");
+			$data['gst_structure2'][$p->part_id] = $this->Crud->get_data_by_id("gst_structure", $p->tax_id, "id");
+		}
+		
 
-		$this->getPage('view_new_sales_by_id', $data);
+		$this->loadView('sales/view_new_sales_by_id', $data);
 	}
 
 	public function add_sales_parts()
@@ -726,7 +758,13 @@ class SalesController extends CommonController
 
 		$data['created_year'] = $created_year;
 		$data['created_month'] = $created_month;
-		$this->getPage('sales_reports.php', $data);
+		$data['fincYears'] = $this->Common_admin_model->getFinancialYears();
+		for ($i = 1; $i <= 12; $i++) {
+			$data['month_data'][$i] = $this->Common_admin_model->get_month($i);
+			$data['month_number'][$i] = $this->Common_admin_model->get_month_number($data['month_data'][$i]);
+		}
+		// pr($data,1);
+		$this->loadView('reports/sales_reports', $data);
 	}
 
 	private function getPage($viewPage, $viewData)
@@ -741,9 +779,14 @@ class SalesController extends CommonController
 		$data['customer'] = $this->Crud->read_data("customer");
 		$data['rejection_sales_invoice'] = $this->Crud->read_data("rejection_sales_invoice");
 		$data['reject_remark'] = $this->Crud->read_data_acc("reject_remark");
-		$this->load->view('header');
-		$this->load->view('rejection_invoices', $data);
-		$this->load->view('footer');	
+
+		foreach ($data['rejection_sales_invoice'] as $u) {
+			$data['customer_data'][$u->customer_id] = $this->Crud->get_data_by_id("customer", $u->customer_id, "id");
+		}
+		// $this->load->view('header');
+		// $this->load->view('rejection_invoices', $data);
+		// $this->load->view('footer');	
+		$this->loadView('sales/rejection_invoices',$data);
 	}
 
 	public function generate_rejection_sales_invoice()
@@ -809,15 +852,22 @@ class SalesController extends CommonController
 		$data['uom'] = $this->Crud->read_data("uom");
 		$child_part_list = $this->db->query('SELECT DISTINCT part_number,part_description,id FROM `customer_part` where customer_id = ' . $data['customer'][0]->id . '');
 		$data['customer_part'] = $child_part_list->result();
-
+		$data['session_type'] = $this->session->userdata['type'];
 		$arr = array(
 			"rejection_sales_id" => $sales_id,
 		);
 		$data['parts_rejection_sales_invoice'] = $this->Crud->get_data_by_id_multiple("parts_rejection_sales_invoice", $arr);
 
-		$this->load->view('header');
-		$this->load->view('view_rejection_sales_invoice_by_id', $data);
-		$this->load->view('footer');
+		foreach ($data['parts_rejection_sales_invoice'] as $p) {
+			
+			$data['child_part_data'][$p->part_id] = $this->Crud->get_data_by_id("customer_part", $p->part_id, "id");
+		}
+
+		// pr($data['child_part_data'],1);
+		$this->loadView('sales/view_rejection_sales_invoice_by_id',$data);
+		// $this->load->view('header');
+		// $this->load->view('view_rejection_sales_invoice_by_id', $data);
+		// $this->load->view('footer');
 	}
 
 
@@ -1427,18 +1477,63 @@ class SalesController extends CommonController
 		if(!empty($customer_part_id))
 		{
 			$data['sales_parts']  = $this->Crud->customQuery(
-			"SELECT s.*, SUM(s.gst_amount) as gst, SUM(s.total_rate) as ttlrt, SUM(s.gst_amount) as gstamnt, SUM(s.tcs_amount) as tcsamnt 
-			FROM `sales_parts` s 
-			INNER JOIN new_sales n ON s.sales_id = n.id AND n.clientId = ".$this->Unit->getSessionClientId()." 
-			WHERE s.customer_id = ".$customer_part_id." group by s.sales_number ORDER BY s.id DESC");
+				"SELECT s.*, SUM(s.gst_amount) as gst, SUM(s.total_rate) as ttlrt, SUM(s.gst_amount) as gstamnt, 
+				SUM(s.tcs_amount) as tcsamnt ,cus.customer_name,cus.payment_terms,rrp.payment_receipt_date
+				,rrp.amount_received,rrp.transaction_details,ns.created_date
+				FROM `sales_parts` s 
+				INNER JOIN new_sales n ON s.sales_id = n.id AND n.clientId = ".$this->Unit->getSessionClientId()."
+				left JOIN customer cus ON s.customer_id = cus.id  
+				left JOIN receivable_report rrp ON s.sales_number = rrp.sales_number  
+				left JOIN new_sales ns ON s.sales_id = ns.id  
+				WHERE s.customer_id = ".$customer_part_id." group by s.sales_number ORDER BY s.id DESC");
 		}
-
+		
+		
 		$data['customers'] = $this->Crud->read_data("customer");
 		$data['selected_customer_part_id'] = $customer_part_id;
-		$this->load->view('header.php');
-		$this->load->view('receivable_report.php', $data);
-		$this->load->view('footer.php');
+		
+		foreach ($data['sales_parts'] as $key => $objs) {
+			$created_date_str = $objs->created_date;
+                                                
+			// Create a DateTime object by specifying the format
+			$dateTime = DateTime::createFromFormat('d/m/Y', $created_date_str);
+		
+			if ($dateTime && is_numeric($objs->payment_terms)) {
+				// Convert payment_terms to an integer for days
+				$payment_terms_days = (int)$objs->payment_terms;
+		
+				// Add payment_terms (in days) to the created date
+				$dateTime->add(new DateInterval('P' . $payment_terms_days . 'D'));
+		
+				// Get the formatted due date
+				$due_date = $dateTime->format('d/m/Y');
+		
+				
+			} else {
+				$due_date = '';
+			}
+
+			$today = new DateTime();
+        
+			// Convert due date string to a DateTime object
+			$dueDateObject = DateTime::createFromFormat('d/m/Y', $due_date);
+			
+			// Calculate the interval between the due date and today's date
+			$interval = $today->diff($dueDateObject);
+			
+			// Get the difference in days
+			$due_days = $interval->format('%r%a');
+
+			$data['sales_parts'][$key]->due_date = $due_date;
+			$data['sales_parts'][$key]->due_days = $due_days;
+		}
+		// pr($data['sales_parts'],1);
+		// $this->load->view('header.php');
+		// $this->load->view('receivable_report.php', $data);
+		// $this->load->view('footer.php');
+		$this->loadView('reports/receivable_report',$data);
 	}
+
 
 
 	public function update_receivable_report()
@@ -1469,7 +1564,7 @@ class SalesController extends CommonController
 						"transaction_details" => $transaction_details,
 						
 					);
-					$result = $this->Crud->update_data_column("receivable_report", $data, $sales_number, "sales_number",);
+					$result = $this->Crud->update_data_column("receivable_report", $data, $sales_number, "sales_number");
 				echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			
 		}

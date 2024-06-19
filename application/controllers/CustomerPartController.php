@@ -10,6 +10,8 @@ class CustomerPartController extends CommonController
 	{
 		parent::__construct();
 		$this->load->model('CustomerPart');
+		$this->load->model('InhouseParts');
+
 	}
 
 	private function getPath()
@@ -68,8 +70,39 @@ class CustomerPartController extends CommonController
 		if (self::TUSHAR_ENGG_SMF == $this->getAROMCustomerName()) {
 			$data['TusharEngg'] = true; //show additional fields for Tushar
 		}
+		if($data['customer_part_list']){
+			foreach ($data['customer_part_list'] as $poo) {
+				
+				$data['po'][$poo->id] = $this->Crud->get_data_by_id("customer_part", $poo->id, "id");
+				$data['gst_structure2'][$data['po'][$poo->id][0]->gst_id] = $this->Crud->get_data_by_id("gst_structure", $data['po'][$poo->id][0]->gst_id, "id");
+				if ($data['operations_bom']) {
+					foreach ($data['operations_bom'] as $s) {
+						
+						if ($s->customer_part_number == $data['po'][$poo->id][0]->part_number) {
+							if ($s->output_part_table_name == "inhouse_parts") {
+								$data['output_part_data'][$s->output_part_id] = $this->InhouseParts->getInhousePartOnlyById($s->output_part_id);
+							} else {
+		
+								$data['output_part_data'][$s->output_part_id] = $this->Crud->get_data_by_id("customer_part", $s->output_part_id, "id");
+							}
+		
+							$data['operations_bom_inputs_data'][$s->id] = $this->Crud->get_data_by_id("operations_bom_inputs", $s->id, "operations_bom_id");
+		
+						}
+					}
+				}
+			}
+		}
 
-		$this->getPage('customer_part_by_id', $data);
+	
+
+		
+
+		$data['customer_data'] = $this->Crud->get_data_by_id("customer", $data['customer_part_list'][0]->customer_id, "id");
+		$data['entitlements'] = $this->session->userdata['entitlements'];
+
+
+		$this->getPage('customer/customer_part_by_id', $data);
 	}
 
 
