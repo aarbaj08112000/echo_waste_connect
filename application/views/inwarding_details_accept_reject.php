@@ -355,13 +355,8 @@
                                                     'supplier_id' => $supplier[0]->id,
                                                     "child_part_id" => $p->part_id,
                                                 );
-
-                                                //$child_part_data = $this->Crud->get_data_by_id("child_part_master",);
                                                 $child_part_data = $this->Crud->get_data_by_id_multiple_condition("child_part_master", $data);
 
-
-                                                // $child_part_data = $this->Crud->get_data_by_id("child_part_master", $p->part_id, "child_part_id");
-                                                $gst_structure_data = $this->Crud->get_data_by_id("gst_structure", $p->tax_id, "id");
                                                 $uom_data = $this->Crud->get_data_by_id("uom", $p->uom_id, "id");
 
                                                 $part_rate_new = 0;

@@ -54,3 +54,31 @@
 		Filename: models/Crud.php
 
 		Line Number: 129
+
+
+5. Quality => Final Inspection Production QTY
+ 	welcome => final_inspection_qa
+ 	because this conditon data not come 
+
+ 	$data['p_q'] = $this->Crud->customQuery('SELECT 
+					p.*, 
+					o.name AS op_name, 
+					m.name AS machine_name, 
+					s.shift_type AS shift_type, 
+					s.name AS shift_name
+				FROM 
+					`p_q` p
+				JOIN 
+					machine m ON p.machine_id = m.id
+				JOIN 
+					operator o ON p.operator_id = o.id
+				JOIN 
+					shifts s ON p.shift_id = s.id
+				WHERE 
+					m.clientId = '.$clientId.'
+		------------------------------------------------------
+		|													 |
+		|			AND m.name = "FINAL INSPECTION"			 |
+		------------------------------------------------------
+				ORDER BY 
+					p.id DE

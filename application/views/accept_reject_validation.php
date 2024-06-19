@@ -89,22 +89,7 @@
                                             <th>View Details</th>
                                         </tr>
                                     </thead>
-                                    <tfoot>
-                                        <tr>
-                                            <th>Sr No</th>
-                                            <th>GRN Number </th>
-                                            <th>GRN Date</th>
-                                            <th>PO Number</th>
-                                            <th>Supplier Name </th>
-                                            <th>Invoice Number</th>
-                                            <th>Date</th>
-                                            <th>Status</th>
-                                            <?php if($isMultiClient == "true") { ?>
-                                                <th>Delivery Unit</th>
-                                            <?php } ?>
-                                            <th>View Details</th>
-                                        </tr>
-                                    </tfoot>
+                                   
                                     <tbody>
                                         <?php
                                         $i = 1;

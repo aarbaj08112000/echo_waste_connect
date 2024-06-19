@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-06-16 22:25:44
+/* Smarty version 4.3.2, created on 2024-06-18 17:37:14
   from '/var/www/html/extra_work/erp_converted/application/views/templates/store/part_stocks.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_666f19102efea9_09742450',
+  'unifunc' => 'content_667178720a0468_64184473',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_666f19102efea9_09742450 (Smarty_Internal_Template $_smarty_tpl) {
+function content_667178720a0468_64184473 (Smarty_Internal_Template $_smarty_tpl) {
 ?><div class="wrapper" style="width:2400px">
 <?php $_smarty_tpl->_assignInScope('role', trim($_smarty_tpl->tpl_vars['session_data']->value['type']));?>
 <div class="content-wrapper">

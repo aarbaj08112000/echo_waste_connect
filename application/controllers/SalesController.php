@@ -739,11 +739,17 @@ class SalesController extends CommonController
 	public function rejection_invoices()  
 	{
 		$data['customer'] = $this->Crud->read_data("customer");
-		$data['rejection_sales_invoice'] = $this->Crud->read_data("rejection_sales_invoice");
+		$data['rejection_sales_invoice'] = $this->Crud->customQuery("
+			SELECT r.*,c.customer_name as customer_name
+			FROM `rejection_sales_invoice` as r
+			LEFT JOIN customer as c On c.id = r.customer_id
+			WHERE r.clientId = '".$this->Unit->getSessionClientId()."'
+			ORDER BY r.id DESC
+		");
 		$data['reject_remark'] = $this->Crud->read_data_acc("reject_remark");
-		$this->load->view('header');
-		$this->load->view('rejection_invoices', $data);
-		$this->load->view('footer');	
+		// $this->load->view('header');
+		$this->loadView('quality/rejection_invoices', $data);
+		// $this->load->view('footer');	
 	}
 
 	public function generate_rejection_sales_invoice()
@@ -813,11 +819,17 @@ class SalesController extends CommonController
 		$arr = array(
 			"rejection_sales_id" => $sales_id,
 		);
-		$data['parts_rejection_sales_invoice'] = $this->Crud->get_data_by_id_multiple("parts_rejection_sales_invoice", $arr);
-
-		$this->load->view('header');
-		$this->load->view('view_rejection_sales_invoice_by_id', $data);
-		$this->load->view('footer');
+		$data['parts_rejection_sales_invoice'] = $this->Crud->customQuery("
+			SELECT prs.*,c.part_number as part_number,c.part_description as part_description,c.id as customer_part_id
+			FROM parts_rejection_sales_invoice as prs
+			LEFT JOIN customer_part as c ON c.id = prs.part_id
+			WHERE prs.rejection_sales_id = '$sales_id'
+		");	
+		$data['user_type'] = $this->session->userdata['type'];
+		// pr($data['parts_rejection_sales_invoice'],1);
+		// $this->load->view('header');
+		$this->loadView('quality/view_rejection_sales_invoice_by_id', $data);
+		// $this->load->view('footer');
 	}
 
 
@@ -1469,7 +1481,7 @@ class SalesController extends CommonController
 						"transaction_details" => $transaction_details,
 						
 					);
-					$result = $this->Crud->update_data_column("receivable_report", $data, $sales_number, "sales_number",);
+					$result = $this->Crud->update_data_column("receivable_report", $data, $sales_number, "sales_number");
 				echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			
 		}

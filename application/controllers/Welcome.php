@@ -544,12 +544,18 @@ class Welcome extends CommonController
 	{
 		$new_po_id = $this->uri->segment('2');
 		$data['new_po_id'] = $this->uri->segment('2');
-		$data['inwarding_data'] = $this->Crud->customQuery("SELECT * FROM inwarding
-		WHERE delivery_unit = '".$this->Unit->getSessionClientUnitName()."'");
+		$data['inwarding_data'] = $this->Crud->customQuery("
+			SELECT i.* ,np.po_number as po_number,s.supplier_name as supplier_name
+			FROM inwarding as i
+			LEFT JOIN new_po as np ON  np.id  = i.po_id
+			LEFT JOIN supplier as s ON  s.id  = np.supplier_id
+			WHERE i.delivery_unit = '".$this->Unit->getSessionClientUnitName()."'");
+
 		
-		$this->load->view('header');
-		$this->load->view('accept_reject_validation', $data);
-		$this->load->view('footer');
+		$data['isMultiClient'] = $this->session->userdata['isMultipleClientUnits'];
+		// $this->load->view('header');
+		$this->loadView('quality/accept_reject_validation', $data);
+		// $this->load->view('footer');
 	}
 	public function inwarding_details()
 	{
@@ -1060,10 +1066,75 @@ class Welcome extends CommonController
 			'supplier_id' => $data['supplier'][0]->id
 		);
 
-		$data['po_parts'] = $this->Crud->get_data_by_id("po_parts", $new_po_id, "po_id");
-		$this->load->view('header');
-		$this->load->view('inwarding_details_accept_reject', $data);
-		$this->load->view('footer');
+		$invoice_number = $inwarding_data[0]->invoice_number;
+		$supplier_id = $data['supplier'][0]->id;
+		$data['po_parts'] = $this->Crud->customQuery("SELECT p.*,u.uom_name as uom_name,gd.qty as grn_qty,gd.verified_qty as verified_qty,gd.accept_qty as accept_qty,gd.reject_qty as reject_qty,gd.remark as remark,gd.rm_batch_no as rm_batch_no,gd.mtc_report as mtc_report,gd.id as grn_details_id
+			FROM po_parts as p
+			LEFT JOIN uom as u ON u.id = p.uom_id 
+			LEFT JOIN grn_details as gd ON gd.part_id = p.part_id AND gd.inwarding_id = $inwarding_id AND gd.po_number = $new_po_id AND gd.invoice_number = '$invoice_number'
+			WHERE p.po_id = $new_po_id
+			ORDER BY p.id DESC
+		");
+		foreach ($data['po_parts'] as $key => $p) {
+			$data_con = array(
+				'supplier_id' => $supplier_id,
+                "child_part_id" => $p->part_id,
+            );
+            $child_part_data = $this->Crud->get_data_by_id_multiple_condition("child_part_master", $data_con);
+            $data['po_parts'][$key]->child_part_data = $child_part_data[0];
+            $arr2 = array(
+                'supplier_id' => $supplier_id,
+                'part_id' => $p->part_id,
+                'po_number' => $new_po_id,
+                'type' => "grn_rejection",
+            );
+            $rejection_flow_data = $this->Crud->get_data_by_id_multiple("rejection_flow", $arr2);
+            $data['po_parts'][$key]->rejection_flow_data = $rejection_flow_data[0];
+		}
+		
+		
+		/* extra query */
+		$arr = array(
+			'inwarding_id' => $inwarding_data[0]->id,
+            'invoice_number' => $inwarding_data[0]->invoice_number,
+                                    
+        );
+        $invoice_amount = $inwarding_data[0]->invoice_amount;
+        // pr($invoice_amount,1);
+        // $inwarding_data = $this->Crud->get_data_by_id_multiple("inwarding", $arr);
+        $grn_details_data = $this->Crud->get_data_by_id_multiple("grn_details", $arr);
+        $actual_price = 0;
+        foreach ($grn_details_data as $g) {
+        	$actual_price = $actual_price + $g->inwarding_price;
+        }
+                                    
+                                    
+        // $cgst_amount = ($actual_price*$gst_structure[0]->cgst)/100;
+        // $sgst_amount = ($actual_price*$gst_structure[0]->sgst)/100;
+        // $igst_amount = ($actual_price*$gst_structure[0]->igst)/100;
+        // $actual_price = $actual_price + $cgst_amount +$sgst_amount+$igst_amount;
+        $actual_price = $actual_price + $data['new_po'][0]->final_amount;
+        $minus_price = $actual_price - 1;
+        $plus_price = $actual_price + 1;
+        if ($actual_price != 0) {
+        	if ($invoice_amount >= $minus_price) {
+            	if ($invoice_amount <= $plus_price) {
+                    $status = "verifed";
+                } else {
+                	$status = "not-verifed";
+                }
+            } else {
+            	$status = "not-verifed";
+           	}
+        } else {
+        	$status = "not-verifed";
+        }
+        $data['status'] = $status;
+        $data['actual_price'] = $actual_price;
+        $data['isMultiClient'] = $this->session->userdata['isMultipleClientUnits'];
+		// $this->load->view('header');
+		$this->loadView('quality/inwarding_details_accept_reject', $data);
+		// $this->load->view('footer');
 	}
 
 
@@ -1516,7 +1587,7 @@ class Welcome extends CommonController
 	{
 
 		$data['operations'] = $this->Crud->read_data("reject_remark");
-		$this->loadView('remarks', $data);
+		$this->loadView('quality/remarks', $data);
 	}
 	public function operations_data()
 	{
@@ -3117,10 +3188,19 @@ class Welcome extends CommonController
 				ORDER BY 
 					p.id DESC 
 				LIMIT 10');
+		foreach ($data['p_q'] as $key => $u) {
+			
+			if ($u->output_part_table_name == "inhouse_parts1") {
+				$output_part_data = $this->InhouseParts->getInhousePartOnlyById($u->output_part_id);
+            } else {
+            	$output_part_data = $this->Crud->get_data_by_id("customer_part", $u->output_part_id, "id");
+            }
+            $data['p_q'][$key]->output_part_data = $output_part_data;
+            
+		}
 		
 		$data['reject_remark'] = $this->Crud->read_data("reject_remark");
-
-		$this->loadView('final_inspection_qa', $data);
+		$this->loadView('quality/final_inspection_qa', $data);
 	}
 
 	public function final_inspection()
@@ -3733,7 +3813,6 @@ class Welcome extends CommonController
 	}
 	public function stock_rejection()
 	{
-	
 		$data['child_part'] = $this->SupplierParts->readSupplierParts();
 		$data['supplier'] = $this->Crud->read_data("supplier");
 		$data['rejection_flow'] = $this->Crud->customQuery("SELECT r.*, c.part_number, c.part_description,s.supplier_name FROM rejection_flow r
@@ -3758,9 +3837,9 @@ class Welcome extends CommonController
 					AND r.type = 'grn_rejection'
 					ORDER BY r.id DESC");
 
-		$this->load->view('header');
-		$this->load->view('grn_rejection', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		$this->loadView('quality/grn_rejection', $data);
+		// $this->load->view('footer');
 	}
 	public function short_receipt_mdr()
 	{
@@ -7508,9 +7587,19 @@ class Welcome extends CommonController
 
 		// print_r($data['child_part_new']);
 		$data['raw_material_inspection_master'] = $this->Crud->get_data_by_id("raw_material_inspection_master", $data['child_part_id_table'], "child_part_id");
-		$this->load->view('header');
-		$this->load->view('raw_material_inspection_inwarding', $data);
-		$this->load->view('footer');
+		foreach ($data['raw_material_inspection_master'] as $key => $u) {
+			$data_old_po_number = array(
+				'child_part_id' => $data['child_part_id'],
+                'raw_material_inspection_master_id' => $u->id,
+                'invoice_number' => $data['inwarding_data'][0]->invoice_number,
+            );
+            $raw_material_inspection_report_data = $this->Common_admin_model->get_data_by_id_multiple_condition("raw_material_inspection_report", $data_old_po_number);
+            $data['raw_material_inspection_master'][$key]->raw_material_inspection_report_data = $raw_material_inspection_report_data;
+		}
+		// pr($data['raw_material_inspection_master'],1);
+		// $this->load->view('header');
+		$this->loadView('quality/raw_material_inspection_inwarding', $data);
+		// $this->load->view('footer');
 	}
 	public function operations_bom()
 	{
