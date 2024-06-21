@@ -2779,10 +2779,10 @@ class Welcome extends CommonController
 	}
 	public function planning_year_page()
 	{
-
-		$this->load->view('header');
-		$this->load->view('planning_year_page', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		// $this->load->view('planning_year_page', $data);
+		// $this->load->view('footer');
+		$this->loadView('customer/planning_year_page',$data);
 	}
 	
 	public function planing_data_report_view()
@@ -4092,9 +4092,28 @@ class Welcome extends CommonController
 		$data['customer_part_rate'] = $role_management_data->result();
 
 		// print_r($data['customer_part_list']);
-		$this->load->view('header');
-		$this->load->view('customer_part_price_by_id', $data);
-		$this->load->view('footer');
+
+		if ($data['customer_part']) {
+			foreach ($data['customer_part'] as $c) {
+				if ($customer_id == $c->customer_id) { 
+					$data['customer'][$c->customer_id] = $this->Crud->get_data_by_id("customer", $c->customer_id, "id");
+					// $data['customer_part_type'][$c->customer_part_id] = $this->Crud->get_data_by_id("customer_part_type", $c->customer_part_id, "id");	
+				}
+			}
+		}
+		
+
+		foreach ($data['customer_part_rate'] as $poo ) {
+			$data['customer_part_rate_data'][$poo->customer_master_id] = $this->Crud->get_data_by_id("customer_part_rate", $poo->customer_master_id, "customer_master_id");
+			$data['po'][$poo->customer_master_id] = $this->Crud->get_data_by_id("customer_part", $poo->customer_master_id, "id");
+			$data['customer_data'][$data['po'][$poo->customer_master_id][0]->customer_id] = $this->Crud->get_data_by_id("customer", $data['po'][$poo->customer_master_id][0]->customer_id, "id");
+			$data['customer_part_data'][$data['po'][$poo->customer_master_id][0]->customer_part_id] = $this->Crud->get_data_by_id("customer_part_type", $data['po'][$poo->customer_master_id][0]->customer_part_id, "id");
+		}
+		// pr($data['customer_data'],1);
+		// $this->load->view('header');
+		// $this->load->view('customer_part_price_by_id', $data);
+		// $this->load->view('footer');
+		$this->loadView('customer/customer_part_price_by_id',$data);
 	}
 	public function customer_part_operation_by_id()
 	{
@@ -4144,9 +4163,29 @@ class Welcome extends CommonController
 		$data['customers'] = $this->Crud->read_data("customer");
 		$data['customer_part'] = $this->Crud->read_data("customer_part");
 		$data['customer_part_rate'] = $this->Crud->get_data_by_id("customer_part_rate", $customer_master_id, "customer_master_id");
-		$this->load->view('header');
-		$this->load->view('view_part_rate_history', $data);
-		$this->load->view('footer');
+		
+		if ($data['customer_part']) {
+			foreach ($data['customer_part'] as $c) {
+				if ($customer_id == $c->customer_id) {                                                                        // $data['toolList'] = $this->Crud->get_data_by_id("tools", "insert", "type");
+					$data['customer'][$c->customer_id] = $this->Crud->get_data_by_id("customer", $c->customer_id, "id");		
+				}
+			}
+		}
+
+		if ($data['customer_part_rate']) {
+			foreach ($data['customer_part_rate'] as $poo) {
+				// echo $poo->part_number;
+				$data['customer_part_rate_data'][$poo->customer_master_id] = $this->Crud->get_data_by_id("customer_part_rate", $poo->customer_master_id, "customer_master_id");
+				$data['po'][$poo->customer_master_id] = $this->Crud->get_data_by_id("customer_part", $poo->customer_master_id, "id");
+				$data['customer_data'][$data['po'][$poo->customer_master_id][0]->customer_id] = $this->Crud->get_data_by_id("customer", $data['po'][$poo->customer_master_id][0]->customer_id, "id");
+				$data['customer_part_data'][$data['po'][$poo->customer_master_id]] = $this->Crud->get_data_by_id("customer_part_type", [$data['po'][$poo->customer_master_id]][0]->customer_part_id, "id");
+			}
+		}
+		
+		// $this->load->view('header');
+		// $this->load->view('view_part_rate_history', $data);
+		// $this->load->view('footer');
+		$this->loadView('customer/view_part_rate_history',$data);
 	}
 
 	public function view_part_operation_history()
@@ -7526,9 +7565,21 @@ class Welcome extends CommonController
 		$data['child_part_list'] = $this->SupplierParts->readSupplierParts();
 		$data['customer_part_list'] = $this->Crud->read_data("customer_part");
 		$data['bom_list'] = $this->Crud->get_data_by_id("bom", $data['id'], "customer_part_id");
-		$this->load->view('header');
-		$this->load->view('bom', $data);
-		$this->load->view('footer');
+
+		// if ($data['customer_part']) {
+		// 	$i = 1;
+		// 	foreach ($data['customer_part'] as $c) {
+		// 		if ($customer_id == $c->customer_id) {                                                                        // $data['toolList'] = $this->Crud->get_data_by_id("tools", "insert", "type");
+		// 			$data['customer'][$c->customer_id] = $this->Crud->get_data_by_id("customer", $c->customer_id, "id");
+		// 		}
+		// 	}
+		// }
+
+		// $this->load->view('header');
+		// $this->load->view('bom', $data);
+		// $this->load->view('footer');
+		$entitlements = $this->session->userdata('entitlements');
+		$this->loadView('customer/bom',$data);
 	}
 	public function customer_part_main()
 	{
@@ -7554,9 +7605,10 @@ class Welcome extends CommonController
 		// $data['bom_list'] = $this->Crud->read_data("bom");
 		$data['bom_list'] = $this->Crud->get_data_by_id("bom", $data['id'], "customer_part_id");
 
-		$this->load->view('header');
-		$this->load->view('customer_part_main', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		// $this->load->view('customer_part_main', $data);
+		// $this->load->view('footer');
+		$this->loadView('customer/customer_part_main',$data);
 	}
 	public function bom_by_id()
 	{

@@ -92,7 +92,7 @@
                                                                         if ($customer_id == $c->customer_id) {                                                                        // $data['toolList'] = $this->Crud->get_data_by_id("tools", "insert", "type");
                                                                             $customer = $this->Crud->get_data_by_id("customer", $c->customer_id, "id");
                                                                 ?>
-                                                                            <option value="<?php echo $c->id ?>"><?php echo $customer[0]->customer_name . "/" . $customer[0]->customer_code . "/" . $c->part_number . "/" . $c->part_description ?></option>
+                                                                            <option value="<?php echo $c->id ?>"><?php echo $customer[$c->customer_id][0]->customer_name . "/" . $customer[$c->customer_id][0]->customer_code . "/" . $c->part_number . "/" . $c->part_description ?></option>
                                                                 <?php
                                                                         }
                                                                     }
