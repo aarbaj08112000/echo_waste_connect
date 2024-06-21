@@ -69,9 +69,34 @@ class PlanningController extends CommonController
 		}
 		
 		$data['customer_id'] = $customer_id;
-		$this->load->view('header');
-		$this->load->view('planing_data', $data);
-		$this->load->view('footer');
+
+		if ($data['planing_data']) {
+			foreach ($data['planing_data'] as $t) {
+				if ($data['month'] == $t->month) {
+					$data['customer_part_data'][$t->customer_part_id] = $this->Crud->get_data_by_id("customer_part", $t->customer_part_id, "id");
+					$data['customer_part_rate'][$t->customer_part_id] = $this->Crud->get_data_by_id("customer_part_rate", $t->customer_part_id, "customer_master_id");
+					$customers_data[$customer_part_data[0]->customer_id] = $this->Crud->get_data_by_id("customer", $customer_part_data[$t->customer_part_id][0]->customer_id, "id");
+					$planing_data[$t->id] = $this->Crud->get_data_by_id("planing_data", $t->id, "planing_id");
+					$month_number = $this->Common_admin_model->get_month_number($month);
+					$year_number = substr($financial_year, 3, strlen($financial_year));
+					$data['sales_invoice'][$t->customer_part_id] = $this->Crud->customQuery('SELECT sum(p.qty) as dispatched_qty FROM new_sales s, sales_parts p
+							WHERE s.created_year = "' . $year_number . '"
+							AND s.created_month = "'.$month_number.'" 
+							AND s.status = "lock"
+							AND p.part_id = '.$t->customer_part_id.'
+							AND s.id = p.sales_id
+							GROUP BY s.customer_part_id');
+					}
+				
+			}
+		}
+		$data['segment_2'] =$this->uri->segment('2');
+		$data['segment_3'] =$this->uri->segment('3');
+		// $this->load- >view('header');
+		// $this->load->view('planing_data', $data);
+		// $this->load->view('footer');
+		$this->loadView('customer/planing_data', $data);
+
 	}
 
 	public function get_customer_parts_for_planning()
@@ -273,11 +298,30 @@ class PlanningController extends CommonController
 		$data['customer'] = $this->Crud->read_data("customer");
 
 		$role_management_data = $this->db->query('SELECT  id,part_number FROM `child_part` ');
-		$data['child_part_master'] = $role_management_data->result();
+		$data['child_part_master_main'] = $role_management_data->result();
 
-		$this->load->view('header');
-		$this->load->view('view_all_child_parts_schedule', $data);
-		$this->load->view('footer');
+
+		if ($data['child_part_master_main']) {
+			foreach ($data['child_part_master_main'] as $t) {
+				$subtotal=0;
+				$shortage_qty=0;
+				$actual_stock=0;                                                
+				$data['child_part_master'][$t->part_number] = $this->Crud->get_data_by_id("child_part_master", $t->part_number, "part_number");
+				$data['child_part_data'][$t->part_number] = $this->SupplierParts->getSupplierPartByPartNumber($t->part_number);
+				$array = array(
+					"child_part_id" => $data['child_part_master'][$t->part_number] [0]->child_part_id,
+					"financial_year" => $financial_year,
+					"month" => $month,
+				);
+				$data['planing_data'] [$data['child_part_master'][0]->child_part_id]= $this->Crud->get_data_by_id_multiple_condition("planing_data", $array);
+			}
+		}
+		
+		// $this->load->view('header');
+		// $this->load->view('view_all_child_parts_schedule', $data);
+		// $this->load->view('footer');
+		$this->loadView('customer/view_all_child_parts_schedule', $data);
+
 	}
 
 	function planning_export_customer_part()
@@ -558,7 +602,7 @@ class PlanningController extends CommonController
 		$filter_month = $this->input->post('filter_month');
 		$filter_year = $this->input->post('filter_year');
 		$selected_customer = $this->input->post('selected_customer');
-
+		
 		if (empty($filter_month)) {
 			$filter_month = $this->month;
 		}
@@ -591,14 +635,20 @@ class PlanningController extends CommonController
 					AND EXTRACT(YEAR FROM shop_date) = ".$filter_year);
 			}
 		}
+
+		for ($i = 1; $i <= 12; $i++) {
+			$data['month_data'][$i] = $this->Common_admin_model->get_month($i);
+			$data['month_number'][$i] = $this->Common_admin_model->get_month_number($data['month_data'][$i]);
+		}
 		
 		$data['customer'] = $this->Crud->read_data("customer");
 		$data['selected_customer'] = $selected_customer;
 		$data['filter_year'] = $filter_year;
 		$data['filter_month'] = $filter_month;
-		$this->load->view('header');
-		$this->load->view('planning_shop_order_list', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		// $this->load->view('planning_shop_order_list', $data);
+		// $this->load->view('footer');
+		$this->loadView('customer/planning_shop_order_list',$data);
 	}
 
 	public function add_planning_shop_order()
