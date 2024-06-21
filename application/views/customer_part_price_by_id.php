@@ -184,6 +184,7 @@
                                     <tbody>
                                         <?php
                                         $i = 1;
+                                        
                                         if ($customer_part_rate) {
                                             foreach ($customer_part_rate as $poo) {
                                                 // echo $poo->part_number;
@@ -191,7 +192,7 @@
                                                 $po = $this->Crud->get_data_by_id("customer_part", $poo->customer_master_id, "id");
                                                 $customer_data = $this->Crud->get_data_by_id("customer", $po[0]->customer_id, "id");
                                                 $customer_part_data = $this->Crud->get_data_by_id("customer_part_type", $po[0]->customer_part_id, "id");
-                                                // print_r($supplier_data);
+                                               
                                                 if ($customer_data[0]->id == $customer_id) {
                                         ?>
 

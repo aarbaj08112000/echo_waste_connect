@@ -80,7 +80,7 @@
                                         $i = 1;
                                         if ($customer_po_tracking) {
                                             foreach ($customer_po_tracking as $s) {
-												$customer_data = $this->Crud->get_data_by_id("customer", $s->customer_id, "id");
+												
 												// print_r($m);
                                                 if($s->status != "closed")
                                                 {

@@ -52,9 +52,18 @@ class PLMIntegration extends CommonController
 		//old
 		//$role_management_data = $this->db->query('SELECT DISTINCT customer_master_id FROM `customer_part_drawing` ORDER BY `id` DESC');
 		
-		$data['search_part_id']=$search_part_id;
+		$data['search_part_id'] = $search_part_id;
+
+		if ($data['customer_part_drawing']) {
+			foreach ($data['customer_part_drawing'] as $poo) {
+				$data['customer_part_drawing_data'][$poo->customer_master_id] = $this->Crud->get_data_by_id("customer_part_drawing", $poo->customer_master_id, "customer_master_id");
+				$data['po'][$poo->customer_master_id] = $this->Crud->get_data_by_id("customer_part", $poo->customer_master_id, "id");
+				}
+			}
 		
-		$this->getPage('customer_part_drawing_by_id', $data);
+		// $this->getPage('customer_part_drawing_by_id', $data);
+		$data['entitlements'] = $this->session->userdata('entitlements');
+		$this->loadView('customer/customer_part_drawing_by_id',$data);
 	}
 	
 
@@ -84,10 +93,20 @@ class PLMIntegration extends CommonController
 			$data['search_customer_part'] = $this->Crud->get_data_by_id_multiple_condition("customer_part", $uniqueCheck);
 		}
 
+		
+		if ($data['customer_part']) {
+			foreach ($data['customer_part'] as $c) {
+				if ($customer_id == $c->customer_id) {                                                                       
+					$data['customer'][$c->customer_id] = $this->Crud->get_data_by_id("customer", $c->customer_id, "id");
+				}
+			}
+		}
 		//$data['search_customer_part'] = $this->Crud->get_data_by_id_multiple_condition("customer_part", $uniqueCheck);
 		$data['search_part_id']=$search_part_id;
+		$data['entitlements'] = $this->session->userdata('entitlements');
+		// $this->getPage('customer_part_documents_by_id', $data);
+		$this->loadView('customer/customer_part_documents_by_id', $data);
 
-		$this->getPage('customer_part_documents_by_id', $data);
 	}
 
 	public function add_customer_drawing()
@@ -265,8 +284,9 @@ class PLMIntegration extends CommonController
 		$data['customer_data'] = $this->Crud->get_data_by_id("customer",$customerid,"id");
 		$data['customer_part'] = $this->Crud->get_data_by_id("customer_part", $customer_master_id, "id");
 		$data['customer_part_rate'] = $this->Crud->get_data_by_id("customer_part_drawing", $customer_master_id, "customer_master_id");
-
-		$this->getPage('view_part_drawing_history', $data);
+		$data['entitlements'] = $this->session->userdata('entitlements');
+		// $this->getPage('view_part_drawing_history', $data);
+		$this->loadView('customer/view_part_drawing_history',$data);
 	}
 
 	public function updatecustomerpartdrwing()

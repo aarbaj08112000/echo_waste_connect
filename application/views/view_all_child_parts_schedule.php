@@ -72,19 +72,17 @@ $CI->load->model('SupplierParts');
                                         $total=0;
                                       
                                         if ($child_part_master) {
-                                            foreach ($child_part_master as $t) {
+                                            foreach ($child_part_master_main as $t) {
                                                 $subtotal=0;
                                                 $shortage_qty=0;
                                                 $actual_stock=0;                                                
                                                 $child_part_master = $this->Crud->get_data_by_id("child_part_master", $t->part_number, "part_number");
-                                                
                                                 if($child_part_master) {
                                                 $child_part_data = $this->SupplierParts->getSupplierPartByPartNumber($t->part_number);
                                                 $array = array(
                                                     "child_part_id" => $child_part_master[0]->child_part_id,
                                                     "financial_year" => $financial_year,
                                                     "month" => $month,
-
                                                 );
                                                 $planing_data = $this->Crud->get_data_by_id_multiple_condition("planing_data", $array);
                                                 $req_qty = 0;

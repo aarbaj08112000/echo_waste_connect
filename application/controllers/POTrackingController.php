@@ -17,7 +17,8 @@ class POTrackingController extends CommonController {
 
 	public function customer_po_tracking() {
 		$data['customer_data'] = $this->Crud->read_data("customer");
-		$this->getPage('customer_po_tracking', $data);
+		// $this->getPage('customer_po_tracking', $data);
+		$this->loadView('customer/customer_po_tracking',$data);
 	}
 	
 	
@@ -98,8 +99,14 @@ class POTrackingController extends CommonController {
 		// INNER JOIN customer ON customer_part.customer_id=customer.id;');
 		// $data['customer_parts'] = $role_management_data->result();
 		$data['customer_po_tracking'] = $this->Crud->read_data("customer_po_tracking");
+		if ($data['customer_po_tracking']) {
+			foreach ($data['customer_po_tracking'] as $s) {
+				$data['customer_data'][$s->customer_id] = $this->Crud->get_data_by_id("customer", $s->customer_id, "id");
+			}
+		}
 		// print_r($data['customer_po_tracking']);
-		$this->getPage('customer_po_tracking_all', $data);
+		// $this->getPage('customer_po_tracking_all', $data);
+		$this->loadView('customer/customer_po_tracking_all', $data);
 	}
 	
 	public function customer_po_tracking_all_closed() {
@@ -110,9 +117,16 @@ class POTrackingController extends CommonController {
 		// 		$data['customer_parts'] = $role_management_data->result();
 		$data['customer_po_tracking'] = $this->Crud->read_data("customer_po_tracking");
 		$data['customer_po_tracking'] = $this->Crud->get_data_by_id("customer_po_tracking", "closed", "status");
-		// print_r($data['customer_po_tracking']);
 		
-		$this->getPage('customer_po_tracking_all_closed', $data);
+		// print_r($data['customer_po_tracking']);
+		if ($data['customer_po_tracking']) {
+			foreach ($data['customer_po_tracking'] as $s) {
+				$data['customer_data'][$s->customer_id] = $this->Crud->get_data_by_id("customer", $s->customer_id, "id");
+			}
+		}
+		
+		// $this->getPage('customer_po_tracking_all_closed', $data);
+		$this->loadView('customer/customer_po_tracking_all_closed', $data);
 	}
 	
 	public function view_customer_tracking_id()
@@ -122,10 +136,35 @@ class POTrackingController extends CommonController {
 		$data['customer_po_tracking'] = $this->Crud->get_data_by_id("customer_po_tracking", $customer_tracking_po_id, "id");
 		$data['customer'] = $this->Crud->get_data_by_id("customer", $data['customer_po_tracking'][0]->customer_id , "id");
 		$data['new_po'] = $this->Crud->get_data_by_id("customer_po_tracking", $customer_tracking_po_id, "id");
+		
 		$data['parts_customer_trackings'] = $this->Crud->get_data_by_id("parts_customer_trackings", $customer_tracking_po_id, "customer_po_tracking_id");
 		$role_management_data = $this->db->query('SELECT part_number,id,part_description from `customer_part` WHERE customer_id = '. $data['customer_po_tracking'][0]->customer_id.' ORDER BY id DESC');
 		$data['customer_part_data'] = $role_management_data->result();
-		$this->getPage('view_customer_tracking_id', $data);
+
+		if ($data['parts_customer_trackings']) {
+			$final_po_amount = 0;
+			$i = 1;
+			foreach ($data['parts_customer_trackings'] as $p) {
+				$data_id = array(
+					'id' => $p->part_id,
+				);
+				$data['child_part_data'][$p->part_id] = $this->Crud->get_data_by_id_multiple_condition("customer_part", $data_id);
+				$child_part_rate_criteria = array(
+					'customer_master_id' => $data['child_part_data'][$p->part_id][0]->id
+				);
+				$data['child_part_rate'][$data['child_part_data'][$p->part_id][0]->id] = $this->Crud->get_data_by_id_multiple_condition("customer_part_rate", $child_part_rate_criteria);
+				//get the parts from sales parts whose sales invoice is locked only
+				$role_management_data = $this->db->query('SELECT SUM(parts.qty) AS MAINSUM from `sales_parts`as parts , 
+				new_sales as sales WHERE  parts.part_id = ' . $p->part_id . ' 
+				AND parts.po_number = \''.$data['customer_po_tracking'][0]->po_number.'\' 
+				AND parts.sales_id = sales.id AND sales.status =\'lock\'');
+				$data['sales_qty_data'][$p->part_id] = $role_management_data->result();
+				
+			}
+		}
+		// pr($data,1);
+		// $this->getPage('view_customer_tracking_id', $data);
+		$this->loadView('customer/view_customer_tracking_id', $data);
 	}
 	
 	
