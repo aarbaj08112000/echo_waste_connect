@@ -281,7 +281,7 @@ class InhousePartsController extends CommonController
 			$data['child_part'] = "";
 		}
 		$data['enableStockUpdate'] = $this->isEnableStockUpdate();
-		$this->loadView('inhouse_parts_admin', $data);
+		$this->loadView('admin/inhouse_parts_admin', $data);
 	}
 
 

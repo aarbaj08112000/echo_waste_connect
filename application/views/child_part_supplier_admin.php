@@ -47,18 +47,12 @@
                                         $i = 1;
                                         if ($child_part_list) {
                                             foreach ($child_part_list as $poo) {
-                                                $array = array(
-                                                    "part_number" => $poo->part_number,
-                                                    "supplier_id" => $poo->supplier_id,
-                                                );
 
-                                                $po = $this->Crud->get_data_by_id_multiple_condition_without("child_part_master", $array);
-
+                                                $po = $poo->po;
                                                 if ($po[0]->admin_approve == "no") {
-                                                    $supplier_data = $this->Crud->get_data_by_id("supplier", $poo->supplier_id, "id");
-                                                    $uom_data = $this->Crud->get_data_by_id("uom", $po[0]->uom_id, "id");
-                                                    $child_part_id = $this->Crud->get_data_by_id("part_type", $po[0]->child_part_id, "id");
-                                                    $gst_structure2 = $this->Crud->get_data_by_id("gst_structure", $po[0]->gst_id, "id");
+                                                    $supplier_data = $poo->supplier_data;
+                                                    $uom_data = $poo->uom_data;
+                                                    $gst_structure2 = $poo->gst_structure2;
                                         ?>
 
                                                     <tr>
