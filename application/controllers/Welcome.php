@@ -2744,12 +2744,33 @@ class Welcome extends CommonController
 
 		$child_part_list = $this->db->query('SELECT DISTINCT part_number,supplier_id FROM `child_part_master`');
 		$data['child_part_list'] = $child_part_list->result();
+		foreach ($data['child_part_list'] as $key => $poo) {
+			$array = array(
+				"part_number" => $poo->part_number,
+                "supplier_id" => $poo->supplier_id,
+            );
+			$po = $this->Crud->get_data_by_id_multiple_condition_without("child_part_master", $array);
+			$data['child_part_list'][$key]->po = $po;
+
+			$supplier_data = $this->Crud->get_data_by_id("supplier", $poo->supplier_id, "id");
+			$data['child_part_list'][$key]->supplier_data = $supplier_data;
+
+			$uom_data = $this->Crud->get_data_by_id("uom", $po[0]->uom_id, "id");
+			$data['child_part_list'][$key]->uom_data = $uom_data;
+
+            // $child_part_id = $this->Crud->get_data_by_id("part_type", $po[0]->child_part_id, "id");
+            // $data['child_part_list'][$key]->child_part_id = $child_part_id;
+
+            $gst_structure2 = $this->Crud->get_data_by_id("gst_structure", $po[0]->gst_id, "id");
+            $data['child_part_list'][$key]->gst_structure2 = $gst_structure2;
+		}
+		// pr($data['child_part_list'],1);
 		$child_part_list = $this->db->query('SELECT DISTINCT part_number FROM `child_part`');
 		$data['child_part_master'] = $child_part_list->result();
 
-		$this->load->view('header');
-		$this->load->view('child_part_supplier_admin', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		$this->loadView('admin/child_part_supplier_admin', $data);
+		// $this->load->view('footer');
 	}
 
 	

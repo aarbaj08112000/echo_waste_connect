@@ -88,7 +88,7 @@ class FGStockController extends CommonController
 		}
 
 		$data['enableStockUpdate'] = $this->isEnableStockUpdate();
-		$this->loadView('customer_parts_admin', $data);
+		$this->loadView('admin/customer_parts_admin', $data);
 	}
 
 	public function update_customer_parts_master_fg_stock() {

@@ -282,7 +282,7 @@ class SupplierPartsController extends CommonController
 			$data['child_part'] = "";
 		}
 		$data['enableStockUpdate'] = $this->isEnableStockUpdate();
-		$this->loadView('child_parts', $data);
+		$this->loadView('admin/child_parts', $data);
 	}
 
 	/**

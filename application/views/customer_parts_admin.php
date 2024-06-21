@@ -76,7 +76,6 @@
                                         $i = 1;
                                         if ($child_part) {
                                             foreach ($child_part as $po) {
-                                                $uom_data = $this->Crud->get_data_by_id("uom", $po->uom_id, "id");
                                         ?>
                                         <tr>
                                             <td><?php echo $i ?></td>
