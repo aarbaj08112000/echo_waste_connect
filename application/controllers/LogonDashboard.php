@@ -43,7 +43,8 @@ class LogonDashboard extends CommonController
 		session_destroy();
 		$data['client_list'] = $this->Crud->read_data_acc("client");
 		$data['isMultipleClientUnits'] = $this->isMultiClientSupport();
-		$this->load->view('login', $data);
+		// $this->load->view('login', $data);
+		$this->loadView('login', $data,"No","No");
 	}
 	
 	public function logout()
@@ -69,78 +70,74 @@ class LogonDashboard extends CommonController
 
 	public function signin()
 	{
+		// pr($_POST,1);
 		// $data['userInfo'] = $this->Crud->read_data("userInfo");
 		$this->form_validation->set_rules('email', ' Email', 'trim|required|min_length[3]');
 		$this->form_validation->set_rules('password', ' Password', 'trim|required|min_length[3]');
-	
-		if ($this->form_validation->run() == FALSE) {
-			$data = array(
-				'errors' => validation_errors()
-			);
-			$this->session->set_flashdata($data);
-			redirect('login');
-		} else {
-			$email = $this->input->post('email');
-			$password = $this->input->post('password');
-			$clientUnit = $this->input->post('clientUnit');
 
-			$arr = array(
-				'user_email' => $email,
-				'user_password' => $password
+		$email = $this->input->post('email');
+		$password = $this->input->post('password');
+		$clientUnit = $this->input->post('clientUnit');
+
+		$arr = array(
+			'user_email' => $email,
+			'user_password' => $password
+		);
+		$result = $this->Crud->get_data_by_id_multiple("userinfo", $arr);
+		if (empty($result)) {
+			$success = 0;
+			$messages = "Email and Password Invalid.";
+		} else {
+			//clear the session values
+			$user_data = array(
+				'user_id' => '',
+				'user_email' => '',
+				'user_login' => '',
+				'user_name' => '',
+				'AROMCustomerType' => '',
+				'entitlements' => '',
+				'type' => '',
+				'role' => '',
+				'isMultipleClientUnits' => '',
+				'noOfClients' => ''
+					//	'businessType' => ''
 			);
-			$result = $this->Crud->get_data_by_id_multiple("userinfo", $arr);
-			if (empty($result)) {
-				$data = array(
-					'errors' => 'Email and Password Invalid.'
-				);
-				$this->session->set_flashdata($data);
-				redirect('login');
-			} else {
-				//clear the session values
+			$this->session->set_userdata($user_data);
+			//End clear the session values
+
+			if ($result) {
+				$entitlements = $this->getEntitlements();
+
 				$user_data = array(
-					'user_id' => '',
-					'user_email' => '',
-					'user_login' => '',
-					'user_name' => '',
-					'AROMCustomerType' => '',
-					'entitlements' => '',
-					'type' => '',
-					'role' => '',
-					'isMultipleClientUnits' => '',
-					'noOfClients' => ''
-				//	'businessType' => ''
+					'user_id' => $result[0]->id,
+					'user_email' => $result[0]->user_email,
+					'user_login' => true,
+					'user_name' => $result[0]->user_name,
+					'type' => $result[0]->type,
+					'role' => $result[0]->user_role
+					//	'businessType' => 'SMALL'
 				);
 				$this->session->set_userdata($user_data);
-				//End clear the session values
-
-				if ($result) {
-					$entitlements = $this->getEntitlements();
-					
-					$user_data = array(
-						'user_id' => $result[0]->id,
-						'user_email' => $result[0]->user_email,
-						'user_login' => true,
-						'user_name' => $result[0]->user_name,
-						'type' => $result[0]->type,
-						'role' => $result[0]->user_role
-					//	'businessType' => 'SMALL'
-					);
-					$this->session->set_userdata($user_data);
-					$this->session->set_userdata('entitlements',$entitlements);
-					if(empty($clientUnit)){
-						$clientUnit = 1;
-					}
-					
-					$this->session->set_userdata('clientUnit', $clientUnit);
-					$clientDetails = $this->getClientUnitDetails($clientUnit);
-					$this->session->set_userdata('clientUnitName', $clientDetails[0]->client_unit); //set the clientUnit to session..
-					$this->session->set_userdata('isMultipleClientUnits',$this->isMultiClientSupport()); //Update client unit for session.
-					$this->session->set_userdata('noOfClients',$this->getNoOfClients()); //Total no of client in DB
-					$this->session->set_flashdata('login', 'success');
-					redirect('index');
+				$this->session->set_userdata('entitlements',$entitlements);
+				if(empty($clientUnit)){
+					$clientUnit = 1;
 				}
+
+				$this->session->set_userdata('clientUnit', $clientUnit);
+				$clientDetails = $this->getClientUnitDetails($clientUnit);
+				$this->session->set_userdata('clientUnitName', $clientDetails[0]->client_unit); //set the clientUnit to session..
+				$this->session->set_userdata('isMultipleClientUnits',$this->isMultiClientSupport()); //Update client unit for session.
+				$this->session->set_userdata('noOfClients',$this->getNoOfClients()); //Total no of client in DB
+				$this->session->set_flashdata('login', 'success');
+				// redirect('index');
+				$success = 1;
+				$messages = "User Login successfully";
 			}
 		}
+		$return_arr['success']=$success;
+		$return_arr['messages']=$messages;
+		echo json_encode($return_arr);
+		exit;
 	}
 
 	public function index(){

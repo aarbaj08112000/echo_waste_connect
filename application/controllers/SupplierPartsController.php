@@ -49,9 +49,10 @@ class SupplierPartsController extends CommonController
 		$grade = $this->input->post('grade');
 		$size = $this->input->post('size');
 		$thickness = $this->input->post('thickness');
-		
+
 		if ($sub_type == "RM" && empty($weight)) {
-			echo "please add weight for RM parts";
+			$success = 0;
+			$messages = "Please add weight for RM parts";
 		} else {
 			$data = array(
 				"part_number" => $part_number,
@@ -59,7 +60,8 @@ class SupplierPartsController extends CommonController
 			);
 			$check = $this->SupplierParts->isRecordExists($data);
 			if ($check != 0) {
-				$this->addErrorMessage('Record already exists');
+				$success = 0;
+				$messages = "Record already exists";
 			} else {
 				if (!empty($_FILES['part_drawing']['name'])) {
 					$image_path = "./documents/";
@@ -76,11 +78,9 @@ class SupplierPartsController extends CommonController
 						$picture4 = $uploadData['file_name'];
 					} else {
 						$picture4 = '';
-						echo "no 1";
 					}
 				} else {
 					$picture4 = '';
-					echo "no 2";
 				}
 
 				if (!empty($_FILES['modal']['name'])) {
@@ -98,11 +98,9 @@ class SupplierPartsController extends CommonController
 						$picture5 = $uploadData['file_name'];
 					} else {
 						$picture5 = '';
-						echo "no 1";
 					}
 				} else {
 					$picture5 = '';
-					echo "no 2";
 				}
 
 				if (!empty($_FILES['cad_file']['name'])) {
@@ -120,11 +118,9 @@ class SupplierPartsController extends CommonController
 						$picture6 = $uploadData['file_name'];
 					} else {
 						$picture6 = '';
-						echo "no 1";
 					}
 				} else {
 					$picture6 = '';
-					echo "no 2";
 				}
 
 				$data = array(
@@ -158,14 +154,20 @@ class SupplierPartsController extends CommonController
 				);
 				$result = $this->SupplierParts->createSupplierPart($data);
 				if ($result) {
+					$success = 1;
+					$messages = "Record added successfully";
 					$this->addSuccessMessage('Record updated successfully');
 				} else {
-					$this->addErrorMessage('Unable to add record. Please try again.');
+					$success = 0;
+					$messages = "Unable to add record. Please try again.";
 				}
 			}
 		}
 
-		$this->redirectMessage();
+		$return_arr['success']=$success;
+		$return_arr['messages']=$messages;
+		echo json_encode($return_arr);
+		exit;
 	}
 
 
@@ -181,7 +183,7 @@ class SupplierPartsController extends CommonController
 
 	public function _child_part_view($filter_child_part_id)
 	{
-		
+
 		if (isset($filter_child_part_id)) {
 			$data['filter_child_part_id'] = $filter_child_part_id;
 		} else {
@@ -192,23 +194,162 @@ class SupplierPartsController extends CommonController
 				$data['child_part_master'] = $this->SupplierParts->getSupplierPartById($filter_child_part_id);
 			} else if ($filter_child_part_id == 'ALL' || $filter_child_part_id == '') {
 				$data['child_part_master'] = $this->SupplierParts->readSupplierParts();
-			} 
+			}
+
 		
-
 		$data['supplier_part_list'] = $this->SupplierParts->readSupplierPartsOnly();
-
 		$data['uom'] = $this->Crud->read_data("uom");
 		$data['cparttypelist'] = $this->Crud->read_data("part_type");
 		$data['supplier_list'] = $this->Crud->read_data("supplier");
 		$data['gst_structure'] = $this->Crud->read_data("gst_structure");
+		$session_data = $this->session->userdata('entitlements');
+		/* datatable */
+        $column[] = [
+            "data" => "part_number",
+            "title" => "Part Number",
+            "width" => "14%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "part_description",
+            "title" => "Part Description",
+            "width" => "16%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "buffer_stock",
+            "title" => "Safety/buffer <br>Stock",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "hsn_code",
+            "title" => "HSN Code",
+            "width" => "10%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "sub_type",
+            "title" => "Purchase Item Category",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "store_rack_location",
+            "title" => "Store Rack Location",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "uom_name",
+            "title" => "UOM",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "max_uom",
+            "title" => "Max PO QTY",
+            "width" => "7%",
+            "className" => "dt-center status-row",
+        ];
+        $column[] = [
+            "data" => "store_stock_rate",
+            "title" => "Stock Rate",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        if($session_data['isSheetMetal'] == 1){
+        $column[] = [
+            "data" => "weight",
+            "title" => "Weight",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "size",
+            "title" => "Size",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "thickness",
+            "title" => "Thickness",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        }
+        $column[] = [
+            "data" => "grade",
+            "title" => "Grade",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "action",
+            "title" => "Action",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $data["data"] = $column;
+        $data["is_searching_enable"] = false;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Employee data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
+        // $ajax_json['teacher_data'] = $this->session->userdata();
+        // pr($ajax_json['designation'],1);
+		$this->getPage('purchase/child_part_view', $data,"Yes","Yes");
+		// $this->getPage('purchase/test', $data,"NO","NO");
+	}
+	public function get_child_part_view()
+	{
+		$post_data = $this->input->post();
+        $column_index = array_column($post_data["columns"], "data");
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+            if ($key == 0) {
+                $order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+                $order_by .=
+                    "," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+		$data = $this->SupplierParts->get_child_part_view_data(
+            $condition_arr,
+            $post_data["search"]
+        );
+
+		foreach ($data as $key => $value) {
+			$edit_data = base64_encode(json_encode($value)); 
+			$data[$key]['action'] = "<i class='ti ti-edit edit-part' title='Edit' data-value='$edit_data'></i>";
+		}
+		$data["data"] = $data;
+        $total_record = $this->SupplierParts->get_child_part_view_count([], $post_data["search"]);
+        $data["recordsTotal"] = $total_record['total_record'];
+        $data["recordsFiltered"] = $total_record['total_record'];
+        echo json_encode($data);
+        exit();
 		
-		$this->getPage('purchase/child_part_view', $data);
 	}
 
 	public function update_child_part_view()
 	{
 
-		$id = $this->input->post('id');
+		
+		$id = $this->input->post('part_id');
 		$data['child_part_id'] = $this->input->post('filter_child_part_id');
 		$data['filter_child_part_id'] = $this->input->post('filter_child_part_id');
 
@@ -235,6 +376,7 @@ class SupplierPartsController extends CommonController
 
 			$data = array(
 				"part_description" => $part_description,
+				"uom_id" => $this->input->post('uom_id'),
 				"safty_buffer_stk" => $safty_buffer_stk,
 				"hsn_code" => $hsn_code,
 				"store_rack_location" => $store_rack_location,
@@ -248,6 +390,9 @@ class SupplierPartsController extends CommonController
 				"max_uom" => $max_uom,
 				"min_uom" => $child_part_data[0]->min_uom,
 			);
+
+		$message = "";
+		$success = 0;
 			$result = $this->SupplierParts->updatePartById($data , $id);
 			if ($result) {
 				$stockData = array(
@@ -255,14 +400,22 @@ class SupplierPartsController extends CommonController
 				);
 				$resultStock = $this->SupplierParts->updateStockById($stockData, $id);
 				if ($resultStock) {
-					$this->addSuccessMessage('Record updated successfully');
+					$message = 'Record updated successfully';
+					$success =1;
 				} else {
-					$this->addErrorMessage('Unable to update safty buffer stock record. Please try again.');
+					$message = 'Unable to update safty buffer stock record. Please try again.';
 				}
 			} else {
-				$this->addErrorMessage('Unable to update record. Please try again.');
+				$message = 'Unable to update record. Please try again.';
 			}
-			$this->redirectMessage();
+
+		$return_arr = [];
+		$return_arr['message'] = $message;
+		$return_arr['success'] = $success;
+		echo json_encode($return_arr);
+		exit();
+
+
 	}
 
 
