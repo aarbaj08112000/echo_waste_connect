@@ -1239,9 +1239,9 @@ class Welcome extends CommonController
 	{
 		$data['gst'] = $this->Crud->read_data("gst_structure");
 
-		$this->load->view('header');
-		$this->load->view('gst', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		$this->loadView('admin/gst', $data);
+		// $this->load->view('footer');
 	}
 	public function customer_child_part()
 	{
@@ -1580,16 +1580,16 @@ class Welcome extends CommonController
 		$data['operations'] = $this->Common_admin_model->get_all_data("operations");
 
 		// print_r($data['orders']);
-		$this->load->view('header.php');
-		$this->load->view('operations.php', $data);
-		$this->load->view('footer.php');
+		// $this->load->view('header.php');
+		$this->loadView('admin/operations', $data);
+		// $this->load->view('footer.php');
 	}
 	public function transporter()
 	{
 		$data['transporter'] = $this->Common_admin_model->get_all_data("transporter");
-		$this->load->view('header.php');
-		$this->load->view('transporter.php', $data);
-		$this->load->view('footer.php');
+		// $this->load->view('header.php');
+		$this->loadView('admin/transporter', $data);
+		// $this->load->view('footer.php');
 	}
 	public function remarks()
 	{
@@ -1603,10 +1603,10 @@ class Welcome extends CommonController
 		$data['operation_data'] = $this->Common_admin_model->get_all_data("operation_data");
 
 		// print_r($data['orders']);
-		$this->load->view('header.php');
-		$this->load->view('operations_data.php', $data);
+		// $this->load->view('header.php');
+		$this->loadView('admin/operations_data', $data);
 
-		$this->load->view('footer.php');
+		// $this->load->view('footer.php');
 	}
 
 	public function view_history_part()
@@ -3198,17 +3198,17 @@ class Welcome extends CommonController
 		$data['user_info'] = $this->Crud->where_not_condition("userinfo", "type", $criteria);
 		//earlier code --> $data['user_info'] = $this->Crud->get_data_by_id_multiple_condition("userinfo",$criteria);
 		//working earlier - $data['user_info'] = $this->Crud->read_data("userinfo");
-		$this->load->view('header');
-		$this->load->view('erp_users', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		$this->loadView('admin/erp_users', $data);
+		// $this->load->view('footer');
 	}
 
 	public function asset()
 	{
 		$data['shifts'] = $this->Crud->read_data("shifts");
-		$this->load->view('header');
-		$this->load->view('shift', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		$this->loadView('admin/shift', $data);
+		// $this->load->view('footer');
 	}
 	
 	public function final_inspection_qa()
@@ -3257,13 +3257,16 @@ class Welcome extends CommonController
 		$data['customer_part'] = $role_management_data->result();
 		$role_management_data = $this->db->query('SELECT *  FROM `customer_parts_master` ');
 		$data['customer_parts_master'] = $role_management_data->result();
-		$data['final_inspection_request'] = $this->Crud->read_data("final_inspection_request");
-
-		// print_r($data['customer_part']);
-
-		$this->load->view('header');
-		$this->load->view('final_inspection', $data);
-		$this->load->view('footer');
+		$data['final_inspection_request'] = $this->Crud->customQuery("
+			SELECT fi.*,cp.part_number as part_number,cp.part_description as part_description,cp.final_inspection_location as final_inspection_location
+			FROM final_inspection_request as fi
+			LEFT JOIN customer_parts_master as cp ON cp.id = fi.customer_part_id
+			WHERE fi.clientId = '".$this->Unit->getSessionClientId()."'
+			ORDER BY fi.id DESC
+		");
+		// $this->load->view('header');
+		$this->loadView('admin/molding/final_inspection', $data);
+		// $this->load->view('footer');
 	}
 
 	public function part_family()
@@ -3271,22 +3274,18 @@ class Welcome extends CommonController
 
 		$data['part_family'] = $this->Crud->read_data("part_family");
 
-		$this->load->view('header');
-		$this->load->view('part_family', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		$this->loadView('admin/part_family', $data);
+		// $this->load->view('footer');
 	}
 	public function process()
 	{
 
-		// $data['planing_id'] = $this->uri->segment('2');
-		// $planing_id = $this->uri->segment('2');
-		// $financial_year = $this->uri->segment('2');
-		// $data['planing_data'] = $this->Crud->get_data_by_id("planing_data", $planing_id, "planing_id");
 		$data['process'] = $this->Crud->read_data("process");
 
-		$this->load->view('header');
-		$this->load->view('process', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		$this->loadView('admin/process', $data);
+		// $this->load->view('footer');
 	}
 	public function customer_parts_master()
 	{
@@ -3308,9 +3307,9 @@ class Welcome extends CommonController
 	{
 		$data['downtime_master'] = $this->Crud->read_data("downtime_master");
 
-		$this->load->view('header');
-		$this->load->view('downtime_master', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		$this->loadView('admin/downtime_master', $data);
+		// $this->load->view('footer');
 	}
 
 

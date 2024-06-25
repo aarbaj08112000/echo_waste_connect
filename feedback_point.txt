@@ -1,4 +1,6 @@
 
+
+COMMON_SHEET_METAL/COMMON_PLASTIC
 1.challan_parts_history_subcon table not present
  that`s why http://localhost/extra_work/erprefresh/view_challan_parts_history_subcon/9/221 not working
 
@@ -82,3 +84,16 @@
 		------------------------------------------------------
 				ORDER BY 
 					p.id DE
+
+
+6.http://localhost/extra_work/erp_converted/operations 
+	update functionality
+	not working
+
+7.https://arominfotech.com/erp/demo/plastic/asset 
+	not working add funtionality
+	https://arominfotech.com/erp/demo/plastic/add_shifts
+
+8.https://arominfotech.com/erp/demo/plastic/client 
+
+	filter not work

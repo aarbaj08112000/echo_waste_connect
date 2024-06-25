@@ -132,13 +132,12 @@
                                         if ($molding_stock_transfer) {
                                             $i = 1;
                                             foreach ($molding_stock_transfer as $u) {
-                                                $output_part_data = $this->Crud->get_data_by_id("customer_part", $u->customer_part_id, "id");
                                         ?>
 
                                         <tr>
                                             <td><?php echo $i; ?></td>
-                                            <td><?php echo $output_part_data[0]->part_number ?> /
-                                                <?php echo $output_part_data[0]->part_description ?>/
+                                            <td><?php echo $u->part_number ?> /
+                                                <?php echo $u->part_description ?>/
 
                                             </td>
                                             <!-- <td><?php echo $u->semi_finished_location ?></td>

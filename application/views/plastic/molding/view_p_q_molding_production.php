@@ -111,19 +111,13 @@
                                         if ($molding_production) {
                                             $i = 1;
                                             foreach ($molding_production as $u) {
-                                                $shifts_data = $this->Crud->get_data_by_id("shifts", $u->shift_id, "id");
-                                                $machine_data = $this->Crud->get_data_by_id("machine", $u->machine_id, "id");
-                                                $operator_data = $this->Crud->get_data_by_id("operator", $u->operator_id, "id");
-                                                $customer_part_data = $this->Crud->get_data_by_id("customer_part", $u->customer_part_id, "id");
-                                                $downtime_master = $this->Crud->get_data_by_id("downtime_master", $u->downtime_reason, "id");
-                                                // $downtime_master = $this->Crud->get_data_by_id("downtime_master", $u->mold_id, "id");
                                                 $total_pde = (
-                                                    ($u->accepted_qty / $u->production_hours * $shifts_data[0]->name) 
-                                                    / $customer_part_data[0]->production_target_per_shift * 100) * 100;
+                                                    ($u->accepted_qty / $u->production_hours * $u->name) 
+                                                    / $production_target_per_shift * 100) * 100;
                                                 $total_qe = ($u->accepted_qty / $u->qty) * 100;
                                                 $total_ppm = (($u->rejection_qty+$u->rejected_qty)/ $u->qty) * 1000000;
                                                 
-                                                $planned_pt  = ($u->production_hours - $shifts_data[0]->ppt);
+                                                $planned_pt  = ($u->production_hours - $u->ppt);
                                                 $runtime = $planned_pt - ($downtime_in_min  + $setup_time_in_min);
                                                 $availbility = $runtime / $planned_pt;
                                                 $total_prod_qty = $u->rejection_qty + $u->qty;
@@ -139,12 +133,12 @@
 
                                         <tr>
                                             <td><?php echo "JO-".$u->id; ?></td>
-                                            <td><?php echo $customer_part_data[0]->part_number ?> /
-                                                <?php echo $customer_part_data[0]->part_description ?></td>
+                                            <td><?php echo $u->part_number ?> /
+                                                <?php echo $u->part_description ?></td>
                                             <td><?php echo $u->date ?></td>
-                                            <td><?php echo $shifts_data[0]->shift_type . "/" . $shifts_data[0]->name; ?></td>
-                                            <td><?php echo $machine_data[0]->name; ?></td>
-                                            <td><?php echo $operator_data[0]->name; ?></td>
+                                            <td><?php echo $u->shift_type . "/" . $u->name; ?></td>
+                                            <td><?php echo $u->machine_name; ?></td>
+                                            <td><?php echo $u->operator_name; ?></td>
                                             <td><?php echo round($target_production_qty,2) ?></td>         
                                             <td><?php echo $u->qty ?></td>
                                             <td><?php echo $u->rejection_qty ?></td>
@@ -352,7 +346,7 @@
                                                                             <div class="form-group">
                                                                                 <label for="">Shift</label>
                                                                                 <br>
-                                                                                <span><?php echo $shifts_data[0]->shift_type . "/" . $shifts_data[0]->name; ?></span>
+                                                                                <span><?php echo $u->shift_type . "/" . $u->name; ?></span>
                                                                                 
 
                                                                             </div>

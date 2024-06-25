@@ -110,13 +110,13 @@
                                         ?>
                                         <tr>
                                             <td><?php echo $i; ?></td>
-                                            <td><?php echo $output_part_data[0]->part_number ?> /
-                                                <?php echo $output_part_data[0]->part_description ?>/
+                                            <td><?php echo $u->part_number ?> /
+                                                <?php echo $u->part_description ?>/
                                             </td>
                                             <td><?php echo $u->qty ?></td>
                                             <td><?php echo $u->status ?></td>
                                             <td><?php if ($u->status == "pending") {
-                                                            if ($u->qty <= $output_part_data[0]->final_inspection_location) {
+                                                            if ($u->qty <= $u->final_inspection_location) {
                                                         ?>
                                                 <a class="btn btn-warning"
                                                     href="<?php echo base_url('final_inspection_stock_transfer_click/') . $u->id ?>">Click
