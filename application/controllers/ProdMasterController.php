@@ -11,7 +11,7 @@ class ProdMasterController extends CommonController {
 	public function shifts()
 	{
 		$data['shifts'] = $this->Crud->read_data("shifts",true);
-		$this->loadView('shifts', $data);
+		$this->loadView('admin/shifts', $data);
 	}
 
 
@@ -57,7 +57,7 @@ class ProdMasterController extends CommonController {
 	public function operator()
 	{
 		$data['operator'] = $this->Crud->read_data("operator",true);
-		$this->loadView('operator', $data);
+		$this->loadView('admin/operator', $data);
 	}
 
 	public function add_operator()
@@ -91,7 +91,7 @@ class ProdMasterController extends CommonController {
 	public function machine()
 	{
 		$data['machine'] = $this->Crud->read_data("machine",true);
-		$this->loadView('machine', $data);	
+		$this->loadView('admin/machine', $data);	
 	}
 
 	public function add_machine()

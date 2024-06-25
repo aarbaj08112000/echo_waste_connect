@@ -28,7 +28,7 @@ class P_Molding extends CommonController
 	public function grades()
 	{
 		$data['grades'] = $this->Common_admin_model->get_all_data("grades");
-		$this->loadView($this->getPath() . 'grades', $data);
+		$this->loadView('admin/molding/grades', $data);
 	}
 
 	public function add_grades()
@@ -251,8 +251,24 @@ class P_Molding extends CommonController
 
 
 
-		$data['molding_production'] = $this->Crud->get_data_by_id_multiple("molding_production", $criteria);
-
+		$data['molding_production'] = $this->Crud->customQuery("SELECT mp.*,s.shift_type as shift_type,s.name as name,m.name as machine_name,op.name as operator_name,cp.part_number as part_number,cp.part_description as part_description,cp.production_target_per_shift as production_target_per_shift,mm.mold_name as mold_name
+			FROM molding_production as mp
+			LEFT JOIN shifts as s ON s.id = mp.shift_id 
+			LEFT JOIN machine as m ON m.id = mp.machine_id
+			LEFT JOIN operator as op ON op.id = mp.operator_id
+			LEFT JOIN customer_part as cp ON cp.id = mp.customer_part_id
+			LEFT JOIN mold_maintenance as mm ON mm.id = mp.mold_id
+			WHERE mp.status = 'pending'
+			AND mp.clientId = '".$this->Unit->getSessionClientId()	."' "
+		);
+		
+		foreach ($data['molding_production'] as $key => $u) {
+			$shifts_data = $this->Crud->get_data_by_id("shifts", $u->shift_id, "id");
+			$machine_data = $this->Crud->get_data_by_id("machine", $u->machine_id, "id");
+            $operator_data = $this->Crud->get_data_by_id("operator", $u->operator_id, "id");
+            $customer_part_data = $this->Crud->get_data_by_id("customer_part", $u->customer_part_id, "id");
+            $mold_master = $this->Crud->get_data_by_id("mold_maintenance", $u->mold_id, "id");
+		}
 
 
 		$data['shifts'] = $this->Crud->read_data("shifts");
@@ -277,7 +293,7 @@ class P_Molding extends CommonController
 
 
 
-		$this->getPage('p_q_molding_production', $data);
+		$this->loadView('admin/molding/p_q_molding_production', $data);
 
 	}
 
@@ -296,11 +312,26 @@ class P_Molding extends CommonController
 		}
 		$data['created_year'] = $created_year;
 		$data['created_month'] = $created_month;
-		$data['molding_production'] = $this->Crud->customQuery("SELECT * from molding_production
-			WHERE clientId  = ".$this->Unit->getSessionClientId()." 
-			AND status = 'completed' 
-			AND month = ". $created_month . " AND year = " . $created_year);
-		$this->getPage('view_p_q_molding_production', $data);
+		$data['molding_production'] = $this->Crud->customQuery("
+			SELECT mp.*,s.name as name,s.name as name,s.ppt as ppt,s.shift_type as shift_type,m.name as machine_name,op.name as operator_name,cp.production_target_per_shift as production_target_per_shift,cp.part_number as part_number,cp.part_description as part_description
+			from molding_production as mp
+			LEFT JOIN shifts as s ON s.id = mp.shift_id
+			LEFT JOIN machine as m ON m.id = mp.machine_id
+			LEFT JOIN operator as op ON op.id = mp.operator_id
+			LEFT JOIN customer_part as cp ON cp.id = mp.customer_part_id
+			WHERE mp.clientId  = ".$this->Unit->getSessionClientId()." 
+			AND mp.status = 'completed' 
+			AND mp.month = ". $created_month . " AND mp.year = " . $created_year);
+		// pr($data['molding_production'],1);
+		$month_arr = [];
+		for ($i = 1; $i <= 12; $i++) {
+			$month_data = $this->Common_admin_model->get_month($i);
+            $month_number = $this->Common_admin_model->get_month_number($month_data);
+            array_push($month_arr,['month_data'=>$month_data,'month_number'=>$month_number]);
+        }
+       	$data['month_arr'] = $month_arr;
+       	// pr($data,1);
+		$this->loadView('admin/molding/view_p_q_molding_production', $data);
 	}
 
 
@@ -909,7 +940,7 @@ class P_Molding extends CommonController
 		customer_part part, customer cust WHERE cust.id = part.customer_id");
 		$data['filter_child_part_id'] = $filter_part; 
 
-		$this->getPage('mold_maintenance', $data);
+		$this->loadView('admin/molding//mold_maintenance', $data);
 	}
 
 
@@ -959,8 +990,8 @@ class P_Molding extends CommonController
 		AND part.customer_id = cust.id");
 
 		$data['showDocRequestDetails'] = $this->showMaterialRequestDetails();
-
-		$this->getPage('machine_request', $data);
+		$data['isMultiClient'] = $this->session->userdata['isMultipleClientUnits'];
+		$this->loadView('admin/molding/machine_request', $data);
 	}
 
 
@@ -1012,7 +1043,7 @@ class P_Molding extends CommonController
 
 		$data['showDocRequestDetails'] = $this->showMaterialRequestDetails();
 		$data['filter_by_status'] = $filter_by_status;
-		$this->getPage('machine_request_completed', $data);
+		$this->loadView('admin/molding/machine_request_completed', $data);
 	}
 
 
@@ -1036,7 +1067,8 @@ class P_Molding extends CommonController
 				INNER JOIN uom u ON c.uom_id = u.id
 				WHERE req.id = ".$machine_request_id." 
 				AND s.clientId = ".$this->Unit->getSessionClientId()." order by parts.id desc");
-		$this->getPage('machine_request_details', $data);
+		$data['machine_request_id'] = $this->uri->segment('2');  
+		$this->loadView('admin/molding/machine_request_details', $data);
 
 	}
 
@@ -1104,9 +1136,14 @@ class P_Molding extends CommonController
 		$role_management_data = $this->db->query('SELECT *  FROM `customer_parts_master` WHERE molding_production_qty >= 1 ');
 		$data['customer_part'] = $role_management_data->result();
 		// print_r($data['customer_part']);
-		$data['molding_stock_transfer'] = $this->Crud->read_data("molding_stock_transfer");
-
-		$this->getPage('molding_stock_transfer', $data);
+		$data['molding_stock_transfer'] = $this->Crud->customQuery("
+			SELECT ms.*,c.part_number as part_number,c.part_description as part_description
+			FROM molding_stock_transfer as ms
+			LEFT JOIN customer_part as c ON c.id = ms.customer_part_id
+			WHERE ms.clientId = '".$this->Unit->getSessionClientId()."' 
+			ORDER BY ms.id DESC
+		");
+		$this->loadView('admin/molding/molding_stock_transfer', $data);
 	}
 
 
@@ -1159,7 +1196,7 @@ class P_Molding extends CommonController
 		where d.molding_productionKy = ' . $molding_production_id . ' AND r.id = d.rejection_reasonKy');
 		$data['rejection_details'] = $role_management_data; //$role_management_data->result();
 		$data['view_page'] = $view_page;
-		$this->getPage('rejection_details', $data);
+		$this->loadView('admin/molding/rejection_details', $data);
 	}
 
 	public function add_rejection_details()
@@ -1232,7 +1269,7 @@ class P_Molding extends CommonController
 		$data['downtime_details'] = $role_management_data->result();
 		$data['view_page'] = $view_page;
 
-		$this->getPage('downtime_details', $data);
+		$this->loadView('admin/molding/downtime_details', $data);
 	}
 
 	public function add_downtime_details()
@@ -1380,9 +1417,9 @@ class P_Molding extends CommonController
 		$data['created_year'] = $created_year;
 		$data['created_month'] = $created_month;
 
-		$this->load->view('header.php');
-		$this->load->view('report_prod_rejection.php', $data);
-		$this->load->view('footer.php');
+		// $this->load->view('header.php');
+		$this->loadView('admin/molding/report_prod_rejection', $data);
+		// $this->load->view('footer.php');
 	}
 
 	public function upload_mold_maintenance_doc()

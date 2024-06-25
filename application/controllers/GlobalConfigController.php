@@ -45,7 +45,7 @@ class GlobalConfigController extends CommonController
 			$data['configurations'] = $this->Crud->read_data("global_configuration");
 		}
 		$data['isAromAdmin'] = $this->isAromAdmin;
-		$this->getPage('global_configuration', $data);
+		$this->loadView('admin/global_configuration', $data);
 	}
 
 	public function addConfig()

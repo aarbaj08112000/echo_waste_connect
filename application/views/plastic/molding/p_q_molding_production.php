@@ -289,25 +289,18 @@
                                         if ($molding_production) {
                                             $i = 1;
                                             foreach ($molding_production as $u) {
-                                                $shifts_data = $this->Crud->get_data_by_id("shifts", $u->shift_id, "id");
-                                                $machine_data = $this->Crud->get_data_by_id("machine", $u->machine_id, "id");
-                                                $operator_data = $this->Crud->get_data_by_id("operator", $u->operator_id, "id");
-                                                $customer_part_data = $this->Crud->get_data_by_id("customer_part", $u->customer_part_id, "id");
-                                                $mold_master = $this->Crud->get_data_by_id("mold_maintenance", $u->mold_id, "id");
-                                                // $downtime_master = $this->Crud->get_data_by_id("downtime_master", $u->downtime_reason, "id");
-                                                // $downtime_master = $this->Crud->get_data_by_id("downtime_master", $u->mold_id, "id");
                                         ?>
 
                                         <tr>
                                             <td><?php echo "JO-".$u->id; ?></td>
-                                            <td><?php echo $customer_part_data[0]->part_number ?> /
-                                                <?php echo $customer_part_data[0]->part_description ?></td>
-                                            <td><?php echo $mold_master[0]->mold_name; ?></td>
+                                            <td><?php echo $u->part_number ?> /
+                                                <?php echo $u->part_description ?></td>
+                                            <td><?php echo $u->mold_name; ?></td>
                                             <td><?php echo $u->date ?></td>
-                                            <td><?php echo $shifts_data[0]->shift_type . "/" . $shifts_data[0]->name; ?>
+                                            <td><?php echo $u->shift_type . "/" . $u->name; ?>
                                             </td>
-                                            <td><?php echo $machine_data[0]->name; ?></td>
-                                            <td><?php echo $operator_data[0]->name; ?></td>
+                                            <td><?php echo $u->machine_name; ?></td>
+                                            <td><?php echo $u->operator_name; ?></td>
                                             <td><?php echo $u->qty ?></td>
                                             <td><?php echo $u->rejection_qty ?></td>
                                             <td><?php echo $u->accepted_qty ?></td>
@@ -455,7 +448,7 @@
                                             <td><?php echo $u->cycle_time ?></td>
                                             <td><?php echo $u->finish_part_weight ?></td>
                                             <td><?php echo $u->runner_weight ?></td>
-                                            <td><?php echo $customer_part_data[0]->production_target_per_shift ?></td>
+                                            <td><?php echo $u->production_target_per_shift ?></td>
                                             <td>
                                                 <a class="btn btn-primary" href="<?php echo base_url('view_rejection_details/') . $u->id.'/'.$u->customer_part_id .'/add'?>">
                                                     <i class='far fa-edit'></i>
@@ -511,7 +504,7 @@
                                                                             <div class="form-group">
                                                                                 <label for="">Shift</label>
                                                                                 <br>
-                                                                                <span><?php echo $shifts_data[0]->shift_type . "/" . $shifts_data[0]->name; ?></span>
+                                                                                <span><?php echo $u->shift_type . "/" . $u->name; ?></span>
 
 
                                                                             </div>

@@ -21,9 +21,11 @@ class MasterController extends CommonController {
 		$data['client_list'] = $this->Crud->read_data_acc("client");
 		$session_client_unit = $this->session->userdata('clientUnit');
 		$data['filter_client'] = $session_client_unit;
-		$this->load->view('header');
-		$this->load->view('client', $data);
-		$this->load->view('footer');
+		$data['isMultiClient'] = $this->session->userdata['isMultipleClientUnits'];
+		$data['noOfClients'] = $this->session->userdata['noOfClients'];
+		// $this->load->view('header');
+		$this->loadView('admin/client', $data);
+		// $this->load->view('footer');
 		
 	}
 
@@ -150,9 +152,9 @@ class MasterController extends CommonController {
 	public function uom()
 	{
 		$data['uom'] = $this->UomModel->getAllUOM();
-		$this->load->view('header');
-		$this->load->view('uom', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		$this->loadView('admin/uom', $data);
+		// $this->load->view('footer');
 	}
 	
 	public function adduom()
