@@ -1,6 +1,29 @@
-<!-- Content wrapper -->
+<?php
+/* Smarty version 4.3.2, created on 2024-06-27 20:30:16
+  from '/var/www/html/extra_work/erp_converted/application/views/templates/purchase/child_part_supplier_view.tpl' */
 
-<%assign var="entitlements" value=$session_data['entitlements']%>
+/* @var Smarty_Internal_Template $_smarty_tpl */
+if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
+  'version' => '4.3.2',
+  'unifunc' => 'content_667d7e80c246b4_26416694',
+  'has_nocache_code' => false,
+  'file_dependency' => 
+  array (
+    '9b7b685afd0a501de2bf3c46616a95fe919d7cfb' => 
+    array (
+      0 => '/var/www/html/extra_work/erp_converted/application/views/templates/purchase/child_part_supplier_view.tpl',
+      1 => 1719500413,
+      2 => 'file',
+    ),
+  ),
+  'includes' => 
+  array (
+  ),
+),false)) {
+function content_667d7e80c246b4_26416694 (Smarty_Internal_Template $_smarty_tpl) {
+?><!-- Content wrapper -->
+
+<?php $_smarty_tpl->_assignInScope('entitlements', $_smarty_tpl->tpl_vars['session_data']->value['entitlements']);?>
 <div class="content-wrapper">
   <!-- Content -->
 
@@ -27,11 +50,21 @@
                 <div class="input-group">
                   <select name="child_part_id" class="form-control select2" id="part_number_search">
                     <option value="">Select Part Number / Description</option>
-                    <%foreach from=$child_part_list_filter item=$c%>
-                        <option <%if ($filter_child_part_id == $c->child_part_id) %>selected <%/if%> value="
-                        <%$c->child_part_id %>"><%$c->part_number%> / <%$c->part_description %>
+                    <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['child_part_list_filter']->value, 'c');
+$_smarty_tpl->tpl_vars['c']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['c']->value) {
+$_smarty_tpl->tpl_vars['c']->do_else = false;
+?>
+                        <option <?php if (($_smarty_tpl->tpl_vars['filter_child_part_id']->value == $_smarty_tpl->tpl_vars['c']->value->child_part_id)) {?>selected <?php }?> value="
+                        <?php echo $_smarty_tpl->tpl_vars['c']->value->child_part_id;?>
+"><?php echo $_smarty_tpl->tpl_vars['c']->value->part_number;?>
+ / <?php echo $_smarty_tpl->tpl_vars['c']->value->part_description;?>
+
                         </option>
-                    <%/foreach%>
+                    <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                   </select>
                 </div>
               </li>
@@ -85,9 +118,17 @@
       <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="supplier_part_price">
       <thead>
           <tr>
-              <%foreach from=$data key=key item=val%>
-              <th><b>Search <%$val['title']%></b></th>
-              <%/foreach%>
+              <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['data']->value, 'val', false, 'key');
+$_smarty_tpl->tpl_vars['val']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['key']->value => $_smarty_tpl->tpl_vars['val']->value) {
+$_smarty_tpl->tpl_vars['val']->do_else = false;
+?>
+              <th><b>Search <?php echo $_smarty_tpl->tpl_vars['val']->value['title'];?>
+</b></th>
+              <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
           </tr>
       </thead>
       <tbody></tbody>
@@ -110,17 +151,35 @@
     letter-spacing: 1px;
 }
 </style>
-<script>
-    var column_details =  <%$data|json_encode%>;
-    var page_length_arr = <%$page_length_arr|json_encode%>;
-    var is_searching_enable = <%$is_searching_enable|json_encode%>;
-    var is_top_searching_enable =  <%$is_top_searching_enable|json_encode%>;
-    var is_paging_enable =  <%$is_paging_enable|json_encode%>;
-    var is_serverSide =  <%$is_serverSide|json_encode%>;
-    var no_data_message =  <%$no_data_message|json_encode%>;
-    var is_ordering =  <%$is_ordering|json_encode%>;
-    var sorting_column = <%$sorting_column%>;
-    var api_name =  <%$api_name|json_encode%>;
-    var base_url = <%$base_url|json_encode%>;
-</script>
-<script src="<%$base_url%>public/js/purchase/child_part_supplier_view.js"></script>
+<?php echo '<script'; ?>
+>
+    var column_details =  <?php echo json_encode($_smarty_tpl->tpl_vars['data']->value);?>
+;
+    var page_length_arr = <?php echo json_encode($_smarty_tpl->tpl_vars['page_length_arr']->value);?>
+;
+    var is_searching_enable = <?php echo json_encode($_smarty_tpl->tpl_vars['is_searching_enable']->value);?>
+;
+    var is_top_searching_enable =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_top_searching_enable']->value);?>
+;
+    var is_paging_enable =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_paging_enable']->value);?>
+;
+    var is_serverSide =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_serverSide']->value);?>
+;
+    var no_data_message =  <?php echo json_encode($_smarty_tpl->tpl_vars['no_data_message']->value);?>
+;
+    var is_ordering =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_ordering']->value);?>
+;
+    var sorting_column = <?php echo $_smarty_tpl->tpl_vars['sorting_column']->value;?>
+;
+    var api_name =  <?php echo json_encode($_smarty_tpl->tpl_vars['api_name']->value);?>
+;
+    var base_url = <?php echo json_encode($_smarty_tpl->tpl_vars['base_url']->value);?>
+;
+<?php echo '</script'; ?>
+>
+<?php echo '<script'; ?>
+ src="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+public/js/purchase/child_part_supplier_view.js"><?php echo '</script'; ?>
+>
+<?php }
+}

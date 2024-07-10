@@ -37,7 +37,7 @@
       <!-- Icons. Uncomment required icon fonts -->
       <link rel="stylesheet" href="<%$base_url%>public/assets/vendor/fonts/boxicons.css" />
       <!-- tabler css -->
-      <link rel="stylesheet" href="public/css/plugin/tabler_css/tabler_icons.css">
+      <link rel="stylesheet" href="<%$base_url%>public/css/plugin/tabler_css/tabler_icons.css">
       <!-- Core CSS -->
       <link rel="stylesheet" href="<%$base_url%>public/assets/vendor/css/core.css" class="template-customizer-core-css" />
       <link rel="stylesheet" href="<%$base_url%>public/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
@@ -71,7 +71,7 @@
       <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/fixedcolumns/3.3.3/js/dataTables.fixedColumns.min.js"></script>
       <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
       <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedcolumns/3.3.3/css/fixedColumns.dataTables.min.css">
-      <link rel="stylesheet" type="text/css" href="public/css/data_table/datatable.css">
+      <link rel="stylesheet" type="text/css" href="<%$base_url%>public/css/data_table/datatable.css">
       <!-- select2 -->
       <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
       <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>

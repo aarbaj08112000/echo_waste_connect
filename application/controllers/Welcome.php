@@ -27,6 +27,7 @@ class Welcome extends CommonController
 		$this->load->model('InhouseParts');
 		$this->load->model('SupplierParts');	
 		$this->load->model('CustomerPart');
+		$this->load->model("welcome_model");
 	}
 	public function test_tpl(){
 
@@ -2228,7 +2229,12 @@ class Welcome extends CommonController
 		$child_part_list = $this->db->query('SELECT DISTINCT part_number FROM `child_part`');
 		$data['child_part_list'] = "";
 		$type = $this->uri->segment('2');
-		$data['type'] = $this->uri->segment('2');
+		$data['type'] = $type != '' && $type != null ? $type : 'direct';
+		$item_category = ['direct','subcon_item','subcon_regular','consumable_item','indirect_assets','customer_bom'];
+		if(!in_array($type, $item_category)){
+			$data['type'] = 'direct';
+		}
+		
 		// $this->load->view('header');
 		$this->loadView('purchase/child_part', $data);
 		// $this->load->view('footer');
@@ -2697,18 +2703,18 @@ class Welcome extends CommonController
 			if($filter_child_part_id > 0){
 				$part_where = "AND cpm.child_part_id = ".$filter_child_part_id;
 			}
-			$data['child_part_master']  = $this->Crud->customQuery("SELECT gs.id as gs_id,gs.code as gs_code,u.uom_name as uom_name,s.supplier_name as supplier_name,s.supplier_name as with_in_state,cpm.*
-				FROM child_part_master AS cpm
-				LEFT JOIN child_part AS child ON cpm.part_number = child.part_number
-				LEFT JOIN supplier AS s ON s.id = cpm.supplier_id
-				LEFT JOIN uom AS u ON u.id = cpm.uom_id
-				LEFT JOIN gst_structure AS gs ON gs.id = cpm.gst_id
-				LEFT JOIN child_part_master AS cpm2
-				ON cpm.supplier_id = cpm2.supplier_id
-				AND cpm.child_part_id = cpm2.child_part_id
-				AND cpm.id < cpm2.id
-			WHERE cpm2.id IS NULL $part_where
-		   group by cpm.supplier_id, cpm.child_part_id order by id desc");
+			// $data['child_part_master']  = $this->Crud->customQuery("SELECT gs.id as gs_id,gs.code as gs_code,u.uom_name as uom_name,s.supplier_name as supplier_name,s.supplier_name as with_in_state,cpm.*
+			// 	FROM child_part_master AS cpm
+			// 	LEFT JOIN child_part AS child ON cpm.part_number = child.part_number
+			// 	LEFT JOIN supplier AS s ON s.id = cpm.supplier_id
+			// 	LEFT JOIN uom AS u ON u.id = cpm.uom_id
+			// 	LEFT JOIN gst_structure AS gs ON gs.id = cpm.gst_id
+			// 	LEFT JOIN child_part_master AS cpm2
+			// 	ON cpm.supplier_id = cpm2.supplier_id
+			// 	AND cpm.child_part_id = cpm2.child_part_id
+			// 	AND cpm.id < cpm2.id
+			// WHERE cpm2.id IS NULL $part_where
+		 //   group by cpm.supplier_id, cpm.child_part_id order by id desc");
 		// }
 		
 		$data['child_part_list_filter']  = $this->Crud->customQuery('SELECT master.part_number,master.child_part_id, child.part_description
@@ -2716,8 +2722,147 @@ class Welcome extends CommonController
 					WHERE master.part_number = child.part_number
 					GROUP BY master.part_number,master.child_part_id 
 					ORDER BY child_part_id asc');
-
+		/* datatable */
+        $column[] = [
+            "data" => "admin_approve",
+            "title" => "Approval Status",
+            "width" => "14%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "rev_history",
+            "title" => "Rev. & History",
+            "width" => "16%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "revision_no",
+            "title" => "Revision Number",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "revision_remark",
+            "title" => "Revision Remark",
+            "width" => "10%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "revision_date",
+            "title" => "Revision Date",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "part_number",
+            "title" => "Part Number",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "part_description",
+            "title" => "Part Description",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "uom_name",
+            "title" => "UOM",
+            "width" => "7%",
+            "className" => "dt-center status-row",
+        ];
+        $column[] = [
+            "data" => "gs_code",
+            "title" => "Tax Structure",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        // $column[] = [
+        //     "data" => "update_tax",
+        //     "title" => "Update Tax",
+        //     "width" => "7%",
+        //     "className" => "dt-center",
+        // ];
+        $column[] = [
+            "data" => "supplier_name",
+            "title" => "Supplier",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "part_rate",
+            "title" => "Part Price",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        
+        $column[] = [
+            "data" => "document",
+            "title" => "Quotation Document",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        
+        $data["data"] = $column;
+        $data["is_searching_enable"] = false;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Supplier Part Price data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
 		$this->loadView('purchase/child_part_supplier_view', $data);
+	}
+
+	public function view_child_part_supplier(){
+		$post_data = $this->input->post();
+        $column_index = array_column($post_data["columns"], "data");
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+            if ($key == 0) {
+                $order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+                $order_by .=
+                    "," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+		$data = $this->welcome_model->get_child_part_supplier(
+            $condition_arr,
+            $post_data["search"]
+        );
+		// pr($data,1);
+		foreach ($data as $key => $value) {
+			$edit_data = base64_encode(json_encode($value));
+			$document = display_no_character();
+			if(!empty($value['quotation_document'])){
+				$url = base_url('documents/').$value['quotation_document'];
+				$document = "<a href='$url' download>Download </a>";
+			}
+			$data[$key]['document'] = $document;
+			$rev_history ="<i class='ti ti-clock-cog' title='History'></i>";
+			if($value['admin_approve'] == 'accept'){
+				$rev_history .= "<i class='ti ti-edit edit-part' title='Edit'></i>";
+			}
+			$data[$key]['rev_history'] = $rev_history;
+		}
+		$data["data"] = $data;
+        $total_record = $this->welcome_model->get_child_part_supplier_count([], $post_data["search"]);
+        $data["recordsTotal"] = $total_record['total_record'];
+        $data["recordsFiltered"] = $total_record['total_record'];
+        echo json_encode($data);
+        exit();
+		
 	}
 
 
