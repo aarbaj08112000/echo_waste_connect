@@ -1,4 +1,27 @@
-<div class="wrapper container-xxl flex-grow-1 container-p-y">
+<?php
+/* Smarty version 4.3.2, created on 2024-07-03 16:16:50
+  from '/var/www/html/extra/erp_converted/application/views/templates/reports/receivable_report.tpl' */
+
+/* @var Smarty_Internal_Template $_smarty_tpl */
+if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
+  'version' => '4.3.2',
+  'unifunc' => 'content_66852c1ae720c0_72561807',
+  'has_nocache_code' => false,
+  'file_dependency' => 
+  array (
+    '21368537732e00cd55627b0265080d0078b831e4' => 
+    array (
+      0 => '/var/www/html/extra/erp_converted/application/views/templates/reports/receivable_report.tpl',
+      1 => 1720003592,
+      2 => 'file',
+    ),
+  ),
+  'includes' => 
+  array (
+  ),
+),false)) {
+function content_66852c1ae720c0_72561807 (Smarty_Internal_Template $_smarty_tpl) {
+?><div class="wrapper container-xxl flex-grow-1 container-p-y">
 
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme filter-popup-block" style="width: 0px;">
 <div class="app-brand demo justify-content-between">
@@ -22,13 +45,22 @@
             <div class="input-group">
             <select name="customer_part_id" id="customer_part_id" class="form-control select2" required>
             <option value="">Select Customer</option>
-                            <%if $customers%>
-                                <%foreach from=$customers item=c%>
-                                <option value="<%$c->id%>"
-                                    <%if $selected_customer_part_id === $c->id%>selected<%/if%>
-                                ><%$c->customer_name%></option>
-                                <%/foreach%>
-                            <%/if%>
+                            <?php if ($_smarty_tpl->tpl_vars['customers']->value) {?>
+                                <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['customers']->value, 'c');
+$_smarty_tpl->tpl_vars['c']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['c']->value) {
+$_smarty_tpl->tpl_vars['c']->do_else = false;
+?>
+                                <option value="<?php echo $_smarty_tpl->tpl_vars['c']->value->id;?>
+"
+                                    <?php if ($_smarty_tpl->tpl_vars['selected_customer_part_id']->value === $_smarty_tpl->tpl_vars['c']->value->id) {?>selected<?php }?>
+                                ><?php echo $_smarty_tpl->tpl_vars['c']->value->customer_name;?>
+</option>
+                                <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
+                            <?php }?>
                         </select>
             </div>
           </li>
@@ -88,9 +120,17 @@
                             <div class="table-responsive text-nowrap">
                                 <table id="receivable_report" class="table table-bordered table-striped">
                                     <thead>
-                                        <%foreach from=$data key=key item=val%>
-                                        <th><b>Search <%$val['title']%></b></th>
-                                        <%/foreach%>
+                                        <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['data']->value, 'val', false, 'key');
+$_smarty_tpl->tpl_vars['val']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['key']->value => $_smarty_tpl->tpl_vars['val']->value) {
+$_smarty_tpl->tpl_vars['val']->do_else = false;
+?>
+                                        <th><b>Search <?php echo $_smarty_tpl->tpl_vars['val']->value['title'];?>
+</b></th>
+                                        <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                                     </tr>
                                         </tr>
                                     </thead>
@@ -113,13 +153,14 @@
                                     </h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close">
-                                        <%* <span aria-hidden="true">&times;</span> *%>
-                                    </button>
+                                                                            </button>
                                 </div>
                                 <div class="modal-body">
 
-                                    <form action="<%$base_url%>update_receivable_report" method="POST">
-                                        <input type="hidden" name="sales_number" required value="<%$po->sales_number%>">
+                                    <form action="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+update_receivable_report" method="POST">
+                                        <input type="hidden" name="sales_number" required value="<?php echo $_smarty_tpl->tpl_vars['po']->value->sales_number;?>
+">
                                         <div class="row">
                                             <div class="col-lg-12">
                                                 <div class="form-group">
@@ -181,17 +222,34 @@
     </div>
     <!-- /.content-wrapper -->
 </div>
-<script>
-    var column_details =  <%$data|json_encode%>;
-    var page_length_arr = <%$page_length_arr|json_encode%>;
-    var is_searching_enable = <%$is_searching_enable|json_encode%>;
-    var is_top_searching_enable =  <%$is_top_searching_enable|json_encode%>;
-    var is_paging_enable =  <%$is_paging_enable|json_encode%>;
-    var is_serverSide =  <%$is_serverSide|json_encode%>;
-    var no_data_message =  <%$no_data_message|json_encode%>;
-    var is_ordering =  <%$is_ordering|json_encode%>;
-    var sorting_column = <%$sorting_column%>;
-    var api_name =  <%$api_name|json_encode%>;
-    var base_url = <%$base_url|json_encode%>;
-</script>
-<script src="<%$base_url%>/public/js/reports/receivable_report.js"></script>
+<?php echo '<script'; ?>
+>
+    var column_details =  <?php echo json_encode($_smarty_tpl->tpl_vars['data']->value);?>
+;
+    var page_length_arr = <?php echo json_encode($_smarty_tpl->tpl_vars['page_length_arr']->value);?>
+;
+    var is_searching_enable = <?php echo json_encode($_smarty_tpl->tpl_vars['is_searching_enable']->value);?>
+;
+    var is_top_searching_enable =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_top_searching_enable']->value);?>
+;
+    var is_paging_enable =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_paging_enable']->value);?>
+;
+    var is_serverSide =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_serverSide']->value);?>
+;
+    var no_data_message =  <?php echo json_encode($_smarty_tpl->tpl_vars['no_data_message']->value);?>
+;
+    var is_ordering =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_ordering']->value);?>
+;
+    var sorting_column = <?php echo $_smarty_tpl->tpl_vars['sorting_column']->value;?>
+;
+    var api_name =  <?php echo json_encode($_smarty_tpl->tpl_vars['api_name']->value);?>
+;
+    var base_url = <?php echo json_encode($_smarty_tpl->tpl_vars['base_url']->value);?>
+;
+<?php echo '</script'; ?>
+>
+<?php echo '<script'; ?>
+ src="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+/public/js/reports/receivable_report.js"><?php echo '</script'; ?>
+><?php }
+}
