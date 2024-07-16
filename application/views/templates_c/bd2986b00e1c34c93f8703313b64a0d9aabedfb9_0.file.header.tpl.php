@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-06-26 20:48:08
+/* Smarty version 4.3.2, created on 2024-07-11 11:20:59
   from '/var/www/html/extra_work/erp_converted/application/views/templates/header.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_667c31309019b9_20219668',
+  'unifunc' => 'content_668f72c3196d96_86751075',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'bd2986b00e1c34c93f8703313b64a0d9aabedfb9' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/header.tpl',
-      1 => 1719415083,
+      1 => 1720677057,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_667c31309019b9_20219668 (Smarty_Internal_Template $_smarty_tpl) {
+function content_668f72c3196d96_86751075 (Smarty_Internal_Template $_smarty_tpl) {
 if (!($_smarty_tpl->tpl_vars['session_data']->value['user_id'] > 0)) {
 echo redirect('login');?>
 
@@ -93,6 +93,8 @@ public/css/data_table/jquery.dataTables.min.css"> -->
       <link rel="stylesheet" type="text/css" href="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
 public/css/data_table/searchPanes.dataTables.min.css">
       <!-- Helpers -->
+
+
       <?php echo '<script'; ?>
  src="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
 public/assets/vendor/js/helpers.js"><?php echo '</script'; ?>
@@ -150,6 +152,14 @@ public/css/data_table/datatable.css">
       <?php echo '<script'; ?>
  src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"><?php echo '</script'; ?>
 >
+
+      <!-- toastr -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+      <?php echo '<script'; ?>
+ src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"><?php echo '</script'; ?>
+>
+      <!-- toastr -->
+
       <?php echo '<script'; ?>
  type="text/javascript">
          var theme_color = "#ea1c31";

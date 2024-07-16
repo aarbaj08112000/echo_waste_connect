@@ -400,12 +400,18 @@ class Welcome extends CommonController
 	public function supplier()
 
 	{
-		$supplier_list = $this->Crud->read_data_where_result("supplier", array("admin_approve" => "pending"));
-		$data['supplier_list'] = $supplier_list->result();
-		// $data['supplier_list'] = $this->Crud->read_data_with_admin("supplier");
-		// $this->load->view('header');
+		$get_data = $this->input->get();
+		$mode ="Add";
+		if(isset($get_data['id'])){
+			if($get_data['id'] >0){
+				$mode = "Update";
+				$data = $this->welcome_model->get_supplier_details($get_data['id']);
+			}
+			
+		}
+		$data['mode'] = $mode;
+		// pr($data,1);
 		$this->loadView('purchase/supplier', $data);
-		// $this->load->view('footer');
 	}
 
 	// public function approved_supplier()
@@ -2295,8 +2301,233 @@ class Welcome extends CommonController
 		$supplier_list = $this->Crud->read_data_where_result("supplier", array("admin_approve" => "accept"));
 		$data['supplier_list'] = $supplier_list->result();
 		// $this->load->view('header');
-		$this->loadView('purchase/approved_supplier', $data);
+		$data['supplier_part_list'] = $this->SupplierParts->readSupplierPartsOnly();
+		$data['uom'] = $this->Crud->read_data("uom");
+		$data['cparttypelist'] = $this->Crud->read_data("part_type");
+		$data['supplier_list'] = $this->Crud->read_data("supplier");
+		$data['gst_structure'] = $this->Crud->read_data("gst_structure");
+		$session_data = $this->session->userdata('entitlements');
+		/* datatable */
+        $column[] = [
+            "data" => "supplier_name",
+            "title" => "Supplier Name",
+            "width" => "14%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "supplier_number",
+            "title" => "Supplier Number",
+            "width" => "20%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "location",
+            "title" => "Supplier Address",
+            "width" => "50%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "email",
+            "title" => "Supplier Email",
+            "width" => "20%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "mobile_no",
+            "title" => "Supplier Mobile Number",
+            "width" => "50%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "pan_card",
+            "title" => "PAN CARD",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "gst_number",
+            "title" => "GST Number",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "state",
+            "title" => "State",
+            "width" => "7%",
+            "className" => "dt-center status-row",
+        ];
+        $column[] = [
+            "data" => "payment_terms",
+            "title" => "Payment Terms",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "nda_document",
+            "title" => "NDA Documents",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "registration_document",
+            "title" => "Registration Documents",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "other_document_1",
+            "title" => "Other Document 1",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "other_document_2",
+            "title" => "Other Document 2",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "other_document_3",
+            "title" => "Other Document 3",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "admin_approve",
+            "title" => "Admin Approval",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "with_in_state",
+            "title" => "With In State",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "action",
+            "title" => "Action",
+            "width" => "2%",
+            "className" => "dt-center",
+        ];
+        $data["data"] = $column;
+        $data["is_searching_enable"] = false;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Supplier data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
+        // $ajax_json['teacher_data'] = $this->session->userdata();
+        // pr($ajax_json['designation'],1);
+		$this->loadView('purchase/approved_supplier', $data,"Yes","Yes");
 		// $this->load->view('footer');
+	}
+	public function get_supplier_view()
+	{
+		$post_data = $this->input->post();
+        $column_index = array_column($post_data["columns"], "data");
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+            if ($key == 0) {
+                $order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+                $order_by .=
+                    "," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+
+        // pr($post_data["search"],1);
+		$data = $this->welcome_model->get_supplier_data(
+            $condition_arr,
+            $post_data["search"]
+        );
+
+
+		$upload_path = $base_url."public/uploads/documents/";
+		foreach ($data as $key => $value) {
+			$edit_data = base64_encode(json_encode($value)); 
+			
+			if($value['nda_document'] != ""){
+				$nda_path = $upload_path.$value['nda_document'];
+				if(strpos($nda_path, '.pdf')!== false){
+					$data[$key]['nda_document'] ="<embed src='".$nda_path."' width='70' height='80'>";
+				}else{
+					$data[$key]['nda_document'] ="<img src='".$nda_path."' width='70' height='80'>";
+				}
+				
+			}else{
+				$data[$key]['nda_document'] = display_no_character();
+			}
+
+
+			if($value['registration_document'] != ""){
+				$nda_path = $upload_path.$value['registration_document'];
+				if(strpos($nda_path, '.pdf')!== false){
+					$data[$key]['registration_document'] ="<embed src='".$nda_path."' width='70' height='80'>";
+				}else{
+					$data[$key]['registration_document'] ="<img src='".$nda_path."' width='70' height='80'>";
+				}
+				
+			}else{
+				$data[$key]['registration_document'] = display_no_character();
+			}
+
+
+			if($value['other_document_1'] != ""){
+				$nda_path = $upload_path.$value['other_document_1'];
+				if(strpos($nda_path, '.pdf')!== false){
+					$data[$key]['other_document_1'] ="<embed src='".$nda_path."' width='70' height='80'>";
+				}else{
+					$data[$key]['other_document_1'] ="<img src='".$nda_path."' width='70' height='80'>";
+				}
+			}else{
+				$data[$key]['other_document_1'] = display_no_character();
+			}
+
+			if($value['other_document_2'] != ""){
+				$nda_path = $upload_path.$value['other_document_2'];
+				if(strpos($nda_path, '.pdf')!== false){
+					$data[$key]['other_document_2'] ="<embed src='".$nda_path."' width='70' height='80'>";
+				}else{
+					$data[$key]['other_document_2'] ="<img src='".$nda_path."' width='70' height='80'>";
+				}
+			}else{
+				$data[$key]['other_document_2'] = display_no_character();
+			}
+
+			if($value['other_document_3'] != ""){
+				$nda_path = $upload_path.$value['other_document_3'];
+				if(strpos($nda_path, '.pdf')!== false){
+					$data[$key]['other_document_3'] ="<embed src='".$nda_path."' width='70' height='80'>";
+				}else{
+					$data[$key]['other_document_3'] ="<img src='".$nda_path."' width='70' height='80'>";
+				}
+			}else{
+				$data[$key]['other_document_3'] = display_no_character();
+			}
+			
+			$data[$key]['action'] = "<a href='".$base_url."supplier?id=".$value['id']."' title='Edit'><i class='ti ti-edit ' ></i></a>";
+		}
+		
+		$data["data"] = $data;
+        $total_record = $this->welcome_model->get_supplier_data_count([], $post_data["search"]);
+        $data["recordsTotal"] = $total_record['total_record'];
+        $data["recordsFiltered"] = $total_record['total_record'];
+        echo json_encode($data);
+        exit();
+		
 	}
 
 	public function approved_supplier()
@@ -2628,7 +2859,7 @@ class Welcome extends CommonController
 
 	public function child_part_supplier()
 	{
-
+		$get_data = $this->input->get();
 		$data['uom'] = $this->Crud->read_data("uom");
 		$data['cparttypelist'] = $this->Crud->read_data("part_type");
 
@@ -2637,9 +2868,18 @@ class Welcome extends CommonController
 		$data['child_part_list'] = $this->Crud->customQuery("select c.id, c.part_number, c.part_description, u.uom_name from child_part c, uom u
 		where c.uom_id = u.id ");
 		
-		// $this->load->view('header');
+		$mode = "Add";
+		$child_part_data = [];
+		if(isset($get_data['id'])){
+			if($get_data['id'] >0){
+				$mode = "Update";
+				$child_part_data = $this->welcome_model->get_child_part_details($get_data['id']);
+				$child_part_data['revision_date'] = formateFormDate($child_part_data['revision_date']);
+			}
+		}
+		$data['child_part_data'] =$child_part_data;
+		$data['mode'] =$mode;
 		$this->loadView('purchase/child_part_supplier', $data);
-		// $this->load->view('footer');
 	}
 
 
@@ -2700,9 +2940,7 @@ class Welcome extends CommonController
 			$data['filter_child_part_id'] = (int) $filter_child_part_id;
 			$data['gst_structure'] = $this->Crud->read_data("gst_structure");
 			$part_where = '';
-			if($filter_child_part_id > 0){
-				$part_where = "AND cpm.child_part_id = ".$filter_child_part_id;
-			}
+			
 			// $data['child_part_master']  = $this->Crud->customQuery("SELECT gs.id as gs_id,gs.code as gs_code,u.uom_name as uom_name,s.supplier_name as supplier_name,s.supplier_name as with_in_state,cpm.*
 			// 	FROM child_part_master AS cpm
 			// 	LEFT JOIN child_part AS child ON cpm.part_number = child.part_number
@@ -2802,6 +3040,12 @@ class Welcome extends CommonController
             "width" => "7%",
             "className" => "dt-center",
         ];
+        $column[] = [
+            "data" => "action",
+            "title" => "Action",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
         
         $data["data"] = $column;
         $data["is_searching_enable"] = false;
@@ -2843,18 +3087,21 @@ class Welcome extends CommonController
         );
 		// pr($data,1);
 		foreach ($data as $key => $value) {
-			$edit_data = base64_encode(json_encode($value));
 			$document = display_no_character();
 			if(!empty($value['quotation_document'])){
 				$url = base_url('documents/').$value['quotation_document'];
 				$document = "<a href='$url' download>Download </a>";
 			}
 			$data[$key]['document'] = $document;
-			$rev_history ="<i class='ti ti-clock-cog' title='History'></i>";
+			$edit_data = base64_encode(json_encode($value));
+			$revision_history = $base_url."price_revision/".$value['part_number']."/".$value['supplier_id'];
+			$rev_history ="<a href='".$revision_history."' title='History'><i class='ti ti-clock-cog' ></i></a>";
 			if($value['admin_approve'] == 'accept'){
-				$rev_history .= "<i class='ti ti-edit edit-part' title='Edit'></i>";
+				$rev_history .= "<i class='ti ti-square-rounded-plus edit-supplier-part-price' title='Add Rev.' data-value='$edit_data'></i>";
 			}
 			$data[$key]['rev_history'] = $rev_history;
+			$edit_url = $base_url."child_part_supplier?id=".$value['id'];
+			$data[$key]['action'] = "<a href='".$edit_url."'><i class='ti ti-edit edit-part' title='Edit'></i></a>";
 		}
 		$data["data"] = $data;
         $total_record = $this->welcome_model->get_child_part_supplier_count([], $post_data["search"]);
@@ -4452,13 +4699,18 @@ class Welcome extends CommonController
 			"id" => $id
 		);
 		$result = $this->Crud->delete_data($table_name, $data);
+		$message ="Something went wrong!";
+		$success = 0;
 		if ($result) {
-			$this->addSuccessMessage('Record deleted successfully.');
-		} else {
-			$this->addErrorMessage('Unable to delete. Please try again.');
+			$message ="Record deleted successfully.";
+			$success = 1;
 		}
-		$this->redirectMessage();
-
+		$return_arr = [
+			"message" =>$message,
+			"success" => $success
+			];
+		echo json_encode($return_arr);
+		exit();
 		/*if ($result) {
 			echo "<script>alert(' Deleted Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
@@ -6279,12 +6531,8 @@ class Welcome extends CommonController
 	public function addchildpart_supplier()
 	{
 
-		$child_part_id = $this->input->post('child_part_id');
-		$array = array(
-			"id" => $child_part_id,
-		);
-		$child_part_data = $this->SupplierParts->getSupplierPartById($child_part_id);
-		$child_part_id = $this->input->post('child_part_id');
+		
+		
 		$part_desc = $this->input->post('part_desc');
 		$part_rate = $this->input->post('upart_rate');
 		// $saft_stk = $this->input->post('saft_stk');
@@ -6297,78 +6545,114 @@ class Welcome extends CommonController
 		$with_in_state = $this->input->post('with_in_state');
 		// $gst_id = $this->input->post('hsn_code');
 		$revision_remark = $this->input->post('revision_remark');
-		$data2 = array(
-			"id" => $supplier_id,
-		);
-		$supplier_data = $this->Crud->get_data_by_id_multiple_condition("supplier", $data2);
-		$data3 = array(
-			"id" => $gst_id,
-		);
 
-		$gst_structure_data = $this->Crud->get_data_by_id_multiple_condition("gst_structure", $data3);
-		if ($gst_structure_data[0]->with_in_state == $supplier_data[0]->with_in_state) {
-			$data = array(
-				"part_number" => $child_part_data[0]->part_number,
-				"supplier_id" => $supplier_id,
+		$message = '';
+		$success = 0;
+		$mode = $this->input->post('mode');
+		if($mode == 'Add'){
+			$child_part_id = $this->input->post('child_part_id');
+			$array = array(
+				"id" => $child_part_id,
 			);
-			$check = $this->Crud->read_data_where("child_part_master", $data);
-			if ($check != 0) {
-				echo "<script>alert('Record already exists with selected Supplier and Part Number.');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-			} else {
+			$child_part_data = $this->SupplierParts->getSupplierPartById($child_part_id);
+			$data2 = array(
+				"id" => $supplier_id,
+			);
+			$supplier_data = $this->Crud->get_data_by_id_multiple_condition("supplier", $data2);
+			$data3 = array(
+				"id" => $gst_id,
+			);
 
-
-				if (!empty($_FILES['quotation_document']['name'])) {
-					$image_path = "./documents/";
-					$config['allowed_types'] = '*';
-					$config['upload_path'] = $image_path;
-					$config['file_name'] = $_FILES['quotation_document']['name'];
-
-					//Load upload library and initialize configuration
-					$this->load->library('upload', $config);
-					$this->upload->initialize($config);
-
-					if ($this->upload->do_upload('quotation_document')) {
-						$uploadData = $this->upload->data();
-						$picture4 = $uploadData['file_name'];
-					} else {
-						$picture4 = 'no 1';
-						// echo "no 1";
-					}
-				} else {
-					$picture4 = '';
-					// echo "no 2";
-				}
-
-				// echo $picture4;
-
+			$gst_structure_data = $this->Crud->get_data_by_id_multiple_condition("gst_structure", $data3);
+			if ($gst_structure_data[0]->with_in_state == $supplier_data[0]->with_in_state) {
 				$data = array(
 					"part_number" => $child_part_data[0]->part_number,
-					"part_description" => $child_part_data[0]->part_description,
 					"supplier_id" => $supplier_id,
-					"part_rate" => $part_rate,
-					"uom_id" => $child_part_data[0]->uom_id,
-					"revision_no" => $revision_no,
-					"child_part_id" => $child_part_id,
-					"revision_remark" => $revision_remark,
-					"revision_date" => $revision_date,
-					"created_id" => $this->user_id,
-					"date" => $this->current_date,
-					"time" => $this->current_time,
-					"quotation_document" => $picture4,
-					"gst_id" => $gst_id,
-					"with_in_state" => $with_in_state,
 				);
-
-				$result = $this->Crud->insert_data("child_part_master", $data);
-				if ($result) {
-					echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$check = $this->Crud->read_data_where("child_part_master", $data);
+				if ($check != 0) {
+					$message ="Record already exists with selected Supplier and Part Number.";
 				} else {
-					echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+
+
+					if (!empty($_FILES['quotation_document']['name'])) {
+						$image_path = "./documents/";
+						$config['allowed_types'] = '*';
+						$config['upload_path'] = $image_path;
+						$config['file_name'] = $_FILES['quotation_document']['name'];
+
+						//Load upload library and initialize configuration
+						$this->load->library('upload', $config);
+						$this->upload->initialize($config);
+
+						if ($this->upload->do_upload('quotation_document')) {
+							$uploadData = $this->upload->data();
+							$picture4 = $uploadData['file_name'];
+						} else {
+							$picture4 = 'no 1';
+							// echo "no 1";
+						}
+					} else {
+						$picture4 = '';
+						// echo "no 2";
+					}
+
+					// echo $picture4;
+
+					$data = array(
+						"part_number" => $child_part_data[0]->part_number,
+						"part_description" => $child_part_data[0]->part_description,
+						"supplier_id" => $supplier_id,
+						"part_rate" => $part_rate,
+						"uom_id" => $child_part_data[0]->uom_id,
+						"revision_no" => $revision_no,
+						"child_part_id" => $child_part_id,
+						"revision_remark" => $revision_remark,
+						"revision_date" => $revision_date,
+						"created_id" => $this->user_id,
+						"date" => $this->current_date,
+						"time" => $this->current_time,
+						"quotation_document" => $picture4,
+						"gst_id" => $gst_id,
+						"with_in_state" => $with_in_state,
+					);
+					$result = $this->Crud->insert_data("child_part_master", $data);
+					if ($result) {
+						$success = 1;
+						$message ="Supplier part price added Sucessfully";
+					} else {
+						$message ="'Unable to Add";
+					}
 				}
+			} else {
+				$message = "Error 405: Supplier With In state and Tax Strucutre With In State Does Not Matched, Please select another tax Strucutre";
 			}
-		} else {
-			echo "<script>alert('Error 405: Supplier With In state and Tax Strucutre With In State Does Not Matched, Please select another tax Strucutre');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		}else if($mode == 'Update'){
+			$data = array(
+				"part_rate" => $part_rate,
+				"uom_id" => $child_part_data[0]->uom_id,
+				"revision_remark" => $revision_remark,
+				"gst_id" => $gst_id
+			);
+			$supplier_child_part_id = $this->input->post('supplier_child_part_id');
+			$result = $this->welcome_model->update_child_part_data($data, $supplier_child_part_id);
+			if ($result) {
+				$success = 1;
+				$message ="Supplier part price updated Sucessfully";
+			}else {
+				$message ="'Unable to update";
+			}
 		}
+
+
+
+		$return_arr = [
+			"message"=>$message,
+			"success" => $success
+		];
+		// pr($return_arr,1);
+		echo json_encode($return_arr);
+		exit();
 	}
 	public function updatechildpart()
 	{
@@ -6496,6 +6780,7 @@ class Welcome extends CommonController
 	}
 	public function updatechildpart_supplier()
 	{
+
 		$id = $this->input->post('id');
 		$array = array(
 			"id" => $id,
@@ -6536,13 +6821,14 @@ class Welcome extends CommonController
 				$picture4 = $uploadData['file_name'];
 			} else {
 				$picture4 = '';
-				echo "no 1";
+				// echo "no 1";
 			}
 		} else {
 			$picture4 = '';
-			echo "no 2";
+			// echo "no 2";
 		}
-
+		$message = 0;
+		$success = 0;
 		$data = array(
 			"part_number" => $part_number,
 			"part_description" => $part_desc,
@@ -6564,14 +6850,22 @@ class Welcome extends CommonController
 
 
 		);
-		// pr($data,1);
+		
 		$result = $this->Crud->insert_data("child_part_master", $data);
 		if ($result) {
-			echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$success = 1;
+			$message = "Part revision added Sucessfully";
 		} else {
-			echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$message ="Something went wrong";
 		}
 
+		$return_arr = [
+			"success"=>$success,
+			"message"=>$message
+		];
+
+		echo json_encode($return_arr);
+		exit();
 		//}
 	}
 	public function updatechildpart_supplier_admin()
@@ -6789,6 +7083,7 @@ class Welcome extends CommonController
 
 	public function addSupplier()
 	{
+		
 		$name = $this->input->post('supplierName');
 		$number = $this->input->post('supplierNumber');
 		$email = $this->input->post('supplierEmail');
@@ -6813,7 +7108,7 @@ class Welcome extends CommonController
 		// $check = $this->Crud->read_data_where("supplier", $data);
 
 		if (!empty($_FILES['nda_document']['name'])) {
-			$image_path = "./documents/";
+			$image_path = "./public/uploads/documents/";
 			$config['allowed_types'] = '*';
 			$config['upload_path'] = $image_path;
 			$config['file_name'] = $_FILES['nda_document']['name'];
@@ -6827,14 +7122,14 @@ class Welcome extends CommonController
 				$picture4 = $uploadData['file_name'];
 			} else {
 				$picture4 = '';
-				echo "no 1";
+				// echo "no 1";
 			}
 		} else {
 			$picture4 = '';
-			echo "no 2";
+			// echo "no 2";
 		}
 		if (!empty($_FILES['registration_document']['name'])) {
-			$image_path = "./documents/";
+			$image_path = "./public/uploads/documents/";
 			$config['allowed_types'] = '*';
 			$config['upload_path'] = $image_path;
 			$config['file_name'] = $_FILES['registration_document']['name'];
@@ -6848,14 +7143,14 @@ class Welcome extends CommonController
 				$picture5 = $uploadData['file_name'];
 			} else {
 				$picture5 = '';
-				echo "no 1";
+				// echo "no 1";
 			}
 		} else {
 			$picture5 = '';
-			echo "no 2";
+			// echo "no 2";
 		}
 		if (!empty($_FILES['other_document_1']['name'])) {
-			$image_path = "./documents/";
+			$image_path = "./public/uploads/documents/";
 			$config['allowed_types'] = '*';
 			$config['upload_path'] = $image_path;
 			$config['file_name'] = $_FILES['other_document_1']['name'];
@@ -6869,14 +7164,14 @@ class Welcome extends CommonController
 				$picture6 = $uploadData['file_name'];
 			} else {
 				$picture6 = '';
-				echo "no 1";
+				// echo "no 1";
 			}
 		} else {
 			$picture6 = '';
-			echo "no 2";
+			// echo "no 2";
 		}
 		if (!empty($_FILES['other_document_2']['name'])) {
-			$image_path = "./documents/";
+			$image_path = "./public/uploads/documents/";
 			$config['allowed_types'] = '*';
 			$config['upload_path'] = $image_path;
 			$config['file_name'] = $_FILES['other_document_2']['name'];
@@ -6890,14 +7185,14 @@ class Welcome extends CommonController
 				$picture7 = $uploadData['file_name'];
 			} else {
 				$picture7 = '';
-				echo "no 1";
+				// echo "no 1";
 			}
 		} else {
 			$picture7 = '';
-			echo "no 2";
+			// echo "no 2";
 		}
 		if (!empty($_FILES['other_document_3']['name'])) {
-			$image_path = "./documents/";
+			$image_path = "./public/uploads/documents/";
 			$config['allowed_types'] = '*';
 			$config['upload_path'] = $image_path;
 			$config['file_name'] = $_FILES['other_document_3']['name'];
@@ -6911,17 +7206,18 @@ class Welcome extends CommonController
 				$picture8 = $uploadData['file_name'];
 			} else {
 				$picture7 = '';
-				echo "no 1";
+				// echo "no 1";
 			}
 		} else {
 			$picture8 = '';
-			echo "no 2";
+			// echo "no 2";
 		}
 
 
-		if (false) {
-			echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-		} else {
+		$success = 0;
+		$message = 0;
+		$mode =  $this->input->post('mode');
+		if($mode == "Add"){
 			$data = array(
 				'supplier_name' => $name,
 				'supplier_number' => $number,
@@ -6945,11 +7241,45 @@ class Welcome extends CommonController
 
 			$result = $this->Crud->insert_data("supplier", $data);
 			if ($result) {
-				echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$success = 1;
+				$message = "Supplier added Sucessfully";
 			} else {
-				echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$message = "Something went wrong";
+			}
+		}else if ($mode == "Update"){
+			$data = array(
+				'supplier_name' => $name,
+				'email' => $email,
+				"payment_terms" => $paymentTerms,
+				"state" => $state,
+				"gst_number" => $gst_no,
+				'location' => $location,
+				'mobile_no' => $mobile_no,
+				'pan_card' => $pan_card,
+				"registration_document" => $picture5,
+				"nda_document" => $picture4,
+				"other_document_1" => $picture6,
+				"other_document_2" => $picture7,
+				"other_document_3" => $picture8,
+				"with_in_state" => $with_in_state,
+				"admin_approve"=>$admin_approve
+			);
+			$supplier_id = $this->input->post('supplier_id');
+			$result = $this->welcome_model->update_supplier_data($data,$supplier_id);
+			if ($result) {
+				$success = 1;
+				$message = "Supplier updated Sucessfully";
+			} else {
+				$message = "Something went wrong";
 			}
 		}
+		$return_arr =[
+			"success" =>$success,
+			"message" =>$message
+		];
+		echo json_encode($return_arr);
+		exit();
+		
 	}
 
 	public function updateSupplier()
@@ -8048,7 +8378,6 @@ class Welcome extends CommonController
 		$data['gst_structure'] = $this->Crud->read_data("gst_structure");
 		$data['customer_part_list'] = $this->Crud->read_data("customer_part");
 		$data['bom_list'] = $this->Crud->get_data_by_id("bom", $data['id'], "customer_part_id");
-
 		// $this->load->view('header');
 		$this->loadView('purchase/new_po', $data);
 		// $this->load->view('footer');

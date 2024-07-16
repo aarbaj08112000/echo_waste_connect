@@ -329,6 +329,61 @@ class SupplierParts extends CI_Model {
         $this->db->from("child_part as cp");
         $this->db->join("child_part_stock as cs", "cp.id = cs.childPartId AND cs.clientId = $clientId ",'left');
         $this->db->join("uom as u", "u.id = cp.uom_id",'left');
+        if (is_array($search_params) && count($search_params) > 0) {
+            if ($search_params["part_number"] != "") {
+                $this->db->where("cp.id", $search_params["part_number"]);
+            }
+            if ($search_params["part_description"] != "") {
+                $this->db->like(
+                    "cp.part_description",
+                    $search_params["part_description"]
+                );
+            }
+            // if ($search_params["employee_name"] != "") {
+            //     $this->db->or_like(
+            //         "em.first_name",
+            //         $search_params["employee_name"]
+            //     );
+            //     $this->db->or_like(
+            //         "em.last_name",
+            //         $search_params["employee_name"]
+            //     );
+            // }
+            // if ($search_params["employee_code"] != "") {
+            //     $this->db->like(
+            //         "em.employee_code",
+            //         $search_params["employee_code"]
+            //     );
+            // }
+            // if ($search_params["join_date"] != "") {
+            //     $this->db->where(
+            //         "em.employment_date >=",
+            //         mysqlFormat($search_params["join_date_from"])
+            //     );
+            //     $this->db->where(
+            //         "em.employment_date <=",
+            //         mysqlFormat($search_params["join_date_to"])
+            //     );
+            // }
+            // if ($search_params["email"] != "") {
+            //     $this->db->like(
+            //         "em.email",
+            //         $search_params["email"]
+            //     );
+            // }
+            // if ($search_params["department"] != "") {
+            //     $this->db->where(
+            //         "d.department_id",
+            //         $search_params["department"]
+            //     );
+            // }
+            // if ($search_params["designation"] != "") {
+            //     $this->db->where(
+            //         "de.id",
+            //         $search_params["designation"]
+            //     );
+            // }
+        }
         $result_obj = $this->db->get();
         $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
 

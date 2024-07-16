@@ -64,6 +64,7 @@ class Newcontroller extends CommonController
 
 	public function generate_new_po()
 	{
+		// pr($this->input->post(),1);
 		$notes = $this->input->post('notes');
 		$shipping_address = $this->input->post('shipping_address');
 		$billing_address = $this->input->post('billing_address');
@@ -155,12 +156,23 @@ class Newcontroller extends CommonController
 			"clientId" => $this->Unit->getSessionClientId()
 		);
 
+		$success = 0;
+		$message = "Something went wrong";
 		$result = $this->Crud->insert_data("new_po", $data);
+		$redirect_url ='';
 		if ($result) {
-			echo "<script>alert('Successfully Added');document.location='" . base_url('view_new_po_by_id/') . $result . "'</script>";
-		} else {
-			echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$success = 1;
+			$message = "PO generated successfully.";
+			$redirect_url =  base_url('view_new_po_by_id/'). $result;
 		}
+
+		$return_arr = [
+			"message" => $message,
+			"success" => $success,
+			"redirect_url" => $redirect_url
+		];
+		echo json_encode($return_arr);
+		exit();
 	}
 	
 	
@@ -604,7 +616,6 @@ $CI->load->model('SupplierParts');
 	public function update_po_parts()
 	{
 		$id = $this->input->post('id');
-
 		$uom_id = $this->input->post('uom_id');
 		$delivery_date = $this->input->post('delivery_date');
 		$qty = $this->input->post('qty');
@@ -613,25 +624,31 @@ $CI->load->model('SupplierParts');
 		$child_part_data = $this->SupplierParts->getSupplierPartByPartNumber($part_number);
 		$max_po_qty = $child_part_data[0]->max_uom;
 
-
-			if($max_po_qty < $qty)
-			{
-			echo "<script>alert('Max PO Qty must be less than actual qty , please enter diff qty');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-
-			}
-			else
-			{
+		$message ="Something went wrong!";
+		$success = 0;
+		if($max_po_qty < $qty)
+		{
+			$message ="Max PO Qty must be less than actual qty , please enter diff qty";
+		}
+		else{
 			$data = array(
 				"qty" => $qty,
 				"pending_qty" => $qty,
 			);
 			$result = $this->Crud->update_data("po_parts", $data, $id);
 			if ($result) {
-				echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$message ="Updated Sucessfully";
+				$success = 1;
 			} else {
-				echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$message = 'Error 410 :  Not Updated';
 			}
 		}
+		$return_arr = [
+			"message" =>$message,
+			"success" => $success
+			];
+		echo json_encode($return_arr);
+		exit();
 	}
 	public function update_parts_customer_trackings()
 	{
@@ -674,6 +691,8 @@ $CI->load->model('SupplierParts');
 			"date" => $this->current_date,
 
 		);
+		$message ="Something went wrong!";
+		$success = 0;
 		$result = $this->Crud->update_data("po_parts", $data, $id);
 		if ($result) {
 			$data2 = array(
@@ -684,14 +703,18 @@ $CI->load->model('SupplierParts');
 			);
 			$result2 = $this->Crud->update_data("new_po", $data2, $new_po_id);
 			if ($result2) {
-				echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-			} else {
-				echo "<script>alert('Error 4102 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$message = "Updated Sucessfully";
+				$success =1;
 			}
-		} else {
-			echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
 		//}
+		
+		$return_arr = [
+			"message" =>$message,
+			"success" => $success
+			];
+		echo json_encode($return_arr);
+		exit();
 	}
 	public function update_po_parts_amendment_approve_sub()
 	{
@@ -730,12 +753,19 @@ $CI->load->model('SupplierParts');
 			"new_po_qty" => $qty,
 			"po_approved_updated" => "pending",
 		);
+		$message ="Something went wrong!";
+		$success = 0;
 		$result = $this->Crud->update_data("po_parts", $data, $id);
 		if ($result) {
-			echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-		} else {
-			echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$success = 1;
+			$message ="Updated Sucessfully";
 		}
+		$return_arr = [
+			"message" =>$message,
+			"success" => $success
+			];
+		echo json_encode($return_arr);
+		exit();
 	}
 	public function update_po_parts_amendment_sub()
 	{
@@ -925,11 +955,20 @@ $CI->load->model('SupplierParts');
 			"status" => $status
 		);
 		$result = $this->Crud->update_data("new_po", $data, $id);
+		$message = "Something went wrong!";
+		$success = 1;
 		if ($result) {
-			echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$message = "Updated Sucessfully";
+			$success = 1;
 		} else {
-			echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$message ="Error 410 :  Not Updated";
 		}
+		$return_arr = [
+			"message" =>$message,
+			"success" => $success
+		];
+		echo json_encode($return_arr);
+		exit();
 	}
 
 	public function accept_po_sub()
@@ -1126,17 +1165,15 @@ $CI->load->model('SupplierParts');
 		);
 		$check = $this->Crud->read_data_where("po_parts", $data);
 		$routing_data = $this->Crud->get_data_by_id("routing", $part_id, "part_id");
-
+		$message = "Something went wrong!";
+		$success = 0;
 		if ($type != "normal" && empty($routing_data)) {
-			echo "<script>alert('Error 403 : Routing Not Found please Add Routing for this part !!!  ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$message ="Error 403 : Routing Not Found please Add Routing for this part !!!";
 		} else if ($qty > $max_uom) {
-			echo "<script>alert('Error 401 : Quantity should be less than MAX PO QTY. Please check  ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$message ="Error 401 : Quantity should be less than MAX PO QTY. Please check";
 		} else if ($check) {
-			echo "<script>alert('Error 403 : Part  Already Exists To This PO Number , Enter Different Part ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$message = "Error 403 : Part  Already Exists To This PO Number , Enter Different Part ";
 		} else {
-
-
-
 			$data = array(
 				"po_id" => $po_id,
 				"po_number" => $po_number,
@@ -1158,15 +1195,19 @@ $CI->load->model('SupplierParts');
 				"created_month" => $this->month,
 				"created_year" => $this->year,
 			);
-
-
 			$result = $this->Crud->insert_data("po_parts", $data);
 			if ($result) {
-				echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-			} else {
-				echo "<script>alert('Unab le to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$message ="Part added successfully.";
+				$success = 1;
 			}
 		}
+
+		$return_arr = [
+			"message" =>$message,
+			"success" => $success
+		];
+		echo json_encode($return_arr);
+		exit();
 	}
 	
 	public function add_challan_parts_history()

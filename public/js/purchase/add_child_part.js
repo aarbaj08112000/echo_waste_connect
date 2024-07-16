@@ -135,6 +135,7 @@ const page = {
                 url: "supplierPartsController/get_child_part_view",
                 type: "POST",
             },
+             columnDefs: [{ sortable: false, targets: 10 }],
         });
         $('.dataTables_length').find('label').contents().filter(function() {
             return this.nodeType === 3; // Filter out text nodes

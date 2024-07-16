@@ -46,7 +46,7 @@ table.dataTable thead .sorting, table.dataTable thead .sorting_asc, table.dataTa
 
 
 .layout-menu-fixed .filter-popup-block{
-    right: 0 !important;
+    right: -1px !important;
     left: auto !important;
 
 }
@@ -186,7 +186,7 @@ table.dataTable thead .sorting, table.dataTable thead .sorting_asc, table.dataTa
 }
 
 .select2-container--default .select2-selection.select2-selection--single{
-	    height: 37px !important;
+	    height: 39px !important;
 }
 .select2-container--default .select2-selection.select2-selection--single .select2-selection__rendered{
 	    line-height: 35px !important;
@@ -195,7 +195,15 @@ table.dataTable thead .sorting, table.dataTable thead .sorting_asc, table.dataTa
 	    top: 8px !important;
 }
 
+.filter-block .select2-container--default .select2-selection--single .select2-selection__arrow{
+        top: 1px !important;
+}
+.select2-container--default .select2-selection--single {
+    border: var(--bs-border-width) solid #d9dee3 !important;
+}
+
 .breadcrumb h1 {
+    font-family: 'gilroysemibold';
 	padding: 0 !important;
     position: relative;
     padding-left: 0 !important;
@@ -232,6 +240,7 @@ table.dataTable thead .sorting, table.dataTable thead .sorting_asc, table.dataTa
     margin: 0 5px;
 }
 .breadcrumb h1 a em{
+    font-family: 'gilroymedium';
 	font-size: 15px;
     color: #5d87ff !important;
     font-style: normal !important;
@@ -282,12 +291,15 @@ table.dataTable tbody td {
 
 /* list btn */
 
-.listing-btn .btn-group .btn {
-    color: #fff !important;
-    background-color: var(--bs-theme-color) !important;
-    border-color: #788393 !important;
-    transform: unset !important;
-    height: 44px;
+.listing-btn .btn-group .btn.dropdown-toggle {
+    /*color: #fff !important;
+    background-color: var(--bs-theme-color) !important;*/
+    border-left-color: #788393 !important;
+    border-right: 0px;
+        border-bottom: 0px;
+    border-top: 0px;
+    /*transform: unset !important;
+    height: 44px;*/
 }
 
 
@@ -295,3 +307,94 @@ table.dataTable tbody td {
 form .error:not(li):not(input) {
     font-size: 100%;
 }
+
+/* listing */
+.action-button-box i{
+    font-size: 18px !important;
+    background: white;
+    color: var(--bs-theme-color) !important;
+    margin-right: 6px;
+    border-radius: 4px;
+}
+.action-button-box span{
+    position: relative;
+    font-family: 'gilroymedium';
+    top: 1px !important;
+    font-size: 19px;
+}
+
+
+/* form */
+.form-group .form-label {
+    margin-bottom: 6px;
+    font-size: 18px;
+    text-transform: unset;
+}
+
+
+/* detail block */
+.tgdp-rgt-tp-sect {
+    float: left;
+    width: 25%;
+}
+.tgdp-rgt-tp-sect .tgdp-rgt-tp-ttl {
+    max-width: 95%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 16px !important;
+    margin-bottom: 0px;
+}
+.tgdp-rgt-tp-sect .tgdp-rgt-tp-txt {
+    font-size: 16px !important;
+    color: #000 !important;
+    max-width: 95%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.card .tabTitle {
+    display: inline-block;
+    width: 100%;
+}
+.card .tabTitle h2{
+    margin: 20px !important;
+    letter-spacing: 0.04px;
+    color: #1B252F !important;
+    font-weight: 500 !important;
+    font-size: 20px !important;
+    display: inline-block;
+}
+
+.table thead {
+    background: #f2f5f7;
+    color: #0a0a0a;
+}
+.table thead tr th {
+    min-width: 50px;
+    border-top-left-radius: 2px;
+    padding: 10px 5px;
+    background: #dcf0fe !important;
+    border: 0;
+    font-size: 14px;
+    font-weight: 500 !important;
+    color: #222 !important;
+    font-family: 'gilroysemibold';
+}
+
+.table tr:nth-child(odd) td {
+    box-shadow: inset 0 0 0 9999px #fff;
+}
+.table tr:nth-child(even) td {
+    box-shadow: inset 0 0 0 9999px var(--bs-theme-light1-color);
+}
+.table tfoot th { 
+    font-size: 16px;
+    background: #ffe6e6 !important;
+}
+tfoot {
+    border-color: #ffe6e6 !important;
+}
+
+
+

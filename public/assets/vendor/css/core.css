@@ -118,6 +118,7 @@
     --bs-form-invalid-color: #ff3e1d;
     --bs-form-invalid-border-color: #ff3e1d;
     --bs-theme-color: #ea1c31;
+    --bs-theme-light1-color:#f0f0f0;
     --bs-theme-light4-color: #e7c6bd;
     --bs-theme-light5-color: #edd3cd;
     --bs-filter-color: #f8495b;
@@ -5283,9 +5284,9 @@ textarea.form-control-lg {
 }
 
 .modal {
-    --bs-modal-zindex: 1090;
+        --bs-modal-zindex: 1090;
     --bs-modal-width: 35rem;
-    --bs-modal-padding: 1.5rem;
+    --bs-modal-padding: 1rem;
     --bs-modal-margin: 1.5rem;
     --bs-modal-color: ;
     --bs-modal-bg: #fff;
@@ -5296,14 +5297,14 @@ textarea.form-control-lg {
     --bs-modal-inner-border-radius: calc(var(--bs-border-radius-lg) - 0px);
     --bs-modal-header-padding-x: 1.5rem;
     --bs-modal-header-padding-y: 0.25rem;
-    --bs-modal-header-padding: 1.5rem 1.5rem 0.25rem;
+    --bs-modal-header-padding: 1rem 1rem;
     --bs-modal-header-border-color: var(--bs-border-color);
-    --bs-modal-header-border-width: 0px;
+    --bs-modal-header-border-width: 1px;
     --bs-modal-title-line-height: 1.53;
     --bs-modal-footer-gap: 0.5rem;
     --bs-modal-footer-bg: ;
     --bs-modal-footer-border-color: var(--bs-border-color);
-    --bs-modal-footer-border-width: 0px;
+    --bs-modal-footer-border-width: 1px;
     position: fixed;
     top: 0;
     left: 0;
@@ -5414,12 +5415,14 @@ textarea.form-control-lg {
 
 .modal-title {
     margin-bottom: 0;
+        color: #000;
     line-height: var(--bs-modal-title-line-height)
 }
 
 .modal-body {
     position: relative;
     flex: 1 1 auto;
+        color: #3e4247;
     padding: var(--bs-modal-padding)
 }
 
@@ -10695,9 +10698,9 @@ html:not([dir=rtl]) .form-control:not([readonly]):focus::placeholder {
     border-color: #c7cdd4
 }
 
-.input-group:focus-within {
+/*.input-group:focus-within {
     box-shadow: 0 0 .25rem .05rem rgba(105,108,255,.1)
-}
+}*/
 
 .input-group:focus-within .form-control,.input-group:focus-within .input-group-text {
     box-shadow: none
@@ -11155,7 +11158,7 @@ html:not([dir=rtl]) .modal .btn-close:hover,html:not([dir=rtl]) .modal .btn-clos
 }
 
 .modal-footer {
-    padding: .25rem 1.5rem 1.5rem
+    padding: .75rem
 }
 
 .modal-dialog-scrollable .btn-close,.modal-fullscreen .btn-close,.modal-top .btn-close {
@@ -14163,9 +14166,9 @@ html:not([dir=rtl]) .toast.bs-toast .toast-header .btn-close {
     white-space: normal !important
 }
 
-.text-nowrap {
+/*.text-nowrap {
     white-space: nowrap !important
-}
+}*/
 
 .text-break {
     word-wrap: break-word !important;
@@ -29334,5 +29337,6 @@ a.bg-vimeo:hover,a.bg-vimeo:focus {
   right: unset !important;
   top: 28px;
 }
-
-
+.DTFC_LeftBodyLiner {
+    overflow: hidden !important;
+}

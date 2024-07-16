@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-06-27 19:25:35
+/* Smarty version 4.3.2, created on 2024-07-10 22:45:49
   from '/var/www/html/extra_work/erp_converted/application/views/templates/purchase/child_part.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_667d6f57ccd3a8_76077017',
+  'unifunc' => 'content_668ec1c5e4a016_17184628',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'ef027b7cf48f4b243fa508af19c721d1de746020' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/purchase/child_part.tpl',
-      1 => 1719496535,
+      1 => 1720625657,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_667d6f57ccd3a8_76077017 (Smarty_Internal_Template $_smarty_tpl) {
+function content_668ec1c5e4a016_17184628 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->_assignInScope('entitlements', $_smarty_tpl->tpl_vars['session_data']->value['entitlements']);?>
 <!-- Content wrapper -->
 
@@ -130,39 +130,37 @@ jelly-o tart brownie jelly.
 
   <div class="col-xl">
     <div class="card mb-4 px-3">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0" id="form-title">Add</h5>
-      </div>
+      
       <div class="card-body">
         <form id="addchildpart" class="mb-3" action="javascript:void(0)" method="POST" enctype='multipart/form-data'>
           <div class="row">
             <div class="col-lg-6 ">
               <div class="form-group mb-3">
-                <label for="po_num">Part Number</label><span class="text-danger">*</span>
+                <label for="po_num" class="form-label">Part Number</label><span class="text-danger">*</span>
                 <input type="text" name="part_number"  class="form-control" id="exampleInputEmail1" placeholder="Enter Part Number" aria-describedby="emailHelp">
               </div>
               </div>
               <div class="col-lg-6">
               <div class="form-group mb-3">
-                <label for="po_num">Part Description </label><span class="text-danger">*</span>
+                <label for="po_num" class="form-label">Part Description </label><span class="text-danger">*</span>
                 <input type="text" name="part_desc"  class="form-control"  placeholder="Enter Part Description" aria-describedby="emailHelp">
               </div>
             </div>
             <div class="col-lg-6">
               <div class="form-group mb-3">
-                <label for="po_num">Safety/buffer stock </label><span class="text-danger">*</span>
+                <label for="po_num" class="form-label">Safety/buffer stock </label><span class="text-danger">*</span>
                 <input type="text" name="safty_buffer_stk"  class="form-control"  placeholder="Enter Saftey/buffer stock" aria-describedby="emailHelp">
               </div>
             </div>
             <div class="col-lg-6">
               <div class="form-group mb-3">
-                <label for="po_num">HSN Code</label>
+                <label for="po_num" class="form-label">HSN Code</label>
                 <input type="text" name="hsn_code" class="form-control" id="hsn_code" placeholder="Enter HSN Code" aria-describedby="emailHelp">
               </div>
             </div>
             <div class="col-lg-6">
               <div class="form-group mb-3">
-                <label> Purchase Item Category </label><span class="text-danger">*</span>
+                <label class="form-label"> Purchase Item Category </label><span class="text-danger">*</span>
                 <select class="form-control select2 item-category" name="sub_type">
                   <?php if ($_smarty_tpl->tpl_vars['type']->value == "direct") {?>
                   <option value="Regular grn">Regular grn</option>
@@ -185,7 +183,7 @@ jelly-o tart brownie jelly.
               <?php if ($_smarty_tpl->tpl_vars['type']->value == "customer_bom" || $_smarty_tpl->tpl_vars['type']->value == "indirect_assets") {?>
               <div class="col-lg-6">
               <div class="form-group mb-3">
-                <label> Asset </label>
+                <label class="form-label"> Asset </label>
                 <select class="form-control select2 assets" name="asset" style="width: 100%;">
                   <option value="consumable">Consumable</option>
                   <?php if ($_smarty_tpl->tpl_vars['asset']->value) {?>
@@ -210,32 +208,32 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
 
               <div class="col-lg-6">
                 <div class="form-group mb-3">
-                  <label for="po_num">Store Rack Location</label>
+                  <label for="po_num" class="form-label">Store Rack Location</label>
                   <input type="text" name="store_rack_location" class="form-control" id="exampleInputEmail1" placeholder="Enter Store Rack Location" aria-describedby="emailHelp">
                 </div>
               </div>
               <div class="col-lg-6">
                 <div class="form-group mb-3">
-                  <label for="po_num">Store Stock Rate</label>
+                  <label for="po_num" class="form-label">Store Stock Rate</label>
                   <input type="number" step="any" name="store_stock_rate" class="form-control" id="exampleInputEmail1" placeholder="Enter Store Stock Rate" aria-describedby="emailHelp">
                 </div>
               </div>
                 <?php if (($_smarty_tpl->tpl_vars['entitlements']->value['isSheetMetal'] != null)) {?>
                 <div class="col-lg-6">
                 <div class="form-group mb-3">
-                  <label for="po_num">Weight</label>
+                  <label for="po_num" class="form-label">Weight</label>
                   <input type="number" step="any" name="weight" class="form-control"  placeholder="Enter Weight" aria-describedby="emailHelp">
                 </div>
               </div>
               <div class="col-lg-6">
                 <div class="form-group mb-3">
-                  <label for="po_num">Size</label>
+                  <label for="po_num" class="form-label">Size</label>
                   <input type="text" step="any" name="size" class="form-control"  placeholder="Enter Size" aria-describedby="emailHelp">
                 </div>
               </div>
               <div class="col-lg-6">
                 <div class="form-group mb-3">
-                  <label for="po_num">Thickness</label>
+                  <label for="po_num" class="form-label">Thickness</label>
                   <input type="text" step="any" name="thickness" class="form-control"  placeholder="Enter Thickness" aria-describedby="emailHelp">
                 </div>
               </div>
@@ -243,7 +241,7 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                 <?php }?>
               <div class="col-lg-6">
                 <div class="form-group mb-3">
-                  <label> UOM </label><span class="text-danger">*</span>
+                  <label class="form-label"> UOM </label><span class="text-danger">*</span>
                   <select class="form-control select2 item-uom" name="uom_id" style="width: 100%;">
                     <?php
 $_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['uom']->value, 'c1');
@@ -263,19 +261,19 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                 </div>
                 <div class="col-lg-6">
                   <div class="form-group mb-3">
-                    <label for="po_num">Max PO Quantity </label><span class="text-danger">*</span>
+                    <label for="po_num" class="form-label">Max PO Quantity </label><span class="text-danger">*</span>
                     <input  type="number" step="any" name="max_uom" class="form-control" id="hsn_code" placeholder="Enter Max UOM" aria-describedby="emailHelp">
                   </div>
                 </div>
                 <div class="col-lg-6">
                   <div class="form-group mb-3">
-                    <label for="po_num">Grade <span class="text-danger">*</span> </label>
+                    <label class="form-label" for="po_num">Grade <span class="text-danger">*</span> </label>
                     <input type="text" name="grade" class="form-control"  placeholder="Enter grade" aria-describedby="emailHelp">
                   </div>
                 </div>
               </div>
 
-              <button type="submit" class="btn btn-primary">Send</button>
+              <button type="submit" class="btn btn-primary">Submit</button>
             </form>
           </div>
         </div>
@@ -286,12 +284,7 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
 
 
   <div class="content-backdrop fade"></div>
-<style type="text/css">
-  .select2-container--default .select2-selection.select2-selection--single {
-    height: 37px !important;
-    border: var(--bs-border-width) solid #d9dee3;
-}
-</style>
+
 <?php echo '<script'; ?>
  type="text/javascript">
   var base_url = <?php echo json_encode($_smarty_tpl->tpl_vars['base_url']->value);?>

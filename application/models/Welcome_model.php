@@ -56,6 +56,17 @@ class Welcome_model extends CI_Model
 				AND cpm.child_part_id = cpm2.child_part_id
 				AND cpm.id < cpm2.id','left');
 	    $this->db->where('cpm2.id',NULL);
+        if (is_array($search_params) && count($search_params) > 0) {
+            if ($search_params["part_number"] != "") {
+                $this->db->where("cpm.child_part_id", $search_params["part_number"]);
+            }
+            // if ($search_params["part_description"] != "") {
+            //     $this->db->like(
+            //         "cp.part_description",
+            //         $search_params["part_description"]
+            //     );
+            // }
+        }
         $result_obj = $this->db->get();
         $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
 
@@ -63,6 +74,82 @@ class Welcome_model extends CI_Model
         return $ret_data;
     }
 
+    public function get_supplier_data($condition_arr = [],
+        $search_params = "")
+     {
+
+        $this->db->select('s.*');
+        $this->db->from('supplier as s');
+        if (count($condition_arr) > 0) {
+            $this->db->limit($condition_arr["length"], $condition_arr["start"]);
+            if ($condition_arr["order_by"] != "") {
+                $this->db->order_by($condition_arr["order_by"]);
+            }
+        }
+        if (is_array($search_params) && count($search_params) > 0) {
+            if ($search_params["supplier_name"] != "") {
+                $this->db->where("s.id", $search_params["supplier_name"]);
+            }
+            if ($search_params["admin_approve"] != "") {
+                $this->db->where("s.admin_approve", $search_params["admin_approve"]);
+            }
+            // if ($search_params["part_description"] != "") {
+            //     $this->db->like(
+            //         "cp.part_description",
+            //         $search_params["part_description"]
+            //     );
+            // }
+        }
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+        // pr($this->db->last_query(),1);
+        return $ret_data;
+    }
+    public function get_supplier_data_count(
+        $condition_arr = [],
+        $search_params = ""
+    ) {
+
+        $this->db->select('COUNT(s.id) as total_record');
+        $this->db->from('supplier as s');
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
+
+       
+        return $ret_data;
+    }
+    public function get_supplier_details($supplier_id = '') {
+
+        $this->db->select('s.*');
+        $this->db->from('supplier as s');
+        $this->db->where("s.id",$supplier_id);
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
+        return $ret_data;
+    }
+    public function update_supplier_data($update_data= array(),$supplier_id = ''){
+        $this->db->where('id', $supplier_id);
+        $this->db->update('supplier', $update_data);
+        $this->db->affected_rows();
+        $affected_rows = $this->db->affected_rows() == 0 ? 1 : $this->db->affected_rows();
+        return $affected_rows;
+    }
+    public function get_child_part_details($child_part_id = '') {
+
+        $this->db->select('c.*');
+        $this->db->from('child_part_master as c');
+        $this->db->where("c.id",$child_part_id);
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
+        return $ret_data;
+    }
+    public function update_child_part_data($update_data= array(),$supplier_child_part_id = ''){
+        $this->db->where('id', $supplier_child_part_id);
+        $this->db->update('child_part_master', $update_data);
+        $this->db->affected_rows();
+        $affected_rows = $this->db->affected_rows() == 0 ? 1 : $this->db->affected_rows();
+        return $affected_rows;
+    }
     
 }
 

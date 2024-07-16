@@ -14,7 +14,6 @@ const app = {
               $(this).addClass("hide")
           }
       })
-
       $("#layout-menu").on("mouseover",function(){
         if(!$('html').hasClass("layout-compact")){
           $('html').addClass("layout-menu-hover")
@@ -69,6 +68,28 @@ const app = {
       $("#downloadCSVBtn").on("click",function(){
           $(".buttons-csv").trigger("click");
       })
-      $(".select2-init").select2();
+      $(".select2-init,.select2").select2();
+
+
+      this.allowNumber();
+      this.removeValidationMessage();
+  },
+  allowNumber:function(){
+    $('.onlyNumericInput').on('keypress', function(event) {
+        var charCode = (event.which) ? event.which : event.keyCode;
+
+        // Allow only digits (0-9) and some specific control keys
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            event.preventDefault();
+        }
+    });
+  },
+  removeValidationMessage: function(){
+    $(document).on("change input",".custom-form input.required-input",function(){
+        var value = $(this).val();
+        if (value !=''){
+          $(this).parents(".form-group").find("label.error").remove()
+        }
+    })
   }
 }

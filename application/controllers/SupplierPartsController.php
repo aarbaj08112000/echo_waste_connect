@@ -213,7 +213,7 @@ class SupplierPartsController extends CommonController
         $column[] = [
             "data" => "part_description",
             "title" => "Part Description",
-            "width" => "16%",
+            "width" => "20%",
             "className" => "dt-left",
         ];
         $column[] = [
