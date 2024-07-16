@@ -3647,7 +3647,7 @@ class Welcome extends CommonController
 					$data['subtotal2'][$t->id] = 0;
 					if ($data['customer_part_rate'][$t->id]) {
 						$data['rate'][$t->id] = $data['customer_part_rate'][$t->id][0]->rate;
-						$data['subtotal1'][$t->id] = $data['customer_part_rate'][$t->id][0]->rate * $data['planing_data_new'][$t->id][0]->schedule_qty;
+						$data['subtotal1'][$t->id] = $data['customer_parplaning_data_report_viewt_rate'][$t->id][0]->rate * $data['planing_data_new'][$t->id][0]->schedule_qty;
 						$data['subtotal2'][$t->id] = $data['customer_part_rate'][$t->id][0]->rate * $data['planing_data_new'][$t->id][0]->schedule_qty_2;
 
 						$total1 = $total1 + $data['subtotal1'][$t->id];
@@ -3701,6 +3701,108 @@ class Welcome extends CommonController
 	public function planing_data_report()
 	{
 
+		$column[] = [
+            "data" => "customer_name",
+            "title" => "CUSTOMER NAME",
+            "width" => "14%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "sales_number",
+            "title" => "Sales Inv No",
+            "width" => "16%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "created_date",
+            "title" => "Sales Inv Date",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "subtotal",
+            "title" => "Basic Amount Total",
+            "width" => "10%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "gst",
+            "title" => "GST Total Amount",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "row_total",
+            "title" => "Total Amount With GST",
+            "width" => "17%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "payment_terms",
+            "title" => "Payment Terms in Days",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "due_date",
+            "title" => "Due Date",
+            "width" => "7%",
+            "className" => "dt-center status-row",
+        ];
+        $column[] = [
+            "data" => "due_days",
+            "title" => "Due Days",
+            "width" => "17%",
+            "className" => "dt-center",
+			
+        ];
+       
+        $column[] = [
+            "data" => "payment_receipt_date_formated",
+            "title" => "Payment Receipt Date",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "amount_received",
+            "title" => "Amount Received",
+            "width" => "7%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "transaction_details",
+            "title" => "Transaction Details",
+            "width" => "7%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        
+        $column[] = [
+            "data" => "bal_amnt",
+            "title" => "Balance Amount to Receive",
+            "width" => "7%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+
+		$column[] = [
+				"data" => "action",
+				"title" => "Action",
+				"width" => "7%",
+				"className" => "dt-center",
+				'orderable' => false
+			];
+			$column[] = [
+				"data" => "action",
+				"title" => "Action",
+				"width" => "7%",
+				"className" => "dt-center",
+				'orderable' => false
+			];
+
 		//echo $this->input->post('customer_id');
 		if (!empty($this->input->post('customer_id'))) {
 			$data['customer_id'] = $this->input->post('customer_id');
@@ -3721,12 +3823,47 @@ class Welcome extends CommonController
 		$this->load->view('footer');
 	}
 	
+	public function planningReportDataAjax(){
+		$post_data = $this->input->post();
+
+        $column_index = array_column($post_data["columns"], "data");
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+			if ($key == 0) {
+				$order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+				$order_by .=
+				"," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+		
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+		
+		$data = $this->welcome_model->getPlanningReportView($condition_arr,$post_data["search"]);
+		
+		
+		foreach ($data as $key => $value) {
+			$edit_data = base64_encode(json_encode($value)); 
+			$data[$key]['action'] = "<i class='ti ti-edit edit-part' title='Edit' data-value='$edit_data'></i>";
+		}
+
+		$data["data"] = $data;
+        $total_record = $this->welcome_model->getPlanningReportViewCount([], $post_data["search"]);
+		
+        $data["recordsTotal"] = count($total_record);
+        $data["recordsFiltered"] = count($total_record);
+        echo json_encode($data);
+	}
+
+
 	/**
 	 * Stock Rejection transfer 
 	 */
 	public function transfer_stock()
 	{
-
 		$rejection_flow_id  = $this->uri->segment('2');
 		$rejection_flow_data = $this->Crud->get_data_by_id("rejection_flow", $rejection_flow_id, "id");
 		$child_part_data = $this->SupplierParts->getSupplierPartById($rejection_flow_data[0]->part_id);

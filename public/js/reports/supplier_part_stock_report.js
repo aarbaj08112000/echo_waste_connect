@@ -7,7 +7,7 @@ const page = {
         this.dataTable();
         this.filter();
         this.formValidation();
-        $(document).on("click",".edit-part",function(){
+        $(document).on("click",".edit-fg",function(){
             var data = $(this).attr("data-value");
             data = JSON.parse(atob(data)); 
             console.log(data)
@@ -40,7 +40,7 @@ const page = {
             $("#uom_id").val(data.uom_id).trigger("change");
             $("#max_uom").val(data.max_uom);
             $("#grade").val(data.grade);
-            // myModal.show();
+            myModal.show();
         })
 
     },
@@ -158,7 +158,6 @@ const page = {
     },
     serachParams: function(){
         var part_id = $("#selectPart").val();
-     
         var params = {part_id:part_id};
         return params;
     },

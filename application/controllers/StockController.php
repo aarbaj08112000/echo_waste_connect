@@ -78,7 +78,7 @@ class StockController extends CommonController
             "className" => "dt-center",
         ];
         $column[] = [
-            "data" => "stock",
+            "data" => "stock_html",
             "title" => "Store Stock",
             "width" => "17%",
             "className" => "dt-center",
@@ -95,6 +95,7 @@ class StockController extends CommonController
             "title" => "Stock Reserve against Job order",
             "width" => "7%",
             "className" => "dt-center status-row",
+			'orderable' => false
         ];
         $column[] = [
             "data" => "store_scrap",
@@ -149,7 +150,7 @@ class StockController extends CommonController
         ];
 
 		$column[] = [
-            "data" => "stock_value",
+            "data" => "production_stocksss",
             "title" => "Production Stock",
             "width" => "17%",
             "className" => "dt-center",
@@ -178,7 +179,7 @@ class StockController extends CommonController
         ];
 
         $column[] = [
-            "data" => "store_stock_rate",
+            "data" => "plastic_prod_details",
             "title" => "Production Scrap",
             "width" => "7%",
             "className" => "dt-center",
@@ -201,7 +202,7 @@ class StockController extends CommonController
         ];
 
 		$column[] = [
-            "data" => "store_stock_rate",
+            "data" => "transfer_fg",
             "title" => "Transfer To FG",
             "width" => "7%",
             "className" => "dt-center",
@@ -265,14 +266,48 @@ class StockController extends CommonController
         $base_url = $this->config->item("base_url");
 		
 		$data = $this->SupplierParts->getPartStockReportView($condition_arr,$post_data["search"]);
-		
-		
+		$stock_column_name = $this->Unit->getStockColNmForClientUnit();
+		$sheet_prod_column_name = $this->Unit->getProdColNmForClientUnit();
+		$plastic_prod_column_name = $this->Unit->getPlasticProdColNmForClientUnit();
+		$role = $this->session->userdata('type');
 		
 		foreach ($data as $key => $value) {
 			// $edit_data = base64_encode(json_encode($value)); 
 			// $data[$key]['action'] = "<i class='ti ti-edit edit-part' title='Edit' data-value='$edit_data'></i>";
 			$stock_val = $value['stock'] * $value['store_stock_rate'];
+			$transfer_fg = $value[$stock_column_name];
+			$production_stocks = $value[$sheet_prod_column_name];
+			$plastic_prod_details = $value[$plastic_prod_column_name];
+			if($value['stock'] > 0){
+				$stock_temp = base64_encode(json_encode($value)); 
+				$stock_temp_html = '<button type="button" class="btn btn-primary" data-bs-toggle="modal" class="edit-fg" data-value='.$stock_temp.' data-bs-target="#storeToStore">
+											'.$value['stock'].'
+											</button>';
+			}
+			if($value[$stock_column_name] > 0 && ($role == "Admin" || $role=="stores")){
+				$fg_data = base64_encode(json_encode($value)); 
+				$transfer_fg = '<button type="button" class="btn btn-primary" data-bs-toggle="modal" class="edit-fg" data-value='.$fg_data.' data-bs-target="#fgtransfer">
+											Transfer FG Stock
+											</button>';
+			}
+			if($value[$sheet_prod_column_name] > 0 && ($role == "Admin")){
+				$product__data = base64_encode(json_encode($value)); 
+				$production_stocks = '<button type="button" class="btn btn-primary" data-bs-toggle="modal" data--bs-target="#prodToStore" data-value='.$product__data.'>
+										  '.$value[$sheet_prod_column_name].'
+										  </button>';
+			}
+			if($value[$plastic_prod_column_name] > 0 && ($role == "Admin")){
+				$plastic_prod_column_name_data = base64_encode(json_encode($value)); 
+				$plastic_prod_details = '<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#prodToStorePlastic" data-value='.$plastic_prod_column_name_data.'>
+										'.$value[$plastic_prod_column_name].'
+										</button>';
+			}
+			$data[$key]['production_stocksss'] = $production_stocks;
+			$data[$key]['stock_html'] = $stock_temp_html;
+			$data[$key]['transfer_fg'] = $transfer_fg;
 			$data[$key]['stock_value'] = $stock_val;
+			$data[$key]['plastic_prod_details'] = $plastic_prod_details;
+			
 		}
 
 		$data["data"] = $data;

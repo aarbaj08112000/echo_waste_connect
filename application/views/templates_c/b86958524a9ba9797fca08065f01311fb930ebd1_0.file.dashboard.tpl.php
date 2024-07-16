@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-06-21 10:04:27
+/* Smarty version 4.3.2, created on 2024-07-12 10:31:57
   from '/var/www/html/extra/erp_converted/application/views/templates/dashboard.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_667502d3341852_95242847',
+  'unifunc' => 'content_6690b8c5afa348_20130340',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_667502d3341852_95242847 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6690b8c5afa348_20130340 (Smarty_Internal_Template $_smarty_tpl) {
 ?>
 <div class="wrapper">
     <div class="content-wrapper">

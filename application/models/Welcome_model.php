@@ -63,6 +63,66 @@ class Welcome_model extends CI_Model
         return $ret_data;
     }
 
+    public function getPlanningReportView($condition_arr = [],$search_params = ""){
+        $this->db->select('
+            p.*, 
+            cp.id AS customer_part_id, 
+            cp.customer_id AS customer_part_customer_id, 
+            cpr.customer_master_id AS customer_part_rate_id, 
+            c.id AS customer_id, 
+            jc.customer_part_id AS job_card_customer_part_id, 
+            pd.planing_id AS planing_data_new_id
+        ');
+        $this->db->from('planing p');
+        $this->db->join('customer_part cp', 'cp.id = p.customer_part_id', 'left');
+        $this->db->join('customer_part_rate cpr', 'cpr.customer_master_id = cp.id', 'left');
+        $this->db->join('customer c', 'c.id = cp.customer_id', 'left');
+        $this->db->join('job_card jc', 'jc.customer_part_id = cp.customer_id', 'left');
+        $this->db->join('planing_data pd', 'pd.planing_id = p.id', 'left');
+        $this->db->where('(cp.admin_approve = \'accept\' OR cp.admin_approve IS NULL)');
+        // $this->db->where_in('p.<condition>', <value>);  // Replace <condition> and <value> as appropriate
+        $this->db->order_by('p.id', 'DESC');
+        // if(is_valid_array($search_params) && $search_params['customer_part_id'] > 0){
+        //     $this->db->where('s.customer_id', $search_params['customer_part_id']);
+        // }
+        // pr($condition_arr,1);
+        if($condition_arr["order_by"] == ''){    
+            $this->db->order_by('s.id', 'DESC');
+        }
+        if (count($condition_arr) > 0) {
+            $this->db->limit($condition_arr["length"], $condition_arr["start"]);
+            if ($condition_arr["order_by"] != "") {
+                $this->db->order_by($condition_arr["order_by"]);
+            }
+        }
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+        // pr($this->db->last_query(),1);
+        return $ret_data;
+    }
+
+    public function getPlanningReportViewCount( $condition_arr = [],$search_params = ""){
+        $this->db->select('count(pid)');
+        $this->db->from('planing p');
+        $this->db->join('customer_part cp', 'cp.id = p.customer_part_id', 'left');
+        $this->db->join('customer_part_rate cpr', 'cpr.customer_master_id = cp.id', 'left');
+        $this->db->join('customer c', 'c.id = cp.customer_id', 'left');
+        $this->db->join('job_card jc', 'jc.customer_part_id = cp.customer_id', 'left');
+        $this->db->join('planing_data pd', 'pd.planing_id = p.id', 'left');
+        $this->db->where('(cp.admin_approve = \'accept\' OR cp.admin_approve IS NULL)');
+        // $this->db->where_in('p.<condition>', <value>);  // Replace <condition> and <value> as appropriate
+        $this->db->order_by('p.id', 'DESC');
+        if(is_valid_array($search_params) && $search_params['customer_part_id'] > 0){
+            $this->db->where('s.customer_id', $search_params['customer_part_id']);
+        }
+        
+        // $this->db->order_by('s.id', 'DESC');
+
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];        
+        return $ret_data;
+    }
+
     
 }
 
