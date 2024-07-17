@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-07-16 10:55:48
+/* Smarty version 4.3.2, created on 2024-07-17 20:53:52
   from '/var/www/html/extra/erp_converted/application/views/templates/reports/planing_data_report_view.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_6696045cf03718_29149965',
+  'unifunc' => 'content_6697e208b7cd27_73904446',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '0d56f6b2460614445c802cc84467cf0c51b6b2b7' => 
     array (
       0 => '/var/www/html/extra/erp_converted/application/views/templates/reports/planing_data_report_view.tpl',
-      1 => 1718605193,
+      1 => 1721229779,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_6696045cf03718_29149965 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6697e208b7cd27_73904446 (Smarty_Internal_Template $_smarty_tpl) {
 ?><div class="wrapper" style="width:2000px">
     <div class="content-wrapper">
         <section class="content-header">
@@ -114,7 +114,7 @@ $_smarty_tpl->tpl_vars['i']->first = $_smarty_tpl->tpl_vars['i']->iteration === 
                                 </div>
                             </div>
                             <div class="card-body">
-                                <table id="example1" class="table table-bordered table-striped">
+                                <table id="planning_data" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
                                             <th>Sr. No.</th>
@@ -239,5 +239,34 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
         </section>
     </div>
 </div>
-<?php }
+<?php echo '<script'; ?>
+>
+    var column_details =  <?php echo json_encode($_smarty_tpl->tpl_vars['data']->value);?>
+;
+    var page_length_arr = <?php echo json_encode($_smarty_tpl->tpl_vars['page_length_arr']->value);?>
+;
+    var is_searching_enable = <?php echo json_encode($_smarty_tpl->tpl_vars['is_searching_enable']->value);?>
+;
+    var is_top_searching_enable =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_top_searching_enable']->value);?>
+;
+    var is_paging_enable =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_paging_enable']->value);?>
+;
+    var is_serverSide =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_serverSide']->value);?>
+;
+    var no_data_message =  <?php echo json_encode($_smarty_tpl->tpl_vars['no_data_message']->value);?>
+;
+    var is_ordering =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_ordering']->value);?>
+;
+    var sorting_column = <?php echo $_smarty_tpl->tpl_vars['sorting_column']->value;?>
+;
+    var api_name =  <?php echo json_encode($_smarty_tpl->tpl_vars['api_name']->value);?>
+;
+    var base_url = <?php echo json_encode($_smarty_tpl->tpl_vars['base_url']->value);?>
+;
+<?php echo '</script'; ?>
+>
+<?php echo '<script'; ?>
+ src="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+/public/js/reports/planning_data_report.js"><?php echo '</script'; ?>
+><?php }
 }

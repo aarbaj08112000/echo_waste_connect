@@ -3816,11 +3816,25 @@ class Welcome extends CommonController
 		$data['customer'] = $this->Crud->read_data("customer");
 
 
+		$data["data"] = $column;
+        $data["is_searching_enable"] = false;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Employee data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
 
-
-		$this->load->view('header');
-		$this->load->view('planing_data_report', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		$this->getPage('reports/planing_data_report_view', $data);
+		// $this->load->view('footer');
 	}
 	
 	public function planningReportDataAjax(){
@@ -3843,7 +3857,7 @@ class Welcome extends CommonController
         $base_url = $this->config->item("base_url");
 		
 		$data = $this->welcome_model->getPlanningReportView($condition_arr,$post_data["search"]);
-		
+		pr($data,1);
 		
 		foreach ($data as $key => $value) {
 			$edit_data = base64_encode(json_encode($value)); 
