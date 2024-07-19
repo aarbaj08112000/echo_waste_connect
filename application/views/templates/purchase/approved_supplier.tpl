@@ -1,3 +1,4 @@
+
 <!-- Content wrapper -->
 
 <%assign var="entitlements" value=$session_data['entitlements']%>
@@ -21,6 +22,7 @@
             <!-- Dashboard -->
             <div class="filter-row">
               <li class="nav-small-cap">
+
                 <span class="hide-menu">Supplier Name</span>
                 <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
               </li>
@@ -52,7 +54,7 @@
             </div>  
 
             
-            
+          
 
         </ul>
       </div>
@@ -62,6 +64,7 @@
             <button class="btn btn-primary search-filter">Search</button>
         </div>
 </aside>
+
     <nav aria-label="breadcrumb">
       <div class="sub-header-left pull-left breadcrumb">
         <h1>
@@ -80,11 +83,13 @@
       <a class="btn btn-seconday action-button-box" type="button"  title="Add Supplier Part Price" href="supplier">
         <span>Add Supplier</span>
       </a>
+
       <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
       <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
       <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
       <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
     </div>
+
     <!-- Responsive Table -->
     <div class="card p-0 mt-4">
       <div class="table-responsive text-nowrap">
@@ -109,6 +114,7 @@
 </div>
 <!-- Content wrapper -->
 <script>
+
     var column_details =  <%$data|json_encode%>;
     var page_length_arr = <%$page_length_arr|json_encode%>;
     var is_searching_enable = <%$is_searching_enable|json_encode%>;
@@ -121,4 +127,6 @@
     var api_name =  <%$api_name|json_encode%>;
     var base_url = <%$base_url|json_encode%>;
 </script>
+
 <script src="<%$base_url%>public/js/purchase/supplier_list.js"></script>
+

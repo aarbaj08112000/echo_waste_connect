@@ -1,4 +1,27 @@
-<div class="wrapper container-xxl flex-grow-1 container-p-y" >
+<?php
+/* Smarty version 4.3.2, created on 2024-07-10 19:08:58
+  from '/var/www/html/extra/erp_converted/application/views/templates/reports/sales_reports.tpl' */
+
+/* @var Smarty_Internal_Template $_smarty_tpl */
+if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
+  'version' => '4.3.2',
+  'unifunc' => 'content_668e8ef2d82592_62068313',
+  'has_nocache_code' => false,
+  'file_dependency' => 
+  array (
+    '250659980b3318e4436ac0ca9432af9ba761e476' => 
+    array (
+      0 => '/var/www/html/extra/erp_converted/application/views/templates/reports/sales_reports.tpl',
+      1 => 1720618564,
+      2 => 'file',
+    ),
+  ),
+  'includes' => 
+  array (
+  ),
+),false)) {
+function content_668e8ef2d82592_62068313 (Smarty_Internal_Template $_smarty_tpl) {
+?><div class="wrapper container-xxl flex-grow-1 container-p-y" >
     <!-- Navbar -->
     <!-- /.navbar -->
     <!-- Main Sidebar Container -->
@@ -25,10 +48,19 @@
               <li class="sidebar-item">
                 <div class="input-group">
                   <select name="month_number" class="form-control select2" id="month_number">
-                  <%foreach $month_data as $key => $val%>
-                  <option <%if $month_number[$key] eq $created_month%>selected<%/if%>
-                      value="<%$month_number[$key]%>"><%$val%></option>
-              <%/foreach%>
+                  <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['month_data']->value, 'val', false, 'key');
+$_smarty_tpl->tpl_vars['val']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['key']->value => $_smarty_tpl->tpl_vars['val']->value) {
+$_smarty_tpl->tpl_vars['val']->do_else = false;
+?>
+                  <option <?php if ($_smarty_tpl->tpl_vars['month_number']->value[$_smarty_tpl->tpl_vars['key']->value] == $_smarty_tpl->tpl_vars['created_month']->value) {?>selected<?php }?>
+                      value="<?php echo $_smarty_tpl->tpl_vars['month_number']->value[$_smarty_tpl->tpl_vars['key']->value];?>
+"><?php echo $_smarty_tpl->tpl_vars['val']->value;?>
+</option>
+              <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                   </select>
                 </div>
               </li>
@@ -41,9 +73,17 @@
               <li class="sidebar-item">
               <div class="input-group">
                 <select name="year" class="form-control select2" id="year">
-                <%for $i=2022 to 2027%>
-                <option <%if $i == $created_year%>selected<%/if%> value="<%$i%>"><%$i%></option>
-                <%/for%>
+                <?php
+$_smarty_tpl->tpl_vars['i'] = new Smarty_Variable(null, $_smarty_tpl->isRenderingCache);$_smarty_tpl->tpl_vars['i']->step = 1;$_smarty_tpl->tpl_vars['i']->total = (int) ceil(($_smarty_tpl->tpl_vars['i']->step > 0 ? 2027+1 - (2022) : 2022-(2027)+1)/abs($_smarty_tpl->tpl_vars['i']->step));
+if ($_smarty_tpl->tpl_vars['i']->total > 0) {
+for ($_smarty_tpl->tpl_vars['i']->value = 2022, $_smarty_tpl->tpl_vars['i']->iteration = 1;$_smarty_tpl->tpl_vars['i']->iteration <= $_smarty_tpl->tpl_vars['i']->total;$_smarty_tpl->tpl_vars['i']->value += $_smarty_tpl->tpl_vars['i']->step, $_smarty_tpl->tpl_vars['i']->iteration++) {
+$_smarty_tpl->tpl_vars['i']->first = $_smarty_tpl->tpl_vars['i']->iteration === 1;$_smarty_tpl->tpl_vars['i']->last = $_smarty_tpl->tpl_vars['i']->iteration === $_smarty_tpl->tpl_vars['i']->total;?>
+                <option <?php if ($_smarty_tpl->tpl_vars['i']->value == $_smarty_tpl->tpl_vars['created_year']->value) {?>selected<?php }?> value="<?php echo $_smarty_tpl->tpl_vars['i']->value;?>
+"><?php echo $_smarty_tpl->tpl_vars['i']->value;?>
+</option>
+                <?php }
+}
+?>
                 </select>
               </div>
             </li>
@@ -79,22 +119,7 @@
     </div>
     <div class="content-wrapper ">
         <!-- Content Header (Page header) -->
-       <%* <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>Sales Reports</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="<%$base_url%>dashboard">Home</a></li>
-                            <li class="breadcrumb-item active">Po Balance Qty</li>
-                        </ol>
-                    </div>
-                </div>
-            </div><!-- /.container-fluid -->
-        </section> *%>
-        <!-- Main content -->
+               <!-- Main content -->
         <section class="content">
             <div class="">
                 <div class="row">
@@ -123,24 +148,33 @@
                                                             Criteria</h5>
                                                         <button type="button" class="close btn-close" data-dismiss="modal"
                                                             aria-label="Close" data-bs-dismiss="modal">
-                                                            <%*<span aria-hidden="true">&times;</span>*%>
-                                                        </button>
+                                                                                                                    </button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="form-group">
-                                                            <form action="<%$base_url%>sales_report" method="POST">
+                                                            <form action="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+sales_report" method="POST">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="">Year:</label>
                                                             <select required name="search_year" id=""
                                                                 class="form-control select2">
                                                                 
-                                                                <%if $created_month < 4%>
-                                                                    <%assign var="year_sel" value=$created_year-1%>
-                                                                <%/if%>
-                                                                <%foreach from=$fincYears item=fyear%>
-                                                                    <option <%if $fyear->startYear == $year_sel%>selected<%/if%> value="<%$fyear->startYear%>"><%$fyear->displayName%></option>
-                                                                <%/foreach%>
+                                                                <?php if ($_smarty_tpl->tpl_vars['created_month']->value < 4) {?>
+                                                                    <?php $_smarty_tpl->_assignInScope('year_sel', $_smarty_tpl->tpl_vars['created_year']->value-1);?>
+                                                                <?php }?>
+                                                                <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['fincYears']->value, 'fyear');
+$_smarty_tpl->tpl_vars['fyear']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['fyear']->value) {
+$_smarty_tpl->tpl_vars['fyear']->do_else = false;
+?>
+                                                                    <option <?php if ($_smarty_tpl->tpl_vars['fyear']->value->startYear == $_smarty_tpl->tpl_vars['year_sel']->value) {?>selected<?php }?> value="<?php echo $_smarty_tpl->tpl_vars['fyear']->value->startYear;?>
+"><?php echo $_smarty_tpl->tpl_vars['fyear']->value->displayName;?>
+</option>
+                                                                <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                                                             </select>
                                                         </div>
                                                         <div class="form-group">
@@ -150,10 +184,19 @@
                                                             </label>
                                                             <select required name="search_month" id=""
                                                                 class="form-control select2">
-                                                                <%foreach $month_data as $key => $val%>
-                                                                <option <%if $month_number[$key] eq $created_month%>selected<%/if%>
-                                                                    value="<%$month_number[$key]%>"><%$val%></option>
-                                                            <%/foreach%>
+                                                                <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['month_data']->value, 'val', false, 'key');
+$_smarty_tpl->tpl_vars['val']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['key']->value => $_smarty_tpl->tpl_vars['val']->value) {
+$_smarty_tpl->tpl_vars['val']->do_else = false;
+?>
+                                                                <option <?php if ($_smarty_tpl->tpl_vars['month_number']->value[$_smarty_tpl->tpl_vars['key']->value] == $_smarty_tpl->tpl_vars['created_month']->value) {?>selected<?php }?>
+                                                                    value="<?php echo $_smarty_tpl->tpl_vars['month_number']->value[$_smarty_tpl->tpl_vars['key']->value];?>
+"><?php echo $_smarty_tpl->tpl_vars['val']->value;?>
+</option>
+                                                            <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                                                             </select>
                                                         </div>
                                                         <div class="form-group">
@@ -197,7 +240,8 @@
                                                 </button>
                                             </div>
                                             <div class="modal-body">
-                                                <form action="<%$base_url%>add_job_card" method="POST"
+                                                <form action="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+add_job_card" method="POST"
                                                     enctype='multipart/form-data'>
                                                     <div class="row">
                                                         <div class="col-lg-12">
@@ -207,14 +251,20 @@
                                                                     class="text-danger">*</span>
                                                                 <select name="customer_part_id" id=""
                                                                     class="form-control select2">
-                                                                    <%if $customer_part%>
-                                                                        <%foreach from=$customer_part item=c%>
-                                                                            <%*assign var="customer" value=$Crud.get_data_by_id("customer", $c.customer_id, "id")*%>
-                                                                            <option value="<%$c.id%>">
-                                                                                <%*$customer.0.customer_name%>/<%$customer.0.customer_code%>/<%$c.part_number%>/<%$c.part_description*%>
-                                                                            </option>
-                                                                        <%/foreach%>
-                                                                    <%/if%>
+                                                                    <?php if ($_smarty_tpl->tpl_vars['customer_part']->value) {?>
+                                                                        <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['customer_part']->value, 'c');
+$_smarty_tpl->tpl_vars['c']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['c']->value) {
+$_smarty_tpl->tpl_vars['c']->do_else = false;
+?>
+                                                                                                                                                        <option value="<?php echo $_smarty_tpl->tpl_vars['c']->value['id'];?>
+">
+                                                                                                                                                            </option>
+                                                                        <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
+                                                                    <?php }?>
                                                                 </select>
 
                                                             </div>
@@ -245,55 +295,22 @@
                                         <table id="example1" class="table table-bordered table-striped">
                                             <thead>
                                             <tr>
-                                            <%foreach from=$data key=key item=val%>
-                                            <th><b>Search <%$val['title']%></b></th>
-                                            <%/foreach%>
+                                            <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['data']->value, 'val', false, 'key');
+$_smarty_tpl->tpl_vars['val']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['key']->value => $_smarty_tpl->tpl_vars['val']->value) {
+$_smarty_tpl->tpl_vars['val']->do_else = false;
+?>
+                                            <th><b>Search <?php echo $_smarty_tpl->tpl_vars['val']->value['title'];?>
+</b></th>
+                                            <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                                         </tr>
                                             </thead>
                                             <tbody>
                                             </tbody>
-                                        <%*   <tbody>
-                                                <%assign var="i" value=1%>
-                                                <%if $sales_parts%>
-                                                    <%foreach from=$sales_parts item=po%>
-                                                    <%if $po->basic_total > 0%>
-                                                    <%assign var="subtotal" value=$po->basic_total%>
-                                                    <%else%>
-                                                        <%assign var="subtotal" value=round($po->total_rate - $po->gst_amount, 2)%>
-                                                    <%/if%>
-                                                    
-                                                    <%if $po->part_price > 0%>
-                                                        <%assign var="rate" value=$po->part_price%>
-                                                    <%else%>
-                                                        <%assign var="rate" value=round($subtotal / $po->qty, 2)%>
-                                                    <%/if%>
-                                                        <%assign var="row_total" value=round($po->total_rate, 2) + round($po->tcs_amount, 2)%>
-                                                        <tr>
-                                                            <td><%$i%></td>
-                                                            <td><%$po->customer_name%></td>
-                                                            <td><%$po->po_number%></td>
-                                                            <td><%$po->salesNumber%></td>
-                                                            <td><%$po->sales_date%></td>
-                                                            <td><%$po->status%></td>
-                                                            <td><%$po->part_number%></td>
-                                                            <td><%$po->part_description%></td>
-                                                            <td><%$po->hsn_code%></td>
-                                                            <td><%$po->qty%></td>
-                                                            <td><%$po->uom_id%></td>
-                                                            <td><%$uom_id%></td>
-                                                            <td><%$subtotal%></td>
-                                                            <td><%round($po->sgst_amount, 2)%></td>
-                                                            <td><%round($po->cgst_amount, 2)%></td>
-                                                            <td><%round($po->igst_amount, 2)%></td>
-                                                            <td><%round($po->tcs_amount, 2)%></td>
-                                                            <td><%round($po->gst_amount, 2)%></td>
-                                                            <td><%round($row_total, 2)%></td>
-                                                        </tr>
-                                                        <%assign var="i" value=$i+1%>
-                                                    <%/foreach%>
-                                                <%/if%>
-                                            </tbody> *%>
-                                        </table>
+                                                                                </table>
                                     </div>
                                 </div>
                                 <!-- /.card-body -->
@@ -310,17 +327,34 @@
     </div>
     <!-- /.content-wrapper -->
 </div>
-<script>
-    var column_details =  <%$data|json_encode%>;
-    var page_length_arr = <%$page_length_arr|json_encode%>;
-    var is_searching_enable = <%$is_searching_enable|json_encode%>;
-    var is_top_searching_enable =  <%$is_top_searching_enable|json_encode%>;
-    var is_paging_enable =  <%$is_paging_enable|json_encode%>;
-    var is_serverSide =  <%$is_serverSide|json_encode%>;
-    var no_data_message =  <%$no_data_message|json_encode%>;
-    var is_ordering =  <%$is_ordering|json_encode%>;
-    var sorting_column = <%$sorting_column%>;
-    var api_name =  <%$api_name|json_encode%>;
-    var base_url = <%$base_url|json_encode%>;
-</script>
-<script src="<%$base_url%>/public/js/reports/sales_repots.js"></script>
+<?php echo '<script'; ?>
+>
+    var column_details =  <?php echo json_encode($_smarty_tpl->tpl_vars['data']->value);?>
+;
+    var page_length_arr = <?php echo json_encode($_smarty_tpl->tpl_vars['page_length_arr']->value);?>
+;
+    var is_searching_enable = <?php echo json_encode($_smarty_tpl->tpl_vars['is_searching_enable']->value);?>
+;
+    var is_top_searching_enable =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_top_searching_enable']->value);?>
+;
+    var is_paging_enable =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_paging_enable']->value);?>
+;
+    var is_serverSide =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_serverSide']->value);?>
+;
+    var no_data_message =  <?php echo json_encode($_smarty_tpl->tpl_vars['no_data_message']->value);?>
+;
+    var is_ordering =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_ordering']->value);?>
+;
+    var sorting_column = <?php echo $_smarty_tpl->tpl_vars['sorting_column']->value;?>
+;
+    var api_name =  <?php echo json_encode($_smarty_tpl->tpl_vars['api_name']->value);?>
+;
+    var base_url = <?php echo json_encode($_smarty_tpl->tpl_vars['base_url']->value);?>
+;
+<?php echo '</script'; ?>
+>
+<?php echo '<script'; ?>
+ src="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+/public/js/reports/sales_repots.js"><?php echo '</script'; ?>
+><?php }
+}

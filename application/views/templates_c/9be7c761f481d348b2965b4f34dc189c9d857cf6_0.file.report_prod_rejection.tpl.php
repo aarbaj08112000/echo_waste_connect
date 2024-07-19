@@ -1,4 +1,27 @@
-<div class="wrapper container-xxl flex-grow-1 container-p-y">
+<?php
+/* Smarty version 4.3.2, created on 2024-07-05 11:29:12
+  from '/var/www/html/extra/erp_converted/application/views/templates/admin/molding/report_prod_rejection.tpl' */
+
+/* @var Smarty_Internal_Template $_smarty_tpl */
+if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
+  'version' => '4.3.2',
+  'unifunc' => 'content_66878bb02f8922_78231759',
+  'has_nocache_code' => false,
+  'file_dependency' => 
+  array (
+    '9be7c761f481d348b2965b4f34dc189c9d857cf6' => 
+    array (
+      0 => '/var/www/html/extra/erp_converted/application/views/templates/admin/molding/report_prod_rejection.tpl',
+      1 => 1720159151,
+      2 => 'file',
+    ),
+  ),
+  'includes' => 
+  array (
+  ),
+),false)) {
+function content_66878bb02f8922_78231759 (Smarty_Internal_Template $_smarty_tpl) {
+?><div class="wrapper container-xxl flex-grow-1 container-p-y">
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme filter-popup-block" style="width: 0px;">
     <div class="app-brand demo justify-content-between">
         <a href="javascript:void(0)" class="app-brand-link">
@@ -44,9 +67,15 @@
                               <label for="">
                                  <span class="text-danger">Data Analysis </span>
                                  <div style="padding-left: 10px;padding-top:10px">
-                                    <li>Total rejection across all the customers : <span class="text-danger"><%$total_rejection[0]->total_rejection_qty %></span></li>
-                                    <li>Maximum rejections are for reason <span class="text-danger"><%$max_rejection_reason[0]->name %></span> with Quantity: <span class="text-danger"><%$max_rejection_reason[0]->total_rejection_qty %></span></li>
-                                    <li>Maximum rejection on machine : <span class="text-danger"><%$machine_analysis[0]->machine_name %></span> for reason <span class="text-danger"><%$machine_analysis[0]->name %></span> with Quantity: <span class="text-danger"><%$machine_analysis[0]->total_rejection_qty %></span></li>
+                                    <li>Total rejection across all the customers : <span class="text-danger"><?php echo $_smarty_tpl->tpl_vars['total_rejection']->value[0]->total_rejection_qty;?>
+</span></li>
+                                    <li>Maximum rejections are for reason <span class="text-danger"><?php echo $_smarty_tpl->tpl_vars['max_rejection_reason']->value[0]->name;?>
+</span> with Quantity: <span class="text-danger"><?php echo $_smarty_tpl->tpl_vars['max_rejection_reason']->value[0]->total_rejection_qty;?>
+</span></li>
+                                    <li>Maximum rejection on machine : <span class="text-danger"><?php echo $_smarty_tpl->tpl_vars['machine_analysis']->value[0]->machine_name;?>
+</span> for reason <span class="text-danger"><?php echo $_smarty_tpl->tpl_vars['machine_analysis']->value[0]->name;?>
+</span> with Quantity: <span class="text-danger"><?php echo $_smarty_tpl->tpl_vars['machine_analysis']->value[0]->total_rejection_qty;?>
+</span></li>
                                  </div>
                               </label>
                            </div>
@@ -67,16 +96,25 @@
                                        </tr>
                                     </thead>
                                     <tbody>
-                                       	<%assign var='i' value=1 %>
-                                        <%if ($max_rejection_reason) %>
-                                            <%foreach from=$max_rejection_reason item=r %>
+                                       	<?php $_smarty_tpl->_assignInScope('i', 1);?>
+                                        <?php if (($_smarty_tpl->tpl_vars['max_rejection_reason']->value)) {?>
+                                            <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['max_rejection_reason']->value, 'r');
+$_smarty_tpl->tpl_vars['r']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['r']->value) {
+$_smarty_tpl->tpl_vars['r']->do_else = false;
+?>
 		                                       <tr>
-		                                          <td><%$r->name %></td>
-		                                          <td><%$r->total_rejection_qty %></td>
+		                                          <td><?php echo $_smarty_tpl->tpl_vars['r']->value->name;?>
+</td>
+		                                          <td><?php echo $_smarty_tpl->tpl_vars['r']->value->total_rejection_qty;?>
+</td>
 		                                       </tr>
-		                                    <%assign var='i' value=$i+1 %>
-		                                    <%/foreach%>
-                                        <%/if%>
+		                                    <?php $_smarty_tpl->_assignInScope('i', $_smarty_tpl->tpl_vars['i']->value+1);?>
+		                                    <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
+                                        <?php }?>
                                     </tbody>
                                  </table>
                               </div>
@@ -92,17 +130,27 @@
                                        </tr>
                                     </thead>
                                     <tbody>
-                                       <%assign var='i' value=1 %>
-                                        <%if ($machine_analysis) %>
-                                            <%foreach from=$machine_analysis item=r %>
+                                       <?php $_smarty_tpl->_assignInScope('i', 1);?>
+                                        <?php if (($_smarty_tpl->tpl_vars['machine_analysis']->value)) {?>
+                                            <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['machine_analysis']->value, 'r');
+$_smarty_tpl->tpl_vars['r']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['r']->value) {
+$_smarty_tpl->tpl_vars['r']->do_else = false;
+?>
 		                                       <tr>
-		                                          <td><%$r->machine_name %></td>
-		                                          <td><%$r->name %></td>
-		                                          <td><%$r->total_rejection_qty %></td>
+		                                          <td><?php echo $_smarty_tpl->tpl_vars['r']->value->machine_name;?>
+</td>
+		                                          <td><?php echo $_smarty_tpl->tpl_vars['r']->value->name;?>
+</td>
+		                                          <td><?php echo $_smarty_tpl->tpl_vars['r']->value->total_rejection_qty;?>
+</td>
 		                                       </tr>
-		                                    <%assign var='i' value=$i+1 %>
-		                                    <%/foreach%>
-                                        <%/if%>
+		                                    <?php $_smarty_tpl->_assignInScope('i', $_smarty_tpl->tpl_vars['i']->value+1);?>
+		                                    <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
+                                        <?php }?>
                                     </tbody>
                                  </table>
                               </div>
@@ -126,22 +174,38 @@
                            </tr>
                         </thead>
                         <tbody>
-                           <%assign var='i' value=1 %>
-                            <%if ($report_prod_rejection) %>
-                                <%foreach from=$report_prod_rejection item=r %>
+                           <?php $_smarty_tpl->_assignInScope('i', 1);?>
+                            <?php if (($_smarty_tpl->tpl_vars['report_prod_rejection']->value)) {?>
+                                <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['report_prod_rejection']->value, 'r');
+$_smarty_tpl->tpl_vars['r']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['r']->value) {
+$_smarty_tpl->tpl_vars['r']->do_else = false;
+?>
 		                           <tr>
-		                              <td><%$i %></td>
-		                              <td><%$r->rejection_reason %></td>
-		                              <td><%$r->rejection_qty %></td>
-		                              <td><%$r->customer_name %></td>
-		                              <td><%$r->part_number %></td>
-		                              <td><%$r->prod_date %>/ <%$r->shift_type %></td>
-		                              <td><%$r->machine_name %></td>
-		                              <td><%$r->operator_name %></td>
+		                              <td><?php echo $_smarty_tpl->tpl_vars['i']->value;?>
+</td>
+		                              <td><?php echo $_smarty_tpl->tpl_vars['r']->value->rejection_reason;?>
+</td>
+		                              <td><?php echo $_smarty_tpl->tpl_vars['r']->value->rejection_qty;?>
+</td>
+		                              <td><?php echo $_smarty_tpl->tpl_vars['r']->value->customer_name;?>
+</td>
+		                              <td><?php echo $_smarty_tpl->tpl_vars['r']->value->part_number;?>
+</td>
+		                              <td><?php echo $_smarty_tpl->tpl_vars['r']->value->prod_date;?>
+/ <?php echo $_smarty_tpl->tpl_vars['r']->value->shift_type;?>
+</td>
+		                              <td><?php echo $_smarty_tpl->tpl_vars['r']->value->machine_name;?>
+</td>
+		                              <td><?php echo $_smarty_tpl->tpl_vars['r']->value->operator_name;?>
+</td>
 		                           </tr>
-		                        <%assign var='i' value=$i+1 %>
-		                        <%/foreach%>
-                            <%/if%>
+		                        <?php $_smarty_tpl->_assignInScope('i', $_smarty_tpl->tpl_vars['i']->value+1);?>
+		                        <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
+                            <?php }?>
                         </tbody>
                      </table>
                      </div>
@@ -159,7 +223,8 @@
    <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
-<script>
+<?php echo '<script'; ?>
+>
 var file_name = "report_prod_rejection";
 var pdf_title = "Rejection Report";
    document.getElementById("showIcon").addEventListener("click", function() {
@@ -233,6 +298,8 @@ var pdf_title = "Rejection Report";
                 },
             ],
    });
-</script>
+<?php echo '</script'; ?>
+>
 </body>
-</html>
+</html><?php }
+}
