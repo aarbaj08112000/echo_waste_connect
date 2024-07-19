@@ -1,7 +1,7 @@
 .hide{
   display: none;
 }
-.error{
+label.error{
   color: red;
 }
 /* Success Toast */

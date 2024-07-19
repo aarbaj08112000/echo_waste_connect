@@ -1,47 +1,31 @@
 var table = '';
 var file_name = "item_par_list";
 var pdf_title = "Item part List";
-// var myModal = new bootstrap.Modal(document.getElementById('child_part_update'))
+var myModal = new bootstrap.Modal(document.getElementById('addRevision'))
 const page = {
     init: function(){
         this.dataTable();
+       
         this.filter();
-        // this.formValidation();
-        // $(document).on("click",".edit-part",function(){
-        //     var data = $(this).attr("data-value");
-        //     data = JSON.parse(atob(data)); 
-        //     console.log(data)
-        //     var option = '';
-        //     if(data.sub_type == 'Regular grn' || data.sub_type == 'RM' ){
-        //         option = '<option  value="Regular grn">Regular GRN</option><option  value="RM">RM</option>';
-        //     }else if(data.sub_type == 'Subcon grn' || data.sub_type == 'Subcon Regular'){
-        //         option = '<option  value="Subcon grn">Subcon GRN</option> <option value="Subcon Regular">Subcon Regular</option>';
-        //     }else if(data.sub_type == 'consumable'){
-        //         option = '<option sub_type value="consumable" >Consumable</option>';
-        //     }else if(data.sub_type == 'customer_bom'){
-        //         option = '<option sub_type value="customer_bom">Customer BOM</option>';
-        //     }else if(data.sub_type == 'asset'){
-        //         option = '<option sub_type value="asset" >Asset</option>';
-        //     }
-        //     $("#sub_type").html(option).select2();
-        //     $("label.error").remove();
-        //     $("input.error").removeClass('error');
-        //     $("#part_id").val(data.part_id);
-        //     $("#part_number").val(data.part_number);
-        //     $("#part_description").val(data.part_description);
-        //     $("#saft__stk").val(data.buffer_stock);
-        //     $("#hsn_code").val(data.hsn_code);
-        //     $("#sub_type").val(data.sub_type).trigger("change");
-        //     $("#store_rack_location").val(data.store_rack_location);
-        //     $("#store_stock_rate").val(data.store_stock_rate);
-        //     $("#weight").val(data.weight);
-        //     $("#size").val(data.size);
-        //     $("#thickness").val(data.thickness);
-        //     $("#uom_id").val(data.uom_id).trigger("change");
-        //     $("#max_uom").val(data.max_uom);
-        //     $("#grade").val(data.grade);
-        //     myModal.show();
-        // })
+        this.formValidation();
+        $(document).on("click",".edit-supplier-part-price",function(){
+            $("label.error").remove();
+            var data = $(this).attr("data-value");
+            data = JSON.parse(atob(data)); 
+            console.log(data);
+            var option = '';
+            $("#id").val(data.id);
+            $("#upart_number").val(data.part_number);
+            $("#upart_desc").val(data.part_description);
+            $("#supplier_id").val(data.supplier_id);
+            $("#urevision_date").val("");
+            $("#urevision_no").val("");
+            $("#revision_remark").val("");
+            $("#upart_rate").val("");
+            $("#quotation_document").val("");
+            $("#gst_id").val(data.gs_id).trigger("change");
+            myModal.show();
+        })
 
     },
     dataTable: function(){
@@ -132,6 +116,7 @@ const page = {
                 url: "welcome/view_child_part_supplier",
                 type: "POST",
             },
+            columnDefs: [{ sortable: false, targets: 1 },{ sortable: false, targets: 12 }],
         });
         $('.dataTables_length').find('label').contents().filter(function() {
             return this.nodeType === 3; // Filter out text nodes
@@ -142,74 +127,48 @@ const page = {
     },
     formValidation: function(){
         let that = this;
-        $("#updatechildpart").validate({
+        $("#addRevPart").validate({
             rules: {
-                part_number: {
+                upart_number: {
                     required: true
                 },
-                part_description: {
+                upart_desc: {
                     required: true
                 },
-                saft__stk: {
+                urevision_date: {
                     required: true
                 },
-                hsn_code: {
+                urevision_no: {
                     required: true
                 },
-                sub_type: {
+                revision_remark: {
                     required: true
                 },
-                store_rack_location: {
+                upart_rate: {
                     required: true
                 },
-                store_stock_rate: {
+                // quotation_document: {
+                //     required: true,
+                //     number: true
+                // },
+                gst_id: {
                     required: true,
-                    number: true
                 },
-                weight: {
-                    required: true,
-                    number: true
-                },
-                size: {
-                    required: true
-                },
-                thickness: {
-                    required: true
-                },
-                uom_name: {
-                    required: true
-                },
-                max_uom: {
-                    required: true,
-                    number: true
-                },
-                grade: {
-                    required: true
-                }
             },
             messages: {
-                part_number: "Please enter Part Number",
-                part_description: "Please enter Part Description",
-                saft__stk: "Please enter Safety/Buffer Stock",
-                hsn_code: "Please enter HSN Code",
-                sub_type: "Please select Purchase Item Category",
-                store_rack_location: "Please enter Store Rack Location",
-                store_stock_rate: {
-                    required: "Please enter Store Stock Rate",
-                    number: "Please enter a valid number"
-                },
-                weight: {
-                    required: "Please enter Weight",
-                    number: "Please enter a valid number"
-                },
-                size: "Please enter Size",
-                thickness: "Please enter Thickness",
-                uom_name: "Please select UOM",
-                max_uom: {
-                    required: "Please enter Max PO Quantity",
-                    number: "Please enter a valid number"
-                },
-                grade: "Please enter Grade"
+                upart_number: "Please enter Part Number",
+                upart_desc: "Please enter Part Description",
+                urevision_date: "Please enter Revision Date",
+                urevision_no: "Please enter Revision Number",
+                revision_remark: "Please enter Revision Remark",
+                upart_rate: "Please enter Part Price",
+                // quotation_document: {
+                //     required: "Please enter Store Stock Rate",
+                //     number: "Please enter a valid number"
+                // },
+                gst_id: {
+                    required: "Please enter Tax Structure",
+                }
             },
             errorPlacement: function(error, element)
             {
@@ -218,25 +177,24 @@ const page = {
             submitHandler: function(form) {
               var formdata = new FormData(form);
               $.ajax({
-                url: "update_child_part_view",
+                url: "updatechildpart_supplier",
                 data:formdata,
                 processData:false,
                 contentType:false,
                 cache:false,
                 type:"post",
                 success: function(result){
-                  var data = JSON.parse(result);
-                  if (data.success == 1) {
-                    //   toastr.success(data.messages);
-                    //   setTimeout(function () {
-                    //     window.location.href = "dashboard";
-                    // }, 2000);
-                    table.destroy(); 
-                    that.dataTable(); 
-                    myModal.hide();  
-                  }else{
-                    // toastr.error("Invalid data");
-                  }
+                    var data = JSON.parse(result);
+                    if (data.success == 1) {
+                        toastr.success(data.message);
+                        setTimeout(function() {
+                            myModal.hide();
+                            table.destroy(); 
+                            that.dataTable();
+                        }, 2000);
+                    } else {
+                        toastr.error(data.message);
+                    }
 
                 }
               });

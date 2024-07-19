@@ -104,8 +104,8 @@
 
     <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5 listing-btn">
       <div class="btn-group">
-        <a type="button" class="btn btn-danger" href="<%base_url('child_part/direct')%>">Add Direct Regular Item</a>
-        <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false"  data-bs-reference="parent">
+        <a type="button" class="btn btn-seconday" href="<%base_url('child_part/direct')%>">Add Direct Regular Item</a>
+        <button type="button" class="btn btn btn-seconday dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false"  data-bs-reference="parent">
         </button>
         <ul class="dropdown-menu dropdown-menu-start" >
           <li><a class="dropdown-item" href="<%base_url('child_part/subcon_item')%>"> Add Direct Subcon Item</a></li>

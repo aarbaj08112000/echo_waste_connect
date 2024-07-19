@@ -62,15 +62,14 @@ $(document).ready(function() {
             cache: false,
             type: "post",
             success: function(result) {
-                console.log(result);
                 var data = JSON.parse(result);
                 if (data.success == 1) {
-                    toastr.success(data.messages);
+                    toastr.success(data.message);
                     setTimeout(function() {
                         window.location.href = "child_part_supplier_view";
                     }, 2000);
                 } else {
-                    toastr.error(data.messages);
+                    toastr.error(data.message);
                 }
             },
             error: function(xhr, status, error) {

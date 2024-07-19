@@ -95,6 +95,11 @@ function digitalSignature($file_path = '',$location = '',$signer = '',$certpwd =
 	fclose($myfile);
 	// exit();
 }
+function formateFormDate($date =''){
+	$date=date_create($date);
+	$date = date_format($date,"Y-m-d");
+	return $date;
+}
 
 
 ?>

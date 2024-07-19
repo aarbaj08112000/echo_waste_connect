@@ -117,3 +117,6 @@ thead, tbody, tfoot, tr, td, th {
 .DTFC_LeftHeadWrapper thead th {
       vertical-align: middle;
 }
+DTFC_LeftBodyLiner{
+  overflow: hidden !important;
+}

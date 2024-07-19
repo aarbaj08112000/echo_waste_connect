@@ -62,6 +62,8 @@
       <!-- <link rel="stylesheet" type="text/css" href="<%$base_url%>public/css/data_table/jquery.dataTables.min.css"> -->
       <link rel="stylesheet" type="text/css" href="<%$base_url%>public/css/data_table/searchPanes.dataTables.min.css">
       <!-- Helpers -->
+
+
       <script src="<%$base_url%>public/assets/vendor/js/helpers.js"></script>
       <script src="<%$base_url%>public/assets/js/config.js"></script>
       <script src="<%$base_url%>public/assets/vendor/js/bootstrap.js"></script>
@@ -82,6 +84,12 @@
       <!-- select2 -->
       <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
       <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+      <!-- toastr -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+      <!-- toastr -->
+
       <script type="text/javascript">
          var theme_color = "#ea1c31";
       </script>

@@ -106,39 +106,37 @@ jelly-o tart brownie jelly.
 
   <div class="col-xl">
     <div class="card mb-4 px-3">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0" id="form-title">Add</h5>
-      </div>
+      
       <div class="card-body">
         <form id="addchildpart" class="mb-3" action="javascript:void(0)" method="POST" enctype='multipart/form-data'>
           <div class="row">
             <div class="col-lg-6 ">
               <div class="form-group mb-3">
-                <label for="po_num">Part Number</label><span class="text-danger">*</span>
+                <label for="po_num" class="form-label">Part Number</label><span class="text-danger">*</span>
                 <input type="text" name="part_number"  class="form-control" id="exampleInputEmail1" placeholder="Enter Part Number" aria-describedby="emailHelp">
               </div>
               </div>
               <div class="col-lg-6">
               <div class="form-group mb-3">
-                <label for="po_num">Part Description </label><span class="text-danger">*</span>
+                <label for="po_num" class="form-label">Part Description </label><span class="text-danger">*</span>
                 <input type="text" name="part_desc"  class="form-control"  placeholder="Enter Part Description" aria-describedby="emailHelp">
               </div>
             </div>
             <div class="col-lg-6">
               <div class="form-group mb-3">
-                <label for="po_num">Safety/buffer stock </label><span class="text-danger">*</span>
+                <label for="po_num" class="form-label">Safety/buffer stock </label><span class="text-danger">*</span>
                 <input type="text" name="safty_buffer_stk"  class="form-control"  placeholder="Enter Saftey/buffer stock" aria-describedby="emailHelp">
               </div>
             </div>
             <div class="col-lg-6">
               <div class="form-group mb-3">
-                <label for="po_num">HSN Code</label>
+                <label for="po_num" class="form-label">HSN Code</label>
                 <input type="text" name="hsn_code" class="form-control" id="hsn_code" placeholder="Enter HSN Code" aria-describedby="emailHelp">
               </div>
             </div>
             <div class="col-lg-6">
               <div class="form-group mb-3">
-                <label> Purchase Item Category </label><span class="text-danger">*</span>
+                <label class="form-label"> Purchase Item Category </label><span class="text-danger">*</span>
                 <select class="form-control select2 item-category" name="sub_type">
                   <%if $type == "direct"%>
                   <option value="Regular grn">Regular grn</option>
@@ -161,7 +159,7 @@ jelly-o tart brownie jelly.
               <%if $type == "customer_bom" || $type == "indirect_assets"%>
               <div class="col-lg-6">
               <div class="form-group mb-3">
-                <label> Asset </label>
+                <label class="form-label"> Asset </label>
                 <select class="form-control select2 assets" name="asset" style="width: 100%;">
                   <option value="consumable">Consumable</option>
                   <%if $asset %>
@@ -177,32 +175,32 @@ jelly-o tart brownie jelly.
 
               <div class="col-lg-6">
                 <div class="form-group mb-3">
-                  <label for="po_num">Store Rack Location</label>
+                  <label for="po_num" class="form-label">Store Rack Location</label>
                   <input type="text" name="store_rack_location" class="form-control" id="exampleInputEmail1" placeholder="Enter Store Rack Location" aria-describedby="emailHelp">
                 </div>
               </div>
               <div class="col-lg-6">
                 <div class="form-group mb-3">
-                  <label for="po_num">Store Stock Rate</label>
+                  <label for="po_num" class="form-label">Store Stock Rate</label>
                   <input type="number" step="any" name="store_stock_rate" class="form-control" id="exampleInputEmail1" placeholder="Enter Store Stock Rate" aria-describedby="emailHelp">
                 </div>
               </div>
                 <%if ($entitlements['isSheetMetal']!=null) %>
                 <div class="col-lg-6">
                 <div class="form-group mb-3">
-                  <label for="po_num">Weight</label>
+                  <label for="po_num" class="form-label">Weight</label>
                   <input type="number" step="any" name="weight" class="form-control"  placeholder="Enter Weight" aria-describedby="emailHelp">
                 </div>
               </div>
               <div class="col-lg-6">
                 <div class="form-group mb-3">
-                  <label for="po_num">Size</label>
+                  <label for="po_num" class="form-label">Size</label>
                   <input type="text" step="any" name="size" class="form-control"  placeholder="Enter Size" aria-describedby="emailHelp">
                 </div>
               </div>
               <div class="col-lg-6">
                 <div class="form-group mb-3">
-                  <label for="po_num">Thickness</label>
+                  <label for="po_num" class="form-label">Thickness</label>
                   <input type="text" step="any" name="thickness" class="form-control"  placeholder="Enter Thickness" aria-describedby="emailHelp">
                 </div>
               </div>
@@ -210,7 +208,7 @@ jelly-o tart brownie jelly.
                 <%/if%>
               <div class="col-lg-6">
                 <div class="form-group mb-3">
-                  <label> UOM </label><span class="text-danger">*</span>
+                  <label class="form-label"> UOM </label><span class="text-danger">*</span>
                   <select class="form-control select2 item-uom" name="uom_id" style="width: 100%;">
                     <%foreach from=$uom item=c1%>
                     <option value="<%$c1->id %>">
@@ -221,19 +219,19 @@ jelly-o tart brownie jelly.
                 </div>
                 <div class="col-lg-6">
                   <div class="form-group mb-3">
-                    <label for="po_num">Max PO Quantity </label><span class="text-danger">*</span>
+                    <label for="po_num" class="form-label">Max PO Quantity </label><span class="text-danger">*</span>
                     <input  type="number" step="any" name="max_uom" class="form-control" id="hsn_code" placeholder="Enter Max UOM" aria-describedby="emailHelp">
                   </div>
                 </div>
                 <div class="col-lg-6">
                   <div class="form-group mb-3">
-                    <label for="po_num">Grade <span class="text-danger">*</span> </label>
+                    <label class="form-label" for="po_num">Grade <span class="text-danger">*</span> </label>
                     <input type="text" name="grade" class="form-control"  placeholder="Enter grade" aria-describedby="emailHelp">
                   </div>
                 </div>
               </div>
 
-              <button type="submit" class="btn btn-primary">Send</button>
+              <button type="submit" class="btn btn-primary">Submit</button>
             </form>
           </div>
         </div>
@@ -244,12 +242,7 @@ jelly-o tart brownie jelly.
 
 
   <div class="content-backdrop fade"></div>
-<style type="text/css">
-  .select2-container--default .select2-selection.select2-selection--single {
-    height: 37px !important;
-    border: var(--bs-border-width) solid #d9dee3;
-}
-</style>
+
 <script type="text/javascript">
   var base_url = <%$base_url|@json_encode%>
 </script>
