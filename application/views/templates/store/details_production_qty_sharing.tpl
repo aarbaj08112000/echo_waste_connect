@@ -4,7 +4,7 @@
       <div class="container-fluid">
          <div class="row mb-2">
             <div class="col-sm-6">
-               <h1>Production Details - Sharing</h1>
+               <h1>Production Details - Sharing  </h1>
             </div>
             <div class="col-sm-6">
                <ol class="breadcrumb float-sm-right">
@@ -39,12 +39,12 @@
                         </div>
                         <div class="col-lg-2">
                            <label for="">Machine Data</label>
-                           <input type="text" readonly value="<%$sharing_p_q[0]->machine_name %>" 
+                           <input type="text" readonly value="<%$sharing_p_q[0]->machine_name %>"
                               class="form-control">
                         </div>
                         <div class="col-lg-2">
                            <label for="">Operator Data</label>
-                           <input type="text" readonly value="<%$sharing_p_q[0]->op_name %>" 
+                           <input type="text" readonly value="<%$sharing_p_q[0]->op_name %>"
                               class="form-control">
                         </div>
                      </div>
@@ -165,7 +165,7 @@
 									                  <div class="modal-header">
 									                     <h5 class="modal-title" id="exampleModalLabel">
 									                        Onhold
-									                        Update 
+									                        Update
 									                     </h5>
 									                     <button type="button" class="close" data-dismiss="modal"
 									                        aria-label="Close">
