@@ -90,9 +90,9 @@
       <div class="sub-header-left pull-left breadcrumb">
         <h1>
           Store
-          <a hijacked="yes" href="#stock/issue_request/index" class="backlisting-link" title="Back to Issue Request Listing" >
+          <a hijacked="yes" href="javascript:void(0)" class="backlisting-link" >
             <i class="ti ti-chevrons-right" ></i>
-            <em >Challan</em></a>
+            <em >Stock</em></a>
           </h1>
           <br>
           <span >Supplier Parts (Item) Stock.</span>
@@ -105,38 +105,37 @@
         <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
         <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
         <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+        <a href="<%base_url('download_stock_variance') %>" class="btn btn-seconday" title="Download Stock Variance"><i class="ti ti-download"></i> </a>
       </div>
-      <div class="card-header">
-        <h3 class="card-title">
-          <a href="<%base_url('download_stock_variance') %>" class="btn btn-info">Download Stock Variance </a>
-        </h3>
-      </div>
-      <form action="<%base_url('view_part_stocks') %>" method="POST" enctype="multipart/form-data">
-        <div class="row">
-          <div class="col-lg-2">
-            <div style="">
-              <div class="form-group">
-                <label for="on click url">Select Part Number<span class="text-danger">*</span></label> <br>
-                <select name="part_id" id="selectPart" class="form-control select2" required id="">
-                  <option value="ALL">All</option>
-                  <%foreach from=$supplier_part_select_list item=c %>
-                    <option <%if ($filter_part_id == $c->childPartId) %>selected <%/if%> value="<%$c->childPartId %>"><%$c->part_number %>
-                    </option>
-                  <%/foreach%>
-                  <!-- <option value="ALL">ALL</option> -->
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-4">
-            <label for="">&nbsp;</label> <br>
-            <button class="btn btn-secondary">Search </button>
-          </div>
-        </div>
-      </form>
+
+
+
 
       <!-- Main content -->
-      <div class="card p-0 mt-4">
+      <div class="card p-3">
+        <form action="<%base_url('view_part_stocks') %>" method="POST" enctype="multipart/form-data">
+          <div class="row">
+            <div class="col-lg-2">
+              <div style="">
+                <div class="form-group">
+                  <label for="on click url">Select Part Number<span class="text-danger">*</span></label> <br>
+                  <select name="part_id" id="selectPart" class="form-control select2" required id="">
+                    <option value="ALL">All</option>
+                    <%foreach from=$supplier_part_select_list item=c %>
+                      <option <%if ($filter_part_id == $c->childPartId) %>selected <%/if%> value="<%$c->childPartId %>"><%$c->part_number %>
+                      </option>
+                    <%/foreach%>
+                    <!-- <option value="ALL">ALL</option> -->
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <label for="">&nbsp;</label> <br>
+              <button class="btn btn-secondary">Search </button>
+            </div>
+          </div>
+        </form>
         <div class="table-responsive text-nowrap">
           <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="part_stocks">
             <thead>
