@@ -3702,102 +3702,102 @@ class Welcome extends CommonController
 	{
 
 		$column[] = [
-            "data" => "customer_name",
-            "title" => "CUSTOMER NAME",
+            "data" => "part_number",
+            "title" => "Customer Part Number",
             "width" => "14%",
             "className" => "dt-left",
         ];
         $column[] = [
-            "data" => "sales_number",
-            "title" => "Sales Inv No",
+            "data" => "part_description",
+            "title" => "Customer Part Description",
             "width" => "16%",
             "className" => "dt-left",
         ];
         $column[] = [
-            "data" => "created_date",
-            "title" => "Sales Inv Date",
+            "data" => "customer_name",
+            "title" => "Customer Name",
             "width" => "17%",
             "className" => "dt-center",
         ];
         $column[] = [
-            "data" => "subtotal",
-            "title" => "Basic Amount Total",
+            "data" => "month",
+            "title" => "Month",
             "width" => "10%",
             "className" => "dt-center",
 			'orderable' => false
         ];
         $column[] = [
-            "data" => "gst",
-            "title" => "GST Total Amount",
+            "data" => "schedule_qty",
+            "title" => "Schedule Qty 1",
             "width" => "17%",
             "className" => "dt-center",
         ];
         $column[] = [
-            "data" => "row_total",
-            "title" => "Total Amount With GST",
+            "data" => "schedule_qty_2",
+            "title" => "Schedule Qty 2",
             "width" => "17%",
             "className" => "dt-center",
 			'orderable' => false
         ];
         $column[] = [
-            "data" => "payment_terms",
-            "title" => "Payment Terms in Days",
+            "data" => "job_card_qty",
+            "title" => "Job Card Qumulative Qty",
             "width" => "7%",
             "className" => "dt-center",
         ];
         $column[] = [
-            "data" => "due_date",
-            "title" => "Due Date",
+            "data" => "job_card_qty",
+            "title" => "Job Card Balance Qty",
             "width" => "7%",
             "className" => "dt-center status-row",
         ];
         $column[] = [
-            "data" => "due_days",
-            "title" => "Due Days",
+            "data" => "issued",
+            "title" => "Job Card Issued",
             "width" => "17%",
             "className" => "dt-center",
 			
         ];
        
         $column[] = [
-            "data" => "payment_receipt_date_formated",
-            "title" => "Payment Receipt Date",
+            "data" => "closed",
+            "title" => "Job Card Closed",
             "width" => "7%",
             "className" => "dt-center",
         ];
         $column[] = [
-            "data" => "amount_received",
-            "title" => "Amount Received",
+            "data" => "rate",
+            "title" => "Customer Part Price",
             "width" => "7%",
             "className" => "dt-center",
 			'orderable' => false
         ];
         $column[] = [
-            "data" => "transaction_details",
-            "title" => "Transaction Details",
+            "data" => "dispatch_sales_qty",
+            "title" => "Dispatch (sales qty)",
             "width" => "7%",
             "className" => "dt-center",
 			'orderable' => false
         ];
         
         $column[] = [
-            "data" => "bal_amnt",
-            "title" => "Balance Amount to Receive",
+            "data" => "balance_s_qty",
+            "title" => "Balance Schedule qty",
             "width" => "7%",
             "className" => "dt-center",
 			'orderable' => false
         ];
 
 		$column[] = [
-				"data" => "action",
-				"title" => "Action",
+				"data" => "total1",
+				"title" => "Subtotal Schedule",
 				"width" => "7%",
 				"className" => "dt-center",
 				'orderable' => false
 			];
 			$column[] = [
-				"data" => "action",
-				"title" => "Action",
+				"data" => "total2",
+				"title" => "View Details",
 				"width" => "7%",
 				"className" => "dt-center",
 				'orderable' => false
@@ -3811,11 +3811,8 @@ class Welcome extends CommonController
 			$data['customer_id'] = $this->uri->segment('4');
 			$customer_id = $this->uri->segment('4');
 		}
-		
 		$data['customer_part'] = $this->Crud->read_data("customer_part");
 		$data['customer'] = $this->Crud->read_data("customer");
-
-
 		$data["data"] = $column;
         $data["is_searching_enable"] = false;
         $data["is_paging_enable"] = true;
