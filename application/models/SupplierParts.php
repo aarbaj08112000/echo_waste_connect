@@ -843,5 +843,31 @@ class SupplierParts extends CI_Model {
         return $ret_data;
     }
 
+    public function getPlanningViewData($planing_id = ''){
+        
+        $unitId = $this->Unit->getSessionClientId();
+        $this->db->select('
+            pd.planing_id,
+            pd.child_part_id,
+            cp.part_number,
+            cp.part_description,
+            pd.bom_qty,
+            pd.schedule_qty,
+            (pd.schedule_qty * pd.bom_qty) AS req_qty,
+            IFNULL(cps.stock, 0) AS stock,
+            ((pd.schedule_qty * pd.bom_qty) - IFNULL(cps.stock, 0)) AS shortage_qty
+        ');
+        $this->db->from('planing_data pd');
+        $this->db->join('child_part cp', 'pd.child_part_id = cp.id', 'left');
+        $this->db->join('child_part_stock cps', 'cp.id = cps.childPartId AND cps.clientId = '.$unitId, 'left');
+        $this->db->where('pd.planing_id', $planing_id);
+        $this->db->order_by('pd.planing_id', 'ASC');
+
+        $query = $this->db->get();
+        $planning_data = $query->result();
+        
+        return $planning_data;
+    }
+
 }
 ?>

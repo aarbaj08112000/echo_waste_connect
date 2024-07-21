@@ -3894,7 +3894,7 @@ class Welcome extends CommonController
 					$data['subtotal2'][$t->id] = 0;
 					if ($data['customer_part_rate'][$t->id]) {
 						$data['rate'][$t->id] = $data['customer_part_rate'][$t->id][0]->rate;
-						$data['subtotal1'][$t->id] = $data['customer_part_rate'][$t->id][0]->rate * $data['planing_data_new'][$t->id][0]->schedule_qty;
+						$data['subtotal1'][$t->id] = $data['customer_parplaning_data_report_viewt_rate'][$t->id][0]->rate * $data['planing_data_new'][$t->id][0]->schedule_qty;
 						$data['subtotal2'][$t->id] = $data['customer_part_rate'][$t->id][0]->rate * $data['planing_data_new'][$t->id][0]->schedule_qty_2;
 
 						$total1 = $total1 + $data['subtotal1'][$t->id];
@@ -3948,6 +3948,108 @@ class Welcome extends CommonController
 	public function planing_data_report()
 	{
 
+		$column[] = [
+            "data" => "part_number",
+            "title" => "Customer Part Number",
+            "width" => "14%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "part_description",
+            "title" => "Customer Part Description",
+            "width" => "16%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "customer_name",
+            "title" => "Customer Name",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "month",
+            "title" => "Month",
+            "width" => "10%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "button_total",
+            "title" => "Schedule Qty 1",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "schedule_qty_2",
+            "title" => "Schedule Qty 2",
+            "width" => "17%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "job_card_qty",
+            "title" => "Job Card Qumulative Qty",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "job_card_qty",
+            "title" => "Job Card Balance Qty",
+            "width" => "7%",
+            "className" => "dt-center status-row",
+        ];
+        $column[] = [
+            "data" => "issued",
+            "title" => "Job Card Issued",
+            "width" => "17%",
+            "className" => "dt-center",
+			
+        ];
+       
+        $column[] = [
+            "data" => "closed",
+            "title" => "Job Card Closed",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "rate",
+            "title" => "Customer Part Price",
+            "width" => "7%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "dispatch_sales_qty",
+            "title" => "Dispatch (sales qty)",
+            "width" => "7%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        
+        $column[] = [
+            "data" => "balance_s_qty",
+            "title" => "Balance Schedule qty",
+            "width" => "7%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+
+		$column[] = [
+				"data" => "total1",
+				"title" => "Subtotal Schedule",
+				"width" => "7%",
+				"className" => "dt-center",
+				'orderable' => false
+			];
+			$column[] = [
+				"data" => "total2",
+				"title" => "View Details",
+				"width" => "7%",
+				"className" => "dt-center",
+				'orderable' => false
+			];
+
 		//echo $this->input->post('customer_id');
 		if (!empty($this->input->post('customer_id'))) {
 			$data['customer_id'] = $this->input->post('customer_id');
@@ -3956,24 +4058,83 @@ class Welcome extends CommonController
 			$data['customer_id'] = $this->uri->segment('4');
 			$customer_id = $this->uri->segment('4');
 		}
-		
 		$data['customer_part'] = $this->Crud->read_data("customer_part");
+		$data["data"] = $column;
 		$data['customer'] = $this->Crud->read_data("customer");
-
-
-
-
-		$this->load->view('header');
-		$this->load->view('planing_data_report', $data);
-		$this->load->view('footer');
+        $data["is_searching_enable"] = false;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Employee data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
+		
+		// $this->load->view('header');
+		$this->getPage('reports/planing_data_report_view', $data);
+		// $this->load->view('footer');
 	}
 	
+	public function planningReportDataAjax(){
+		$post_data = $this->input->post();
+		
+        $column_index = array_column($post_data["columns"], "data");
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+			if ($key == 0) {
+				$order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+				$order_by .=
+				"," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+		
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+		
+		$data = $this->welcome_model->getPlanningReportView($condition_arr,$post_data["search"]);
+		
+		// pr($data,1);
+	
+		foreach ($data as $key => $value) {
+			$edit_data = base64_encode(json_encode($value)); 
+			$url = base_url('view_planing_data').'/'.$value['planing_id'];
+			$data[$key]['button_total'] = "<a href='$url'><button class='btn btn-primary'>View Details</button></a>";
+			$subtotal_1 = $val['rate'] * $val['schedule_qty'];
+			$subtotal_2 = $val['rate'] * $val['schedule_qty_2'];
+			$data[$key]['subtotal1'] = $subtotal_1;
+			$data[$key]['subtotal2'] = $subtotal_2;
+			$data[$key]['issued'] = '';
+			$data[$key]['closed'] = '';
+			$data[$key]['balance_s_qty'] = '';
+			$data[$key]['total1'] = '';
+			$data[$key]['total2'] = '';
+					
+			
+		}
+
+		$data["data"] = $data;
+        $total_record = $this->welcome_model->getPlanningReportViewCount([], $post_data["search"],$month = 'APR',$year = 'FY-2024');
+		
+        $data["recordsTotal"] = count($total_record);
+        $data["recordsFiltered"] = count($total_record);
+        echo json_encode($data);
+	}
+
+
 	/**
 	 * Stock Rejection transfer 
 	 */
 	public function transfer_stock()
 	{
-
 		$rejection_flow_id  = $this->uri->segment('2');
 		$rejection_flow_data = $this->Crud->get_data_by_id("rejection_flow", $rejection_flow_id, "id");
 		$child_part_data = $this->SupplierParts->getSupplierPartById($rejection_flow_data[0]->part_id);
