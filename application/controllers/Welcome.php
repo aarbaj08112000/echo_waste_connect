@@ -47,7 +47,7 @@ class Welcome extends CommonController
 
 		$created_month  = $this->input->post("created_month");
 		$created_year  = $this->input->post("created_year");
-
+		
 		if (empty($created_year)) {
 			$created_year = $this->year;
 		}
@@ -56,16 +56,71 @@ class Welcome extends CommonController
 			$created_month = $this->month;
 		}
 
-		$data['po_data'] = $this->Crud->customQuery("SELECT po.po_number, po.created_date, po.expiry_po_date, po.status, s.supplier_name, c.part_number,c.part_description, parts.qty, parts.pending_qty
-		FROM supplier s, new_po po
-		LEFT JOIN po_parts parts ON po.id = parts.po_id 
-		LEFT JOIN child_part c ON parts.part_id = c.id 
-		WHERE po.clientId = ".$this->Unit->getSessionClientId()." 
-		AND po.created_month = " . $created_month . "
-		AND po.created_year = " . $created_year . "
-		AND po.supplier_id = s.id
-		group by po.id ");
-
+		$column[] = [
+            "data" => "supplier_name",
+            "title" => "Supplier name",
+            "width" => "14%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "part_number",
+            "title" => "Part No",
+            "width" => "16%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "part_description",
+            "title" => "Part Description",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "po_number",
+            "title" => "PO Number",
+            "width" => "10%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "created_date",
+            "title" => "Date",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "expiry_po_date",
+            "title" => "Expiry Date<",
+            "width" => "17%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "status",
+            "title" => "Status",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "qty",
+            "title" => "Qty",
+            "width" => "7%",
+            "className" => "dt-center status-row",
+        ];
+        $column[] = [
+            "data" => "received_qty",
+            "title" => "Received Qty",
+            "width" => "17%",
+            "className" => "dt-center",
+			
+        ];
+       
+        $column[] = [
+            "data" => "pending_qty",
+            "title" => "Balance Qty",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+		
 		$data['created_year'] = $created_year;
 		$data['created_month'] = $created_month;
 
@@ -75,12 +130,63 @@ class Welcome extends CommonController
 			$data['month_data'][$i] = $this->Common_admin_model->get_month($i);
 			$data['month_number'][$i] = $this->Common_admin_model->get_month_number($data['month_data'][$i]);
 		}
+		$data["data"] = $column;
+        $data["is_searching_enable"] = false;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Employee data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
 		// $this->load->view('header.php',$data);
 		// $this->load->view('reports_po_balance_qty.php', $data);
 		// $this->load->view('footer.php');
 		$this->loadView('reports/reports_po_balance_qty',$data);
 
 	}
+
+	public function reportPoBalanceData(){
+		$post_data = $this->input->post();
+		
+        $column_index = array_column($post_data["columns"], "data");
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+			if ($key == 0) {
+				$order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+				$order_by .=
+				"," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+		
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+		
+		$data = $this->SupplierParts->getPoRepotData($condition_arr,$post_data["search"]);
+		
+		
+		
+		foreach ($data as $key => $value) {
+			$data[$key]['received_qty'] = $value['qty'] - $value['pending_qty'];
+		}
+		
+		$data["data"] = $data;
+        $total_record = $this->SupplierParts->getPoRepotDataCount([], $post_data["search"]);
+		
+        $data["recordsTotal"] = count($total_record);
+        $data["recordsFiltered"] = count($total_record);
+        echo json_encode($data);
+	}
+
 	public function filter_date($first_date, $second_date, $table, $column)
 	{
 		$this->db->where("$column >=", $first_date);
@@ -106,28 +212,89 @@ class Welcome extends CommonController
 			$created_month = $this->month;
 		}
 
-		$role_management_data = $this->db->query("SELECT * FROM `grn_details` grn
-		INNER JOIN new_po po ON po.id = grn.po_number 
-		WHERE po.clientId = ".$this->Unit->getSessionClientId()." 
-		AND grn.created_month = " . $created_month . " AND grn.created_year = " . $created_year . " ORDER BY grn.id DESC ");
-		$data['grn_details'] = $role_management_data->result();
-		// pr($data,1);
-		if ($data['grn_details']) {
-			foreach ($data['grn_details'] as $g) {
-				$data['new_po'][$g->id] = $this->Crud->get_data_by_id("new_po", $g->po_number, "id");
-				$data['inwarding'][$g->id] = $this->Crud->get_data_by_id("inwarding", $g->inwarding_id, "id");
-				$data['supplier_data'][$g->id] = $this->Crud->get_data_by_id("supplier", $new_po[0]->supplier_id, "id");
-				$data['child_part_data'][$g->id] = $this->Crud->get_data_by_id("child_part", $g->part_id, "id");
-				$data['data_old'][$g->id] = array(
-					'po_id' => $new_po[0]->id,
-					'part_id' => $g->part_id,
-		
-				);
-		
-				$po_parts[$g->id] = $this->Common_admin_model->get_data_by_id_multiple_condition("po_parts", $data_old[$g->id]);
-			}
-		}
 
+		$column[] = [
+            "data" => "supplier_name",
+            "title" => "Supplier name",
+            "width" => "14%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "part_number",
+            "title" => "Part No",
+            "width" => "16%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "part_description",
+            "title" => "Part Description",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "grn_number",
+            "title" => "GRN No",
+            "width" => "10%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "po_date",
+            "title" => "GRN Date",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "qty",
+            "title" => "Received QTY",
+            "width" => "17%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "verified_qty",
+            "title" => "Validation QTY",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+      
+
+		// $role_management_data = $this->db->query("SELECT * FROM `grn_details` grn
+		// INNER JOIN new_po po ON po.id = grn.po_number 
+		// WHERE po.clientId = ".$this->Unit->getSessionClientId()." 
+		// AND grn.created_month = " . $created_month . " AND grn.created_year = " . $created_year . " ORDER BY grn.id DESC ");
+		// $data['grn_details'] = $role_management_data->result();
+		// // pr($data,1);
+		// if ($data['grn_details']) {
+		// 	foreach ($data['grn_details'] as $g) {
+		// 		$data['new_po'][$g->id] = $this->Crud->get_data_by_id("new_po", $g->po_number, "id");
+		// 		$data['inwarding'][$g->id] = $this->Crud->get_data_by_id("inwarding", $g->inwarding_id, "id");
+		// 		$data['supplier_data'][$g->id] = $this->Crud->get_data_by_id("supplier", $new_po[0]->supplier_id, "id");
+		// 		$data['child_part_data'][$g->id] = $this->Crud->get_data_by_id("child_part", $g->part_id, "id");
+		// 		$data['data_old'][$g->id] = array(
+		// 			'po_id' => $new_po[0]->id,
+		// 			'part_id' => $g->part_id,
+		
+		// 		);
+		
+		// 		$po_parts[$g->id] = $this->Common_admin_model->get_data_by_id_multiple_condition("po_parts", $data_old[$g->id]);
+		// 	}
+		// }
+		$data["data"] = $column;
+        $data["is_searching_enable"] = false;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Employee data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
 		$data['created_year'] = $created_year;
 		$data['created_month'] = $created_month;
 		// echo 'SELECT * FROM `po_parts` WHERE  created_date >= '.$from_date.' AND  created_date <= '.$to_date.'';
@@ -136,6 +303,43 @@ class Welcome extends CommonController
 		// $this->load->view('footer.php');
 		$this->loadView('reports/reports_inspection',$data);
 	}
+
+
+	public function getInspectionReportData(){
+		$customer_part_id  = $this->input->post("customer_part_id");
+		$post_data = $this->input->post();
+
+        $column_index = array_column($post_data["columns"], "data");
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+			if ($key == 0) {
+				$order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+				$order_by .=
+				"," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+		
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+		
+		$data = $this->SupplierParts->getInspectionsReportView($condition_arr,$post_data["search"]);
+	
+		foreach ($data as $key => $value) {
+			
+			$data[$key]['po_date'] = $this->Crud->getDateByFormat($value['po_date']);
+		}
+
+		$data["data"] = $data;
+        $total_record = $this->SupplierParts->getInspectionsReportViewCount($condition_arr, $post_data["search"]);
+		
+        $data["recordsTotal"] = $total_record['tot_record'];
+        $data["recordsFiltered"] = $total_record['tot_record'];
+        echo json_encode($data);
+	}
+
 	public function pei_chart_sales_values_in_rs()
 	{
 
@@ -203,7 +407,6 @@ class Welcome extends CommonController
 		$created_month  = $this->input->post("created_month");
 		$created_year  = $this->input->post("created_year");
 
-
 		if (empty($created_year)) {
 			$created_year = $this->year;
 		}
@@ -214,12 +417,100 @@ class Welcome extends CommonController
 		// $role_management_data = $this->db->query('SELECT * FROM `grn_details` WHERE created_month = ' . $created_month . ' AND created_year = ' . $created_year . ' ORDER BY id DESC ');
 		// $data['grn_details'] = $role_management_data->result();
 		
-		$data['grn_details'] = $this->Crud->customQuery("SELECT * FROM `grn_details` grn
-		INNER JOIN new_po po ON po.id = grn.po_number
-		WHERE po.clientId = ".$this->Unit->getSessionClientId()." AND grn.created_month = " . $created_month . " 
-		AND grn.created_year = " . $created_year . " ORDER BY grn.id DESC ");	
-		$data['created_year'] = $created_year;
-		$data['created_month'] = $created_month;
+		$column[] = [
+            "data" => "supplier_name",
+            "title" => "Supplier name",
+            "width" => "14%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "part_number",
+            "title" => "Part No",
+            "width" => "16%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "part_description",
+            "title" => "Part Description",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "grn_number",
+            "title" => "GRN No",
+            "width" => "10%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "created_date",
+            "title" => "GRN Date",
+            "width" => "17%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "qty",
+            "title" => "Received Qty",
+            "width" => "17%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "verified_qty",
+            "title" => "Validation QTY",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "accept_qty",
+            "title" => "Accepted QTY",
+            "width" => "7%",
+            "className" => "dt-center status-row",
+        ];
+        $column[] = [
+            "data" => "reject_qty",
+            "title" => "Rejected QTY",
+            "width" => "17%",
+            "className" => "dt-center",
+			
+        ];
+       
+        $column[] = [
+            "data" => "remark",
+            "title" => "Rejection Remark",
+            "width" => "7%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        
+       
+       
+		
+		$data['created_month'] = $created_month; 
+		$data['created_year'] = $created_year; 
+		$data["data"] = $column;
+        $data["is_searching_enable"] = false;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Employee data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
+
+		// $data['grn_details'] = $this->Crud->customQuery("SELECT * FROM `grn_details` grn
+		// INNER JOIN new_po po ON po.id = grn.po_number
+		// WHERE po.clientId = ".$this->Unit->getSessionClientId()." AND grn.created_month = " . $created_month . " 
+		// AND grn.created_year = " . $created_year . " ORDER BY grn.id DESC ");	
+		// $data['created_year'] = $created_year;
+		// $data['created_month'] = $created_month;
 		
 		for ($i = 1; $i <= 12; $i++) {
 			$data['month_data'][$i] = $this->Common_admin_model->get_month($i);
@@ -230,27 +521,61 @@ class Welcome extends CommonController
 				$data['customer'][$c->id] = $this->Crud->get_data_by_id("customer", $c->customer_id, "id");
 			}
 		}
-		if ($data['grn_details']) {
-			foreach ($data['grn_details'] as $g) {
-				$data['new_po'][$g->id] = $this->Crud->get_data_by_id("new_po", $g->po_number, "id");
-				$data['inwarding'][$g->inwarding_id] = $this->Crud->get_data_by_id("inwarding", $g->inwarding_id, "id");
-				$data['supplier_data'][$g->supplier_id] = $this->Crud->get_data_by_id("supplier", $new_po[0]->supplier_id, "id");
-				$data['child_part_data'][$g->part_id] = $this->Crud->get_data_by_id("child_part", $g->part_id, "id");
-				$data['data_old'][$g->id] = array(
-					'po_id' => $new_po[0]->id,
-					'part_id' => $g->part_id,
+		// if ($data['grn_details']) {
+		// 	foreach ($data['grn_details'] as $g) {
+		// 		$data['new_po'][$g->id] = $this->Crud->get_data_by_id("new_po", $g->po_number, "id");
+		// 		$data['inwarding'][$g->inwarding_id] = $this->Crud->get_data_by_id("inwarding", $g->inwarding_id, "id");
+		// 		$data['supplier_data'][$g->supplier_id] = $this->Crud->get_data_by_id("supplier", $new_po[0]->supplier_id, "id");
+		// 		$data['child_part_data'][$g->part_id] = $this->Crud->get_data_by_id("child_part", $g->part_id, "id");
+		// 		$data['data_old'][$g->id] = array(
+		// 			'po_id' => $new_po[0]->id,
+		// 			'part_id' => $g->part_id,
 		
-				);
+		// 		);
 		
-				$po_parts[$g->id] = $this->Common_admin_model->get_data_by_id_multiple_condition("po_parts", $data_old[$g->id]);
-			}
-		}
+		// 		$po_parts[$g->id] = $this->Common_admin_model->get_data_by_id_multiple_condition("po_parts", $data_old[$g->id]);
+		// 	}
+		// }
 		// pr($data['child_part_data'],1);
 		// echo 'SELECT * FROM `po_parts` WHERE  created_date >= '.$from_date.' AND  created_date <= '.$to_date.'';
 		// $this->load->view('header.php');
 		// $this->load->view('reports_incoming_quality.php', $data);
 		// $this->load->view('footer.php');
 		$this->loadView('reports/reports_incoming_quality',$data);
+	}
+
+
+	public function getIncomegQtyReportData(){
+		
+		$post_data = $this->input->post();
+
+        $column_index = array_column($post_data["columns"], "data");
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+			if ($key == 0) {
+				$order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+				$order_by .=
+				"," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+		
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+		
+		$data = $this->SupplierParts->getIncomeReportView($condition_arr,$post_data["search"]);
+		// pr($data,1);
+		// foreach ($data as $key => $value) {
+		// 	$edit_data = base64_encode(json_encode($value)); 
+		// 	$data[$key]['action'] = "<i class='ti ti-edit edit-part' title='Edit' data-value='$edit_data'></i>";
+		// }
+		$data["data"] = $data;
+        $total_record = $this->SupplierParts->getIncomeReportViewCount($condition_arr, $post_data["search"]);
+        $data["recordsTotal"] = $total_record['tot_records'];
+        $data["recordsFiltered"] = $total_record['tot_records'];
+        echo json_encode($data);
 	}
 
 
@@ -2294,12 +2619,146 @@ class Welcome extends CommonController
 
 
 
-	public function _approved_supplier($filter_supplier_id)
+	public function _approved_supplier($filter_supplier_id = 0)
 	{
-		$data['filter_supplier_id'] = $filter_supplier_id;
-		$data['admin_approve'] = "accept";
 		$supplier_list = $this->Crud->read_data_where_result("supplier", array("admin_approve" => "accept"));
 		$data['supplier_list'] = $supplier_list->result();
+		$column[] = [
+            "data" => "supplier_name",
+            "title" => "Supplier Name",
+            "width" => "14%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "supplier_number",
+            "title" => "Supplier Number",
+            "width" => "16%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "location",
+            "title" => "Supplier Address",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "email",
+            "title" => "Supplier Email",
+            "width" => "10%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "mobile_no",
+            "title" => "Supplier Mobile Number",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "pan_card",
+            "title" => "PAN CARD",
+            "width" => "17%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "gst_number",
+            "title" => "GST Number",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "state",
+            "title" => "State",
+            "width" => "7%",
+            "className" => "dt-center status-row",
+        ];
+        $column[] = [
+            "data" => "payment_terms",
+            "title" => "Payment Terms",
+            "width" => "17%",
+            "className" => "dt-center",
+			
+        ];
+       
+        $column[] = [
+            "data" => "doc_nda",
+            "title" => "NDA Documents",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "doc_reg",
+            "title" => "Registration Documents",
+            "width" => "7%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "doc_other_1",
+            "title" => "Other Document 1",
+            "width" => "7%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        
+        $column[] = [
+            "data" => "doc_other_2",
+            "title" => "Other Document 2",
+            "width" => "7%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+
+		$column[] = [
+			"data" => "doc_other_3",
+			"title" => "Other Document 3",
+			"width" => "7%",
+			"className" => "dt-center",
+			'orderable' => false
+		];
+		
+		$column[] = [
+			"data" => "admin_approve",
+			"title" => "Admin Approval",
+			"width" => "7%",
+			"className" => "dt-center",
+			'orderable' => false
+			];
+			
+		$column[] = [
+			"data" => "with_in_state",
+			"title" => "With In State",
+			"width" => "7%",
+			"className" => "dt-center",
+			'orderable' => false
+		];
+
+		$column[] = [
+			"data" => "with_in_state",
+			"title" => "Action",
+			"width" => "7%",
+			"className" => "dt-center",
+			'orderable' => false
+		];
+		$data["data"] = $column;
+        $data["is_searching_enable"] = false;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Employee data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
+		
+		// $this->loadView('reports/receivable_report',$data);
+		
 		// $this->load->view('header');
 		$data['supplier_part_list'] = $this->SupplierParts->readSupplierPartsOnly();
 		$data['uom'] = $this->Crud->read_data("uom");
@@ -2528,6 +2987,60 @@ class Welcome extends CommonController
         echo json_encode($data);
         exit();
 		
+	}
+
+	public function getApprovedSupplierData(){
+		$post_data = $this->input->post();
+		$column_index = array_column($post_data["columns"], "data");
+		foreach ($post_data["order"] as $key => $val) {
+			if ($key == 0) {
+				$order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+				$order_by .=
+				"," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+		
+		$condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+		$data = $this->SupplierParts->getSupplierData($condition_arr,$post_data["search"]);
+		// pr($post_data,1);
+		if(!is_valid_array($data)) echo json_encode([]);
+		foreach ($data as $k=> $val){
+			$doc_nda = $register_doc = $other_doc_1 = $other_doc_2 = $other_doc_3 = '';
+			if(!empty($val['nda_document'])){
+				$tem_d_id = $val['nda_document'];
+				$doc_nda = '<a href="' . base_url('documents/') . $tem_d_id . '" download>Download</a>';
+			}
+			if(!empty($val['registration_document'])){
+				$tem_d_id = $val['registration_document'];
+				$doc_reg = '<a href="' . base_url('documents/') . $tem_d_id . '" download>Download</a>';
+			}
+			if(!empty($val['other_document_1'])){
+				$tem_d_id = $val['other_document_1'];
+				$doc_other_1 = '<a href="' . base_url('documents/') . $tem_d_id . '" download>Download</a>';
+			}
+			if(!empty($val['other_document_2'])){
+				$tem_d_id = $val['other_document_2'];
+				$doc_other_2 = '<a href="' . base_url('documents/') . $tem_d_id . '" download>Download</a>';
+			}
+			if(!empty($val['other_document_3'])){
+				$tem_d_id = $val['other_document_3'];
+				$doc_other_3 = '<a href="' . base_url('documents/') . $tem_d_id . '" download>Download</a>';
+			}
+			$data[$k]['doc_nda'] = $doc_nda;
+			$data[$k]['doc_reg'] = $doc_reg;
+			$data[$k]['doc_other_1'] = $doc_other_1;
+			$data[$k]['doc_other_2'] = $doc_other_2;
+			$data[$k]['doc_other_3'] = $doc_other_3;
+		}
+		
+		$data["data"] = $data;
+        $total_record = $this->SupplierParts->getSupplierDataCount($condition_arr,$post_data["search"]);
+        $data["recordsTotal"] = $total_record['total_record'];
+        $data["recordsFiltered"] = $total_record['total_record'];
+		echo json_encode($data);
 	}
 
 	public function approved_supplier()
@@ -2887,7 +3400,6 @@ class Welcome extends CommonController
 	{
 		
 		$data['filter_supplier_id'] = $filter_supplier_id;
-
 		$data['uom'] = $this->Crud->read_data("uom");
 		$data['cparttypelist'] = $this->Crud->read_data("part_type");
 
@@ -2896,26 +3408,153 @@ class Welcome extends CommonController
 		
 		$child_part_master = $this->Crud->read_data_where_result("child_part_master", array("admin_approve" => "accept"));
 		$data['child_part_master'] = $child_part_master->result();
+
+
+
 		// pr($data['child_part_master'],1);
-		if ($data['child_part_master']) {
-			foreach($data['child_part_master'] as $poo){
-				if (isset($filter_supplier_id) && $filter_supplier_id != "All" && $filter_supplier_id != $poo->supplier_id)
-					continue;
-					$array = array(
-						"part_number" => $poo->part_number,
-						"supplier_id" => $poo->supplier_id,
-					);
+		// if ($data['child_part_master']) {
+		// 	foreach($data['child_part_master'] as $poo){
+		// 		if (isset($filter_supplier_id) && $filter_supplier_id != "All" && $filter_supplier_id != $poo->supplier_id)
+		// 			continue;
+		// 			$array = array(
+		// 				"part_number" => $poo->part_number,
+		// 				"supplier_id" => $poo->supplier_id,
+		// 			);
 				
-				$data['po'][$poo->part_number][] = $this->Crud->get_data_by_id_multiple_condition("child_part_master", $array);	
-				$data['supplier_data'][$poo->supplier_id][] = $this->Crud->get_data_by_id("supplier", $poo->supplier_id, "id");
-				$data['gst_structure2'][$poo->part_number][] = $this->Crud->get_data_by_id("gst_structure", $data['po'][$poo->part_number][0][0]->gst_id, "id");
-			}
-		}
+		// 		$data['po'][$poo->part_number][] = $this->Crud->get_data_by_id_multiple_condition("child_part_master", $array);	
+		// 		$data['supplier_data'][$poo->supplier_id][] = $this->Crud->get_data_by_id("supplier", $poo->supplier_id, "id");
+		// 		$data['gst_structure2'][$poo->part_number][] = $this->Crud->get_data_by_id("gst_structure", $data['po'][$poo->part_number][0][0]->gst_id, "id");
+		// 	}
+		// }
 		// pr($data['po'],1);
 		// $this->load->view('header');
 		// $this->load->view('child_part_supplier_report', $data);
 		// $this->load->view('footer');
+
+		$column[] = [
+            "data" => "admin_approve",
+            "title" => "Approval Status",
+            "width" => "14%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "rev_history",
+            "title" => "Rev. & History",
+            "width" => "16%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "revision_no",
+            "title" => "Revision Number",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "revision_remark",
+            "title" => "Revision Remark",
+            "width" => "10%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "revision_date",
+            "title" => "Revision Date",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "part_number",
+            "title" => "Part Number",
+            "width" => "17%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "part_description",
+            "title" => "Part Description",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "code",
+            "title" => "Tax Structure",
+            "width" => "7%",
+            "className" => "dt-center status-row",
+        ];
+        $column[] = [
+            "data" => "supplier_name",
+            "title" => "Supplier",
+            "width" => "17%",
+            "className" => "dt-center",
+			
+        ];
+       
+        $column[] = [
+            "data" => "part_rate",
+            "title" => "Part Price",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "quotation_doc",
+            "title" => "Quotation Document ",
+            "width" => "7%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+       
+		
+		
+
+		$data["data"] = $column;
+        $data["is_searching_enable"] = false;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Employee data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
 		$this->loadView('reports/child_part_supplier_report',$data);
+	}
+
+	public function getChildPartReportData(){
+		$supplier_id  = $this->input->post("supplier_id");
+		$post_data = $this->input->post();
+		
+        $column_index = array_column($post_data["columns"], "data");
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+			if ($key == 0) {
+				$order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+				$order_by .=
+				"," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+		
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+		$data = $this->SupplierParts->getChildSupplierReportData($condition_arr,$post_data["search"]);
+		foreach ($data as $key => $value) {
+			$edit_data = base64_encode(json_encode($value)); 
+			$data[$key]['rev_history'] = '<button type="submit" data-toggle="modal" class="btn btn-sm btn-primary" data-target="#exampleModaledit2<%$i%>"> <i class="fas fa-edit" data-edit ='. $edit_data.'></i></button>  ' . "<a href='" . base_url() . "price_revision/" . $value['part_number'] . "/" . $value['supplier_id'] . "' class='btn btn-primary btn-sm'> <i class='fas fa-history'></i></a>";
+			$data[$key]['quotation_doc'] = "<a href='" . base_url('documents') . "/" . $val['part_number'] . $val['quotation_document'] . "' download>Download</a>";
+		}
+
+		$data["data"] = $data;
+        $total_record = $this->SupplierParts->getChildSupplierReportCount([], $post_data["search"]);
+        $data["recordsTotal"] = $total_record['total_record'];
+        $data["recordsFiltered"] = $total_record['total_record'];
+        echo json_encode($data);
 	}
 
 	public function child_part_supplier_report()
@@ -7552,7 +8191,23 @@ class Welcome extends CommonController
 		// print_r($data['tool_list']);
 		$this->load->view('header');
 		$this->load->view('price_revision', $data);
+		// $this->loadView('reports/price_revision',$data);
 		$this->load->view('footer');
+
+		// can use this query to get data for report for datatable
+
+	// 	$this->db->select('cpm.*, s.*, u.*, pt.*');
+    // $this->db->from('child_part_master cpm');
+    // $this->db->join('supplier s', 'cpm.supplier_id = s.id', 'left');
+    // $this->db->join('uom u', 'cpm.uom_id = u.id', 'left');
+    // $this->db->join('part_type pt', 'cpm.child_part_id = pt.id', 'left');
+    // $this->db->where('cpm.part_number', $part_number);
+    // $this->db->where('cpm.supplier_id', $supplier_id);
+    // $this->db->order_by('cpm.id', 'desc');
+    // $query = $this->db->get();
+    // return $query->result();
+
+
 	}
 
 

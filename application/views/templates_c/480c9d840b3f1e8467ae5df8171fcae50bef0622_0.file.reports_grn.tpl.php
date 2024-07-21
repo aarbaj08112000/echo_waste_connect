@@ -1,4 +1,27 @@
-<div class="wrapper container-xxl flex-grow-1 container-p-y">
+<?php
+/* Smarty version 4.3.2, created on 2024-07-05 10:59:30
+  from '/var/www/html/extra/erp_converted/application/views/templates/reports/reports_grn.tpl' */
+
+/* @var Smarty_Internal_Template $_smarty_tpl */
+if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
+  'version' => '4.3.2',
+  'unifunc' => 'content_668784ba06b322_72038742',
+  'has_nocache_code' => false,
+  'file_dependency' => 
+  array (
+    '480c9d840b3f1e8467ae5df8171fcae50bef0622' => 
+    array (
+      0 => '/var/www/html/extra/erp_converted/application/views/templates/reports/reports_grn.tpl',
+      1 => 1720157368,
+      2 => 'file',
+    ),
+  ),
+  'includes' => 
+  array (
+  ),
+),false)) {
+function content_668784ba06b322_72038742 (Smarty_Internal_Template $_smarty_tpl) {
+?><div class="wrapper container-xxl flex-grow-1 container-p-y">
     <!-- Content Wrapper. Contains page content -->
 
     <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme filter-popup-block" style="width: 0px;">
@@ -22,10 +45,19 @@
               <li class="sidebar-item">
                 <div class="input-group">
                 <select required name="created_month" id="months" class="form-control select2">
-                <%foreach $month_data as $key => $val%>
-                <option <%if $month_number[$key] eq $created_month%>selected<%/if%>
-                    value="<%$month_number[$key]%>"><%$val%></option>
-            <%/foreach%>
+                <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['month_data']->value, 'val', false, 'key');
+$_smarty_tpl->tpl_vars['val']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['key']->value => $_smarty_tpl->tpl_vars['val']->value) {
+$_smarty_tpl->tpl_vars['val']->do_else = false;
+?>
+                <option <?php if ($_smarty_tpl->tpl_vars['month_number']->value[$_smarty_tpl->tpl_vars['key']->value] == $_smarty_tpl->tpl_vars['created_month']->value) {?>selected<?php }?>
+                    value="<?php echo $_smarty_tpl->tpl_vars['month_number']->value[$_smarty_tpl->tpl_vars['key']->value];?>
+"><?php echo $_smarty_tpl->tpl_vars['val']->value;?>
+</option>
+            <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                 </select>
                 </div>
               </li>
@@ -38,9 +70,17 @@
               <li class="sidebar-item">
               <div class="input-group">
               <select required name="created_year" id="year" class="form-control select2">
-              <%for $i = 2022 to 2027%>
-                  <option <%if $i eq $created_year%>selected<%/if%> value="<%$i%>"><%$i%></option>
-              <%/for%>
+              <?php
+$_smarty_tpl->tpl_vars['i'] = new Smarty_Variable(null, $_smarty_tpl->isRenderingCache);$_smarty_tpl->tpl_vars['i']->step = 1;$_smarty_tpl->tpl_vars['i']->total = (int) ceil(($_smarty_tpl->tpl_vars['i']->step > 0 ? 2027+1 - (2022) : 2022-(2027)+1)/abs($_smarty_tpl->tpl_vars['i']->step));
+if ($_smarty_tpl->tpl_vars['i']->total > 0) {
+for ($_smarty_tpl->tpl_vars['i']->value = 2022, $_smarty_tpl->tpl_vars['i']->iteration = 1;$_smarty_tpl->tpl_vars['i']->iteration <= $_smarty_tpl->tpl_vars['i']->total;$_smarty_tpl->tpl_vars['i']->value += $_smarty_tpl->tpl_vars['i']->step, $_smarty_tpl->tpl_vars['i']->iteration++) {
+$_smarty_tpl->tpl_vars['i']->first = $_smarty_tpl->tpl_vars['i']->iteration === 1;$_smarty_tpl->tpl_vars['i']->last = $_smarty_tpl->tpl_vars['i']->iteration === $_smarty_tpl->tpl_vars['i']->total;?>
+                  <option <?php if ($_smarty_tpl->tpl_vars['i']->value == $_smarty_tpl->tpl_vars['created_year']->value) {?>selected<?php }?> value="<?php echo $_smarty_tpl->tpl_vars['i']->value;?>
+"><?php echo $_smarty_tpl->tpl_vars['i']->value;?>
+</option>
+              <?php }
+}
+?>
           </select>
               </div>
             </li>
@@ -85,7 +125,9 @@
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="<?php echo base_url('dashboard'); ?>">Home</a></li>
+                            <li class="breadcrumb-item"><a href="<?php echo '<?php'; ?>
+ echo base_url('dashboard'); <?php echo '?>'; ?>
+">Home</a></li>
                             <li class="breadcrumb-item active">GRN Reports</li>
                         </ol>
                     </div>
@@ -107,11 +149,11 @@
                                     </div>
                                     <div class="col-lg-1"></div>
                                     <div class="col-sm-2">
-                                        <%if $showDocRequestDetails == "true"%>
+                                        <?php if ($_smarty_tpl->tpl_vars['showDocRequestDetails']->value == "true") {?>
                                             Format No: STR-F-03 <br>
                                             Rev.Date : 11/10/2017 <br>
                                             Rev.No.  : 00
-                                        <%/if%>
+                                        <?php }?>
                                     </div>
                                 </div>
                             </div>
@@ -122,10 +164,10 @@
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="exampleModalLabel">Export Criteria</h5>
                                         <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                            <%* <span aria-hidden="true">&times;</span> *%>
-                                        </button>
+                                                                                    </button>
                                     </div>
-                                    <form action="<%$base_url%>grn_excel_export" method="POST">
+                                    <form action="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+grn_excel_export" method="POST">
                                         <div class="modal-body">
                                             <div class="form-group">
                                                 <label for="">Only Accepted Status GRN will be exported.</label>
@@ -133,18 +175,36 @@
                                             <div class="form-group">
                                                 <label for="">Year:</label>
                                                 <select required name="search_year" id="" class="form-control select2">
-                                                    <%foreach $fincYears as $fyear%>
-                                                        <option <%if $fyear->startYear == $created_year%>selected<%/if%> value="<%$fyear->startYear%>"><%$fyear->displayName%></option>
-                                                    <%/foreach%>
+                                                    <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['fincYears']->value, 'fyear');
+$_smarty_tpl->tpl_vars['fyear']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['fyear']->value) {
+$_smarty_tpl->tpl_vars['fyear']->do_else = false;
+?>
+                                                        <option <?php if ($_smarty_tpl->tpl_vars['fyear']->value->startYear == $_smarty_tpl->tpl_vars['created_year']->value) {?>selected<?php }?> value="<?php echo $_smarty_tpl->tpl_vars['fyear']->value->startYear;?>
+"><?php echo $_smarty_tpl->tpl_vars['fyear']->value->displayName;?>
+</option>
+                                                    <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                                                 </select>
                                             </div>
                                             <div class="form-group">
                                                 <label for="">Month:</label>
                                                 <span class="small"><br>Month will be ignored if GRN Number field is provided.</span>
                                                 <select required name="search_month" id="" class="form-control select2">
-                                                    <%foreach $month_data as $key => $val%>
-                                                        <option <%if $month_number[$key] eq $created_month%>selected<%/if%> value="<%$month_number[$key]%>"><%$val%></option>
-                                                    <%/foreach%>
+                                                    <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['month_data']->value, 'val', false, 'key');
+$_smarty_tpl->tpl_vars['val']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['key']->value => $_smarty_tpl->tpl_vars['val']->value) {
+$_smarty_tpl->tpl_vars['val']->do_else = false;
+?>
+                                                        <option <?php if ($_smarty_tpl->tpl_vars['month_number']->value[$_smarty_tpl->tpl_vars['key']->value] == $_smarty_tpl->tpl_vars['created_month']->value) {?>selected<?php }?> value="<?php echo $_smarty_tpl->tpl_vars['month_number']->value[$_smarty_tpl->tpl_vars['key']->value];?>
+"><?php echo $_smarty_tpl->tpl_vars['val']->value;?>
+</option>
+                                                    <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                                                 </select>
                                             </div>
                                             <div class="form-group">
@@ -178,18 +238,31 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <form action="<%$base_url%>add_job_card" method="POST" enctype='multipart/form-data'>
+                                            <form action="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+add_job_card" method="POST" enctype='multipart/form-data'>
                                                 <div class="row">
                                                     <div class="col-lg-12">
                                                         <div class="form-group">
                                                             <label for="po_num">Select Customer Name / Customer Code / Part Number / Description </label><span class="text-danger">*</span>
                                                             <select name="customer_part_id" id="customer_part_id" class="from-control select2">
-                                                                <%if $customer_part%>
-                                                                    <%foreach $customer_part as $c%>
-                                                                        <%assign var="customer" value=$Crud->get_data_by_id("customer", $c->customer_id, "id")%>
-                                                                        <option value="<%$c->id%>"><%$customer[0]->customer_name%>/<%$customer[0]->customer_code%>/<%$c->part_number%>/<%$c->part_description%></option>
-                                                                    <%/foreach%>
-                                                                <%/if%>
+                                                                <?php if ($_smarty_tpl->tpl_vars['customer_part']->value) {?>
+                                                                    <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['customer_part']->value, 'c');
+$_smarty_tpl->tpl_vars['c']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['c']->value) {
+$_smarty_tpl->tpl_vars['c']->do_else = false;
+?>
+                                                                        <?php $_smarty_tpl->_assignInScope('customer', $_smarty_tpl->tpl_vars['Crud']->value->get_data_by_id("customer",$_smarty_tpl->tpl_vars['c']->value->customer_id,"id"));?>
+                                                                        <option value="<?php echo $_smarty_tpl->tpl_vars['c']->value->id;?>
+"><?php echo $_smarty_tpl->tpl_vars['customer']->value[0]->customer_name;?>
+/<?php echo $_smarty_tpl->tpl_vars['customer']->value[0]->customer_code;?>
+/<?php echo $_smarty_tpl->tpl_vars['c']->value->part_number;?>
+/<?php echo $_smarty_tpl->tpl_vars['c']->value->part_description;?>
+</option>
+                                                                    <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
+                                                                <?php }?>
                                                             </select>
                                                         </div>
                                                         <div class="form-group">
@@ -250,17 +323,34 @@
         </section>
     </div>
 </div>
-<script>
-    var column_details =  <%$data|json_encode%>;
-    var page_length_arr = <%$page_length_arr|json_encode%>;
-    var is_searching_enable = <%$is_searching_enable|json_encode%>;
-    var is_top_searching_enable =  <%$is_top_searching_enable|json_encode%>;
-    var is_paging_enable =  <%$is_paging_enable|json_encode%>;
-    var is_serverSide =  <%$is_serverSide|json_encode%>;
-    var no_data_message =  <%$no_data_message|json_encode%>;
-    var is_ordering =  <%$is_ordering|json_encode%>;
-    var sorting_column = <%$sorting_column%>;
-    var api_name =  <%$api_name|json_encode%>;
-    var base_url = <%$base_url|json_encode%>;
-</script>
-<script src="<%$base_url%>/public/js/reports/gn_report.js"></script>
+<?php echo '<script'; ?>
+>
+    var column_details =  <?php echo json_encode($_smarty_tpl->tpl_vars['data']->value);?>
+;
+    var page_length_arr = <?php echo json_encode($_smarty_tpl->tpl_vars['page_length_arr']->value);?>
+;
+    var is_searching_enable = <?php echo json_encode($_smarty_tpl->tpl_vars['is_searching_enable']->value);?>
+;
+    var is_top_searching_enable =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_top_searching_enable']->value);?>
+;
+    var is_paging_enable =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_paging_enable']->value);?>
+;
+    var is_serverSide =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_serverSide']->value);?>
+;
+    var no_data_message =  <?php echo json_encode($_smarty_tpl->tpl_vars['no_data_message']->value);?>
+;
+    var is_ordering =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_ordering']->value);?>
+;
+    var sorting_column = <?php echo $_smarty_tpl->tpl_vars['sorting_column']->value;?>
+;
+    var api_name =  <?php echo json_encode($_smarty_tpl->tpl_vars['api_name']->value);?>
+;
+    var base_url = <?php echo json_encode($_smarty_tpl->tpl_vars['base_url']->value);?>
+;
+<?php echo '</script'; ?>
+>
+<?php echo '<script'; ?>
+ src="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+/public/js/reports/gn_report.js"><?php echo '</script'; ?>
+><?php }
+}
