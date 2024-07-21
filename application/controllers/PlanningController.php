@@ -205,15 +205,13 @@ class PlanningController extends CommonController
 		$data['planing_id'] = $planing_id;
 		$data['customer_id'] = $this->uri->segment('3');
 		
-		$planning_data =  $this->Crud->get_data_by_id("planing_data", $planing_id, "planing_id");
+		
 		
 		$data['planing_data'] = $planning_data;
 		$data['financial_year'] = $planning_data[0]->financial_year;
 		$data['month'] = $planning_data[0]->month;
 
-		$this->load->view('header');
-		$this->load->view('view_planing_data_new', $data);
-		$this->load->view('footer');
+		
 	}
 
 	public function update_planning_data()
