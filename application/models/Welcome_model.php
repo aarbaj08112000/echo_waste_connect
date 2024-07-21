@@ -64,30 +64,57 @@ class Welcome_model extends CI_Model
     }
 
     public function getPlanningReportView($condition_arr = [],$search_params = ""){
+        $month_number = $search_params['month'] != '' ? $this->get_month_number($search_params['month']) : date('m'); ;
+        $year_number = $search_params['year'] != '' ? substr($search_params['year'], 3) : date('Y') ;
+       
         $this->db->select('
-            p.*, 
-            cp.id AS customer_part_id, 
-            cp.customer_id AS customer_part_customer_id, 
-            cpr.customer_master_id AS customer_part_rate_id, 
-            c.id AS customer_id, 
-            jc.customer_part_id AS job_card_customer_part_id, 
-            pd.planing_id AS planing_data_new_id
-        ');
-        $this->db->from('planing p');
-        $this->db->join('customer_part cp', 'cp.id = p.customer_part_id', 'left');
-        $this->db->join('customer_part_rate cpr', 'cpr.customer_master_id = cp.id', 'left');
-        $this->db->join('customer c', 'c.id = cp.customer_id', 'left');
-        $this->db->join('job_card jc', 'jc.customer_part_id = cp.customer_id', 'left');
-        $this->db->join('planing_data pd', 'pd.planing_id = p.id', 'left');
-        $this->db->where('(cp.admin_approve = \'accept\' OR cp.admin_approve IS NULL)');
-        // $this->db->where_in('p.<condition>', <value>);  // Replace <condition> and <value> as appropriate
-        $this->db->order_by('p.id', 'DESC');
-        // if(is_valid_array($search_params) && $search_params['customer_part_id'] > 0){
-        //     $this->db->where('s.customer_id', $search_params['customer_part_id']);
-        // }
-        // pr($condition_arr,1);
+        p.id AS planing_id,
+        p.financial_year,
+        p.month,
+        p.clientId,
+        cp.id AS customer_part_id,cp.*,
+        cp.customer_id,
+        c.id AS customer_id,
+        c.*,
+        cp_rate.rate,
+        pd.schedule_qty,
+        pd.schedule_qty_2,
+        SUM(jc.req_qty) AS job_card_qty,
+        COUNT(ns.id) AS dispatch_sales_qty,
+        CASE
+            WHEN pd.schedule_qty IS NOT NULL AND cp_rate.rate IS NOT NULL THEN pd.schedule_qty * cp_rate.rate
+            ELSE 0
+        END AS subtotal1,
+        CASE
+            WHEN pd.schedule_qty_2 IS NOT NULL AND cp_rate.rate IS NOT NULL THEN pd.schedule_qty_2 * cp_rate.rate
+            ELSE 0
+        END AS subtotal2
+    ', false);
+    
+    $this->db->from('planing p');
+    $this->db->join('customer_part cp', 'p.customer_part_id = cp.id', 'left');
+    $this->db->join('customer c', 'cp.customer_id = c.id', 'left');
+    $this->db->join('customer_part_rate cp_rate', 'cp.id = cp_rate.customer_master_id', 'left');
+    $this->db->join('planing_data pd', 'p.id = pd.planing_id', 'left');
+    $this->db->join('job_card jc', 'cp.id = jc.customer_part_id AND jc.status = "released"', 'left');
+    $this->db->join('new_sales ns', 'MONTH(ns.created_date) = '.$month_number.' AND YEAR(ns.created_date) = '.$year_number.'', 'left');
+    $this->db->where('p.clientId', $this->Unit->getSessionClientId());
+    if(is_valid_array($search_params) && $search_params['year'] != ''){
+        $this->db->where('p.financial_year',$search_params['year'] );
+    }
+    if(is_valid_array($search_params) && $search_params['month'] != ''){
+        $this->db->where('p.month', $search_params['month']);
+    }
+
+    if(is_valid_array($search_params) && $search_params['customer'] > 0){
+        $this->db->where('c.id', $search_params['customer']);
+    }
+    
+    $this->db->group_by(array('p.id', 'cp.id', 'c.id', 'cp_rate.rate', 'pd.schedule_qty', 'pd.schedule_qty_2'));
+   
+    
         if($condition_arr["order_by"] == ''){    
-            $this->db->order_by('s.id', 'DESC');
+            $this->db->order_by('p.id', 'DESC');
         }
         if (count($condition_arr) > 0) {
             $this->db->limit($condition_arr["length"], $condition_arr["start"]);
@@ -97,24 +124,39 @@ class Welcome_model extends CI_Model
         }
         $result_obj = $this->db->get();
         $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
-        // pr($this->db->last_query(),1);
+        // pr($this->db->last_query(),1);   
         return $ret_data;
     }
 
     public function getPlanningReportViewCount( $condition_arr = [],$search_params = ""){
-        $this->db->select('count(pid)');
+        $month_number = $search_params['month'] != '' ? $this->get_month_number($search_params['month']) : date('m'); ;
+        $year_number = $search_params['year'] != '' ? substr($search_params['year'], 3) : date('Y') ;
+        $this->db->select('count(p.id)');
         $this->db->from('planing p');
-        $this->db->join('customer_part cp', 'cp.id = p.customer_part_id', 'left');
-        $this->db->join('customer_part_rate cpr', 'cpr.customer_master_id = cp.id', 'left');
-        $this->db->join('customer c', 'c.id = cp.customer_id', 'left');
-        $this->db->join('job_card jc', 'jc.customer_part_id = cp.customer_id', 'left');
-        $this->db->join('planing_data pd', 'pd.planing_id = p.id', 'left');
-        $this->db->where('(cp.admin_approve = \'accept\' OR cp.admin_approve IS NULL)');
-        // $this->db->where_in('p.<condition>', <value>);  // Replace <condition> and <value> as appropriate
-        $this->db->order_by('p.id', 'DESC');
-        if(is_valid_array($search_params) && $search_params['customer_part_id'] > 0){
-            $this->db->where('s.customer_id', $search_params['customer_part_id']);
+        $this->db->join('customer_part cp', 'p.customer_part_id = cp.id', 'left');
+        $this->db->join('customer c', 'cp.customer_id = c.id', 'left');
+        $this->db->join('customer_part_rate cp_rate', 'cp.id = cp_rate.customer_master_id', 'left');
+        $this->db->join('planing_data pd', 'p.id = pd.planing_id', 'left');
+        $this->db->join('job_card jc', 'cp.id = jc.customer_part_id AND jc.status = "released"', 'left');
+        $this->db->join('new_sales ns', 'MONTH(ns.created_date) = '.$month_number.' AND YEAR(ns.created_date) = '.$year_number.'', 'left');
+        $this->db->where('p.clientId', $this->Unit->getSessionClientId());
+        
+        if(is_valid_array($search_params) && $search_params['year'] != ''){
+            $this->db->where('p.financial_year',$search_params['year'] );
         }
+        if(is_valid_array($search_params) && $search_params['month'] != ''){
+            $this->db->where('p.month', $search_params['month']);
+        }
+    
+        if(is_valid_array($search_params) && $search_params['customer'] > 0){
+            $this->db->where('c.id', $search_params['customer']);
+        }
+        
+        $this->db->group_by(array('p.id', 'cp.id', 'c.id', 'cp_rate.rate', 'pd.schedule_qty', 'pd.schedule_qty_2'));
+        if($condition_arr["order_by"] == ''){    
+            $this->db->order_by('p.id', 'DESC');
+        }
+       
         
         // $this->db->order_by('s.id', 'DESC');
 
@@ -122,6 +164,36 @@ class Welcome_model extends CI_Model
         $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];        
         return $ret_data;
     }
+
+    public function get_month_number($get_month)
+	{
+       
+		if ($get_month == "APR") {
+			return 4;
+		} else if ($get_month == "MAY") {
+			return 5;
+		} else if ($get_month == "JUN") {
+			return 6;
+		} else if ($get_month == "JUL") {
+			return 7;
+		} else if ($get_month == "AUG") {
+			return 8;
+		} else if ($get_month == "SEP") {
+			return 9;
+		} else if ($get_month == "OCT") {
+			return 10;
+		} else if ($get_month == "NOV") {
+			return 11;
+		} else if ($get_month == "DEC") {
+			return 12;
+		} else if ($get_month == "JAN") {
+			return 1;
+		} else if ($get_month == "FEB") {
+			return 2;
+		} else if ($get_month == "MAR") {
+			return 3;
+		}
+	}
 
     
 }

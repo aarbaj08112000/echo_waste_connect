@@ -3727,7 +3727,7 @@ class Welcome extends CommonController
 			'orderable' => false
         ];
         $column[] = [
-            "data" => "schedule_qty",
+            "data" => "button_total",
             "title" => "Schedule Qty 1",
             "width" => "17%",
             "className" => "dt-center",
@@ -3812,8 +3812,8 @@ class Welcome extends CommonController
 			$customer_id = $this->uri->segment('4');
 		}
 		$data['customer_part'] = $this->Crud->read_data("customer_part");
-		$data['customer'] = $this->Crud->read_data("customer");
 		$data["data"] = $column;
+		$data['customer'] = $this->Crud->read_data("customer");
         $data["is_searching_enable"] = false;
         $data["is_paging_enable"] = true;
         $data["is_serverSide"] = true;
@@ -3828,7 +3828,7 @@ class Welcome extends CommonController
         $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
         $data["admin_url"] = base_url();
         $data["base_url"] = base_url();
-
+		
 		// $this->load->view('header');
 		$this->getPage('reports/planing_data_report_view', $data);
 		// $this->load->view('footer');
@@ -3836,7 +3836,7 @@ class Welcome extends CommonController
 	
 	public function planningReportDataAjax(){
 		$post_data = $this->input->post();
-
+		
         $column_index = array_column($post_data["columns"], "data");
         $order_by = "";
         foreach ($post_data["order"] as $key => $val) {
@@ -3854,15 +3854,28 @@ class Welcome extends CommonController
         $base_url = $this->config->item("base_url");
 		
 		$data = $this->welcome_model->getPlanningReportView($condition_arr,$post_data["search"]);
-		pr($data,1);
 		
+		// pr($data,1);
+	
 		foreach ($data as $key => $value) {
 			$edit_data = base64_encode(json_encode($value)); 
-			$data[$key]['action'] = "<i class='ti ti-edit edit-part' title='Edit' data-value='$edit_data'></i>";
+			$url = base_url('view_planing_data').'/'.$value['planing_id'];
+			$data[$key]['button_total'] = "<a href='$url'><button class='btn btn-primary'>View Details</button></a>";
+			$subtotal_1 = $val['rate'] * $val['schedule_qty'];
+			$subtotal_2 = $val['rate'] * $val['schedule_qty_2'];
+			$data[$key]['subtotal1'] = $subtotal_1;
+			$data[$key]['subtotal2'] = $subtotal_2;
+			$data[$key]['issued'] = '';
+			$data[$key]['closed'] = '';
+			$data[$key]['balance_s_qty'] = '';
+			$data[$key]['total1'] = '';
+			$data[$key]['total2'] = '';
+					
+			
 		}
 
 		$data["data"] = $data;
-        $total_record = $this->welcome_model->getPlanningReportViewCount([], $post_data["search"]);
+        $total_record = $this->welcome_model->getPlanningReportViewCount([], $post_data["search"],$month = 'APR',$year = 'FY-2024');
 		
         $data["recordsTotal"] = count($total_record);
         $data["recordsFiltered"] = count($total_record);
