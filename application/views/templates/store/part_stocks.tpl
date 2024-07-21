@@ -10,6 +10,7 @@
           <i class="ti ti-x fs-8"></i>
         </div>
       </div>
+
       <nav class="sidebar-nav scroll-sidebar filter-block" data-simplebar="init">
         <div class="simplebar-content">
           <ul class="menu-inner py-1">
