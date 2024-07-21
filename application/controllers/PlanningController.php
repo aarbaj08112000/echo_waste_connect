@@ -205,13 +205,13 @@ class PlanningController extends CommonController
 		$data['planing_id'] = $planing_id;
 		$data['customer_id'] = $this->uri->segment('3');
 		
-		
+		$planning_data =  $this->SupplierParts->getPlanningViewData($planing_id);
 		
 		$data['planing_data'] = $planning_data;
 		$data['financial_year'] = $planning_data[0]->financial_year;
 		$data['month'] = $planning_data[0]->month;
-
-		
+		// pr($data,1);
+		$this->loadView('reports/view_planning_data',$data);
 	}
 
 	public function update_planning_data()
