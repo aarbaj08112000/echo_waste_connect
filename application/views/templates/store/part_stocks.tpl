@@ -16,6 +16,7 @@
             <!-- Dashboard -->
             <div class="filter-row">
               <li class="nav-small-cap">
+              
                 <span class="hide-menu">Select Part</span>
                 <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
               </li>
