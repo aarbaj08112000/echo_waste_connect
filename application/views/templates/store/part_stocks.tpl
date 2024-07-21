@@ -1,3 +1,17 @@
+          <script>
+            var column_details = <%$data|json_encode%> ;
+            var page_length_arr = <%$page_length_arr|json_encode%> ;
+            var is_searching_enable = <%$is_searching_enable|json_encode%> ;
+            var is_top_searching_enable = <%$is_top_searching_enable|json_encode%> ;
+            var is_paging_enable = <%$is_paging_enable|json_encode%> ;
+            var is_serverSide = <%$is_serverSide|json_encode%> ;
+            var no_data_message = <%$no_data_message|json_encode%> ;
+            var is_ordering = <%$is_ordering|json_encode%> ;
+            var sorting_column = <%$sorting_column%> ;
+            var api_name = <%$api_name|json_encode%> ;
+            var base_url = <%$base_url|json_encode%> ;
+          </script>
+<script src="<%$base_url%>/public/js/reports/supplier_part_stock_report.js"></script>
 <div class="wrapper container-xxl flex-grow-1 container-p-y">
   <%assign var='role' value=trim($session_data['type'])%>
 
@@ -240,17 +254,4 @@
   </div>
   
         
-          <script>
-            var column_details = <%$data|json_encode%> ;
-            var page_length_arr = <%$page_length_arr|json_encode%> ;
-            var is_searching_enable = <%$is_searching_enable|json_encode%> ;
-            var is_top_searching_enable = <%$is_top_searching_enable|json_encode%> ;
-            var is_paging_enable = <%$is_paging_enable|json_encode%> ;
-            var is_serverSide = <%$is_serverSide|json_encode%> ;
-            var no_data_message = <%$no_data_message|json_encode%> ;
-            var is_ordering = <%$is_ordering|json_encode%> ;
-            var sorting_column = <%$sorting_column%> ;
-            var api_name = <%$api_name|json_encode%> ;
-            var base_url = <%$base_url|json_encode%> ;
-          </script>
-<script src="<%$base_url%>/public/js/reports/supplier_part_stock_report.js"></script>
+
