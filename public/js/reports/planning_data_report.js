@@ -129,7 +129,7 @@ const page = {
             },
             ajax: {
                 data: {'search':data},    
-                url: "SalesController/salesReportsAjax",
+                url: "welcome/planningReportDataAjax",
                 type: "POST",
             },
         });
@@ -145,7 +145,9 @@ const page = {
     },
     filter: function(){
         let that = this;
-        $('#part_number_search').select2();
+        $('#months').select2();
+        $('#month').select2();
+        $('#customers').select2();
         $(".search-filter").on("click",function(){
             table.destroy(); 
             that.dataTable();
@@ -156,14 +158,16 @@ const page = {
         })
     },
     serachParams: function(){
-        var month_number = $("#month_number").val();
+        var month = $("#months").val();
         var year = $("#year").val();
-        var params = {month_number:month_number,year:year};
+        var customer = $('#customers').val();
+        var params = {month:month,year:year,customer:customer};
         return params;
     },
     resetFilter: function(){
-        $("#part_number_search").val('').trigger('change');
-        $("#part_description_search").val('');
+        $("#months").val('').trigger('change');
+        $("#year").val('');
+        $("#customers").val('');
         table.destroy(); 
         this.dataTable();
     }
