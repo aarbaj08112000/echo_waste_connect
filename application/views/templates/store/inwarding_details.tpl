@@ -91,12 +91,15 @@
       <div class="sub-header-left pull-left breadcrumb">
         <h1>
           Store
-          <a hijacked="yes" href="#stock/issue_request/index" class="backlisting-link" title="Back to Issue Request Listing" >
+          <a hijacked="yes" href="javascript:void(0)" class="backlisting-link"  >
             <i class="ti ti-chevrons-right" ></i>
-            <em >Challan</em></a>
+            <em >Inwarding</em></a>
+            <a hijacked="yes" href="javascript:void(0)" class="backlisting-link"  >
+              <i class="ti ti-chevrons-right" ></i>
+              <em >Part GRN</em></a>
           </h1>
           <br>
-          <span >Inwarding Details</span>
+          <span >Inwarding PO Invoice Details</span>
         </div>
       </nav>
       <!-- <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Tables /</span> Basic Tables</h4> -->
@@ -106,9 +109,9 @@
         <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
         <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
         <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
-        <a class="btn btn-dark mt-4"
-           href="<%base_url('inwarding_invoice/') %><%$new_po_id %>">
-        Back </a>
+        <a class="btn btn-seconday"
+           href="<%base_url('inwarding_invoice/') %><%$new_po_id %>" title="Back">
+        <i class="ti ti-arrow-left"></i> </a>
       </div>
 
 
@@ -223,8 +226,8 @@
                                       href="<%base_url('inwarding_invoice/') %><%$new_po_id %>">
                                    < Back </a> &nbsp; -->
                                    <%if ($status == "not-verifed") %>
-        	                           <button type="button" class="btn btn-primary mt-4" data-bstoggle="modal"
-        	                              data-bstarget="#exampleModalmatch">
+        	                           <button type="button" class="btn btn-primary mt-4" data-bs-toggle="modal"
+        	                              data-bs-target="#exampleModalmatch">
         	                           Match Invoice Amount </button>
                                    <%/if%>
 
@@ -232,8 +235,8 @@
                                       	<button class='btn btn-primary mt-4' disabled>Inwarding Already Accepted</button>
                                     <%else if ($status == "verifed") %>
                                           <%if ($inwarding_data[0]->status == "pending" || $inwarding_data[0]->status == "") %>
-        			                           <button type="button" class="btn btn-danger mt-4" data-bstoggle="modal"
-        			                              data-bstarget="#exampleModalgenerate">
+        			                           <button type="button" class="btn btn-danger mt-4" data-bs-toggle="modal"
+        			                              data-bs-target="#exampleModalgenerate">
         			                           Generate GRN </button>
         			                       <%/if%>
                                    <%/if%>

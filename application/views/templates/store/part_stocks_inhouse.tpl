@@ -89,9 +89,9 @@
       <div class="sub-header-left pull-left breadcrumb">
         <h1>
           Store
-          <a hijacked="yes" href="#stock/issue_request/index" class="backlisting-link" title="Back to Issue Request Listing" >
+          <a hijacked="yes" href="javascript:void(0)" class="backlisting-link" >
             <i class="ti ti-chevrons-right" ></i>
-            <em >Inwarding</em></a>
+            <em >Stock</em></a>
           </h1>
           <br>
           <span >Inhouse Parts (Item) Stock</span>
@@ -105,7 +105,7 @@
         <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
         <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
         <a href="<%base_url('download_stock_variance') %>"
-           class="btn btn-info">Download Stock Variance </a>
+           class="btn btn-seconday" title="Download Stock Variance"> <i class="ti ti-download"></i> </a>
       </div>
 
       <!-- Main content -->
