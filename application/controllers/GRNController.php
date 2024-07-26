@@ -506,6 +506,20 @@ class GRNController extends CommonController
 				} else {
 					echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 				}
+				// if ($result) {
+				// 	$success = 1;
+				// 	$messages = "Successfully updated.";
+				// 	// $this->addSuccessMessage('Invoice Number added successfully.');
+				// } else {
+				// 	$success = 0;
+				// 	$messages = "Unable to add Invoice Number.";
+				// 	// $this->addErrorMessage('Unable to add Invoice Number.');
+				// }
+				// // $this->redirectMessage();
+				// $return_arr['success']=$success;
+				// $return_arr['messages']=$messages;
+				// echo json_encode($return_arr);
+				// exit;
 			}
 
 		}

@@ -112,7 +112,7 @@
 
 
       <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-         <div class="modal-dialog modal-lg" role="document">
+         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
             <div class="modal-content">
                <div class="modal-header">
                   <h5 class="modal-title" id="exampleModalLabel">Add Stock Rejection </h5>
@@ -121,12 +121,12 @@
                   </button>
                </div>
                <div class="modal-body">
-                  <form action="<%base_url('add_rejection_flow') %>" method="POST" enctype='multipart/form-data'>
+                  <form action="javascript:void(0)" method="POST" class="custom-form add_stock_rejection" enctype='multipart/form-data'>
                      <div class="row">
                         <div class="col-lg-12">
                            <div class="form-group">
                               <label for="po_num">Select Part Number / Description / Stock </label><span class="text-danger">*</span>
-                              <select name="part_id" id="" class="from-control select2">
+                              <select name="part_id" id="" class="from-control form-select required-input">
                                  <%if ($child_part) %>
                                         <%foreach from=$child_part item=c %>
                                             <%if ($c->stock > 0) %>
@@ -138,7 +138,7 @@
                            </div>
                            <div class="form-group">
                               <label for="po_num">Select Supplier</label><span class="text-danger">*</span>
-                              <select name="supplier_id" id="" class="from-control select2">
+                              <select name="supplier_id" id="" class="from-control form-select required-input">
                                  <%if ($supplier) %>
                                         <%foreach from=$supplier item=c %>
                                       <option value="<%$c->id %>"><%$c->supplier_name %></option>
@@ -148,19 +148,19 @@
                            </div>
                            <div class="form-group">
                               <label for="po_num">Enter Reason <span class="text-danger">*</span></label>
-                              <input type="text" name="reason" required placeholder="Enter Reason" class="form-control">
+                              <input type="text" name="reason"  placeholder="Enter Reason" class="form-control required-input">
                            </div>
                            <div class="form-group">
                               <label for="po_num">Upload debit note (approved document)</label>
-                              <input type="file" name="uploading_document" class="form-control">
+                              <input type="file" name="uploading_document" class="form-control required-input">
                            </div>
                            <div class="form-group">
                               <label for="po_num">Enter Qty <span class="text-danger">*</span></label>
-                              <input type="number" name="qty" step="any" placeholder="Enter Qty" name="qty" required class="form-control">
+                              <input type="number" name="qty" step="any" placeholder="Enter Qty" name="qty"  class="form-control required-input">
                            </div>
                            <div class="form-group">
                               <label for="po_num">Enter Remark </label>
-                              <input type="text" name="remark" required placeholder="Enter Remark" class="form-control">
+                              <input type="text" name="remark"  placeholder="Enter Remark" class="form-control required-input">
                            </div>
                         </div>
                      </div>
@@ -219,7 +219,7 @@
                              <%else if ($c->status == "stock_transfered") %>
                                <button type="submit" data-bs-toggle="modal" class="btn btn-sm btn-primary" data-bs-target="#exampleModal2<%$i %>">Approve Rejection</button>
                                <div class="modal fade" id="exampleModal2<%$i %>" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog modal-lg" role="document">
+                                  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                      <div class="modal-content">
                                         <div class="modal-header">
                                            <h5 class="modal-title" id="exampleModalLabel">Approve Rejection</h5>
@@ -274,6 +274,8 @@
   </div>
 
 
+  <script type="text/javascript">
+    var base_url = <%$base_url|@json_encode%>
+  </script>
 
-
-  <script src="<%$base_url%>public/js/store/short_receipt_mdr.js"></script>
+  <script src="<%$base_url%>public/js/store/stock_rejection.js"></script>

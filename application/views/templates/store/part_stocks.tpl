@@ -212,7 +212,7 @@
 				                            <div class="col-lg-12">
 				                            <br>
 				                            <label for="">Supplier Part no / Description </label>
-				                            <select name="customer_part_number" required id="" class="form-control select2">
+				                            <select name="customer_part_number" required id="" class="form-control">
 				                            <option value="">Select Part</option>
 				                            <%if ($supplier_part_select_list) %>
 				                                  	<%foreach from=$supplier_part_select_list item=ccc %>

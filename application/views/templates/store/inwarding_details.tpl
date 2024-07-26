@@ -226,8 +226,8 @@
                                       href="<%base_url('inwarding_invoice/') %><%$new_po_id %>">
                                    < Back </a> &nbsp; -->
                                    <%if ($status == "not-verifed") %>
-        	                           <button type="button" class="btn btn-primary mt-4" data-bstoggle="modal"
-        	                              data-bstarget="#exampleModalmatch">
+        	                           <button type="button" class="btn btn-primary mt-4" data-bs-toggle="modal"
+        	                              data-bs-target="#exampleModalmatch">
         	                           Match Invoice Amount </button>
                                    <%/if%>
 
@@ -235,8 +235,8 @@
                                       	<button class='btn btn-primary mt-4' disabled>Inwarding Already Accepted</button>
                                     <%else if ($status == "verifed") %>
                                           <%if ($inwarding_data[0]->status == "pending" || $inwarding_data[0]->status == "") %>
-        			                           <button type="button" class="btn btn-danger mt-4" data-bstoggle="modal"
-        			                              data-bstarget="#exampleModalgenerate">
+        			                           <button type="button" class="btn btn-danger mt-4" data-bs-toggle="modal"
+        			                              data-bs-target="#exampleModalgenerate">
         			                           Generate GRN </button>
         			                       <%/if%>
                                    <%/if%>

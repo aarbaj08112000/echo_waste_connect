@@ -2,27 +2,27 @@ $( document ).ready(function() {
   page.init();
 });
 var table = '';
-var file_name = "inwarding_details_validation";
-var pdf_title = "inwarding_invoice";
+var file_name = "short_receipt_mdr";
+var pdf_title = "short_receipt_mdr";
 const page = {
   init: function(){
     this.initiateForm();
     this.dataTable();
   },
   dataTable: function() {
-      table = $('#inwarding_details_tbl').DataTable();
+      table = $('#short_receipt_mdr').DataTable();
 
   },
   initiateForm: function(){
     let that = this;
 
-    $(".inwarding_details_validation").submit(function(e){
+    $(".add_stock_rejection").submit(function(e){
       e.preventDefault();
-      let flag = that.formValidate("inwarding_details_validation");
+      let flag = that.formValidate("add_stock_rejection");
       if(flag){
         return;
       }
-      var formData = new FormData($('.inwarding_details_validation')[0]);
+      var formData = new FormData($('.add_stock_rejection')[0]);
 
       $.ajax({
         type: "POST",

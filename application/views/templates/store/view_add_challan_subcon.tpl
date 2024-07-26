@@ -121,7 +121,7 @@
               </button>
             </div>
             <div class="modal-body">
-              <form action="<%base_url('generate_challan_subcon') %>" method="post">
+              <form action="javascript:void(0)" class="custom-form add_challan_subcon" method="post">
                 <!-- <div class="form-group">
                   <label for="Enter Challan Number">Challan Number <span class="text-danger">*</span> </label>
                   <input type="text" name="challan_number" placeholder="Challan Number " required class="form-control">
@@ -130,7 +130,7 @@
                   <div class="col-lg-12">
                     <div class="form-group">
                       <label for="Enter Challan Number">Select Customer <span class="text-danger">*</span> </label>
-                      <select class="form-control select2" name="customer_id" style="width: 100%;">
+                      <select class="form-control select2 required-input" name="customer_id" style="width: 100%;">
                         <%if ($customer) %>
                             <%foreach from=$customer item=c %>
                             <option value="<%$c->id %>">
@@ -143,38 +143,38 @@
                   </div>
                   <div class="col-lg-12">
                     <div class="form-group">
-                      <label for="">Enter Customer Challan Number </label>
-                      <input type="text" placeholder="Enter Remark" value="" name="customer_challan_number" class="form-control">
+                      <label for="">Enter Customer Challan Number <span class="text-danger">*</span></label>
+                      <input type="text" placeholder="Enter Remark" value="" name="customer_challan_number" class="form-control required-input">
                     </div>
                   </div>
                   <div class="col-lg-12">
                     <div class="form-group">
-                      <label for="">Enter Remark </label>
-                      <input type="text" placeholder="Enter Remark" value="" name="remark" class="form-control">
+                      <label for="">Enter Remark <span class="text-danger">*</span></label>
+                      <input type="text" placeholder="Enter Remark" value="" name="remark" class="form-control required-input">
                     </div>
                   </div>
                   <div class="col-lg-12">
                     <div class="form-group">
-                      <label for="">Enter Mode Of Transport </label>
-                      <input type="text" placeholder="Enter Mode Of Transport" value="" name="mode" class="form-control">
+                      <label for="">Enter Mode Of Transport <span class="text-danger">*</span></label>
+                      <input type="text" placeholder="Enter Mode Of Transport" value="" name="mode" class="form-control required-input">
                     </div>
                   </div>
                   <div class="col-lg-12">
                     <div class="form-group">
-                      <label for="">Enter Transporter </label>
-                      <input type="text" placeholder="Enter Transporter" value="" name="transpoter" class="form-control">
+                      <label for="">Enter Transporter <span class="text-danger">*</span></label>
+                      <input type="text" placeholder="Enter Transporter" value="" name="transpoter" class="form-control required-input">
                     </div>
                   </div>
                   <div class="col-lg-12">
                     <div class="form-group">
-                      <label for="">Enter Vehicle No. </label>
-                      <input type="text" placeholder="Enter Vehicle No" value="" name="vechical_number" class="form-control">
+                      <label for="">Enter Vehicle No. <span class="text-danger">*</span></label>
+                      <input type="text" placeholder="Enter Vehicle No" value="" name="vechical_number" class="form-control required-input">
                     </div>
                   </div>
                   <div class="col-lg-12">
                     <div class="form-group">
-                      <label for="">Enter L.R No </label>
-                      <input type="text" placeholder="Enter L.R No" value="" name="l_r_number" class="form-control">
+                      <label for="">Enter L.R No <span class="text-danger">*</span> </label>
+                      <input type="text" placeholder="Enter L.R No" value="" name="l_r_number" class="form-control required-input">
                     </div>
                   </div>
                 </div>
@@ -240,4 +240,7 @@
 
 
 
+  <script type="text/javascript">
+  var base_url = <%$base_url|@json_encode%>
+  </script>
   <script src="<%$base_url%>public/js/store/view_add_challan_subcon.js"></script>

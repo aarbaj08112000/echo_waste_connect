@@ -665,5 +665,7 @@
 
 
 
-
+  <script type="text/javascript">
+    var base_url = <%$base_url|@json_encode%>
+  </script>
   <script src="<%$base_url%>public/js/store/inwarding_details_validation.js"></script>

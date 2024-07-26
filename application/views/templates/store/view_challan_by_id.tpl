@@ -19,12 +19,12 @@
           <span >View Challan</span>
         </div>
       </nav>
-
       <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
 
-        <a href="<%base_url('view_add_challan') %>" class="btn btn-primary mt-4">
-          Back </a>
+        <a href="<%base_url('view_add_challan') %>" class="btn btn-seconday"><i class="ti ti-arrow-left" title="Back"></i></a>
         </div>
+
+
 
 
         <!-- Main content -->
@@ -145,7 +145,7 @@
                           </div>
                           <!-- part add flow -->
                           <%if ($challan_data[0]->status != "completed") %>
-                          <div class="card-header">
+                          <div class="card-header px-0">
                             <div class="row">
                               <div class="col-lg-5">
                                 <div class="form-group">

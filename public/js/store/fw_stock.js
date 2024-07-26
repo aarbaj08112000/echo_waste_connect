@@ -2,32 +2,31 @@ $( document ).ready(function() {
   page.init();
 });
 var table = '';
-var file_name = "inwarding_details_validation";
-var pdf_title = "inwarding_invoice";
+var file_name = "fg_stock";
+var pdf_title = "fg_stock";
 const page = {
   init: function(){
     this.initiateForm();
     this.dataTable();
   },
   dataTable: function() {
-      table = $('#inwarding_details_tbl').DataTable();
+      table = $('#fg_stock_tbl').DataTable();
 
   },
   initiateForm: function(){
     let that = this;
 
-    $(".inwarding_details_validation").submit(function(e){
+    $(".fg_stock_form").submit(function(e){
       e.preventDefault();
-      let flag = that.formValidate("inwarding_details_validation");
+      let flag = that.formValidate("fg_stock_form");
       if(flag){
         return;
       }
-      var formData = new FormData($('.inwarding_details_validation')[0]);
+      var formData = new FormData($('.fg_stock_form')[0]);
 
       $.ajax({
         type: "POST",
-        url: base_url+"add_rejection_flow",
-        // url: "add_rejection_flow",
+        url: base_url+"transfer_fg_stock_to_inhouse_stock",
         data: formData,
         processData: false,
         contentType: false,

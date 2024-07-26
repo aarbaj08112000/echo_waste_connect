@@ -5539,8 +5539,7 @@ class Welcome extends CommonController
 	}
 	public function add_rejection_flow()
 	{
-		print_r($_POST);
-		exit;
+
 		$name = $this->input->post('parttypeName');
 		$type = $this->input->post('type');
 		$grn_number = $this->input->post('grn_number');
@@ -5594,7 +5593,9 @@ class Welcome extends CommonController
 		$new_po_data = $this->Crud->get_data_by_id("new_po", $po_number, "po_number");
 
 		if ((float)$qty > (float)$child_part_data_new[0]->stock && $type == "stock_rejection") {
-			echo "<script>alert('Error 401 : Entered Qty Is Greater Than Store Stock , Please Enter Less Qty !!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$success = 0;
+			$messages = " Error 401 : Entered Qty Is Greater Than Store Stock , Please Enter Less Qty !!!!";
+			// echo "<script>alert('Error 401 : Entered Qty Is Greater Than Store Stock , Please Enter Less Qty !!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 			$child_part_maste_data = $this->Common_admin_model->get_data_by_id_multiple_condition("child_part_master", $data_old);
 
@@ -5663,13 +5664,12 @@ class Welcome extends CommonController
 
 			if (false) {
 				// echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-				$success = 1;
+				$success = 0;
 				$messages = " Already Exists.";
 			} else {
 
 				$result = $this->Crud->insert_data("rejection_flow", $data);
-				print_r($result);
-				exit;
+
 				// if ($result) {
 				// 	echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 				// } else {
