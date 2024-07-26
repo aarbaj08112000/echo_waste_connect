@@ -140,7 +140,7 @@
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Sr. No..</th>
+                                        
                                             <th>Customer Part Number</th>
                                             <th>Customer Part Description</th>
                                             <th>Customer Name</th>
@@ -283,3 +283,4 @@
 </div>
 </div>
 <!-- /.content-wrapper -->
+

@@ -10,7 +10,7 @@ const page = {
         this.filter();
     },
     dataTable: function(){
-        console.log("ok")
+
         var data = {};
         table = new DataTable("#child_part_view", {
             dom: "Bfrtilp",

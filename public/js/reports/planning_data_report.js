@@ -1,13 +1,13 @@
 var table = '';
-var file_name = "part_stocks";
-var pdf_title = "Supplier Parts (Item) Stock";
+var file_name = "sales_report";
+var pdf_title = "Sales Report";
 // var myModal = new bootstrap.Modal(document.getElementById('child_part_update'))
 const page = {
     init: function(){
         this.dataTable();
         this.filter();
         this.formValidation();
-        $(document).on("click",".edit-fg",function(){
+        $(document).on("click",".edit-part",function(){
             var data = $(this).attr("data-value");
             data = JSON.parse(atob(data)); 
             console.log(data)
@@ -40,14 +40,13 @@ const page = {
             $("#uom_id").val(data.uom_id).trigger("change");
             $("#max_uom").val(data.max_uom);
             $("#grade").val(data.grade);
-            myModal.show();
+            // myModal.show();
         })
 
     },
     dataTable: function(){
-       
         var data = this.serachParams();
-        table = new DataTable("#part_stocks", {
+        table = new DataTable("#planning_data", {
             dom: "Bfrtilp",
             buttons: [
               {     
@@ -130,7 +129,7 @@ const page = {
             },
             ajax: {
                 data: {'search':data},    
-                url: "StockController/getPartStockReportData",
+                url: "welcome/planningReportDataAjax",
                 type: "POST",
             },
         });
@@ -146,7 +145,9 @@ const page = {
     },
     filter: function(){
         let that = this;
-        $('#selectPart').select2();
+        $('#months').select2();
+        $('#month').select2();
+        $('#customers').select2();
         $(".search-filter").on("click",function(){
             table.destroy(); 
             that.dataTable();
@@ -157,12 +158,16 @@ const page = {
         })
     },
     serachParams: function(){
-        var part_id = $("#selectPart").val();
-        var params = {part_id:part_id};
+        var month = $("#months").val();
+        var year = $("#year").val();
+        var customer = $('#customers').val();
+        var params = {month:month,year:year,customer:customer};
         return params;
     },
     resetFilter: function(){
-        $("#selectPart").val('').trigger('change');
+        $("#months").val('').trigger('change');
+        $("#year").val('');
+        $("#customers").val('');
         table.destroy(); 
         this.dataTable();
     }
@@ -170,5 +175,4 @@ const page = {
 
 $( document ).ready(function() {
     page.init();
-    
 });
