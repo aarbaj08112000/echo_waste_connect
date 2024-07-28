@@ -111,7 +111,7 @@
 
 
       <div class="modal fade" id="addPromo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-         <div class="modal-dialog" role="document">
+         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                <div class="modal-header">
                   <h5 class="modal-title" id="exampleModalLabel">Add</h5>
@@ -119,10 +119,10 @@
                   </button>
                </div>
                <div class="modal-body">
-                  <form action="<%base_url('add_rejection_remark') %>" method="POST" enctype="multipart/form-data">
+                  <form action="javascript:void(0)" method="POST" class="custom-form add_rejection_remark" enctype="multipart/form-data">
                      <div class="form-group">
                         <label for="on click url">Rejection Remark <span class="text-danger">*</span></label> <br>
-                        <input required type="text" name="name" placeholder="Enter Operation Number" class="form-control" value="" id="">
+                        <input type="text" name="name" placeholder="Enter Operation Number" class="form-control required-input" value="" id="">
                      </div>
                </div>
                <div class="modal-footer">
@@ -169,6 +169,8 @@
   </div>
 
 
-
+  <script type="text/javascript">
+  var base_url = <%$base_url|@json_encode%>
+  </script>
 
   <script src="<%$base_url%>public/js/quality/remarks.js"></script>

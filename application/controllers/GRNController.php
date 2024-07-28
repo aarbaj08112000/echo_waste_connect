@@ -130,71 +130,71 @@ class GRNController extends CommonController
 			}
 
 
-	// public function add_invoice_number()
-	// {
-	//
-	//     $invoice_number = trim($this->input->post('invoice_number'));
-	//     $invoice_date = $this->input->post('invoice_date');
-	//     $po_id = $this->input->post('new_po_id');
-	//     $grn_date = $this->input->post('grn_date');
-	//     $vehicle_number = $this->input->post('vehicle_number');
-	//     $transporter = $this->input->post('transporter');
-	//     $deliveryUnit = $this->Unit->getSessionClientUnitName();
-	//
-	//     // Check whether the invoice exists and check for supplier id
-	//     $po1 = $this->Crud->customQuery("SELECT po.supplier_id FROM inwarding inward, new_po po
-	//         WHERE inward.invoice_number = $invoice_number
-	//         AND inward.po_id = po.id", array($invoice_number));
-	//
-	//     // Check the supplier id for selected po
-	//     $po2 = $this->Crud->customQuery("SELECT supplier_id FROM new_po
-	//         WHERE id = ?", array($po_id));
-	//
-	//     $dataExist = false;
-	//     foreach ($po1 as $podata) {
-	//         if ($podata->supplier_id == $po2[0]->supplier_id) {
-	//             $dataExist = true;
-	//             break;
-	//         }
-	//     }
-	//
-	//     if ($dataExist) {
-	// 			$success = 0;
-	// 			$messages = "Invoice Number already exists for this supplier. Enter a different Invoice Number.";
-	//         // echo "<script>alert('Invoice Number already exists for this supplier. Enter a different Invoice Number.');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-	//     } else {
-	//         $data = array(
-	//             "invoice_number" => $invoice_number,
-	//             "po_id" => $po_id,
-	//             "invoice_date" => $invoice_date,
-	//             "grn_date" => $grn_date,
-	//             "vehicle_number" => $vehicle_number,
-	//             "transporter" => $transporter,
-	//             "delivery_unit" => $deliveryUnit,
-	//             "created_dttm" => $this->current_dttm,
-	//             "created_date" => $this->current_date,
-	//             "created_month" => $this->month,
-	//             "created_day" => $this->date,
-	//             "created_year" => $this->year,
-	//             "status" => "pending"
-	//         );
-	// 				pr($data,1);
-	//         $result = $this->Crud->insert_data("inwarding", $data);
-	// 				print_r($result);
-	//         if ($result) {
-	//             $success = 1;
-	//             $messages = "Invoice Number added successfully.";
-	//         } else {
-	//             $success = 0;
-	//             $messages = "Unable to add Invoice Number.";
-	//         }
-	//
-	//         $return_arr['success'] = $success;
-	//         $return_arr['messages'] = $messages;
-	//         echo json_encode($return_arr);
-	//         exit;
-	//     }
-	// }
+			// public function add_invoice_number()
+			// {
+			//
+			//     $invoice_number = trim($this->input->post('invoice_number'));
+			//     $invoice_date = $this->input->post('invoice_date');
+			//     $po_id = $this->input->post('new_po_id');
+			//     $grn_date = $this->input->post('grn_date');
+			//     $vehicle_number = $this->input->post('vehicle_number');
+			//     $transporter = $this->input->post('transporter');
+			//     $deliveryUnit = $this->Unit->getSessionClientUnitName();
+			//
+			//     // Check whether the invoice exists and check for supplier id
+			//     $po1 = $this->Crud->customQuery("SELECT po.supplier_id FROM inwarding inward, new_po po
+			//         WHERE inward.invoice_number = $invoice_number
+			//         AND inward.po_id = po.id", array($invoice_number));
+			//
+			//     // Check the supplier id for selected po
+			//     $po2 = $this->Crud->customQuery("SELECT supplier_id FROM new_po
+			//         WHERE id = ?", array($po_id));
+			//
+			//     $dataExist = false;
+			//     foreach ($po1 as $podata) {
+			//         if ($podata->supplier_id == $po2[0]->supplier_id) {
+			//             $dataExist = true;
+			//             break;
+			//         }
+			//     }
+			//
+			//     if ($dataExist) {
+			// 			$success = 0;
+			// 			$messages = "Invoice Number already exists for this supplier. Enter a different Invoice Number.";
+			//         // echo "<script>alert('Invoice Number already exists for this supplier. Enter a different Invoice Number.');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			//     } else {
+			//         $data = array(
+			//             "invoice_number" => $invoice_number,
+			//             "po_id" => $po_id,
+			//             "invoice_date" => $invoice_date,
+			//             "grn_date" => $grn_date,
+			//             "vehicle_number" => $vehicle_number,
+			//             "transporter" => $transporter,
+			//             "delivery_unit" => $deliveryUnit,
+			//             "created_dttm" => $this->current_dttm,
+			//             "created_date" => $this->current_date,
+			//             "created_month" => $this->month,
+			//             "created_day" => $this->date,
+			//             "created_year" => $this->year,
+			//             "status" => "pending"
+			//         );
+			// 				pr($data,1);
+			//         $result = $this->Crud->insert_data("inwarding", $data);
+			// 				print_r($result);
+			//         if ($result) {
+			//             $success = 1;
+			//             $messages = "Invoice Number added successfully.";
+			//         } else {
+			//             $success = 0;
+			//             $messages = "Unable to add Invoice Number.";
+			//         }
+			//
+			//         $return_arr['success'] = $success;
+			//         $return_arr['messages'] = $messages;
+			//         echo json_encode($return_arr);
+			//         exit;
+			//     }
+			// }
 
 
 
@@ -219,12 +219,25 @@ class GRNController extends CommonController
 
 				$insert = $this->Crud->insert_data("raw_material_inspection_report", $data);
 
+				// if ($insert) {
+				// 	$this->addSuccessMessage('Added Successfully.');
+				// } else {
+				// 	$this->addErrorMessage('Unable to perform operation.');
+				// }
+				// $this->redirectMessage();
 				if ($insert) {
-					$this->addSuccessMessage('Added Successfully.');
-				} else {
-					$this->addErrorMessage('Unable to perform operation.');
-				}
-				$this->redirectMessage();
+						$success = 1;
+						$messages = "Added successfully.";
+											} else {
+						$success = 0;
+						$messages = "Something went wrong.";
+											}
+
+					$return_arr['success']=$success;
+					$return_arr['messages']=$messages;
+					echo json_encode($return_arr);
+					exit;
+
 
 			}
 
@@ -243,12 +256,20 @@ class GRNController extends CommonController
 				);
 
 				$result = $this->Crud->update_data_column("raw_material_inspection_report", $data, $id, "id");
+
 				if ($result) {
-					$this->addSuccessMessage('Updated Successfully.');
+					$success = 1;
+					$messages = "Updated Successfully.";
 				} else {
-					$this->addErrorMessage('Unable to perform operation.');
+					$success = 0;
+					$messages = "Unable to perform operation.";
 				}
-				$this->redirectMessage();
+
+				$return_arr['success']=$success;
+				$return_arr['messages']=$messages;
+				echo json_encode($return_arr);
+				exit;
+
 
 			}
 

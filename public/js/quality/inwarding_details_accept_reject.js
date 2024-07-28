@@ -3,8 +3,8 @@ $(document).ready(function() {
 });
 
 var table = '';
-var file_name = "remarks";
-var pdf_title = "remarks";
+var file_name = "inwarding_details_accept_reject";
+var pdf_title = "inwarding_details_accept_reject";
 
 const page = {
     init: function() {
@@ -12,28 +12,29 @@ const page = {
         this.initiateForm();
     },
     dataTable: function() {
-        table = $('#remarks').DataTable();
+        table = $('#inwarding_details_accept_reject').DataTable();
     },
     initiateForm: function(){
       let that = this;
 
-      $(".add_rejection_remark").submit(function(e){
+      $(".update_rm_batch_mtc_report").submit(function(e){
         e.preventDefault();
-        let flag = that.formValidate("add_rejection_remark");
+        console.log(e.preventDefault());
+        let flag = that.formValidate("update_rm_batch_mtc_report");
         if(flag){
           return;
         }
-        var formData = new FormData($('.add_rejection_remark')[0]);
+        var formData = new FormData($('.update_rm_batch_mtc_report')[0]);
 
         $.ajax({
           type: "POST",
-          url: base_url+"add_rejection_remark",
+          url: base_url+"update_rm_batch_mtc_report",
           data: formData,
           processData: false,
           contentType: false,
           success: function (response) {
             var responseObject = JSON.parse(response);
-            var msg = responseObject.message;
+            var msg = responseObject.messages;
             var success = responseObject.success;
             if (success == 1) {
               toastr.success(msg);
