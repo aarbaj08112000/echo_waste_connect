@@ -59,10 +59,6 @@
                   <p class="tgdp-rgt-tp-txt"><%$supplier[0]->supplier_name %></p>
                </div>
                <div class="tgdp-rgt-tp-sect">
-                  <p class="tgdp-rgt-tp-ttl">Supplier Name</p>
-                  <p class="tgdp-rgt-tp-txt"><%$supplier[0]->supplier_name %></p>
-               </div>
-               <div class="tgdp-rgt-tp-sect">
                   <p class="tgdp-rgt-tp-ttl">Supplier Number</p>
                   <p class="tgdp-rgt-tp-txt"><%$supplier[0]->supplier_number %></p>
                </div>
@@ -73,7 +69,7 @@
             </div>
          </div>
       </div>
-      <div class="card p-0 mt-4">
+      <div class="card p-0 mt-4 action-block-main">
          <%if $statusNew eq 'pending'%>
          <div class="card-header">
             <%if ($new_po[0]->expiry_po_date <=  date('Y-m-d') || true) %>
@@ -84,7 +80,7 @@
                   <div class="form-group">
                         <label for="">Select Part Number // Description // Supplier // Rate //
                         Tax Structure // Max Qty<span class="text-danger">*</span> </label>
-                        <select name="part_id"  class="form-control select2">
+                        <select name="part_id"  class="form-control select2" placeholder="Select Part Number">
                            <%if ($child_part) %>
                            <%foreach from=$child_part item=$c %>
                            <%if ($c->c != '') %>
@@ -155,32 +151,32 @@
             <%/if%>
          </div>
          <%/if%>
-         <div class="card-header">
+         <div class="card-header action-block">
             <%if ($po_parts) %>
-            <%if $new_po[0]->status == "pending"  %>
-            <%if ($session_data['type'] == 'admin' || $session_data['type'] == 'Admin') %>
-            <button type="button" class="btn btn-danger ml-1" data-bs-toggle="modal" data-bs-target="#lock">
-            Lock PO
-            </button>
-            <%/if%>
-            <%/if%>
+               <%if $new_po[0]->status == "pending"  %>
+                  <%if ($session_data['type'] == 'admin' || $session_data['type'] == 'Admin') %>
+                  <button type="button" class="btn btn-danger ml-1" data-bs-toggle="modal" data-bs-target="#lock">
+                  Lock PO
+                  </button>
+                  <%/if%>
+               <%/if%>
             <%/if%>
             <%if ($new_po[0]->status == "lock") %>
-            <%if ($session_data['type'] == 'admin' || $session_data['type'] == 'Admin') %>
-            <button type="button" class="btn btn-success ml-1" data-bs-toggle="modal" data-bs-target="#accept">
-            Accept (Released) PO
-            </button>
-            <!-- <button type="button" class="btn btn-danger ml-1" data-toggle="modal" data-target="#delete">
-               Reject (delete) PO
-               </button> -->
-            <%/if%>
+               <%if ($session_data['type'] == 'admin' || $session_data['type'] == 'Admin') %>
+               <button type="button" class="btn btn-success ml-1" data-bs-toggle="modal" data-bs-target="#accept">
+               Accept (Released) PO
+               </button>
+               <!-- <button type="button" class="btn btn-danger ml-1" data-toggle="modal" data-target="#delete">
+                  Reject (delete) PO
+                  </button> -->
+               <%/if%>
             <%else %>
-            <%if ($new_po[0]->status != "pending") %>
-            <button type="button" disabled class="btn btn-success ml-1" data-bs-toggle="modal" data-bs-target="#accept">
-            PO Already Released
-            </button>
-            <a href="<%base_url('download_my_pdf/') %><%$new_po[0]->id %>" class="btn btn-primary" href="">Download</a>
-            <%/if%>
+               <%if ($new_po[0]->status != "pending") %>
+               <button type="button" disabled class="btn btn-success ml-1" data-bs-toggle="modal" data-bs-target="#accept">
+               PO Already Released
+               </button>
+               <a href="<%base_url('download_my_pdf/') %><%$new_po[0]->id %>" class="btn btn-primary" href="">Download</a>
+               <%/if%>
             <%/if%>
             <!-- Modal -->
             <div class="modal fade" id="accept" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -243,37 +239,6 @@
                   </form>
                </div>
             </div>
-            <!-- <div class="modal fade" id="delete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-               <div class="modal-dialog">
-                  <div class="modal-content">
-                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                        </button>
-                     </div>
-                     <div class="modal-body">
-                        <div class="row">
-                           <form action="<%base_url('delete_po') %>" method="POST">
-                              <div class="col-lg-12">
-                                 <div class="form-group">
-                                    <label for=""><b>Are You Sure Want To Delete This
-                                    PO?</b> </label>
-                                    <input type="hidden" name="id" value="<%$new_po[0]->id %>" required class="form-control">
-                                    <input type="hidden" name="status" value="reject" required class="form-control">
-                                    <input type="hidden" name="table_name" value="new_po" required class="form-control">
-                                 </div>
-                              </div>
-                        </div>
-                     </div>
-                     <div class="modal-footer">
-                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                     <button type="submit" class="btn btn-primary">Update</button>
-                     </div>
-                  </div>
-                  </form>
-               </div>
-            </div> -->
          </div>
       </div>
       <div class="card p-0 mt-4">
@@ -360,13 +325,13 @@
                                  </div>
                                  <div class="modal-body">
                                     <div class="row">
-                                       <form action="javascript:void(0)" method="POST" class="update_po_parts">
+                                       <form action="javascript:void(0)" method="POST" class="update_po_parts update_po_parts<%$p->id %> custom-form" data-id="<%$p->id %>">
                                           <div class="col-lg-12">
                                              <div class="form-group">
                                                 <label for="">Enter Qty <span class="text-danger">*</span>
                                                 </label>
-                                                <input type="text" name="qty" value="<%$p->qty %>" placeholder="Enter QTY " required class="form-control onlyNumericInput">
-                                                <input type="hidden" name="part_number" value="<%$child_part_data[0]->part_number %>" placeholder="Enter part_number " required class="form-control">
+                                                <input type="text" name="qty" value="<%$p->qty %>" placeholder="Enter QTY "  class="form-control onlyNumericInput  required-input">
+                                                <input type="hidden" name="part_number" value="<%$child_part_data[0]->part_number %>" placeholder="Enter part_number "  class="form-control onlyNumericInput">
                                                 <input type="hidden" name="id" value="<%$p->id %>" required class="form-control">
                                              </div>
                                           </div>
@@ -431,7 +396,7 @@
                                     <div class="row">
                                        <div class="col-lg-12">
                                           <div class="form-group">
-                                             <form action="javascript:void(0)" method="POST" class="update_po_parts_amendment custom-form">
+                                             <form action="javascript:void(0)" method="POST" class="update_po_parts_amendment update_po_parts_amendment<%$p->id %> custom-form" data-id="<%$p->id %>">
                                                 <label for="">Enter Qty <span class="text-danger">*</span>
                                                 </label>
                                                 <input type="text" name="qty" value="<%$p->new_po_qty %>" placeholder="Enter QTY "  class="form-control onlyNumericInput required-input">
@@ -463,7 +428,7 @@
                                     </button>
                                  </div>
                                  <div class="modal-body">
-                                     <form action="javascript:void(0)" method="POST" class="update_po_parts_amendment_approve custom-form">
+                                     <form action="javascript:void(0)" method="POST" class="update_po_parts_amendment_approve update_po_parts_amendment_approve<%$p->id %> custom-form" data-id="<%$p->id %>">
                                     <div class="row">
                                        <div class="col-lg-12">
                                           <div class="form-group">
