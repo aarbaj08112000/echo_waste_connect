@@ -5,6 +5,15 @@ const page = {
     init: function(){
         this.formValidation();
         this.initiateForm();
+        let action_btn = $(".action-block").find("button[data-bs-toggle='modal']");
+        console.log(action_btn)
+        if(action_btn.length == 0){
+            $(".action-block").remove()
+            let action_card = $(".action-block-main").find(".card-header");
+            if(action_card.length == 0){
+                $(".action-block-main").remove()
+            }
+        }
     },
     formValidation: function(){
         let that = this;
@@ -124,7 +133,13 @@ const page = {
         $(".update_po_parts").submit(function(e){
             e.preventDefault(); // Prevent form submission
                 // var formData = $(this).serialize();
-                var formData = new FormData($('.update_po_parts')[0]);
+                var id = $(this).attr("data-id");
+                let flag = that.formValidate("update_po_parts"+id);
+                if(flag){
+                	return;
+                }
+
+                var formData = new FormData($('.update_po_parts'+id)[0]);
                 $(this).parents(".modal").modal("hide")
                 $.ajax({
                     type: "POST",
@@ -184,11 +199,12 @@ const page = {
         $(".update_po_parts_amendment").submit(function(e){
             e.preventDefault(); // Prevent form submission
                 // var formData = $(this).serialize();
-                let flag = that.formValidate("update_po_parts_amendment");
+                var id = $(this).attr("data-id");
+                let flag = that.formValidate("update_po_parts_amendment"+id);
                 if(flag){
                 	return;
                 }
-                var formData = new FormData($('.update_po_parts_amendment')[0]);
+                var formData = new FormData($('.update_po_parts_amendment'+id)[0]);
                 $(this).parents(".modal").modal("hide")
                 $.ajax({
                     type: "POST",
@@ -218,11 +234,12 @@ const page = {
         $(".update_po_parts_amendment_approve").submit(function(e){
             e.preventDefault(); // Prevent form submission
                 // var formData = $(this).serialize();
-                let flag = that.formValidate("update_po_parts_amendment_approve");
+                var id = $(this).attr("data-id")
+                let flag = that.formValidate("update_po_parts_amendment_approve"+id);
                 if(flag){
                 	return;
                 }
-                var formData = new FormData($('.update_po_parts_amendment_approve')[0]);
+                var formData = new FormData($('.update_po_parts_amendment_approve'+id)[0]);
                 $(this).parents(".modal").modal("hide")
                 $.ajax({
                     type: "POST",

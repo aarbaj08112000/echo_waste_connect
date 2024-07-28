@@ -553,7 +553,7 @@ $CI->load->model('SupplierParts');
 			LEFT JOIN supplier as s ON s.id = np.supplier_id 
 			WHERE np.clientId = ".$this->Unit->getSessionClientId()." AND np.status ='pending'");
 		$data['supplier'] = $this->Crud->read_data("supplier");
-
+		$data['base_url'] = base_url();
 		// $this->load->view('header');
 		$this->loadView('purchase/pending_po', $data);
 		// $this->load->view('footer');
@@ -595,7 +595,7 @@ $CI->load->model('SupplierParts');
 	{
 		$new_po_id = $this->uri->segment('2');
 		$data['supplier_list'] = $this->Crud->read_data("supplier");
-	
+		// pr($data,1);
 		// $this->load->view('header');
 		// $this->load->view('new_po_list_supplier', $data);
 		$this->loadView('purchase/new_po_list_supplier', $data);
@@ -1714,14 +1714,26 @@ $CI->load->model('SupplierParts');
 			"status" => "accept_closed",
 			"closed_remark" => $closed_remark,
 		);
+		$success = 0;
+		$message = "Something went wrong!";
 		$result = $this->Crud->update_data("new_po", $data, $new_po_Data[0]->id);
 		if ($result) {
-			 $this->addSuccessMessage('PO successfully closed.');
-			 $this->redirectMessage();
+			$success = 1;
+			$message = "PO successfully closed.";
+			//  $this->addSuccessMessage('PO successfully closed.');
+			//  $this->redirectMessage();
 		} else {
-			$this->addErrorMessage('Error po_parts not found.');
-			 $this->redirectMessage();
+			$message = "Error po_parts not found.";
+			// $this->addErrorMessage('Error po_parts not found.');
+			//  $this->redirectMessage();
 		}
+		$return_arr = [
+			"success" => $success,
+			"message" => $message
+		];
+
+		echo json_encode($return_arr);
+		exit;
 	}
 	
 	

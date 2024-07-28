@@ -38,7 +38,6 @@ $(document).ready(function() {
                 cache: false,
                 type: "post",
                 success: function(result) {
-                    console.log(result);
                     var data = JSON.parse(result);
                     if (data.success == 1) {
                         toastr.success(data.messages);
