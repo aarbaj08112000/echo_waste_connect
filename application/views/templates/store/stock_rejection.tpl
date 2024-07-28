@@ -90,9 +90,9 @@
       <div class="sub-header-left pull-left breadcrumb">
         <h1>
           Store
-          <a hijacked="yes" href="#stock/issue_request/index" class="backlisting-link" title="Back to Issue Request Listing" >
+          <a hijacked="yes" href="javascript:void(0)" class="backlisting-link" title="Back to Issue Request Listing" >
             <i class="ti ti-chevrons-right" ></i>
-            <em >Challan</em></a>
+            <em >Stock Rejection</em></a>
           </h1>
           <br>
           <span >Stock Rejection</span>
@@ -105,27 +105,28 @@
         <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
         <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
         <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
-        <button type="button" class="btn btn-primary float-left" title="Add Stock Rejection" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        + </button>
+        <button type="button" class="btn btn-seconday" title="Add Stock Rejection" data-bs-toggle="modal" data-bs-target="#exampleModal">
+
+          <i class="ti ti-plus"></i> </button>
       </div>
 
 
       <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-         <div class="modal-dialog modal-lg" role="document">
+         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
             <div class="modal-content">
                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Add </h5>
+                  <h5 class="modal-title" id="exampleModalLabel">Add Stock Rejection </h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
 
                   </button>
                </div>
                <div class="modal-body">
-                  <form action="<%base_url('add_rejection_flow') %>" method="POST" enctype='multipart/form-data'>
+                  <form action="javascript:void(0)" method="POST" class="custom-form add_stock_rejection" enctype='multipart/form-data'>
                      <div class="row">
                         <div class="col-lg-12">
                            <div class="form-group">
                               <label for="po_num">Select Part Number / Description / Stock </label><span class="text-danger">*</span>
-                              <select name="part_id" id="" class="from-control select2">
+                              <select name="part_id" id="" class="from-control form-select required-input">
                                  <%if ($child_part) %>
                                         <%foreach from=$child_part item=c %>
                                             <%if ($c->stock > 0) %>
@@ -137,7 +138,7 @@
                            </div>
                            <div class="form-group">
                               <label for="po_num">Select Supplier</label><span class="text-danger">*</span>
-                              <select name="supplier_id" id="" class="from-control select2">
+                              <select name="supplier_id" id="" class="from-control form-select required-input">
                                  <%if ($supplier) %>
                                         <%foreach from=$supplier item=c %>
                                       <option value="<%$c->id %>"><%$c->supplier_name %></option>
@@ -147,19 +148,19 @@
                            </div>
                            <div class="form-group">
                               <label for="po_num">Enter Reason <span class="text-danger">*</span></label>
-                              <input type="text" name="reason" required placeholder="Enter Reason" class="form-control">
+                              <input type="text" name="reason"  placeholder="Enter Reason" class="form-control required-input">
                            </div>
                            <div class="form-group">
                               <label for="po_num">Upload debit note (approved document)</label>
-                              <input type="file" name="uploading_document" class="form-control">
+                              <input type="file" name="uploading_document" class="form-control required-input">
                            </div>
                            <div class="form-group">
                               <label for="po_num">Enter Qty <span class="text-danger">*</span></label>
-                              <input type="number" name="qty" step="any" placeholder="Enter Qty" name="qty" required class="form-control">
+                              <input type="number" name="qty" step="any" placeholder="Enter Qty" name="qty"  class="form-control required-input">
                            </div>
                            <div class="form-group">
                               <label for="po_num">Enter Remark </label>
-                              <input type="text" name="remark" required placeholder="Enter Remark" class="form-control">
+                              <input type="text" name="remark"  placeholder="Enter Remark" class="form-control required-input">
                            </div>
                         </div>
                      </div>
@@ -199,9 +200,9 @@
                           <td><%$c->reason %></td>
                           <td><%$c->supplier_name %></td>
                           <td><%$c->remark %></td>
-                          <td>
+                          <td class="text-center">
                              <%if ($c->debit_note) %>
-                             <a class="btn btn-dark" download href="<%base_url('documents/') %><%$c->debit_note %>">Download Uploaded Document</a>
+                             <a  download href="<%base_url('documents/') %><%$c->debit_note %>" title="Download Uploaded Document"><i class="ti ti-file-download"></i></a>
                              <%/if%>
                           </td>
                           <td>
@@ -214,11 +215,11 @@
                           <td><%$c->qty %></td>
                           <td>
                              <%if ($c->status == "approved") %>
-                              <a class="btn btn-success" href="<%base_url('create_debit_note/') %><%$c->id %>">Download</a>
+                              <p class="text-center"><a  href="<%base_url('create_debit_note/') %><%$c->id %>" title="Download"><i class="ti ti-download"></i></a></p>
                              <%else if ($c->status == "stock_transfered") %>
                                <button type="submit" data-bs-toggle="modal" class="btn btn-sm btn-primary" data-bs-target="#exampleModal2<%$i %>">Approve Rejection</button>
                                <div class="modal fade" id="exampleModal2<%$i %>" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog modal-lg" role="document">
+                                  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                      <div class="modal-content">
                                         <div class="modal-header">
                                            <h5 class="modal-title" id="exampleModalLabel">Approve Rejection</h5>
@@ -273,6 +274,8 @@
   </div>
 
 
+  <script type="text/javascript">
+    var base_url = <%$base_url|@json_encode%>
+  </script>
 
-
-  <script src="<%$base_url%>public/js/store/short_receipt_mdr.js"></script>
+  <script src="<%$base_url%>public/js/store/stock_rejection.js"></script>

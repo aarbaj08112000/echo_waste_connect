@@ -90,9 +90,12 @@
       <div class="sub-header-left pull-left breadcrumb">
         <h1>
           Store
-          <a hijacked="yes" href="#stock/issue_request/index" class="backlisting-link" title="Back to Issue Request Listing" >
+          <a hijacked="yes" href="javascript:void(0)" class="backlisting-link"  >
             <i class="ti ti-chevrons-right" ></i>
-            <em >Challan</em></a>
+            <em >Inwarding</em></a>
+            <a hijacked="yes" href="javascript:void(0)" class="backlisting-link"  >
+              <i class="ti ti-chevrons-right" ></i>
+              <em >Part GRN</em></a>
           </h1>
           <br>
           <span >Inwarding PO Invoice Numbers</span>
@@ -105,9 +108,10 @@
         <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
         <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
         <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
-        <button type="button" class="btn btn-primary" title="Add Invoice Number" data-bs-toggle="modal" data-bs-target="#exampleModal">
-          +</button>
-          <a class="btn btn-dark" href="<%base_url('inwarding') %>">Back</a>
+        <button type="button" class="btn btn-seconday" title="Add Invoice Number" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          <i class="ti ti-plus"></i></button>
+          <a class="btn btn-seconday" type="button" href="<%base_url('inwarding') %>"><i class="ti ti-arrow-left" title="Back To Item Part List"></i></a>
+          <!-- <a class="btn btn-dark" href="<%base_url('inwarding') %>">Back</a> -->
         <!-- <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button> -->
       </div>
 
@@ -122,21 +126,21 @@
               </button>
             </div>
             <div class="modal-body">
-              <form action="<%base_url('add_invoice_number') %>" method="POST">
+              <form action="javascript:void(0)" method="POST" class="add_invoice_number custom-form">
                 <div class="row">
                   <div class="col-lg-12">
                     <div class="form-group">
                       <label for="tool_number">Invoice Number </label><span class="text-danger">*</span>
-                      <input type="text" name="invoice_number" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Invoice Number">
-                      <input type="hidden" name="new_po_id" value="<%$new_po_id %>" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Invoice Number">
+                      <input type="text" name="invoice_number"  class="form-control required-input"  placeholder="Enter Invoice Number">
+                      <input type="hidden" name="new_po_id" value="<%$new_po_id %>"  class="form-control"  placeholder="Enter Invoice Number">
                     </div>
                     <div class="form-group">
                       <label for="tool_number">Invoice Date </label><span class="text-danger">*</span>
-                      <input type="date" name="invoice_date" max="<%date('Y-m-d') %>" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Invoice Number">
+                      <input type="date" name="invoice_date" max="<%date('Y-m-d') %>"  class="form-control required-input"  placeholder="Enter Invoice Number">
                     </div>
                     <div class="form-group">
                       <label for="tool_number">GRN Date </label><span class="text-danger">*</span>
-                      <input type="date" name="grn_date" readonly value="<%date('Y-m-d') %>" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Invoice Number">
+                      <input type="date" name="grn_date" readonly value="<%date('Y-m-d') %>"  class="form-control required-input"  placeholder="Enter Invoice Number">
                     </div>
                     <div class="form-group">
                       <label for="">Vehicle No.</label>
@@ -144,14 +148,14 @@
                       placeholder="Enter Vehicle No"
                       value=""
                       name="vehicle_number"
-                      pattern="^([A-Z|a-z|0-9]{4,20})$"
+                      pattern="^([A-Z|a-z|0-9]{4,20})"
                       oninvalid="this.setCustomValidity('Please enter a valid vehicle number in the format XX00XX0000')"
                       onchange="this.setCustomValidity('')"
                       class="form-control">
                     </div>
                     <div class="form-group">
                       <label for="tool_number">Transporter ID </label><span class="text-danger">*</span>
-                      <input type="text" name="transporter" value="" class="form-control" id="transporter" aria-describedby="emailHelp" placeholder="Enter transporter">
+                      <input type="text" name="transporter" value="" class="form-control required-input"  placeholder="Enter transporter">
                     </div>
                     <!-- <php if($isMultiClient == "true") { ?>
                     <div class="form-group">
@@ -279,5 +283,7 @@
   </div>
 
 
-
-  <!-- <script src="<%$base_url%>public/js/store/view_add_challan.js"></script> -->
+  <script type="text/javascript">
+    var base_url = <%$base_url|@json_encode%>
+  </script>
+  <script src="<%$base_url%>public/js/store/inwarding_invoice.js"></script>

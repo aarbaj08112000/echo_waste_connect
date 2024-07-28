@@ -5640,7 +5640,9 @@ class Welcome extends CommonController
 		$new_po_data = $this->Crud->get_data_by_id("new_po", $po_number, "po_number");
 
 		if ((float)$qty > (float)$child_part_data_new[0]->stock && $type == "stock_rejection") {
-			echo "<script>alert('Error 401 : Entered Qty Is Greater Than Store Stock , Please Enter Less Qty !!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$success = 0;
+			$messages = " Error 401 : Entered Qty Is Greater Than Store Stock , Please Enter Less Qty !!!!";
+			// echo "<script>alert('Error 401 : Entered Qty Is Greater Than Store Stock , Please Enter Less Qty !!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 			$child_part_maste_data = $this->Common_admin_model->get_data_by_id_multiple_condition("child_part_master", $data_old);
 
@@ -5708,14 +5710,25 @@ class Welcome extends CommonController
 			);
 			
 			if (false) {
-				echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$success = 0;
+
+				$messages = " Already Exists.";
+				// echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
 
 				$result = $this->Crud->insert_data("rejection_flow", $data);
+				// if ($result) {
+				// 	echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				// } else {
+				// 	echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				// }
 				if ($result) {
-					echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+					$success = 1;
+					$messages = " Added successfully.";
 				} else {
-					echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+					$success = 0;
+					$messages = "Unable to add.";
+
 				}
 			}
 		}
