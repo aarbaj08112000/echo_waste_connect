@@ -356,9 +356,14 @@ class MasterController extends CommonController {
 	{
 		$data['consignee_list'] = $this->Crud->CustomQuery("SELECT c.id as c_id, c.*,a.* FROM consignee c, 
 			address_master a where c.address_id = a.id");
-		$this->load->view('header');
-		$this->load->view('consignee', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		
+		foreach ($data['consignee_list'] as $key => $value) {
+			$data['consignee_list'][$key]->encode_data = base64_encode(json_encode($value));
+		}
+		
+		$this->loadView('customer/consignee', $data);	
+		// $this->load->view('footer');
 		
 	}
 	

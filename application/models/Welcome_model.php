@@ -195,6 +195,46 @@ class Welcome_model extends CI_Model
 		}
 	}
 
+    public function getCustomerPartNumber(){
+        $this->db->select('id,part_number as part');
+        $this->db->from('customer_parts_master');
+        $object = $this->db->get();
+        $result_data = is_object($object) ? $object->result_array() : [] ;
+        return $result_data;
+    }
+
+    public function getDataForCustomerParts($condition_arr = [],$search_params = []){
+        $this->db->select('c.part_number as part_number,c.part_description as part_description,c.fg_stock as fg_stock,c.fg_rate as fg_rate');
+        $this->db->from('customer_parts_master as c');
+        if(is_valid_array($search_params) && $search_params['part'] > 0){
+            $this->db->where('c.id', $search_params['part']);
+        }
+         if($condition_arr["order_by"] == ''){    
+                $this->db->order_by('c.id', 'DESC');
+            }
+        
+        if (count($condition_arr) > 0) {
+            $this->db->limit($condition_arr["length"], $condition_arr["start"]);
+            if ($condition_arr["order_by"] != "") {
+                $this->db->order_by($condition_arr["order_by"]);
+            }
+        }
+        $object = $this->db->get();
+        $result_data = is_object($object) ? $object->result_array() : [] ;
+        return $result_data;
+    }
+
+    public function getDataForCustomerPartsCount($condition_arr = [],$search_params = []){
+        $this->db->select('count(id) as total_count');
+        $this->db->from('customer_parts_master');
+        if(is_valid_array($search_params) && $search_params['part'] > 0){
+            $this->db->where('id', $search_params['part']);
+        }
+        $object = $this->db->get();
+        $result_data = is_object($object) ? $object->row_array() : [] ;
+        return $result_data;
+    }
+
     
 }
 

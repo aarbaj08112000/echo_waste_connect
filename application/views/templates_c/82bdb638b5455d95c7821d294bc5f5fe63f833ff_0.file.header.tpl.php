@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-07-21 14:37:20
+/* Smarty version 4.3.2, created on 2024-07-21 15:05:21
   from 'C:\xampp\htdocs\erp_converted\application\views\templates\header.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_669ccfc8914790_39068194',
+  'unifunc' => 'content_669cd659adaf74_99267665',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '82bdb638b5455d95c7821d294bc5f5fe63f833ff' => 
     array (
       0 => 'C:\\xampp\\htdocs\\erp_converted\\application\\views\\templates\\header.tpl',
-      1 => 1721479883,
+      1 => 1721553550,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_669ccfc8914790_39068194 (Smarty_Internal_Template $_smarty_tpl) {
+function content_669cd659adaf74_99267665 (Smarty_Internal_Template $_smarty_tpl) {
 if (!($_smarty_tpl->tpl_vars['session_data']->value['user_id'] > 0)) {
 echo redirect('login');?>
 
@@ -68,9 +68,6 @@ public/assets/vendor/fonts/boxicons.css" />
       <link rel="stylesheet" href="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
 public/css/plugin/tabler_css/tabler_icons.css">
 
-      <link rel="stylesheet" href="public/css/plugin/tabler_css/tabler_icons.css">
-
-   
       <!-- Core CSS -->
       <link rel="stylesheet" href="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
 public/assets/vendor/css/core.css" class="template-customizer-core-css" />
@@ -98,6 +95,8 @@ public/css/data_table/jquery.dataTables.min.css"> -->
       <link rel="stylesheet" type="text/css" href="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
 public/css/data_table/searchPanes.dataTables.min.css">
       <!-- Helpers -->
+
+
       <?php echo '<script'; ?>
  src="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
 public/assets/vendor/js/helpers.js"><?php echo '</script'; ?>
@@ -155,6 +154,14 @@ public/css/data_table/datatable.css">
       <?php echo '<script'; ?>
  src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"><?php echo '</script'; ?>
 >
+
+      <!-- toastr -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+      <?php echo '<script'; ?>
+ src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"><?php echo '</script'; ?>
+>
+      <!-- toastr -->
+
       <?php echo '<script'; ?>
  type="text/javascript">
          var theme_color = "#ea1c31";
@@ -990,5 +997,6 @@ public/img/logo.png" alt="" width="30">
       </nav>
       <!-- Content wrapper -->
       <div class="content-wrapper">
-      <!-- Content --><?php }
+      <!-- Content -->
+<?php }
 }

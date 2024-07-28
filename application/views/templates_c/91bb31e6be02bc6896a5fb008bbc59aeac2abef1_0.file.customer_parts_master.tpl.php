@@ -1,4 +1,27 @@
-<div class="wrapper container-xxl flex-grow-1 container-p-y">
+<?php
+/* Smarty version 4.3.2, created on 2024-07-28 16:08:19
+  from 'C:\xampp\htdocs\erp_converted\application\views\templates\customer\customer_parts_master.tpl' */
+
+/* @var Smarty_Internal_Template $_smarty_tpl */
+if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
+  'version' => '4.3.2',
+  'unifunc' => 'content_66a61f9b03d7b0_78756204',
+  'has_nocache_code' => false,
+  'file_dependency' => 
+  array (
+    '91bb31e6be02bc6896a5fb008bbc59aeac2abef1' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\erp_converted\\application\\views\\templates\\customer\\customer_parts_master.tpl',
+      1 => 1722163097,
+      2 => 'file',
+    ),
+  ),
+  'includes' => 
+  array (
+  ),
+),false)) {
+function content_66a61f9b03d7b0_78756204 (Smarty_Internal_Template $_smarty_tpl) {
+?><div class="wrapper container-xxl flex-grow-1 container-p-y">
 
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme filter-popup-block" style="width: 0px;">
 <div class="app-brand demo justify-content-between">
@@ -22,10 +45,19 @@
             <div class="input-group">
               <select name="part_drop" class="form-control select2" id="part_drop">
               <option value="" selected disabled>Please select part</option>
-              <%foreach $part_drop_data as $key => $val%>
+              <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['part_drop_data']->value, 'val', false, 'key');
+$_smarty_tpl->tpl_vars['val']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['key']->value => $_smarty_tpl->tpl_vars['val']->value) {
+$_smarty_tpl->tpl_vars['val']->do_else = false;
+?>
               <option 
-                  value="<%$val['id']%>"><%$val['part']%></option>
-             <%/foreach%>
+                  value="<?php echo $_smarty_tpl->tpl_vars['val']->value['id'];?>
+"><?php echo $_smarty_tpl->tpl_vars['val']->value['part'];?>
+</option>
+             <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
               </select>
             </div>
           </li>
@@ -70,7 +102,8 @@
                 </div>
                 <div class="col-sm-6">
                   <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="<%$base_url%>dashboard">Home</a></li>
+                    <li class="breadcrumb-item"><a href="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+dashboard">Home</a></li>
                   </ol>
                 </div>
               </div>
@@ -89,22 +122,24 @@
                     <div class="col-lg-12">
                         <div class="row">
                             <div class="col-lg-12 ml-3">
-                                <%if $this->session->flashdata && $this->session->flashdata('errors')%>
+                                <?php if ($_smarty_tpl->tpl_vars['this']->value->session->flashdata && $_smarty_tpl->tpl_vars['this']->value->session->flashdata('errors')) {?>
                                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                        <strong>Error : </strong> <%$this->session->flashdata('errors')%>
+                                        <strong>Error : </strong> <?php echo $_smarty_tpl->tpl_vars['this']->value->session->flashdata('errors');?>
+
                                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
-                                <%/if%>
-                                <%if $this->session->flashdata && $this->session->flashdata('success')%>
+                                <?php }?>
+                                <?php if ($_smarty_tpl->tpl_vars['this']->value->session->flashdata && $_smarty_tpl->tpl_vars['this']->value->session->flashdata('success')) {?>
                                     <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                        <strong>Success :</strong> <%$this->session->flashdata('success')%>
+                                        <strong>Success :</strong> <?php echo $_smarty_tpl->tpl_vars['this']->value->session->flashdata('success');?>
+
                                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
-                                <%/if%>
+                                <?php }?>
                             </div>
                         </div>
                     </div>
@@ -124,7 +159,8 @@
                                     </div>
                                     <div class="modal-body">
                                         <div class="form-group">
-                                            <form action="<%$base_url%>add_customer_parts_master" method="POST" enctype="multipart/form-data">
+                                            <form action="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+add_customer_parts_master" method="POST" enctype="multipart/form-data">
                                         </div>
                                         <div class="form-group">
                                             <label for="on click url">Part Number<span class="text-danger">*</span></label> <br>
@@ -164,37 +200,41 @@
                                             <th>Part Description</th>
                                             <th>FG Stock</th>
                                             <th>Rate</th>
-                                       <%*     <%if $entitlements.isPlastic != null%>
-                                                <th>Grade</th>
-                                            <%/if%> *%>
-                                            <th>Action</th>
+                                                                                   <th>Action</th>
                                         </tr>
                                     </thead>
 
                                     <tbody>
-                                        <%if $customer_parts_master%>
-                                            <%assign var="i" value=1%>
-                                            <%foreach from=$customer_parts_master item=u%>
-                                                <%if $entitlements.isPlastic != null%>
+                                        <?php if ($_smarty_tpl->tpl_vars['customer_parts_master']->value) {?>
+                                            <?php $_smarty_tpl->_assignInScope('i', 1);?>
+                                            <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['customer_parts_master']->value, 'u');
+$_smarty_tpl->tpl_vars['u']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['u']->value) {
+$_smarty_tpl->tpl_vars['u']->do_else = false;
+?>
+                                                <?php if ($_smarty_tpl->tpl_vars['entitlements']->value['isPlastic'] != null) {?>
                                                     
-                                                    <%assign var="grade_name" value=""%>
-                                                    <%if $grades_data%>
-                                                        <%assign var="grade_name" value=$grades_data[$u->grade_id][0]->name%>
-                                                    <%/if%>
-                                                <%/if%>
+                                                    <?php $_smarty_tpl->_assignInScope('grade_name', '');?>
+                                                    <?php if ($_smarty_tpl->tpl_vars['grades_data']->value) {?>
+                                                        <?php $_smarty_tpl->_assignInScope('grade_name', $_smarty_tpl->tpl_vars['grades_data']->value[$_smarty_tpl->tpl_vars['u']->value->grade_id][0]->name);?>
+                                                    <?php }?>
+                                                <?php }?>
 
                                                 <tr>
                                                    
-                                                    <td><%$u->part_number%></td>
-                                                    <td><%$u->part_description%></td>
-                                                    <td><%$u->fg_stock%></td>
-                                                    <td><%$u->fg_rate%></td>
-                                                 <%*   <%if $entitlements.isPlastic != null%>
-                                                        <td><%$grade_name%></td>
-                                                    <%/if%> *%>
-                                                    <td>
+                                                    <td><?php echo $_smarty_tpl->tpl_vars['u']->value->part_number;?>
+</td>
+                                                    <td><?php echo $_smarty_tpl->tpl_vars['u']->value->part_description;?>
+</td>
+                                                    <td><?php echo $_smarty_tpl->tpl_vars['u']->value->fg_stock;?>
+</td>
+                                                    <td><?php echo $_smarty_tpl->tpl_vars['u']->value->fg_rate;?>
+</td>
+                                                                                                     <td>
                                                         <!-- Button trigger modal -->
-                                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#edit<%$i%>">
+                                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#edit<?php echo $_smarty_tpl->tpl_vars['i']->value;?>
+">
                                                             <i class='far fa-edit'></i>
                                                         </button>
                                                         <!-- edit Modal -->
@@ -203,9 +243,11 @@
 
                                                     </td>
                                                 </tr>
-                                                <%assign var="i" value=$i + 1%>
-                                            <%/foreach%>
-                                        <%/if%>
+                                                <?php $_smarty_tpl->_assignInScope('i', $_smarty_tpl->tpl_vars['i']->value+1);?>
+                                            <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
+                                        <?php }?>
                                     </tbody>
 
                                 </table>
@@ -222,16 +264,20 @@
                                     <div class="modal-body">
                                         <div class="row">
                                             <div class="col-lg-12">
-                                                <form action="<%$base_url%>update_customer_parts_master" method="POST" enctype="multipart/form-data">
+                                                <form action="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+update_customer_parts_master" method="POST" enctype="multipart/form-data">
                                                     <div class="form-group">
                                                         <label> Part Description</label><span class="text-danger">*</span>
-                                                        <input type="hidden" readonly value="<%$id%>" name="id" required class="form-control" id="part_id" placeholder="Enter Safety/buffer stock" aria-describedby="emailHelp">
-                                                        <input required type="text" name="part_description" placeholder="Enter Part Description" class="form-control" value="<%$u->part_description%>" id="edit-part-des">
+                                                        <input type="hidden" readonly value="<?php echo $_smarty_tpl->tpl_vars['id']->value;?>
+" name="id" required class="form-control" id="part_id" placeholder="Enter Safety/buffer stock" aria-describedby="emailHelp">
+                                                        <input required type="text" name="part_description" placeholder="Enter Part Description" class="form-control" value="<?php echo $_smarty_tpl->tpl_vars['u']->value->part_description;?>
+" id="edit-part-des">
                                                     </div>
 
                                                     <div class="form-group">
                                                         <label>Rate<span class="text-danger">*</span></label> <br>
-                                                        <input required type="number" step="any" name="fg_rate" placeholder="Enter Rate" class="form-control" value="<%$u->fg_rate%>" id="part-rate"required>
+                                                        <input required type="number" step="any" name="fg_rate" placeholder="Enter Rate" class="form-control" value="<?php echo $_smarty_tpl->tpl_vars['u']->value->fg_rate;?>
+" id="part-rate"required>
                                                     </div>
                                             </div>
                                         </div>
@@ -261,17 +307,34 @@
     </div>
 </div>
 
-<script>
-    var column_details =  <%$data|json_encode%>;
-    var page_length_arr = <%$page_length_arr|json_encode%>;
-    var is_searching_enable = <%$is_searching_enable|json_encode%>;
-    var is_top_searching_enable =  <%$is_top_searching_enable|json_encode%>;
-    var is_paging_enable =  <%$is_paging_enable|json_encode%>;
-    var is_serverSide =  <%$is_serverSide|json_encode%>;
-    var no_data_message =  <%$no_data_message|json_encode%>;
-    var is_ordering =  <%$is_ordering|json_encode%>;
-    var sorting_column = <%$sorting_column%>;
-    var api_name =  <%$api_name|json_encode%>;
-    var base_url = <%$base_url|json_encode%>;
-</script>
-<script src="<%$base_url%>/public/js/customer_part_master.js"></script>
+<?php echo '<script'; ?>
+>
+    var column_details =  <?php echo json_encode($_smarty_tpl->tpl_vars['data']->value);?>
+;
+    var page_length_arr = <?php echo json_encode($_smarty_tpl->tpl_vars['page_length_arr']->value);?>
+;
+    var is_searching_enable = <?php echo json_encode($_smarty_tpl->tpl_vars['is_searching_enable']->value);?>
+;
+    var is_top_searching_enable =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_top_searching_enable']->value);?>
+;
+    var is_paging_enable =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_paging_enable']->value);?>
+;
+    var is_serverSide =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_serverSide']->value);?>
+;
+    var no_data_message =  <?php echo json_encode($_smarty_tpl->tpl_vars['no_data_message']->value);?>
+;
+    var is_ordering =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_ordering']->value);?>
+;
+    var sorting_column = <?php echo $_smarty_tpl->tpl_vars['sorting_column']->value;?>
+;
+    var api_name =  <?php echo json_encode($_smarty_tpl->tpl_vars['api_name']->value);?>
+;
+    var base_url = <?php echo json_encode($_smarty_tpl->tpl_vars['base_url']->value);?>
+;
+<?php echo '</script'; ?>
+>
+<?php echo '<script'; ?>
+ src="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+/public/js/customer_part_master.js"><?php echo '</script'; ?>
+><?php }
+}

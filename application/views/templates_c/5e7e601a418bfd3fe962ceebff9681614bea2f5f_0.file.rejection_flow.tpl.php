@@ -1,4 +1,27 @@
-<div class="wrapper container-xxl flex-grow-1 container-p-y">
+<?php
+/* Smarty version 4.3.2, created on 2024-07-27 15:23:02
+  from 'C:\xampp\htdocs\erp_converted\application\views\templates\sales\rejection_flow.tpl' */
+
+/* @var Smarty_Internal_Template $_smarty_tpl */
+if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
+  'version' => '4.3.2',
+  'unifunc' => 'content_66a4c37e2b3622_99107994',
+  'has_nocache_code' => false,
+  'file_dependency' => 
+  array (
+    '5e7e601a418bfd3fe962ceebff9681614bea2f5f' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\erp_converted\\application\\views\\templates\\sales\\rejection_flow.tpl',
+      1 => 1722073908,
+      2 => 'file',
+    ),
+  ),
+  'includes' => 
+  array (
+  ),
+),false)) {
+function content_66a4c37e2b3622_99107994 (Smarty_Internal_Template $_smarty_tpl) {
+?><div class="wrapper container-xxl flex-grow-1 container-p-y">
     <!-- Navbar -->
 
     <!-- /.navbar -->
@@ -38,14 +61,24 @@
                                 <div class="row">
                                     <div class="col-lg-4">
                                         <div class="form-group">
-                                            <form action="<%$base_url%>generate_rejection_flow" method="POST">
+                                            <form action="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+generate_rejection_flow" method="POST">
                                                 <label for="">Select Customer<span class="text-danger">*</span> </label>
                                                 <select name="customer_id" required id="" class="form-control select2">
-                                                    <%if $customer%>
-                                                        <%foreach from=$customer item=s%>
-                                                            <option value="<%$s->id%>"><%$s->customer_name%></option>
-                                                        <%/foreach%>
-                                                    <%/if%>
+                                                    <?php if ($_smarty_tpl->tpl_vars['customer']->value) {?>
+                                                        <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['customer']->value, 's');
+$_smarty_tpl->tpl_vars['s']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['s']->value) {
+$_smarty_tpl->tpl_vars['s']->do_else = false;
+?>
+                                                            <option value="<?php echo $_smarty_tpl->tpl_vars['s']->value->id;?>
+"><?php echo $_smarty_tpl->tpl_vars['s']->value->customer_name;?>
+</option>
+                                                        <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
+                                                    <?php }?>
                                                 </select>
                                         </div>
                                     </div>
@@ -143,3 +176,5 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+<?php }
+}
