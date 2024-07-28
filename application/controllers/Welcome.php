@@ -2623,142 +2623,6 @@ class Welcome extends CommonController
 	{
 		$supplier_list = $this->Crud->read_data_where_result("supplier", array("admin_approve" => "accept"));
 		$data['supplier_list'] = $supplier_list->result();
-		$column[] = [
-            "data" => "supplier_name",
-            "title" => "Supplier Name",
-            "width" => "14%",
-            "className" => "dt-left",
-        ];
-        $column[] = [
-            "data" => "supplier_number",
-            "title" => "Supplier Number",
-            "width" => "16%",
-            "className" => "dt-left",
-        ];
-        $column[] = [
-            "data" => "location",
-            "title" => "Supplier Address",
-            "width" => "17%",
-            "className" => "dt-center",
-        ];
-        $column[] = [
-            "data" => "email",
-            "title" => "Supplier Email",
-            "width" => "10%",
-            "className" => "dt-center",
-			'orderable' => false
-        ];
-        $column[] = [
-            "data" => "mobile_no",
-            "title" => "Supplier Mobile Number",
-            "width" => "17%",
-            "className" => "dt-center",
-        ];
-        $column[] = [
-            "data" => "pan_card",
-            "title" => "PAN CARD",
-            "width" => "17%",
-            "className" => "dt-center",
-			'orderable' => false
-        ];
-        $column[] = [
-            "data" => "gst_number",
-            "title" => "GST Number",
-            "width" => "7%",
-            "className" => "dt-center",
-        ];
-        $column[] = [
-            "data" => "state",
-            "title" => "State",
-            "width" => "7%",
-            "className" => "dt-center status-row",
-        ];
-        $column[] = [
-            "data" => "payment_terms",
-            "title" => "Payment Terms",
-            "width" => "17%",
-            "className" => "dt-center",
-			
-        ];
-       
-        $column[] = [
-            "data" => "doc_nda",
-            "title" => "NDA Documents",
-            "width" => "7%",
-            "className" => "dt-center",
-        ];
-        $column[] = [
-            "data" => "doc_reg",
-            "title" => "Registration Documents",
-            "width" => "7%",
-            "className" => "dt-center",
-			'orderable' => false
-        ];
-        $column[] = [
-            "data" => "doc_other_1",
-            "title" => "Other Document 1",
-            "width" => "7%",
-            "className" => "dt-center",
-			'orderable' => false
-        ];
-        
-        $column[] = [
-            "data" => "doc_other_2",
-            "title" => "Other Document 2",
-            "width" => "7%",
-            "className" => "dt-center",
-			'orderable' => false
-        ];
-
-		$column[] = [
-			"data" => "doc_other_3",
-			"title" => "Other Document 3",
-			"width" => "7%",
-			"className" => "dt-center",
-			'orderable' => false
-		];
-		
-		$column[] = [
-			"data" => "admin_approve",
-			"title" => "Admin Approval",
-			"width" => "7%",
-			"className" => "dt-center",
-			'orderable' => false
-			];
-			
-		$column[] = [
-			"data" => "with_in_state",
-			"title" => "With In State",
-			"width" => "7%",
-			"className" => "dt-center",
-			'orderable' => false
-		];
-
-		$column[] = [
-			"data" => "with_in_state",
-			"title" => "Action",
-			"width" => "7%",
-			"className" => "dt-center",
-			'orderable' => false
-		];
-		$data["data"] = $column;
-        $data["is_searching_enable"] = false;
-        $data["is_paging_enable"] = true;
-        $data["is_serverSide"] = true;
-        $data["is_ordering"] = true;
-        $data["is_heading_color"] = "#a18f72";
-        $data["no_data_message"] =
-            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
-            base_url() .
-            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Employee data found..!</div>';
-        $data["is_top_searching_enable"] = true;
-        $data["sorting_column"] = json_encode([]);
-        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
-        $data["admin_url"] = base_url();
-        $data["base_url"] = base_url();
-		
-		// $this->loadView('reports/receivable_report',$data);
-		
 		// $this->load->view('header');
 		$data['supplier_part_list'] = $this->SupplierParts->readSupplierPartsOnly();
 		$data['uom'] = $this->Crud->read_data("uom");
@@ -3066,7 +2930,7 @@ class Welcome extends CommonController
 	}
 	public function routing_customer()
 	{
-		$data['customer_part_master'] = $this->Crud->customQuery('SELECT DISTINCT part_number, part_description, id FROM `customer_part` WHERE type="subcon_po" ');
+		$data['customer_part_master'] = $this->Crud->customQuery('SELECT DISTINCT part_number, part_description, id FROM `customer_part` WHERE type!="subcon_po" ');
 		// $this->load->view('header');
 		$this->loadView('purchase/routing_customer', $data);
 		// $this->load->view('footer');
@@ -3181,6 +3045,19 @@ class Welcome extends CommonController
 	{
 		$data['part_id'] = $this->uri->segment('2');
 		$data['child_part_master'] = $this->Crud->customQuery('SELECT DISTINCT part_number, id FROM `child_part` WHERE sub_type ="customer_bom"');
+		$item_arr = [];
+		foreach($data['child_part_master']  as $key=>$val){
+			$array = array(
+				"part_number" => $val->part_number,
+			);
+			$po = $this->Crud->get_data_by_id_multiple_condition("child_part", $array);
+			$item_arr[] =[
+				"id" => $po[0]->id,
+				"part_number" => $po[0]->part_number
+			];
+		}
+		$data['item_arr'] = $item_arr;
+		// pr($item_arr,1);
 		$data['routing'] = $this->Crud->customQuery("
 			SELECT r.id, r.qty, o.part_number as out_partNumber, o.part_description as out_partDesc, i.part_number as in_partNumber, i.part_description as in_partDesc
 			FROM `routing_subcon` r
@@ -3188,9 +3065,7 @@ class Welcome extends CommonController
 			INNER JOIN child_part i ON i.id = r.routing_part_id
 			WHERE r.part_id = " . $data['part_id']);
 
-		$this->load->view('header');
-		$this->load->view('addrouting_customer_subcon', $data);
-		$this->load->view('footer');
+		$this->loadView('purchase/addrouting_customer_subcon', $data);
 	}
 	public function insert_challan_history()
 	{
@@ -4588,7 +4463,6 @@ class Welcome extends CommonController
 	}
 	public function addRoutingParts_subcon()
 	{
-
 		$data = array(
 			'part_id' => $this->input->post('part_id'),
 			'routing_part_id' => $this->input->post('routing_part_id'),
@@ -4601,22 +4475,35 @@ class Welcome extends CommonController
 		);
 
 		$routing_data = $this->Crud->read_data_where("routing_subcon", $data);
-
+		$success = 0;
+		$message = "Something went wrong!";
 		if ($routing_data) {
-			echo "<script>alert('already present');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$message = "Already present";
+			// echo "<script>alert('already present');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 			$inser_query = $this->Crud->insert_data("routing_subcon", $data2);
-
 			if ($inser_query) {
 				if ($inser_query) {
-					echo "<script>alert('successfully added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+					$success = 1;
+					$message = "Successfully added.";
+					// echo "<script>alert('successfully added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 				} else {
-					echo "<script>alert('Error IN User  Adding ,try again');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+					$message = "Error IN User  Adding ,try again.";
+					// echo "<script>alert('Error IN User  Adding ,try again');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 				}
 			} else {
-				echo "Error";
+				$message = "Error.";
+				// echo "Error";
 			}
 		}
+
+		$return_arr = [
+			"success" => $success,
+			"message" => $message
+		];
+
+		echo json_encode($return_arr);
+		exit;
 	}
 
 	public function add_challan_parts_subcon()
@@ -8350,8 +8237,17 @@ class Welcome extends CommonController
 
 		);
 
-		$data['child_part_list'] = $this->Crud->get_data_by_id_multiple_condition("child_part_master", $array);
-
+		// $data['child_part_list'] = $this->Crud->get_data_by_id_multiple_condition("child_part_master", $array);
+		$child_part_list = $this->db->query("
+			SELECT cp.*,s.supplier_name as supplier_name
+			FROM child_part_master as cp
+			LEFT JOIN supplier as s ON s.id = cp.supplier_id
+			WHERE cp.part_number = '$part_number'
+			AND cp.supplier_id  = $supplier_id
+			ORDER BY cp.id DESC
+		");
+		$data['child_part_list'] = $child_part_list->result();
+		// pr($data['child_part_list'],1);
 		// $data['child_part_list'] = $this->Crud->get_data_by_id('child_part_master', $part_number, 'part_number');
 
 
@@ -8363,10 +8259,10 @@ class Welcome extends CommonController
 		// $data['operations'] = $this->Crud->get_data_by_id("operations", $part_id, "part_number");
 
 		// print_r($data['tool_list']);
-		$this->load->view('header');
-		$this->load->view('price_revision', $data);
-		// $this->loadView('reports/price_revision',$data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		// $this->load->view('price_revision', $data);
+		$this->loadView('purchase/price_revision',$data);
+		// $this->load->view('footer');
 
 		// can use this query to get data for report for datatable
 
