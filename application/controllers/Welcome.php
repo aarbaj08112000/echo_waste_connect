@@ -9072,6 +9072,71 @@ class Welcome extends CommonController
 	}
 	public function subcon_supplier_challan_part_report()
 	{
+
+		$column[] = [
+            "data" => "supplier_name",
+            "title" => "Supplier",
+            "width" => "14%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "part_no_dis",
+            "title" => "Child Part",
+            "width" => "16%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "challan_number",
+            "title" => "Challan No",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "created_date",
+            "title" => "Challan Date",
+            "width" => "10%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "aging",
+            "title" => "Aging Date",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "qty",
+            "title" => "Challan Qty",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "remaning_qty",
+            "title" => "Remaning qty",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "process",
+            "title" => "Process",
+            "width" => "7%",
+            "className" => "dt-center status-row",
+        ];
+        $column[] = [
+            "data" => "value_qty",
+            "title" => "Value (Challan Qty)",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+       
+        $column[] = [
+            "data" => "value_qty_remaning",
+            "title" => "Value (Remaining Qty)",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+		
+		
+		
 		$display_arr = [];
 		$data['selected_customer_part_number'] = $this->input->post('selected_customer_part_number');
 		$data['selected_supplier_id'] = $this->input->post('selected_supplier_id');
@@ -9148,6 +9213,35 @@ class Welcome extends CommonController
 		// $this->load->view('subcon_supplier_challan_part_report', $data);
 		// $this->load->view('footer');
 		$this->getPage('subcom_challan/subcon_supplier_challan_part_report',$data);
+	}
+
+	public function getSubcomReportDataAjax(){
+		$post_data = $this->input->post();
+        $column_index = array_column($post_data["columns"], "data");
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+            if ($key == 0) {
+                $order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+                $order_by .=
+                    "," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+		$data = $this->SalesModel->getSalesReportViewData($condition_arr,$post_data["search"]);
+		foreach ($data as $key => $val) {
+			
+			
+		}
+		$data["data"] = $data;
+		
+        $total_record = $this->SalesModel->getSalesReportViewCount([], $post_data["search"]);
+        $data["recordsTotal"] = $total_record['total_record'];
+        $data["recordsFiltered"] = $total_record['total_record'];
+        echo json_encode($data);
 	}
 
 	public function sharing_bom()
