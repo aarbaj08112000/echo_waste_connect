@@ -93,20 +93,132 @@ class POTrackingController extends CommonController {
 	}
 	
 	public function customer_po_tracking_all() {
-		$data['customer_data'] = $this->Crud->read_data("customer");
-		// $role_management_data = $this->db->query('SELECT customer_part.part_number,customer_part.id, customer.customer_name
-		// FROM customer_part
-		// INNER JOIN customer ON customer_part.customer_id=customer.id;');
-		// $data['customer_parts'] = $role_management_data->result();
-		$data['customer_po_tracking'] = $this->Crud->read_data("customer_po_tracking");
-		if ($data['customer_po_tracking']) {
-			foreach ($data['customer_po_tracking'] as $s) {
-				$data['customer_data'][$s->customer_id] = $this->Crud->get_data_by_id("customer", $s->customer_id, "id");
-			}
-		}
-		// print_r($data['customer_po_tracking']);
-		// $this->getPage('customer_po_tracking_all', $data);
+
+		$column[] = [
+            "data" => "customer_name",
+            "title" => "Customer",
+            "width" => "14%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "po_number",
+            "title" => "PO Number",
+            "width" => "16%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "po_start_date",
+            "title" => "Start Date",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "po_end_date",
+            "title" => "End Date",
+            "width" => "10%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "po_amedment_number",
+            "title" => "Amendment No",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "status",
+            "title" => "Status",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "view_details",
+            "title" => "View Details",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "po_doc",
+            "title" => "PO Document",
+            "width" => "7%",
+            "className" => "dt-center status-row",
+        ];
+        $column[] = [
+            "data" => "action",
+            "title" => "Actions",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+       		
+		// $data['customer_po_tracking'] = $this->Crud->read_data("customer_po_tracking");
+		// if ($data['customer_po_tracking']) {
+		// 	foreach ($data['customer_po_tracking'] as $s) {
+		// 		$data['customer_data'][$s->customer_id] = $this->Crud->get_data_by_id("customer", $s->customer_id, "id");
+		// 	}
+		// }
+
+		$data["data"] = $column;
+        $data["is_searching_enable"] = false;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Employee data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
+
 		$this->loadView('customer/customer_po_tracking_all', $data);
+	}
+
+	public function customerPoTrackingAjax(){
+
+		$post_data = $this->input->post();
+        $column_index = array_column($post_data["columns"], "data");
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+            if ($key == 0) {
+                $order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+                $order_by .=
+                    "," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+		$data = $this->CustomerPart->getPoTrakingView($condition_arr,$post_data["search"]);
+		foreach ($data as $key => $val) {
+			$view_details = $po_doc = $action = '';
+			$encode_data = base64_encode(json_encode($val));
+			$view_details = '<a href="' . base_url('view_customer_tracking_id/' . $val['id']) . '" class="btn btn-primary">PO Details</a>';
+			if ($val['uploadedDoc'] != '') {
+				$po_doc = '<a download href="' . base_url('documents/' . $val['uploadedDoc']) . '" id="" class="btn btn-sm btn-primary remove_hoverr"><i class="fas fa-download"></i></a>';
+			}
+		
+			$po_doc .= '<button type="button" data-value = '.$encode_data.' class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#upload_modal"><i class="fas fa-upload"></i></button>';
+			
+			$action = '<button type="button" data-value = '.$encode_data.' class="btn btn-primary edit-part" data-bs-toggle="modal" data-bs-target="#edit_modal"><i class="fa fa-edit"></i> Edit</button>
+					   <button type="button" data-value = '.$encode_data.' class="btn btn-danger close-po" data-bs-toggle="modal" data-bs-target="#close_modal">Close PO</button>';
+		
+			$data[$key]['view_details'] = $view_details;
+			$data[$key]['po_doc'] = $po_doc;
+			$data[$key]['action'] = $action;
+		}
+		
+		$data["data"] = $data;
+		
+        $total_record = $this->CustomerPart->getPoTrakingViewCount([], $post_data["search"]);
+        $data["recordsTotal"] = $total_record['total_record'];
+        $data["recordsFiltered"] = $total_record['total_record'];
+        echo json_encode($data);
+        exit();
+
 	}
 	
 	public function customer_po_tracking_all_closed() {

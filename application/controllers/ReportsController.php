@@ -91,7 +91,7 @@ class ReportsController extends CommonController
             "data" => "total_verified_qty",
             "title" => "Inward Inspection QTY",
             "width" => "7%",
-            "className" => "dt-center",total_verified_qty
+            "className" => "dt-center"
         ];
         $column[] = [
             "data" => "production_qty",

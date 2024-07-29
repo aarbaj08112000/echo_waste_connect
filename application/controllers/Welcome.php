@@ -846,6 +846,11 @@ class Welcome extends CommonController
 		// $this->load->view('header');
 		// $this->load->view('customer', $data);
 		// $this->load->view('footer');
+		foreach ($data['customers'] as $key => $val) {
+			
+			$data['customers'][$key]->encode_data = base64_encode(json_encode($val));
+		}
+		
 		$this->loadView('customer/customer',$data);
 	}
 	public function customer_master()
@@ -4482,17 +4487,105 @@ class Welcome extends CommonController
 	public function customer_parts_master()
 	{
 
-		$data['customer_parts_master'] = $this->CustomerPart->readCustomerParts();
-		$data['grades'] = $this->Crud->read_data("grades");
-		$data['flash_err'] = $this->session->flashdata('errors');
-		$data['flash_suc'] = $this->session->flashdata('success');
-		$data['entitlements'] = $this->session->userdata['entitlements'];
+		// $data['customer_parts_master'] = $this->CustomerPart->readCustomerParts();
+		// $data['grades'] = $this->Crud->read_data("grades");
+		// $data['flash_err'] = $this->session->flashdata('errors');
+		// $data['flash_suc'] = $this->session->flashdata('success');
+		// $data['entitlements'] = $this->session->userdata['entitlements'];
 
-		foreach ($data['customer_parts_master'] as $u) {
-			$data['grades_data'][$u->grade_id]  = $this->Crud->get_data_by_id("grades", $u->grade_id, "id");
-		}
+		$column[] = [
+            "data" => "part_number",
+            "title" => "Part Number",
+            "width" => "14%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "part_description",
+            "title" => "Part Description",
+            "width" => "16%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "fg_stock",
+            "title" => "FG Stock",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "fg_rate",
+            "title" => "Rate",
+            "width" => "10%",
+            "className" => "dt-center",
+			
+        ];
+        $column[] = [
+            "data" => "action",
+            "title" => "Action",
+            "width" => "17%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+       
+
+		// foreach ($data['customer_parts_master'] as $u) {
+		// 	$data['grades_data'][$u->grade_id]  = $this->Crud->get_data_by_id("grades", $u->grade_id, "id");
+		// }
+
+		$data["data"] = $column;
+        $data["is_searching_enable"] = false;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Employee data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
+		$data['part_drop_data'] = $this->welcome_model->getCustomerPartNumber();
 		
 		$this->getPage('customer/customer_parts_master', $data);
+	}
+
+	public function getCustomerpartsAjax(){
+
+		$customer_part_id  = $this->input->post("customer_part_id");
+		$post_data = $this->input->post();
+		
+        $column_index = array_column($post_data["columns"], "data");
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+			if ($key == 0) {
+				$order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+				$order_by .=
+				"," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+		
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+		$customer_data = $this->welcome_model->getDataForCustomerParts($condition_arr, $post_data["search"]);
+
+		foreach ($customer_data as $key => $value) {
+			$edit_data = base64_encode(json_encode($value)); 
+			
+			$customer_data[$key]['action'] = "<button type='button' class='btn btn-primary edit-part' data-bs-toggle='modal' data-bs-target='#editpart' data-value = " . $edit_data . "><i class='far fa-edit'></i></button>";
+
+		}
+
+		$data["data"] = $customer_data;
+        $total_record = $this->welcome_model->getDataForCustomerPartsCount([], $post_data["search"]);
+		
+        $data["recordsTotal"] = $total_record['total_count'];
+        $data["recordsFiltered"] = $total_record['total_count'];
+        echo json_encode($data);
 	}
 
 	public function downtime_master()

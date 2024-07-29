@@ -1475,6 +1475,7 @@ class P_Molding extends CommonController
 	{
 		$mold_maintenance_docs = [];
 		$data['mold_maintenance']  = $this->CustomerPart->getCustomerPartsMolding();
+		// pr($data);
 		foreach($data['mold_maintenance'] as $key => $val){
 			$mold_maintenance_docs[$val['mold_name']] = $this->Crud->get_data_by_id("mold_maintenance", $val['mold_name'], "mold_name");
 		}

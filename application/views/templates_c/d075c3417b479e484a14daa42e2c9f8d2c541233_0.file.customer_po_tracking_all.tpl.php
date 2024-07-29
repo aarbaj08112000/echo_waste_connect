@@ -1,4 +1,27 @@
-<div style="width: 2000px" class="wrapper">
+<?php
+/* Smarty version 4.3.2, created on 2024-07-28 20:06:13
+  from 'C:\xampp\htdocs\erp_converted\application\views\templates\customer\customer_po_tracking_all.tpl' */
+
+/* @var Smarty_Internal_Template $_smarty_tpl */
+if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
+  'version' => '4.3.2',
+  'unifunc' => 'content_66a6575db24f08_28899123',
+  'has_nocache_code' => false,
+  'file_dependency' => 
+  array (
+    'd075c3417b479e484a14daa42e2c9f8d2c541233' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\erp_converted\\application\\views\\templates\\customer\\customer_po_tracking_all.tpl',
+      1 => 1722177371,
+      2 => 'file',
+    ),
+  ),
+  'includes' => 
+  array (
+  ),
+),false)) {
+function content_66a6575db24f08_28899123 (Smarty_Internal_Template $_smarty_tpl) {
+?><div style="width: 2000px" class="wrapper">
     <!-- Navbar -->
 
     <!-- /.navbar -->
@@ -38,7 +61,8 @@
                                 <div class="row">
                                      <div class="col-lg-2">
                                             <div class="form-group">
-                                                <form action="<%$base_url%>inwarding_by_po" method="POST">
+                                                <form action="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+inwarding_by_po" method="POST">
                                                 <label for="">Enter PO Number <span class="text-danger">*</span> </label>
                                                 <input type="text" name="po_number" class="form-control" required placeholder="Enter Valid PO Number : ">
                                             </div>
@@ -100,13 +124,15 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="<%$base_url%>add_part" method="post" enctype='multipart/form-data'>
+                <form action="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+add_part" method="post" enctype='multipart/form-data'>
                     <div class="text-center">
                         <div class="form-group">
                             <label for="exampleInputEmail1">Upload File<span class="text-danger">*</span>
                             <input required type="file" name="cad_file" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Asset Number">
                         </div>
-                        <input value="<%$s->id%>" type="hidden" name="uid" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Customer Name">
+                        <input value="<?php echo $_smarty_tpl->tpl_vars['s']->value->id;?>
+" type="hidden" name="uid" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Customer Name">
                         <input type="hidden" name="table_name" value="customer_po_tracking">
                         <input type="hidden" name="column_name" value="uploadedDoc">
                     </div>
@@ -129,11 +155,14 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="<%$base_url%>update_customer_po_tracking_all" method="POST" enctype="multipart/form-data">
+                <form action="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+update_customer_po_tracking_all" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="">End Date<span class="text-danger">*</span></label>
-                        <input required value="<%$s->po_end_date%>" type="date" class="form-control" name="end_date">
-                        <input required value="<%$s->id%>" type="hidden" class="form-control" name="id">
+                        <input required value="<?php echo $_smarty_tpl->tpl_vars['s']->value->po_end_date;?>
+" type="date" class="form-control" name="end_date">
+                        <input required value="<?php echo $_smarty_tpl->tpl_vars['s']->value->id;?>
+" type="hidden" class="form-control" name="id">
                     </div>
             </div>
             <div class="modal-footer">
@@ -156,11 +185,14 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="<%$base_url%>close_po_customer_po_tracking" method="POST" enctype="multipart/form-data">
+                        <form action="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+close_po_customer_po_tracking" method="POST" enctype="multipart/form-data">
                             <div class="form-group">
-                                <label for="">Are you sure to close <u>PO Number : <%$s->po_number%></u> ?</label>
+                                <label for="">Are you sure to close <u>PO Number : <?php echo $_smarty_tpl->tpl_vars['s']->value->po_number;?>
+</u> ?</label>
                                 <br><br>
-                                <input required value="<%$s->id%>" type="hidden" class="form-control" name="id">
+                                <input required value="<?php echo $_smarty_tpl->tpl_vars['s']->value->id;?>
+" type="hidden" class="form-control" name="id">
                                 <label for="">Remark<span class="text-danger"></span></label>
                                 <input type="text" name="remark" placeholder="Enter Remark " class="form-control"/>
                                 <label for="">Reason<span class="text-danger">*</span> </label>
@@ -182,18 +214,35 @@
 
     <!-- /.content-wrapper -->
 
-    <script>
-    var column_details =  <%$data|json_encode%>;
-    var page_length_arr = <%$page_length_arr|json_encode%>;
-    var is_searching_enable = <%$is_searching_enable|json_encode%>;
-    var is_top_searching_enable =  <%$is_top_searching_enable|json_encode%>;
-    var is_paging_enable =  <%$is_paging_enable|json_encode%>;
-    var is_serverSide =  <%$is_serverSide|json_encode%>;
-    var no_data_message =  <%$no_data_message|json_encode%>;
-    var is_ordering =  <%$is_ordering|json_encode%>;
-    var sorting_column = <%$sorting_column%>;
-    var api_name =  <%$api_name|json_encode%>;
-    var base_url = <%$base_url|json_encode%>;
-</script>
+    <?php echo '<script'; ?>
+>
+    var column_details =  <?php echo json_encode($_smarty_tpl->tpl_vars['data']->value);?>
+;
+    var page_length_arr = <?php echo json_encode($_smarty_tpl->tpl_vars['page_length_arr']->value);?>
+;
+    var is_searching_enable = <?php echo json_encode($_smarty_tpl->tpl_vars['is_searching_enable']->value);?>
+;
+    var is_top_searching_enable =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_top_searching_enable']->value);?>
+;
+    var is_paging_enable =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_paging_enable']->value);?>
+;
+    var is_serverSide =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_serverSide']->value);?>
+;
+    var no_data_message =  <?php echo json_encode($_smarty_tpl->tpl_vars['no_data_message']->value);?>
+;
+    var is_ordering =  <?php echo json_encode($_smarty_tpl->tpl_vars['is_ordering']->value);?>
+;
+    var sorting_column = <?php echo $_smarty_tpl->tpl_vars['sorting_column']->value;?>
+;
+    var api_name =  <?php echo json_encode($_smarty_tpl->tpl_vars['api_name']->value);?>
+;
+    var base_url = <?php echo json_encode($_smarty_tpl->tpl_vars['base_url']->value);?>
+;
+<?php echo '</script'; ?>
+>
 
-    <script src="<%$base_url%>/public/js/potracking.js"></script>
+    <?php echo '<script'; ?>
+ src="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+/public/js/potracking.js"><?php echo '</script'; ?>
+><?php }
+}

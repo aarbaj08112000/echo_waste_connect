@@ -1,4 +1,27 @@
-<div class="wrapper wrapper container-xxl flex-grow-1 container-p-y">
+<?php
+/* Smarty version 4.3.2, created on 2024-07-27 15:16:25
+  from 'C:\xampp\htdocs\erp_converted\application\views\templates\sales\sales_invoice_released.tpl' */
+
+/* @var Smarty_Internal_Template $_smarty_tpl */
+if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
+  'version' => '4.3.2',
+  'unifunc' => 'content_66a4c1f14986e9_18211675',
+  'has_nocache_code' => false,
+  'file_dependency' => 
+  array (
+    '1985c4cb5f430346176f059c522d35acf71ef8c4' => 
+    array (
+      0 => 'C:\\xampp\\htdocs\\erp_converted\\application\\views\\templates\\sales\\sales_invoice_released.tpl',
+      1 => 1722072888,
+      2 => 'file',
+    ),
+  ),
+  'includes' => 
+  array (
+  ),
+),false)) {
+function content_66a4c1f14986e9_18211675 (Smarty_Internal_Template $_smarty_tpl) {
+?><div class="wrapper wrapper container-xxl flex-grow-1 container-p-y">
     <!-- Navbar -->
     <!-- /.navbar -->
     <!-- Main Sidebar Container -->
@@ -13,7 +36,8 @@
                 <i class="ti ti-x fs-8"></i>
             </div>
     </div>
-    <form action="<%base_url('sales_invoice_released')%>" method="post">
+    <form action="<?php echo base_url('sales_invoice_released');?>
+" method="post">
     <nav class="sidebar-nav scroll-sidebar filter-block" data-simplebar="init">
       <div class="simplebar-content" >
         <ul class="menu-inner py-1">
@@ -26,10 +50,19 @@
               <li class="sidebar-item">
                 <div class="input-group">
                 <select required name="created_month" id="" class="form-control select2">
-                <%foreach $month_data as $key => $val%>
-                <option <%if $month_number[$key] eq $created_month%>selected<%/if%>
-                    value="<%$month_number[$key]%>"><%$val%></option>
-            <%/foreach%>
+                <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['month_data']->value, 'val', false, 'key');
+$_smarty_tpl->tpl_vars['val']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['key']->value => $_smarty_tpl->tpl_vars['val']->value) {
+$_smarty_tpl->tpl_vars['val']->do_else = false;
+?>
+                <option <?php if ($_smarty_tpl->tpl_vars['month_number']->value[$_smarty_tpl->tpl_vars['key']->value] == $_smarty_tpl->tpl_vars['created_month']->value) {?>selected<?php }?>
+                    value="<?php echo $_smarty_tpl->tpl_vars['month_number']->value[$_smarty_tpl->tpl_vars['key']->value];?>
+"><?php echo $_smarty_tpl->tpl_vars['val']->value;?>
+</option>
+            <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                 </select>
                 </div>
               </li>
@@ -42,9 +75,18 @@
               <li class="sidebar-item">
               <div class="input-group">
               <select required name="created_year" id="" class="form-control select2">
-              <%foreach from=range(2022, 2027) item=i%>
-                  <option <%if $i == $created_year%>selected<%/if%> value="<%$i%>"><%$i%></option>
-              <%/foreach%>
+              <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, range(2022,2027), 'i');
+$_smarty_tpl->tpl_vars['i']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['i']->value) {
+$_smarty_tpl->tpl_vars['i']->do_else = false;
+?>
+                  <option <?php if ($_smarty_tpl->tpl_vars['i']->value == $_smarty_tpl->tpl_vars['created_year']->value) {?>selected<?php }?> value="<?php echo $_smarty_tpl->tpl_vars['i']->value;?>
+"><?php echo $_smarty_tpl->tpl_vars['i']->value;?>
+</option>
+              <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
           </select>
               </div>
             </li>
@@ -111,18 +153,31 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <form action="<%base_url('add_job_card')%>" method="POST" enctype='multipart/form-data'>
+                                            <form action="<?php echo base_url('add_job_card');?>
+" method="POST" enctype='multipart/form-data'>
                                                 <div class="row">
                                                     <div class="col-lg-12">
                                                         <div class="form-group">
                                                             <label for="po_num">Select Customer Name / Customer Code / Part Number / Description </label><span class="text-danger">*</span>
                                                             <select name="customer_part_id" id="" class="from-control select2">
-                                                                <%if $customer_part%>
-                                                                    <%foreach from=$customer_part item=c%>
-                                                                        <%assign var="customer" value=$this->Crud->get_data_by_id("customer", $c.customer_id, "id")%>
-                                                                        <option value="<%$c.id%>"><%$customer[0].customer_name%>/<%$customer[0].customer_code%>/<%$c.part_number%>/<%$c.part_description%></option>
-                                                                    <%/foreach%>
-                                                                <%/if%>
+                                                                <?php if ($_smarty_tpl->tpl_vars['customer_part']->value) {?>
+                                                                    <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['customer_part']->value, 'c');
+$_smarty_tpl->tpl_vars['c']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['c']->value) {
+$_smarty_tpl->tpl_vars['c']->do_else = false;
+?>
+                                                                        <?php $_smarty_tpl->_assignInScope('customer', $_smarty_tpl->tpl_vars['this']->value->Crud->get_data_by_id("customer",$_smarty_tpl->tpl_vars['c']->value['customer_id'],"id"));?>
+                                                                        <option value="<?php echo $_smarty_tpl->tpl_vars['c']->value['id'];?>
+"><?php echo $_smarty_tpl->tpl_vars['customer']->value[0]['customer_name'];?>
+/<?php echo $_smarty_tpl->tpl_vars['customer']->value[0]['customer_code'];?>
+/<?php echo $_smarty_tpl->tpl_vars['c']->value['part_number'];?>
+/<?php echo $_smarty_tpl->tpl_vars['c']->value['part_description'];?>
+</option>
+                                                                    <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
+                                                                <?php }?>
                                                             </select>
 
                                                         </div>
@@ -167,45 +222,69 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <%assign var="srNo" value=1%>
-                                        <%if $new_sales%>
-                                            <%foreach from=$new_sales item=c%>
+                                        <?php $_smarty_tpl->_assignInScope('srNo', 1);?>
+                                        <?php if ($_smarty_tpl->tpl_vars['new_sales']->value) {?>
+                                            <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['new_sales']->value, 'c');
+$_smarty_tpl->tpl_vars['c']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['c']->value) {
+$_smarty_tpl->tpl_vars['c']->do_else = false;
+?>
                                                 
-                                                <%if isset($c->status)%>
+                                                <?php if ((isset($_smarty_tpl->tpl_vars['c']->value->status))) {?>
                                                     <tr>
-                                                        <td><%$srNo%></td>
-                                                        <td><%$c->created_date%></td>
-                                                        <td><%$c->vehicle_number%></td>
-                                                        <td><%$c->sales_number%></td>
-                                                        <td><%$c->customer_name%></td>
+                                                        <td><?php echo $_smarty_tpl->tpl_vars['srNo']->value;?>
+</td>
+                                                        <td><?php echo $_smarty_tpl->tpl_vars['c']->value->created_date;?>
+</td>
+                                                        <td><?php echo $_smarty_tpl->tpl_vars['c']->value->vehicle_number;?>
+</td>
+                                                        <td><?php echo $_smarty_tpl->tpl_vars['c']->value->sales_number;?>
+</td>
+                                                        <td><?php echo $_smarty_tpl->tpl_vars['c']->value->customer_name;?>
+</td>
                                                         <td>
-                                                            <a class="btn btn-primary btn-sm" href="<%$base_url%>view_new_sales_by_id/<%$c->id%>"><i class="fas fa-eye"></i></a>
+                                                            <a class="btn btn-primary btn-sm" href="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+view_new_sales_by_id/<?php echo $_smarty_tpl->tpl_vars['c']->value->id;?>
+"><i class="fas fa-eye"></i></a>
                                                         </td>
                                                         <td>
-                                                            <a class="btn btn-primary btn-sm" href="<%$base_url%>view_PDI_inspection_report/<%$c->id%>"><i class="fas fa-eye"></i></a>
+                                                            <a class="btn btn-primary btn-sm" href="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+view_PDI_inspection_report/<?php echo $_smarty_tpl->tpl_vars['c']->value->id;?>
+"><i class="fas fa-eye"></i></a>
                                                         </td>
                                                         <td>
-                                                            <%if $c->status != "pending"%>
-                                                            <a class="btn btn-primary btn-sm" href="<%$base_url%>view_e_invoice_by_id/<%$c->id%>"><i class="fas fa-eye"></i></a>
-                                                            <%/if%>
+                                                            <?php if ($_smarty_tpl->tpl_vars['c']->value->status != "pending") {?>
+                                                            <a class="btn btn-primary btn-sm" href="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+view_e_invoice_by_id/<?php echo $_smarty_tpl->tpl_vars['c']->value->id;?>
+"><i class="fas fa-eye"></i></a>
+                                                            <?php }?>
                                                         </td>
-                                                        <td><%$c->status%></td>
+                                                        <td><?php echo $_smarty_tpl->tpl_vars['c']->value->status;?>
+</td>
                                                        
-                                                        <td><%$c->Status%></td>
-                                                        <td><%if isset($c->Status)%><%$c->EwbStatus%><%/if%></td>
-                                                        <%assign var="sales_id" value=$c->id%>
+                                                        <td><?php echo $_smarty_tpl->tpl_vars['c']->value->Status;?>
+</td>
+                                                        <td><?php if ((isset($_smarty_tpl->tpl_vars['c']->value->Status))) {
+echo $_smarty_tpl->tpl_vars['c']->value->EwbStatus;
+}?></td>
+                                                        <?php $_smarty_tpl->_assignInScope('sales_id', $_smarty_tpl->tpl_vars['c']->value->id);?>
                                                         
-                                                        <td><%number_format($final_po_amount[$sales_id], 2)%></td>
+                                                        <td><?php echo number_format($_smarty_tpl->tpl_vars['final_po_amount']->value[$_smarty_tpl->tpl_vars['sales_id']->value],2);?>
+</td>
                                                         <td>
                                                             
-                                                            <%if $c->status != "Cancelled" && (empty($c->Status) || $c->Status == "CANCELLED")%>
-                                                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#cancelInvoice<%$srNo%>">Cancel</button>&nbsp;
-                                                            <%/if%>
-                                                            <%if $c->status == "pending"%>
-                                                            <button type="button" data-toggle="modal" class="btn btn-danger btn-sm" data-target="#deleteInvoice<%$srNo%>"><i class="fas fa-trash"></i></button>
-                                                            <%/if%>
+                                                            <?php if ($_smarty_tpl->tpl_vars['c']->value->status != "Cancelled" && (empty($_smarty_tpl->tpl_vars['c']->value->Status) || $_smarty_tpl->tpl_vars['c']->value->Status == "CANCELLED")) {?>
+                                                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#cancelInvoice<?php echo $_smarty_tpl->tpl_vars['srNo']->value;?>
+">Cancel</button>&nbsp;
+                                                            <?php }?>
+                                                            <?php if ($_smarty_tpl->tpl_vars['c']->value->status == "pending") {?>
+                                                            <button type="button" data-toggle="modal" class="btn btn-danger btn-sm" data-target="#deleteInvoice<?php echo $_smarty_tpl->tpl_vars['srNo']->value;?>
+"><i class="fas fa-trash"></i></button>
+                                                            <?php }?>
 
-                                                            <div class="modal fade" id="cancelInvoice<%$srNo%>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                            <div class="modal fade" id="cancelInvoice<?php echo $_smarty_tpl->tpl_vars['srNo']->value;?>
+" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                                 <div class="modal-dialog">
                                                                     <div class="modal-content">
                                                                         <div class="modal-header">
@@ -216,13 +295,17 @@
                                                                         </div>
                                                                         <div class="modal-body">
                                                                             <div class="row">
-                                                                                <form action="<%base_url('cancel_sale_invoice')%>" method="POST">
+                                                                                <form action="<?php echo base_url('cancel_sale_invoice');?>
+" method="POST">
                                                                                     <div class="col-lg-12">
                                                                                         <div class="form-group">
                                                                                             <label for=""><b>Are you sure want to Cancel this invoice?</b> </label>
-                                                                                            <input type="hidden" name="sales_id" value="<%$c->id%>" required class="form-control">
-                                                                                            <input type="hidden" name="sales_number" value="<%$c->sales_number%>" required class="form-control">
-                                                                                            <input type="hidden" name="status" value="<%$c->status%>" required class="form-control">
+                                                                                            <input type="hidden" name="sales_id" value="<?php echo $_smarty_tpl->tpl_vars['c']->value->id;?>
+" required class="form-control">
+                                                                                            <input type="hidden" name="sales_number" value="<?php echo $_smarty_tpl->tpl_vars['c']->value->sales_number;?>
+" required class="form-control">
+                                                                                            <input type="hidden" name="status" value="<?php echo $_smarty_tpl->tpl_vars['c']->value->status;?>
+" required class="form-control">
                                                                                         </div>
                                                                                     </div>
                                                                             </div>
@@ -237,7 +320,8 @@
                                                             </div>
                                                             
                                                             <!-- delete model -->
-                                                            <div class="modal fade" id="deleteInvoice<%$srNo%>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                            <div class="modal fade" id="deleteInvoice<?php echo $_smarty_tpl->tpl_vars['srNo']->value;?>
+" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                                 <div class="modal-dialog">
                                                                     <div class="modal-content">
                                                                         <div class="modal-header">
@@ -248,12 +332,15 @@
                                                                         </div>
                                                                         <div class="modal-body">
                                                                             <div class="row">
-                                                                                <form action="<%base_url('delete_sale_invoice')%>" method="POST">
+                                                                                <form action="<?php echo base_url('delete_sale_invoice');?>
+" method="POST">
                                                                                     <div class="col-lg-12">
                                                                                         <div class="form-group">
                                                                                             <label for=""><b>Are you sure want to Delete this invoice?</b> </label>
-                                                                                            <input type="hidden" name="sales_id" value="<%$c->id%>" required class="form-control">
-                                                                                            <input type="hidden" name="status" value="<%$c->status%>" required class="form-control">
+                                                                                            <input type="hidden" name="sales_id" value="<?php echo $_smarty_tpl->tpl_vars['c']->value->id;?>
+" required class="form-control">
+                                                                                            <input type="hidden" name="status" value="<?php echo $_smarty_tpl->tpl_vars['c']->value->status;?>
+" required class="form-control">
                                                                                         </div>
                                                                                     </div>
                                                                             </div>
@@ -268,15 +355,18 @@
                                                             </div>
                                                         </td>
                                                     </tr>
-                                                    <%assign var="srNo" value=$srNo + 1%>
-                                                <%/if%>
-                                            <%/foreach%>
-                                        <%/if%>
+                                                    <?php $_smarty_tpl->_assignInScope('srNo', $_smarty_tpl->tpl_vars['srNo']->value+1);?>
+                                                <?php }?>
+                                            <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
+                                        <?php }?>
                                     </tbody>
 
                                     <!-- Pagination code
                                     
-                                    <p><%$links%></p>
+                                    <p><?php echo $_smarty_tpl->tpl_vars['links']->value;?>
+</p>
                                     <div class="row"><div class="col-sm-12 col-md-5"><div class="dataTables_info" id="example1_info" role="status" aria-live="polite">Showing 1 to 10 of 10 entries</div></div><div class="col-sm-12 col-md-7"><div class="dataTables_paginate paging_simple_numbers" id="example1_paginate"><ul class="pagination"><li class="paginate_button page-item previous disabled" id="example1_previous"><a href="#" aria-controls="example1" data-dt-idx="0" tabindex="0" class="page-link">Previous</a></li><li class="paginate_button page-item active"><a href="#" aria-controls="example1" data-dt-idx="1" tabindex="0" class="page-link">1</a></li><li class="paginate_button page-item next disabled" id="example1_next"><a href="#" aria-controls="example1" data-dt-idx="2" tabindex="0" class="page-link">Next</a></li></ul></div></div></div>
                                     
                                     -->
@@ -297,7 +387,8 @@
     </div>
     <!-- /.content-wrapper -->
 
-<script>
+<?php echo '<script'; ?>
+>
 var file_name = "report_prod_rejection";
 var pdf_title = "Rejection Report";
 new DataTable('#example1',{
@@ -362,4 +453,6 @@ new DataTable('#example1',{
             ],
    });
 
-</script>
+<?php echo '</script'; ?>
+><?php }
+}
