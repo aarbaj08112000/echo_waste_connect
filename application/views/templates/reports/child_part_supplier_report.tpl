@@ -109,6 +109,73 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+
+<div class="modal fade" id="add_revison" tabindex=" -1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Revision </h5>
+                <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="<%base_url('updatechildpart_supplier')%>" method="POST" enctype='multipart/form-data'>
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            <input value="<%$po[0]->id%>" type="hidden" name="id" required class="form-control" id="part_id" aria-describedby="emailHelp" placeholder="Customer Name">
+
+                            <div class="form-group">
+                                <label for="po_num">Part Number </label><span class="text-danger">*</span>
+                                <input type="text" value="<%$po[0]->part_number%>" name="upart_number" readonly id = "part_number" class="form-control" placeholder="Enter Part Number.">
+                            </div>
+                            <div class="form-group">
+                                <label for="po_num">Part Description </label><span class="text-danger">*</span>
+                                <input type="text" value="<%$po[0]->part_description%>" name="upart_desc" readonly id= 'part_des' required class="form-control" id="exampleInputEmail1" placeholder="Enter Part Description">
+                            </div>
+                            <div class="form-group">
+                                <label for="po_num">Revision Date </label><span class="text-danger">*</span>
+                                <input type="date" value="<%date('Y-m-d')%>" name="urevision_date" required id = 'revision_date' class="form-control" id="exampleInputEmail1" placeholder="Enter Part Price">
+                            </div>
+                            <div class="form-group">
+                                <label for="po_num">Revision Number </label><span class="text-danger">*</span>
+                                <input type="text" value="" name="urevision_no" required class="form-control" id="revision_numer" placeholder="Enter Safty/buffer stock" aria-describedby="emailHelp">
+                                <input type="hidden" readonly value="<%$po[0]->supplier_id%>" name="supplier_id" required id='supplier_id' class="form-control" id="exampleInputEmail1" placeholder="Enter Safty/buffer stock" aria-describedby="emailHelp">
+                            </div>
+                            <div class="form-group">
+                                <label for="po_num">Revision Remark </label><span class="text-danger">*</span>
+                                <input type="text" value="" name="revision_remark" required class="form-control" id="revision_remark" placeholder="Enter revision_remark" aria-describedby="emailHelp">
+                            </div>
+                            <div class="form-group">
+                                <label for="po_num">Part Price </label><span class="text-danger">*</span>
+                                <input type="text" value="" name="upart_rate" required class="form-control" id="part_rate" placeholder="Enter Part Price">
+                            </div>
+                            <div class="form-group">
+                                <label for="po_num">Quotation Document</label>
+                                <input type="file" name="quotation_document" class="form-control" id="exampleInputEmail1" placeholder="Enter Revision Date" aria-describedby="emailHelp">
+                            </div>
+                            <div class="form-group">
+                                <label> Select Tax Structure </label><span class="text-danger">*</span>
+                                <select class="form-control select2" name="gst_id" style="width: 100%;">
+                                    <%foreach from=$gst_structure item=c%>
+                                        <option <%if $c->id == $gst_structure2[0]->id%>selected<%/if%> value="<%$c->id%>"><%$c->code%></option>
+                                    <%/foreach%>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
 <script>
     var column_details =  <%$data|json_encode%>;
     var page_length_arr = <%$page_length_arr|json_encode%>;

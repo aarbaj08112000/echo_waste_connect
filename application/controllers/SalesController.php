@@ -855,7 +855,7 @@ class SalesController extends CommonController
             "className" => "dt-center",
         ];
 		
-
+		
         $data["data"] = $column;
         $data["is_searching_enable"] = false;
         $data["is_paging_enable"] = true;

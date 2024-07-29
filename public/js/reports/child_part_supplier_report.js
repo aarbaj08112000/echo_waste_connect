@@ -4,15 +4,21 @@ var pdf_title = "Receivable Reports";
 // var myModal = new bootstrap.Modal(document.getElementById('update_report_data'))
 const page = {
     init: function(){
+        
         this.dataTable();
         this.filter();
         this.formValidation();
         $(document).on("click",".edit-part",function(){
             var data = $(this).attr("data-value");
             data = JSON.parse(atob(data)); 
-            $("#payment_date_modal").val(data.payment_receipt_date);
-            $("#receivable_amount_modal").val(data.amount_received);
-            $("#transection_detail_modal").val(data.transaction_details);
+            console.log(data);
+            $("#part_number").val(data.part_number);
+            $("#part_des").val(data.part_description);
+            $("#revision_numer").val(data.revision_no);
+            $("#revision_remark").val(data.revision_remark);
+            $("#part_rate").val(data.part_rate);
+            $("#part_id").val(data.id);
+            $("#supplier_id").val(data.supplier_id);
             // myModal.show();
         })
 

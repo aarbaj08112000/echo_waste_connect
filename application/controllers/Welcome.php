@@ -3551,7 +3551,7 @@ class Welcome extends CommonController
 		$data = $this->SupplierParts->getChildSupplierReportData($condition_arr,$post_data["search"]);
 		foreach ($data as $key => $value) {
 			$edit_data = base64_encode(json_encode($value)); 
-			$data[$key]['rev_history'] = '<button type="submit" data-toggle="modal" class="btn btn-sm btn-primary" data-target="#exampleModaledit2<%$i%>"> <i class="fas fa-edit" data-edit ='. $edit_data.'></i></button>  ' . "<a href='" . base_url() . "price_revision/" . $value['part_number'] . "/" . $value['supplier_id'] . "' class='btn btn-primary btn-sm'> <i class='fas fa-history'></i></a>";
+			$data[$key]['rev_history'] = '<button type="submit" data-bs-toggle="modal" class="btn btn-sm btn-primary edit-part" data-bs-target="#add_revison" data-value ='. $edit_data.'> <i class="fas fa-edit" ></i></button>  ' . "<a href='" . base_url() . "price_revision/" . $value['part_number'] . "/" . $value['supplier_id'] . "' class='btn btn-primary btn-sm'> <i class='fas fa-history'></i></a>";
 			$data[$key]['quotation_doc'] = "<a href='" . base_url('documents') . "/" . $val['part_number'] . $val['quotation_document'] . "' download>Download</a>";
 		}
 
