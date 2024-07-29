@@ -10,13 +10,15 @@ const page = {
         $(document).on("click",".edit-part",function(){
             var data = $(this).attr("data-value");
             data = JSON.parse(atob(data)); 
-            console.log(data)
+            $('#end_date').val(data['po_end_date'])
            
         })
         $(document).on("click",".close-po",function(){
             var data = $(this).attr("data-value");
             data = JSON.parse(atob(data)); 
-            console.log(data)
+           $('#remarks').val(data['remark']);
+           $('#reason').val(data['reason']);
+
            
         })
 
@@ -94,7 +96,7 @@ const page = {
             pagingType: "full_numbers",
             scrollCollapse: true,
             scrollX: true,
-            scrollY: true,
+            // scrollY: true,
             paging: is_paging_enable,
             fixedHeader: false,
             info: true,
@@ -122,7 +124,7 @@ const page = {
     },
     filter: function(){
         let that = this;
-        $('#part_number_search').select2();
+        $('#customer_name').select2();
         $(".search-filter").on("click",function(){
             table.destroy(); 
             that.dataTable();
@@ -133,20 +135,17 @@ const page = {
         })
     },
     serachParams: function(){
-        var month_number = $("#month_number").val();
-        var year = $("#year").val();
-        var params = {month_number:month_number,year:year};
+        var customer_id = $("#customer_name").val();
+        var params = {customer_id:customer_id};
         return params;
     },
     resetFilter: function(){
-        $("#part_number_search").val('').trigger('change');
-        $("#part_description_search").val('');
+        $("#customer_name").val('');
         table.destroy(); 
         this.dataTable();
     }
 }
 
 $( document ).ready(function() {
-    
     page.init();
 });

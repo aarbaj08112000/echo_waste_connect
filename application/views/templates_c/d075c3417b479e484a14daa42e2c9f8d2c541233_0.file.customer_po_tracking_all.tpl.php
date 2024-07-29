@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-07-28 20:06:13
+/* Smarty version 4.3.2, created on 2024-07-29 23:18:56
   from 'C:\xampp\htdocs\erp_converted\application\views\templates\customer\customer_po_tracking_all.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66a6575db24f08_28899123',
+  'unifunc' => 'content_66a7d608a82429_07870973',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'd075c3417b479e484a14daa42e2c9f8d2c541233' => 
     array (
       0 => 'C:\\xampp\\htdocs\\erp_converted\\application\\views\\templates\\customer\\customer_po_tracking_all.tpl',
-      1 => 1722177371,
+      1 => 1722275334,
       2 => 'file',
     ),
   ),
@@ -20,39 +20,92 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66a6575db24f08_28899123 (Smarty_Internal_Template $_smarty_tpl) {
-?><div style="width: 2000px" class="wrapper">
+function content_66a7d608a82429_07870973 (Smarty_Internal_Template $_smarty_tpl) {
+?><div  class="wrapper container-xxl flex-grow-1 container-p-y">
     <!-- Navbar -->
 
     <!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
+    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme filter-popup-block" style="width: 0px;">
+    <div class="app-brand demo justify-content-between">
+        <a href="javascript:void(0)" class="app-brand-link">
+            <span class="app-brand-text demo menu-text fw-bolder ms-2">Filter</span>
+        </a>
+        <div class="close-filter-btn d-block filter-popup cursor-pointer">
+                <i class="ti ti-x fs-8"></i>
+            </div>
+    </div>
+    <nav class="sidebar-nav scroll-sidebar filter-block" data-simplebar="init">
+      <div class="simplebar-content" >
+        <ul class="menu-inner py-1">
+            <!-- Dashboard -->
+            <div class="filter-row">
+              <li class="nav-small-cap">
+                <span class="hide-menu">Select Customer</span>
+                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+              </li>
+              <li class="sidebar-item">
+                <div class="input-group">
+                  <select name="customer_name" class="form-control select2" id="customer_name">
+                  <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['customer_data']->value, 'val', false, 'key');
+$_smarty_tpl->tpl_vars['val']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['key']->value => $_smarty_tpl->tpl_vars['val']->value) {
+$_smarty_tpl->tpl_vars['val']->do_else = false;
+?>
+                  <option 
+                      value="<?php echo $_smarty_tpl->tpl_vars['key']->value;?>
+"><?php echo $_smarty_tpl->tpl_vars['val']->value;?>
+</option>
+                   <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
+                  </select>
+                </div>
+              </li>
+            </div>
+          
+            
 
+        </ul>
+      </div>
+    </nav>
+    <div class="filter-popup-btn">
+            <button class="btn btn-outline-danger reset-filter">Reset</button>
+            <button class="btn btn-primary search-filter">Search</button>
+        </div>
+</aside>
+
+    <nav aria-label="breadcrumb">
+      <div class="sub-header-left pull-left breadcrumb">
+        <h1>
+          Planning & Sales
+          <a hijacked="yes" href="#stock/issue_request/index" class="backlisting-link" title="Back to Issue Request Listing" >
+            <i class="ti ti-chevrons-right" ></i>
+            <em >Customer PO QTY Tracking</em></a>
+        </h1>
+        <br>
+        <span >View Pending</span>
+      </div>
+    </nav>
+    <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
+      <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
+      <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
+      <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
+      <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+    </div>
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>Customer PO QTY Tracking</h1>
-                    </div>
-                    <!-- <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Customer</li>
-                        </ol>
-                    </div> -->
-                </div>
-            </div><!-- /.container-fluid -->
-        </section>
+        
 
         <!-- Main content -->
         <section class="content">
-            <div class="container-fluid">
+            <div class="">
                 <div class="row">
-                    <div class="col-9">
+              
 
                         <!-- /.card -->
 
@@ -105,7 +158,7 @@ inwarding_by_po" method="POST">
                             <!-- /.card-body -->
                         </div>
                         <!-- /.card -->
-                    </div>
+              
                     <!-- /.col -->
                 </div>
                 <!-- /.row -->
@@ -160,9 +213,9 @@ update_customer_po_tracking_all" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="">End Date<span class="text-danger">*</span></label>
                         <input required value="<?php echo $_smarty_tpl->tpl_vars['s']->value->po_end_date;?>
-" type="date" class="form-control" name="end_date">
+" type="date" class="form-control" name="end_date" id="end_date">
                         <input required value="<?php echo $_smarty_tpl->tpl_vars['s']->value->id;?>
-" type="hidden" class="form-control" name="id">
+" type="hidden" class="form-control" name="id" id="part_id">
                     </div>
             </div>
             <div class="modal-footer">
@@ -194,9 +247,9 @@ close_po_customer_po_tracking" method="POST" enctype="multipart/form-data">
                                 <input required value="<?php echo $_smarty_tpl->tpl_vars['s']->value->id;?>
 " type="hidden" class="form-control" name="id">
                                 <label for="">Remark<span class="text-danger"></span></label>
-                                <input type="text" name="remark" placeholder="Enter Remark " class="form-control"/>
+                                <input type="text" name="remark" placeholder="Enter Remark " class="form-control" id="remarks"/>
                                 <label for="">Reason<span class="text-danger">*</span> </label>
-                                <select name="reason" required id="" class="form-control select2">
+                                <select name="reason" required id="reason" class="form-control select2">
                                     <option value="">Select</option>
                                     <option value="Withdraw">Withdraw</option>
                                     <option value="Completed">Completed</option>

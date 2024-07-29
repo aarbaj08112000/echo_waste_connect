@@ -213,11 +213,11 @@ class CustomerPart extends CI_Model {
         $this->db->join('customer c', 'cpt.customer_id = c.id');
        
         if(is_valid_array($search_params) && $search_params['customer_id'] > 0){
-            $this->db->where('c.customer_id', $search_params['customer_id']);
+            $this->db->where('cpt.customer_id', $search_params['customer_id']);
         }
         // pr($condition_arr,1);
         if($condition_arr["order_by"] == ''){    
-            $this->db->order_by('s.id', 'DESC');
+            $this->db->order_by('cpt.id', 'DESC');
         }
         
         if (count($condition_arr) > 0) {
@@ -239,7 +239,7 @@ class CustomerPart extends CI_Model {
        
        
         if(is_valid_array($search_params) && $search_params['customer_id'] > 0){
-            $this->db->where('s.customer_id', $search_params['customer_id']);
+            $this->db->where('cpt.customer_id', $search_params['customer_id']);
         }
 
         $result_obj = $this->db->get();

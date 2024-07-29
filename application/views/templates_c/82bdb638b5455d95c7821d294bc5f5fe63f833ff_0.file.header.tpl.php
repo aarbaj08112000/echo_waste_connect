@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-07-21 15:05:21
+/* Smarty version 4.3.2, created on 2024-07-29 23:18:56
   from 'C:\xampp\htdocs\erp_converted\application\views\templates\header.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_669cd659adaf74_99267665',
+  'unifunc' => 'content_66a7d608a1fbb9_60053457',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_669cd659adaf74_99267665 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66a7d608a1fbb9_60053457 (Smarty_Internal_Template $_smarty_tpl) {
 if (!($_smarty_tpl->tpl_vars['session_data']->value['user_id'] > 0)) {
 echo redirect('login');?>
 

@@ -171,7 +171,9 @@ class POTrackingController extends CommonController {
         $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
         $data["admin_url"] = base_url();
         $data["base_url"] = base_url();
-
+		$customer_data_raw = $this->CustomerPart->getPoTrakingView();
+		$data['customer_data'] = array_column($customer_data_raw,'customer_name','customer_id');
+		
 		$this->loadView('customer/customer_po_tracking_all', $data);
 	}
 

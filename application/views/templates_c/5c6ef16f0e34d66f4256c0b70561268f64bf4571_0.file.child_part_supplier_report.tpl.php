@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-07-26 23:11:06
+/* Smarty version 4.3.2, created on 2024-07-29 23:19:04
   from 'C:\xampp\htdocs\erp_converted\application\views\templates\reports\child_part_supplier_report.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66a3dfb24eec71_51566906',
+  'unifunc' => 'content_66a7d610eda0a6_13732166',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '5c6ef16f0e34d66f4256c0b70561268f64bf4571' => 
     array (
       0 => 'C:\\xampp\\htdocs\\erp_converted\\application\\views\\templates\\reports\\child_part_supplier_report.tpl',
-      1 => 1721325177,
+      1 => 1722275060,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66a3dfb24eec71_51566906 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66a7d610eda0a6_13732166 (Smarty_Internal_Template $_smarty_tpl) {
 ?><div class="wrapper container-xxl flex-grow-1 container-p-y">
     <!-- Navbar -->
     
@@ -149,6 +149,88 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+
+<div class="modal fade" id="add_revison" tabindex=" -1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Revision </h5>
+                <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="<?php echo base_url('updatechildpart_supplier');?>
+" method="POST" enctype='multipart/form-data'>
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            <input value="<?php echo $_smarty_tpl->tpl_vars['po']->value[0]->id;?>
+" type="hidden" name="id" required class="form-control" id="part_id" aria-describedby="emailHelp" placeholder="Customer Name">
+
+                            <div class="form-group">
+                                <label for="po_num">Part Number </label><span class="text-danger">*</span>
+                                <input type="text" value="<?php echo $_smarty_tpl->tpl_vars['po']->value[0]->part_number;?>
+" name="upart_number" readonly id = "part_number" class="form-control" placeholder="Enter Part Number.">
+                            </div>
+                            <div class="form-group">
+                                <label for="po_num">Part Description </label><span class="text-danger">*</span>
+                                <input type="text" value="<?php echo $_smarty_tpl->tpl_vars['po']->value[0]->part_description;?>
+" name="upart_desc" readonly id= 'part_des' required class="form-control" id="exampleInputEmail1" placeholder="Enter Part Description">
+                            </div>
+                            <div class="form-group">
+                                <label for="po_num">Revision Date </label><span class="text-danger">*</span>
+                                <input type="date" value="<?php echo date('Y-m-d');?>
+" name="urevision_date" required id = 'revision_date' class="form-control" id="exampleInputEmail1" placeholder="Enter Part Price">
+                            </div>
+                            <div class="form-group">
+                                <label for="po_num">Revision Number </label><span class="text-danger">*</span>
+                                <input type="text" value="" name="urevision_no" required class="form-control" id="revision_numer" placeholder="Enter Safty/buffer stock" aria-describedby="emailHelp">
+                                <input type="hidden" readonly value="<?php echo $_smarty_tpl->tpl_vars['po']->value[0]->supplier_id;?>
+" name="supplier_id" required id='supplier_id' class="form-control" id="exampleInputEmail1" placeholder="Enter Safty/buffer stock" aria-describedby="emailHelp">
+                            </div>
+                            <div class="form-group">
+                                <label for="po_num">Revision Remark </label><span class="text-danger">*</span>
+                                <input type="text" value="" name="revision_remark" required class="form-control" id="revision_remark" placeholder="Enter revision_remark" aria-describedby="emailHelp">
+                            </div>
+                            <div class="form-group">
+                                <label for="po_num">Part Price </label><span class="text-danger">*</span>
+                                <input type="text" value="" name="upart_rate" required class="form-control" id="part_rate" placeholder="Enter Part Price">
+                            </div>
+                            <div class="form-group">
+                                <label for="po_num">Quotation Document</label>
+                                <input type="file" name="quotation_document" class="form-control" id="exampleInputEmail1" placeholder="Enter Revision Date" aria-describedby="emailHelp">
+                            </div>
+                            <div class="form-group">
+                                <label> Select Tax Structure </label><span class="text-danger">*</span>
+                                <select class="form-control select2" name="gst_id" style="width: 100%;">
+                                    <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['gst_structure']->value, 'c');
+$_smarty_tpl->tpl_vars['c']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['c']->value) {
+$_smarty_tpl->tpl_vars['c']->do_else = false;
+?>
+                                        <option <?php if ($_smarty_tpl->tpl_vars['c']->value->id == $_smarty_tpl->tpl_vars['gst_structure2']->value[0]->id) {?>selected<?php }?> value="<?php echo $_smarty_tpl->tpl_vars['c']->value->id;?>
+"><?php echo $_smarty_tpl->tpl_vars['c']->value->code;?>
+</option>
+                                    <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
 <?php echo '<script'; ?>
 >
     var column_details =  <?php echo json_encode($_smarty_tpl->tpl_vars['data']->value);?>
