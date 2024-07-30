@@ -231,14 +231,11 @@ class POTrackingController extends CommonController {
 		// 		$data['customer_parts'] = $role_management_data->result();
 		$data['customer_po_tracking'] = $this->Crud->read_data("customer_po_tracking");
 		$data['customer_po_tracking'] = $this->Crud->get_data_by_id("customer_po_tracking", "closed", "status");
-		
-		// print_r($data['customer_po_tracking']);
 		if ($data['customer_po_tracking']) {
 			foreach ($data['customer_po_tracking'] as $s) {
 				$data['customer_data'][$s->customer_id] = $this->Crud->get_data_by_id("customer", $s->customer_id, "id");
 			}
 		}
-		
 		// $this->getPage('customer_po_tracking_all_closed', $data);
 		$this->loadView('customer/customer_po_tracking_all_closed', $data);
 	}

@@ -31,9 +31,9 @@ class PlanningController extends CommonController
 
 		$data['financial_year'] = $this->uri->segment('2');
 		$financial_year = $this->uri->segment('2');
-		$this->load->view('header');
-		$this->load->view('planing_data_month', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		$this->loadView('customer/planing_data_month', $data);
+		// $this->load->view('footer');
 	}
 
 	public function planing_data()

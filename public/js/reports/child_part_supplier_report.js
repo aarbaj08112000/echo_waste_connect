@@ -4,7 +4,6 @@ var pdf_title = "Receivable Reports";
 // var myModal = new bootstrap.Modal(document.getElementById('update_report_data'))
 const page = {
     init: function(){
-        
         this.dataTable();
         this.filter();
         this.formValidation();
