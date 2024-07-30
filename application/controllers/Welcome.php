@@ -5407,13 +5407,15 @@ class Welcome extends CommonController
 			}
 		}
 		
-
-		foreach ($data['customer_part_rate'] as $poo ) {
+		
+		foreach ($data['customer_part_rate'] as $key => $poo ) {
 			$data['customer_part_rate_data'][$poo->customer_master_id] = $this->Crud->get_data_by_id("customer_part_rate", $poo->customer_master_id, "customer_master_id");
 			$data['po'][$poo->customer_master_id] = $this->Crud->get_data_by_id("customer_part", $poo->customer_master_id, "id");
 			$data['customer_data'][$data['po'][$poo->customer_master_id][0]->customer_id] = $this->Crud->get_data_by_id("customer", $data['po'][$poo->customer_master_id][0]->customer_id, "id");
 			$data['customer_part_data'][$data['po'][$poo->customer_master_id][0]->customer_part_id] = $this->Crud->get_data_by_id("customer_part_type", $data['po'][$poo->customer_master_id][0]->customer_part_id, "id");
+			$data['customer_part_rate'][$key]->encoded_data = base64_encode(json_encode($data['po'][$poo->customer_master_id][0]));
 		}
+		
 		// pr($data['customer_data'],1);
 		// $this->load->view('header');
 		// $this->load->view('customer_part_price_by_id', $data);

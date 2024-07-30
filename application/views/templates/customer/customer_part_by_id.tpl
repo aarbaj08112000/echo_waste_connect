@@ -332,129 +332,7 @@
                                                     <td><%if $po[$poo->id][0]->isservice == 'Y'%>YES<%else%>NO<%/if%></td>
                                                     <td>
                                                         <button type="submit" data-toggle="modal" class="btn btn-sm btn-primary" data-target="#exampleModaledit2333<%$i%>"> <i class="fas fa-edit"></i></button>
-                                                        <div class="modal fade" id="exampleModaledit2333<%$i%>" tabindex=" -1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                            <div class="modal-dialog " role="document">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-                                                                        <h5 class="modal-title" id="exampleModalLabel">Update Part Details</h5>
-                                                                      
-                                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                            <span aria-hidden="true">&times;</span>
-                                                                        </button>
-                                                                    </div>
-                                                                    <div class="modal-body">
-                                                                        <form action="<%$base_url%>updatecustomerpart_new" method="POST" enctype='multipart/form-data'>
-                                                                            <div class="row">
-                                                                                <div class="col-lg-12">
-                                                                                    <input value="<%$po[$poo->id][0]->id%>" type="hidden" name="id" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Customer Name">
-                                                                                    <div class="form-group">
-                                                                                        <label for="po_num">Part Description<span class="text-danger">*</span></label>
-                                                                                        <input type="text" name="upart_description" required class="form-control" id="upart_description" value="<%$po[$poo->id][0]->part_description%>" aria-describedby="partDescriptionHelp">
-                                                                                    </div>
-                                                                                    <div class="form-group">
-                                                                                        <label>Select Type </label><span class="text-danger">*</span>
-                                                                                        <select class="form-control select2" name="type" style="width: 100%;">
-                                                                                            <option value="standard_po" <%if $po[$poo->id][0]->type == 'standard_po'%>selected<%/if%>>Standard PO</option>
-                                                                                            <option value="subcon_po" <%if $po[$poo->id][0]->type == 'subcon_po'%>selected<%/if%>>Subcon Po</option>
-                                                                                        </select>
-                                                                                    </div>
-                                                                                    <div class="form-group">
-                                                                                        <label> Part Family </label><span class="text-danger">*</span>
-                                                                                        <select readonly class="form-control select2" name="part_family" style="width: 100%;">
-                                                                                            <%if $part_family%>
-                                                                                                <%foreach from=$part_family item=p%>
-                                                                                                    <option value="<%$p->name%>"><%$p->name%></option>
-                                                                                                <%/foreach%>
-                                                                                            <%/if%>
-                                                                                        </select>
-                                                                                    </div>
-
-                                                                                    <%if $entitlements.isPlastic%>
-                                                                                        <div class="form-group">
-                                                                                            <label for="po_num">Gross weight (gram) <span class="text-danger">*</span></label>
-                                                                                            <input type="number" required step="any" name="gross_weight" class="form-control" id="exampleInputEmail1" value="<%$po[$poo->id][0]->gross_weight%>" aria-describedby="emailHelp">
-                                                                                        </div>
-                                                                                        <div class="form-group">
-                                                                                            <label for="po_num">Finish weight (gram) <span class="text-danger">*</span></label>
-                                                                                            <input type="number" required step="any" name="finish_weight" class="form-control" id="exampleInputEmail1" value="<%$po[$poo->id][0]->finish_weight%>" aria-describedby="emailHelp">
-                                                                                        </div>
-                                                                                        <div class="form-group">
-                                                                                            <label for="po_num">Runner weight (gram) <span class="text-danger">*</span></label>
-                                                                                            <input type="number" required step="any" name="runner_weight" class="form-control" id="exampleInputEmail1" value="<%$po[$poo->id][0]->runner_weight%>" aria-describedby="emailHelp">
-                                                                                        </div>
-                                                                                        <div class="form-group">
-                                                                                            <label for="po_num">Cycle Time <span class="text-danger">*</span></label>
-                                                                                            <input type="number" required step="any" name="cycyle_time" class="form-control" id="exampleInputEmail1" value="<%$po[$poo->id][0]->cycyle_time%>" aria-describedby="emailHelp">
-                                                                                        </div>
-                                                                                        <div class="form-group">
-                                                                                            <label for="po_num">Production Target Per Shift <span class="text-danger">*</span></label>
-                                                                                            <input type="number" required step="any" name="production_target_per_shift" class="form-control" id="exampleInputEmail1" value="<%$po[$poo->id][0]->production_target_per_shift%>" aria-describedby="emailHelp">
-                                                                                        </div>
-                                                                                    <%/if%>
-                                                                                    <div class="form-group">
-                                                                                        <label for="po_num">RM Grade <span class="text-danger">*</span></label>
-                                                                                        <input type="text" required name="rm_grade" class="form-control" id="exampleInputEmail1" value="<%$po[$poo->id][0]->rm_grade%>" aria-describedby="emailHelp">
-                                                                                    </div>
-                                                                                    <%if $TusharEngg%>
-                                                                                        <div class="form-group">
-                                                                                            <label for="thickness">Thickness<span class="text-danger">*</span></label>
-                                                                                            <input type="number" step="any" required name="thickness" class="form-control" id="thickness" value="<%$po[$poo->id][0]->thickness%>" aria-describedby="thicknessHelp">
-                                                                                        </div>
-                                                                                        <div class="form-group">
-                                                                                            <label for="passivationType">Passivation Type<span class="text-danger">*</span></label>
-                                                                                            <input type="text" required name="passivationType" class="form-control" id="passivationType" value="<%$po[$poo->id][0]->passivationType%>" aria-describedby="passivationTypeHelp">
-                                                                                        </div>
-                                                                                    <%/if%>
-                                                                                    <div class="form-group">
-                                                                                        <label for="safety_stock">Safety/buffer stock <span class="text-danger">*</span></label>
-                                                                                        <input type="text" value="<%$po[$poo->id][0]->safety_stock%>" name="safety_stock" required class="form-control" id="exampleInputEmail1" placeholder="Enter Safety/buffer stock">
-                                                                                    </div>
-                                                                                    <div class="form-group">
-                                                                                        <label for="hsn_code">HSN Code<span class="text-danger">*</span></label>
-                                                                                        <input type="text" value="<%$po[$poo->id][0]->hsn_code%>" name="hsn_code" required class="form-control" id="exampleInputEmail1" placeholder="Enter HSN Code">
-                                                                                        <input type="hidden" value="<%$po[$poo->id][0]->id%>" name="id" required class="form-control" id="exampleInputEmail1">
-                                                                                    </div>
-                                                                                    <div class="form-group">
-                                                                                        <label> Select Tax Structure</label><span class="text-danger">*</span>
-                                                                                        <select class="form-control select2" name="gst_id" style="width: 100%;">
-                                                                                            <%foreach from=$gst_structure item=c%>
-                                                                                                <option <%if $c->id == $gst_structure2[$po[$poo->id]][0]->id%>selected<%/if%> value="<%$c->id%>"><%$c->code%></option>
-                                                                                            <%/foreach%>
-                                                                                        </select>
-                                                                                    </div>
-                                                                                    <div class="form-group">
-                                                                                        <label> UOM </label><span class="text-danger">*</span>
-                                                                                        <select class="form-control select2" readonly name="uom" style="width: 100%;">
-                                                                                            <%foreach from=$uom item=c1%>
-                                                                                                <option <%if $c1->uom_name == $po[$poo->id][0]->uom%>selected<%/if%> value="<%$c1->uom_name%>"><%$c1->uom_name%></option>
-                                                                                            <%/foreach%>
-                                                                                        </select>
-                                                                                    </div>
-                                                                                    <div class="form-group">
-                                                                                        <label for="po_num">Packaging QTY </label><span class="text-danger">*</span>
-                                                                                        <input type="number" min="0" step="1" name="packaging_qty" value="<%$po[$poo->id][0]->packaging_qty%>" required class="form-control" id="packaging_quantity">
-                                                                                    </div>
-                                                                                    <div class="form-group">
-                                                                                        <label> Select Is Service </label><span class="text-danger">*</span>
-                                                                                        <select class="form-control select2" required name="isservice" style="width: 100%;">
-                                                                                            <option value="">Select Is-Service</option>
-                                                                                            <option value="Y" <%if $po[$poo->id][0]->isservice == 'Y'%>selected<%/if%>>YES</option>
-                                                                                            <option value="N" <%if $po[$poo->id][0]->isservice == 'N'%>selected<%/if%>>NO</option>
-                                                                                        </select>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-lg-6">
-                                                                                </div>
-                                                                            </div>
-                                                                    </div>
-                                                                    <div class="modal-footer">
-                                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                        <button type="submit" class="btn btn-primary">Save changes</button>
-                                                                    </div>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                      
                                                     </td>
                                                     <td>
                                                         <a class="btn btn-primary" href="<%$base_url%>view_inspection_parm_details/<%$customer_data[0]->id%>/<%$poo->id%>">
@@ -483,3 +361,128 @@
     <!-- /.content-wrapper -->
 </div>
 
+<div class="modal fade" id="exampleModaledit2333<%$i%>" tabindex=" -1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog " role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Update Part Details</h5>
+          
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form action="<%$base_url%>updatecustomerpart_new" method="POST" enctype='multipart/form-data'>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <input value="<%$po[$poo->id][0]->id%>" type="hidden" name="id" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Customer Name">
+                        <div class="form-group">
+                            <label for="po_num">Part Description<span class="text-danger">*</span></label>
+                            <input type="text" name="upart_description" required class="form-control" id="upart_description" value="<%$po[$poo->id][0]->part_description%>" aria-describedby="partDescriptionHelp">
+                        </div>
+                        <div class="form-group">
+                            <label>Select Type </label><span class="text-danger">*</span>
+                            <select class="form-control select2" name="type" style="width: 100%;">
+                                <option value="standard_po" <%if $po[$poo->id][0]->type == 'standard_po'%>selected<%/if%>>Standard PO</option>
+                                <option value="subcon_po" <%if $po[$poo->id][0]->type == 'subcon_po'%>selected<%/if%>>Subcon Po</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label> Part Family </label><span class="text-danger">*</span>
+                            <select readonly class="form-control select2" name="part_family" style="width: 100%;">
+                                <%if $part_family%>
+                                    <%foreach from=$part_family item=p%>
+                                        <option value="<%$p->name%>"><%$p->name%></option>
+                                    <%/foreach%>
+                                <%/if%>
+                            </select>
+                        </div>
+
+                        <%if $entitlements.isPlastic%>
+                            <div class="form-group">
+                                <label for="po_num">Gross weight (gram) <span class="text-danger">*</span></label>
+                                <input type="number" required step="any" name="gross_weight" class="form-control" id="exampleInputEmail1" value="<%$po[$poo->id][0]->gross_weight%>" aria-describedby="emailHelp">
+                            </div>
+                            <div class="form-group">
+                                <label for="po_num">Finish weight (gram) <span class="text-danger">*</span></label>
+                                <input type="number" required step="any" name="finish_weight" class="form-control" id="exampleInputEmail1" value="<%$po[$poo->id][0]->finish_weight%>" aria-describedby="emailHelp">
+                            </div>
+                            <div class="form-group">
+                                <label for="po_num">Runner weight (gram) <span class="text-danger">*</span></label>
+                                <input type="number" required step="any" name="runner_weight" class="form-control" id="exampleInputEmail1" value="<%$po[$poo->id][0]->runner_weight%>" aria-describedby="emailHelp">
+                            </div>
+                            <div class="form-group">
+                                <label for="po_num">Cycle Time <span class="text-danger">*</span></label>
+                                <input type="number" required step="any" name="cycyle_time" class="form-control" id="exampleInputEmail1" value="<%$po[$poo->id][0]->cycyle_time%>" aria-describedby="emailHelp">
+                            </div>
+                            <div class="form-group">
+                                <label for="po_num">Production Target Per Shift <span class="text-danger">*</span></label>
+                                <input type="number" required step="any" name="production_target_per_shift" class="form-control" id="exampleInputEmail1" value="<%$po[$poo->id][0]->production_target_per_shift%>" aria-describedby="emailHelp">
+                            </div>
+                        <%/if%>
+                        <div class="form-group">
+                            <label for="po_num">RM Grade <span class="text-danger">*</span></label>
+                            <input type="text" required name="rm_grade" class="form-control" id="exampleInputEmail1" value="<%$po[$poo->id][0]->rm_grade%>" aria-describedby="emailHelp">
+                        </div>
+                        <%if $TusharEngg%>
+                            <div class="form-group">
+                                <label for="thickness">Thickness<span class="text-danger">*</span></label>
+                                <input type="number" step="any" required name="thickness" class="form-control" id="thickness" value="<%$po[$poo->id][0]->thickness%>" aria-describedby="thicknessHelp">
+                            </div>
+                            <div class="form-group">
+                                <label for="passivationType">Passivation Type<span class="text-danger">*</span></label>
+                                <input type="text" required name="passivationType" class="form-control" id="passivationType" value="<%$po[$poo->id][0]->passivationType%>" aria-describedby="passivationTypeHelp">
+                            </div>
+                        <%/if%>
+                        <div class="form-group">
+                            <label for="safety_stock">Safety/buffer stock <span class="text-danger">*</span></label>
+                            <input type="text" value="<%$po[$poo->id][0]->safety_stock%>" name="safety_stock" required class="form-control" id="exampleInputEmail1" placeholder="Enter Safety/buffer stock">
+                        </div>
+                        <div class="form-group">
+                            <label for="hsn_code">HSN Code<span class="text-danger">*</span></label>
+                            <input type="text" value="<%$po[$poo->id][0]->hsn_code%>" name="hsn_code" required class="form-control" id="exampleInputEmail1" placeholder="Enter HSN Code">
+                            <input type="hidden" value="<%$po[$poo->id][0]->id%>" name="id" required class="form-control" id="exampleInputEmail1">
+                        </div>
+                        <div class="form-group">
+                            <label> Select Tax Structure</label><span class="text-danger">*</span>
+                            <select class="form-control select2" name="gst_id" style="width: 100%;">
+                                <%foreach from=$gst_structure item=c%>
+                                    <option <%if $c->id == $gst_structure2[$po[$poo->id]][0]->id%>selected<%/if%> value="<%$c->id%>"><%$c->code%></option>
+                                <%/foreach%>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label> UOM </label><span class="text-danger">*</span>
+                            <select class="form-control select2" readonly name="uom" style="width: 100%;">
+                                <%foreach from=$uom item=c1%>
+                                    <option <%if $c1->uom_name == $po[$poo->id][0]->uom%>selected<%/if%> value="<%$c1->uom_name%>"><%$c1->uom_name%></option>
+                                <%/foreach%>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="po_num">Packaging QTY </label><span class="text-danger">*</span>
+                            <input type="number" min="0" step="1" name="packaging_qty" value="<%$po[$poo->id][0]->packaging_qty%>" required class="form-control" id="packaging_quantity">
+                        </div>
+                        <div class="form-group">
+                            <label> Select Is Service </label><span class="text-danger">*</span>
+                            <select class="form-control select2" required name="isservice" style="width: 100%;">
+                                <option value="">Select Is-Service</option>
+                                <option value="Y" <%if $po[$poo->id][0]->isservice == 'Y'%>selected<%/if%>>YES</option>
+                                <option value="N" <%if $po[$poo->id][0]->isservice == 'N'%>selected<%/if%>>NO</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                    </div>
+                </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+        </form>
+    </div>
+</div>
+</div>
+
+<script src="<%$base_url%>/public/js/planning_and_sales/customer_part.js"></script>
