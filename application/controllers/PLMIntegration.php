@@ -55,9 +55,10 @@ class PLMIntegration extends CommonController
 		$data['search_part_id'] = $search_part_id;
 
 		if ($data['customer_part_drawing']) {
-			foreach ($data['customer_part_drawing'] as $poo) {
+			foreach ($data['customer_part_drawing'] as $key => $poo) {
 				$data['customer_part_drawing_data'][$poo->customer_master_id] = $this->Crud->get_data_by_id("customer_part_drawing", $poo->customer_master_id, "customer_master_id");
 				$data['po'][$poo->customer_master_id] = $this->Crud->get_data_by_id("customer_part", $poo->customer_master_id, "id");
+				$data['customer_part_drawing'][$key]->encoded_data = base64_encode(json_encode(array_merge($data['customer_part_drawing_data'][$poo->customer_master_id],$data['po'][$poo->customer_master_id])));
 				}
 			}
 		
