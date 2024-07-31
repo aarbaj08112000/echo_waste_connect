@@ -9175,7 +9175,7 @@ class Welcome extends CommonController
             "className" => "dt-left",
         ];
         $column[] = [
-            "data" => "part_no_dis",
+            "data" => "part_number",
             "title" => "Child Part",
             "width" => "16%",
             "className" => "dt-left",
@@ -9232,71 +9232,7 @@ class Welcome extends CommonController
 		
 		
 		
-		$display_arr = [];
-		$data['selected_customer_part_number'] = $this->input->post('selected_customer_part_number');
-		$data['selected_supplier_id'] = $this->input->post('selected_supplier_id');
-		// if(!empty($selected_customer_part_number) && !empty($selected_supplier_id))
-		// {
-
-		$role_management_data = $this->db->query('SELECT * FROM challan_parts');
-		$data['challan_parts'] = $role_management_data->result();
-
-
-		// }
-		$role_management_data = $this->db->query('SELECT id,part_number,part_description FROM `child_part`');
-		$data['customer_parts_data'] = $role_management_data->result();
-		$role_management_data = $this->db->query('SELECT * FROM `supplier`');
-		$data['supplier'] = $role_management_data->result();
-		foreach ($data['challan_parts'] as $c) {
-			$current_stock = "";
-			$type = "";
-
-			$child_part_data[$c->id] = $this->Crud->get_data_by_id("child_part", $c->part_id, "id");
-			$customer_data[$c->id] = $this->Crud->get_data_by_id("customer", $c->customer_id, "id");
-			$challan_data[$c->id] = $this->Crud->get_data_by_id("challan", $c->challan_id, "id");
-			$supplier_id = $challan_data[$c->id][0]->supplier_id;
-			$supplier_data[$c->id] = $this->Crud->get_data_by_id("supplier", $supplier_id, "id");
-			$date1 = date_create(date('Y-m-d'));
-			$date2 = date_create($challan_data[0]->created_date);
-			$diff = date_diff($date1, $date2);
-			$data['aging'][$c->id] = $diff->format("%R%a");
-			$array_main = array(
-				"supplier_id" => $supplier_id,
-				"child_part_id" => $c->part_id,
-			);
-			$value_qty = 0;
-			$value_qty_remaning = 0;
-			$child_part_master_data[$c->id] = $this->Crud->get_data_by_id_multiple_condition("child_part_master", $array_main);
-			if ($child_part_master_data) {
-				$data['value_qty'][$c->id] = $c->qty * $child_part_master_data[$c->id][0]->part_rate;
-				$data['value_qty_remaning'][$c->id] = $c->remaning_qty * $child_part_master_data[$c->id][0]->part_rate;
-			}
-			
-			$main_total = $main_total + $data['value_qty'][$c->id];
-			$main_total_2 = $main_total_2 + $data['value_qty_remaning'][$c->id];
-			
-			$show="no";
-			if(!empty($data['selected_customer_part_number']))
-			{
-				if($child_part_data[$c->id][0]->part_number == $data['selected_customer_part_number'])
-				{
-					$show="yes";
-				}
-			}
-			else if(!empty($data['selected_supplier_id']))
-			{
-				
-				if($supplier_data[$c->id][0]->id == $data['selected_supplier_id'])
-				{
-					$show="yes";
-				}
-			}
-			else
-			{
-				$show="yes";
-			}
-			$display_arr[$c->id]['show'] = $show;
-		}
+		$data['box_data'] = $this->welcome_model->getSubConReportView();
 		$data['display_arr'] = $display_arr;
 		$data['child_part_data'] = $child_part_data;
 		$data['customer_data'] = $customer_data;
@@ -9304,6 +9240,22 @@ class Welcome extends CommonController
 		$data['supplier_data'] = $supplier_data;
 		$data['main_total_2'] = $main_total_2;
 		$data['main_total'] = $main_total;
+
+		$data["data"] = $column;
+        $data["is_searching_enable"] = false;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Employee data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
 		// $this->load->view('header');
 		// $this->load->view('subcon_supplier_challan_part_report', $data);
 		// $this->load->view('footer');
@@ -9311,8 +9263,10 @@ class Welcome extends CommonController
 	}
 
 	public function getSubcomReportDataAjax(){
+		
 		$post_data = $this->input->post();
         $column_index = array_column($post_data["columns"], "data");
+		// pr($post_data,1);
         $order_by = "";
         foreach ($post_data["order"] as $key => $val) {
             if ($key == 0) {
@@ -9326,16 +9280,25 @@ class Welcome extends CommonController
         $condition_arr["start"] = $post_data["start"];
         $condition_arr["length"] = $post_data["length"];
         $base_url = $this->config->item("base_url");
-		$data = $this->SalesModel->getSalesReportViewData($condition_arr,$post_data["search"]);
+		
+		$data = $this->welcome_model->getSubConReportView($condition_arr,$post_data["search"]);
+		
 		foreach ($data as $key => $val) {
-			
-			
+			$data[$key]['value_qty'] = $val['qty'] * $val['part_rate'];
+			$data[$key]['value_qty_remaning'] = $val['remaning_qty'] * $val['part_rate'];
+			$date1 = date_create(date('Y-m-d'));
+			$date2 = date_create($val['created_date']);
+			$diff = date_diff($date1, $date2);
+			$data[$key]['aging'] = $diff->format("%R%a");
+		
 		}
+		
 		$data["data"] = $data;
 		
-        $total_record = $this->SalesModel->getSalesReportViewCount([], $post_data["search"]);
-        $data["recordsTotal"] = $total_record['total_record'];
-        $data["recordsFiltered"] = $total_record['total_record'];
+        $total_record = $this->welcome_model->getSubConReportViewCount([], $post_data["search"]);
+        $data["recordsTotal"] = $total_record['tot_count'];
+        $data["recordsFiltered"] = $total_record['tot_count'];
+		
         echo json_encode($data);
 	}
 

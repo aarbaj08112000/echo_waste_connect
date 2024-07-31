@@ -195,15 +195,11 @@ class Welcome_model extends CI_Model
 	}
 
     public function getSubConReportView($condition_arr = [],$search_params = ""){
-        $month_number = $search_params['month'] != '' ? $this->get_month_number($search_params['month']) : date('m'); ;
-        $year_number = $search_params['year'] != '' ? substr($search_params['year'], 3) : date('Y') ;
+       
        
         $this->db->select('
-        cp.id AS challan_part_id, 
-        cp.part_id, 
-        cp.challan_id, 
-        cp.qty, 
-        cp.remaning_qty,
+        cp.id AS challan_part_id,cp.part_id,cp.challan_id, cp.qty,cp.remaning_qty,cp.process,chn.challan_number,
+        cp.remaning_qty,chn.created_date,
         chp.part_number, 
         chp.part_description,
         chn.supplier_id, 
@@ -214,17 +210,23 @@ class Welcome_model extends CI_Model
         $this->db->join('child_part chp', 'cp.part_id = chp.id', 'left');
         $this->db->join('challan chn', 'cp.challan_id = chn.id', 'left');
         $this->db->join('supplier sup', 'chn.supplier_id = sup.id', 'left');
-        $this->db->join('child_part_master cpm', 'cp.part_id = cpm.child_part_id', 'left');
-        if(is_valid_array($search_params) && $search_params['year'] != ''){
-            $this->db->where('p.financial_year',$search_params['year'] );
+        $this->db->join('child_part_master cpm', 'chp.part_number = cpm.part_number', 'left');
+        if (count($condition_arr) > 0) {
+            $this->db->limit($condition_arr["length"], $condition_arr["start"]);
+            if ($condition_arr["order_by"] != "") {
+                $this->db->order_by($condition_arr["order_by"]);
+            }
         }
-        if(is_valid_array($search_params) && $search_params['month'] != ''){
-            $this->db->where('p.month', $search_params['month']);
+        if(is_valid_array($search_params) && $search_params['part_number'] != ''){
+            $this->db->where('chp.part_number',$search_params['part_number'] );
         }
-
-        if(is_valid_array($search_params) && $search_params['customer'] > 0){
-            $this->db->where('c.id', $search_params['customer']);
+        if(is_valid_array($search_params) && $search_params['suppler'] != ''){
+            $this->db->where('chn.supplier_id', $search_params['suppler']);
         }
+        // $this->db->group_by('cpm.part_rate');
+        // if(is_valid_array($search_params) && $search_params['customer'] > 0){
+        //     $this->db->where('c.id', $search_params['customer']);
+        // }
         
         //  $this->db->group_by(array('p.id', 'cp.id', 'c.id', 'cp_rate.rate', 'pd.schedule_qty', 'pd.schedule_qty_2'));
    
@@ -245,11 +247,10 @@ class Welcome_model extends CI_Model
     }
 
     public function getSubConReportViewCount( $condition_arr = [],$search_params = ""){
-        $month_number = $search_params['month'] != '' ? $this->get_month_number($search_params['month']) : date('m'); ;
-        $year_number = $search_params['year'] != '' ? substr($search_params['year'], 3) : date('Y') ;
+       
         
         $this->db->select('
-        Count(cp.id) 
+        Count(cp.id)  as tot_count
         ');
         $this->db->from('challan_parts cp');
         $this->db->join('child_part chp', 'cp.part_id = chp.id', 'left');
@@ -258,17 +259,16 @@ class Welcome_model extends CI_Model
         $this->db->join('child_part_master cpm', 'cp.part_id = cpm.child_part_id', 'left');
         //$this->db->where('cpm.condition', $condition); // Replace $condition with the actual condition
         // $this->db->order_by('cp.id', 'desc');
-
         
-        if(is_valid_array($search_params) && $search_params['year'] != ''){
-            $this->db->where('p.financial_year',$search_params['year'] );
+        
+        // if(is_valid_array($search_params) && $search_params['year'] != ''){
+        //     $this->db->where('p.financial_year',$search_params['year'] );
+        // }
+        if(is_valid_array($search_params) && $search_params['part_number'] != ''){
+            $this->db->where('chp.part_number',$search_params['part_number'] );
         }
-        if(is_valid_array($search_params) && $search_params['month'] != ''){
-            $this->db->where('p.month', $search_params['month']);
-        }
-    
-        if(is_valid_array($search_params) && $search_params['customer'] > 0){
-            $this->db->where('c.id', $search_params['customer']);
+        if(is_valid_array($search_params) && $search_params['suppler'] != ''){
+            $this->db->where('chn.supplier_id', $search_params['suppler']);
         }
         
         // $this->db->group_by(array('p.id', 'cp.id', 'c.id', 'cp_rate.rate', 'pd.schedule_qty', 'pd.schedule_qty_2'));
@@ -276,11 +276,11 @@ class Welcome_model extends CI_Model
         //     $this->db->order_by('p.id', 'DESC');
         // }
        
-        
+        // $this->db->group_by('cpm.part_rate');
         // $this->db->order_by('s.id', 'DESC');
-
         $result_obj = $this->db->get();
-        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];        
+        // pr($this->db->last_query(),1);   
+        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];        
         return $ret_data;
     }
 

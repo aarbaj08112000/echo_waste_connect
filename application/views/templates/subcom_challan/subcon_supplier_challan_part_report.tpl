@@ -1,69 +1,100 @@
-<div style="width:100%" class="wrapper">
-    <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <!-- <h1></h1> -->
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">subcon supplier-challan part stock report</li>
-                        </ol>
-                    </div>
-                </div>
+<div  class="wrapper container-xxl flex-grow-1 container-p-y">
+
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme filter-popup-block" style="width: 0px;">
+<div class="app-brand demo justify-content-between">
+    <a href="javascript:void(0)" class="app-brand-link">
+        <span class="app-brand-text demo menu-text fw-bolder ms-2">Filter</span>
+    </a>
+    <div class="close-filter-btn d-block filter-popup cursor-pointer">
+            <i class="ti ti-x fs-8"></i>
+        </div>
+</div>
+<nav class="sidebar-nav scroll-sidebar filter-block" data-simplebar="init">
+  <div class="simplebar-content" >
+    <ul class="menu-inner py-1">
+        <!-- Dashboard -->
+        <div class="filter-row">
+          <li class="nav-small-cap">
+            <span class="hide-menu">Select Part Number / Description</span>
+            <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+          </li>
+          <li class="sidebar-item">
+            <div class="input-group">
+            <select name="selected_customer_part_number"  id="part_number" class="form-control select2">
+                <option  value="0">NA</option>
+                <%if $box_data%>
+                    <%foreach from=$box_data item=c%>
+                        <option  value="<%$c['part_number']%>"><%$c['part_number']%> / <%$c['part_description']%></option>
+                    <%/foreach%>
+                <%/if%>
+            </select>
             </div>
-            <!-- /.container-fluid -->
-        </section>
+          </li>
+        </div>
+        <div class="filter-row">
+          <li class="nav-small-cap">
+            <span class="hide-menu">Select Supplier</span>
+            <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+          </li>
+          <li class="sidebar-item">
+          <div class="input-group">
+          <select name="selected_supplier_id"  class="form-control select2" id="suppler">
+          <option value="0">NA</option>
+          <%if $box_data%>
+              <%foreach from=$box_data item=c%>
+                  <option value="<%$c['supplier_id']%>"><%$c['supplier_name']%></option>
+              <%/foreach%>
+          <%/if%>
+      </select>
+          </div>
+        </li>
+        </div>  
+        
+
+    </ul>
+  </div>
+</nav>
+<div class="filter-popup-btn">
+        <button class="btn btn-outline-danger reset-filter">Reset</button>
+        <button class="btn btn-primary search-filter">Search</button>
+    </div>
+</aside>
+
+<nav aria-label="breadcrumb">
+  <div class="sub-header-left pull-left breadcrumb">
+    <h1>
+      Reports
+      <a hijacked="yes" href="#stock/issue_request/index" class="backlisting-link" title="Back to Issue Request Listing" >
+        <i class="ti ti-chevrons-right" ></i>
+        <em >subcon supplier-challan part stock report</em></a>
+    </h1>
+    <br>
+    <span >subcon supplier-challan part stock report</span>
+  </div>
+</nav>
+<div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
+  <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
+  <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
+  <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
+  <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+</div>
+
+<div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        
 <!-- Main content -->
 <section class="content">
-<div class="container-fluid">
+<div class="">
     <div class="row">
         <div class="col-12">
            <div class="card">
-                <div class="card-header">
-                    <form action="<%$smarty.const.BASE_URL%>subcon_supplier_challan_part_report" method="POST">
-                        <div class="row">
-                            <div class="col-lg-4">
-                                <label for="">Select Part Number / Description</label>
-                                <select name="selected_customer_part_number" required id="" class="form-control select2">
-                                    <option <%if $selected_customer_part_number eq 0%>selected<%/if%> value="0">NA</option>
-                                    <%if $customer_parts_data%>
-                                        <%foreach from=$customer_parts_data item=c%>
-                                            <option <%if $selected_customer_part_number eq $c->part_number%>selected<%/if%> value="<%$c->part_number%>"><%$c->part_number%> / <%$c->part_description%></option>
-                                        <%/foreach%>
-                                    <%/if%>
-                                </select>
-                            </div>
-                            <div class="col-lg-4">
-                                <label for="">Select Supplier</label>
-                                <select name="selected_supplier_id" required class="form-control select2">
-                                    <option <%if $selected_supplier_id eq 0%>selected<%/if%> value="0">NA</option>
-                                    <%if $supplier%>
-                                        <%foreach from=$supplier item=c%>
-                                            <option <%if $selected_supplier_id eq $c->id%>selected<%/if%> value="<%$c->id%>"><%$c->supplier_name%></option>
-                                        <%/foreach%>
-                                    <%/if%>
-                                </select>
-                            </div>
-                            <div class="col-lg-2">
-                                <div class="form-group mt-1">
-                                    <button class="btn btn-danger mt-4">
-                                        Search
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                
                 <!-- /.card-header -->
                 <div class="card-body">
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>Sr.No.</th>
+                                <%*<th>Sr.No.</th>*%>
                                 <th>Supplier</th>
                                 <th>Child Part</th>
                                 <th>Challan No</th>
@@ -83,7 +114,7 @@
                                 <%foreach from=$challan_parts item=c%>
                                     <%if $display_arr[$c->id]['show'] eq "yes"%>
                                         <tr>
-                                            <td><%$i%></td>
+                                           <%* <td><%$i%></td> *%>
                                             <td><%$supplier_data[$c->id][0]->supplier_name%></td>
                                             <td><%$child_part_data[$c->id][0]->part_number%> <%$child_part_data[0]->part_description%></td>
                                             <td><%$challan_data[$c->id][0]->challan_number%></td>
@@ -100,13 +131,13 @@
                                 <%/foreach%>
                             <%/if%>
                         </tbody>
-                        <tfoot>
+                      <%*  <tfoot>
                             <tr>
                                 <td colspan="9">Total</td>
                                 <td colspan=""><%$main_total%></td>
                                 <td colspan=""><%$main_total_2%></td>
                             </tr>
-                        </tfoot>
+                        </tfoot> *%>
                     </table>
                 </div>
                 <!-- /.card-body -->
@@ -123,3 +154,18 @@
 </div>
 </div>
 <!-- /.content-wrapper -->
+
+<script>
+    var column_details =  <%$data|json_encode%>;
+    var page_length_arr = <%$page_length_arr|json_encode%>;
+    var is_searching_enable = <%$is_searching_enable|json_encode%>;
+    var is_top_searching_enable =  <%$is_top_searching_enable|json_encode%>;
+    var is_paging_enable =  <%$is_paging_enable|json_encode%>;
+    var is_serverSide =  <%$is_serverSide|json_encode%>;
+    var no_data_message =  <%$no_data_message|json_encode%>;
+    var is_ordering =  <%$is_ordering|json_encode%>;
+    var sorting_column = <%$sorting_column%>;
+    var api_name =  <%$api_name|json_encode%>;
+    var base_url = <%$base_url|json_encode%>;
+</script>
+<script src="<%$base_url%>/public/js/reports/subcom_report.js"></script>
