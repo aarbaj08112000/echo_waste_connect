@@ -7,7 +7,7 @@ const datatable = {
         that.dataTable();
         $(document).on('click','.search-filter',function(e){
             let customer_name = $("#customer_name").val();
-            table.column(2).search(customer_name).draw();
+            table.column(1).search(customer_name).draw();
         })
         $(document).on('click','.reset-filter',function(e){
            that.resetFilter();
@@ -81,7 +81,7 @@ const datatable = {
     });
     },
     resetFilter:function(){
-        table.column(2).search('').draw();
+        table.column(1).search('').draw();
     }
 
 }

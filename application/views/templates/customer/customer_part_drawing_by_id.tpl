@@ -402,7 +402,7 @@
     </div>
 </div>
 
-    <script src="<%$base_url%>/public/js/planning_and_sales/customer_part_drawing.js"></script>0
-<%/if%>
+    <script src="<%$base_url%>/public/js/planning_and_sales/customer_part_drawing.js"></script>
+    <%/if%>
 <!-- /.content-wrapper -->
 

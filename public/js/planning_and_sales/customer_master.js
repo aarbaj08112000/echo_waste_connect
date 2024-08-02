@@ -1,5 +1,5 @@
-var file_name = "customer_part";
-var pdf_title = "Customer Part";
+var file_name = "customer_master";
+var pdf_title = "Customer Master";
 var table = '';
 const datatable = {
     init:function(){
@@ -7,21 +7,30 @@ const datatable = {
         that.dataTable();
         $(document).on('click','.search-filter',function(e){
             let customer_name = $("#customer_name").val();
-            table.column(2).search(customer_name).draw();
+            table.column(1).search(customer_name).draw();
         })
         $(document).on('click','.reset-filter',function(e){
            that.resetFilter();
         })
-        $(document).on("click",".edit-part",function(){
+        $(document).on("click",".add-revision",function(){
             var data = $(this).attr("data-value");
-            data = JSON.parse(atob(data)); 
+            data = JSON.parse(atob(data)); JBM
+            console.log(data);
+            $('#part_number').val(data[1]['part_number']);
+            $('#revision_no').val(data[0].revision_no);
+            $('#part_description').val(data[1].part_description);
+            $('#revision_remark').val(data[0].revision_remark);
+            
+            $('#revision_date').val(data[0]['revision_date']);
         })
     },
     dataTable:function(){
       table =  new DataTable('#example1',{
         dom: 'Bfrtip',
-        scrollX: true, 
-        
+        scrollX: false, 
+        columnDefs: [
+            { orderable: false, targets: [3,4,5,6,7,8] } // Disable ordering for the first and third columns
+        ],
         buttons: [
                 {     
                     extend: 'csv',
@@ -33,7 +42,11 @@ const datatable = {
                             var lines = csv.split('\n');
                             var modifiedLines = lines.map(function(line) {
                                 var values = line.split(',');
+                                values.splice(1, 1);
+                                values.splice(9, 1);
                                 values.splice(8, 1);
+                                values.splice(7, 1);
+                                values.splice(6, 1);
                                 return values.join(',');
                             });
                             return modifiedLines.join('\n');
@@ -73,7 +86,11 @@ const datatable = {
                                 }
                                 cell.alignment = alignment;
                             });
+                            row.splice(1, 1);
+                            row.splice(9, 1);
                             row.splice(8, 1);
+                            row.splice(7, 1);
+                            row.splice(6, 1);
                         });
                     }
                 },
@@ -81,7 +98,7 @@ const datatable = {
     });
     },
     resetFilter:function(){
-        table.column(2).search('').draw();
+        table.column(1).search('').draw();
     }
 
 }
