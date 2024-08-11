@@ -43,7 +43,7 @@ class Newcontroller extends CommonController
 		$this->load->view('view_new_sales_by_id_rejection', $data);
 		$this->load->view('footer');
 	}
-	
+
 	public function view_rejection_flow()
 	{
 		$sales_id = $this->uri->segment('2');
@@ -78,7 +78,7 @@ class Newcontroller extends CommonController
 		$freight_amount = $this->input->post('freight_amount');
 		$freight_amount_gst = $this->input->post('freight_amount_gst');
 		//$data['new_po'] = $this->Crud->read_data("new_po");
-		
+
 		if (empty($process_id)) {
 			$sql = "SELECT po_number FROM new_po WHERE po_number like '" . $this->getPOSerialNo() . "%' order by id desc LIMIT 1";
 			$latestSeqFormat = $this->Crud->customQuery($sql);
@@ -174,8 +174,8 @@ class Newcontroller extends CommonController
 		echo json_encode($return_arr);
 		exit();
 	}
-	
-	
+
+
 	public function generate_challan_subcon()
 	{
 		// $challan_number = $this->input->post('challan_number');
@@ -189,39 +189,54 @@ class Newcontroller extends CommonController
 		$mode = $this->input->post("mode");
 		$transpoter = $this->input->post("transpoter");
 		$l_r_number = $this->input->post("l_r_number");
-		
+
 
 		$latestSeqFormat = $this->Crud->customQuery("SELECT challan_number FROM challan_subcon WHERE challan_number like '" . $this->getChallanSerialNo() . "%' order by id desc LIMIT 1");
 		foreach ($latestSeqFormat as $p) {
 			$currentChallanNo = $p->challan_number;
 		}
 
-		$challan_num = substr($currentChallanNo, strlen($this->getChallanSerialNo())) + 1;
+		// $challan_num = substr($currentChallanNo, strlen($this->getChallanSerialNo())) + 1;
+		$challan_num = substr($currentChallanNo, strlen($this->getChallanSerialNo()));
+		$challan_num = (int)$challan_num + 1;
 		$challan_number = $this->getChallanSerialNo() . $challan_num;
-
+		// pr($challan_num,1);
 		$data = array(
-				"challan_number" => $challan_number,
-				"customer_id" => $customer_id,
-				"remark" => $remark,
-				"vechical_number" => $vechical_number,
-				"mode" => $mode,
-				"transpoter" => $transpoter,
-				"l_r_number" => $l_r_number,
-				"created_date" => $this->current_date,
-				"created_time" => $this->current_time,
-				"day" => $this->date,
-				"month" => $this->month,
-				"year" => $this->year,
-				"clientId" => $this->Unit->getSessionClientId()
-			);
+			"challan_number" => $challan_number,
+			"customer_id" => $customer_id,
+			"remark" => $remark,
+			"vechical_number" => $vechical_number,
+			"mode" => $mode,
+			"transpoter" => $transpoter,
+			"l_r_number" => $l_r_number,
+			"created_date" => $this->current_date,
+			"created_time" => $this->current_time,
+			"day" => $this->date,
+			"month" => $this->month,
+			"year" => $this->year,
+			"clientId" => $this->Unit->getSessionClientId()
+		);
 
-			$result = $this->Crud->insert_data("challan_subcon", $data);
-			if ($result) {
-				echo "<script>alert('Successfully Added');document.location='" . base_url('view_challan_by_id_subcon/') . $result . "'</script>";
-			} else {
-				echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-			}
-		
+		$result = $this->Crud->insert_data("challan_subcon", $data);
+		// if ($result) {
+		// 	echo "<script>alert('Successfully Added');document.location='" . base_url('view_challan_by_id_subcon/') . $result . "'</script>";
+		// } else {
+		// 	echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		// }
+		if ($result) {
+						$success = 1;
+						$messages = "Successfully Added.";
+											} else {
+						$success = 0;
+						$messages = "Unable to Add.";
+											}
+
+					$return_arr['success']=$success;
+					$return_arr['messages']=$messages;
+					echo json_encode($return_arr);
+					exit;
+
+
 	}
 	public function generate_new_po_sub()
 	{
@@ -263,8 +278,8 @@ class Newcontroller extends CommonController
 			echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
 	}
-	
-	
+
+
 	public function generate_new_sales_subcon()
 	{
 		$customer_id = $this->input->post('customer_id');
@@ -319,7 +334,7 @@ class Newcontroller extends CommonController
 		}
 	}
 
-	
+
 	public function update_customer_po_tracking_all()
 	{
 		$id = $this->input->post('id');
@@ -353,7 +368,7 @@ class Newcontroller extends CommonController
 
 		$data['new_po'] = $this->Crud->get_data_by_id("new_po", $new_po_id, "id");
 		$data['supplier'] = $this->Crud->get_data_by_id("supplier", $data['new_po'][0]->supplier_id, "id");
-		
+
 		$data['po_parts'] = $this->Crud->get_data_by_id("po_parts", $new_po_id, "po_id");
 		$data['child_part'] = $this->Crud->customQuery('SELECT DISTINCT part_number, supplier_id FROM `child_part_master` where supplier_id = ' . $data['supplier'][0]->id . '');
 
@@ -364,16 +379,16 @@ class Newcontroller extends CommonController
 			$data['child_part'][$key]->c = $c;
 			$data['child_part'][$key]->c2 = [];
 			$data['child_part'][$key]->gst_structure = [];
-			 if ($c) {
-			 	$c2 = $this->Crud->get_data_by_id_multiple_condition("child_part", $array23);
-			 	$data['child_part'][$key]->c2 = $c2;
+			if ($c) {
+				$c2 = $this->Crud->get_data_by_id_multiple_condition("child_part", $array23);
+				$data['child_part'][$key]->c2 = $c2;
 				$gst_structure = $this->Crud->get_data_by_id("gst_structure", $c[0]->gst_id, "id");
 				$data['child_part'][$key]->gst_structure = $gst_structure;
 				if (empty($data['new_po'][0]->process_id)) {
-                	$type = "normal";
-                } else {
-                    $type = "Subcon grn";
-                }
+					$type = "normal";
+				} else {
+					$type = "Subcon grn";
+				}
 			}
 		}
 
@@ -388,15 +403,15 @@ class Newcontroller extends CommonController
 			$gst_structure = $this->Crud->get_data_by_id("gst_structure", $p->tax_id, "id");
 			$data['po_parts'][$key]->gst_structure = $gst_structure;
 
-		} 
+		}
 		// pr($data,1);
 		// $this->load->view('header');
 		// $this->load->view('view_new_po_by_id',$data);
 		$this->loadView('purchase/view_new_po_by_id', $data);
 		// $this->load->view('footer');
 	}
-	
-	
+
+
 	public function view_new_po_by_id_sub()
 	{
 		$new_po_id = $this->uri->segment('2');
@@ -409,7 +424,7 @@ class Newcontroller extends CommonController
 		$arr = array(
 			'supplier_id' => $data['supplier'][0]->id,
 		);
-		
+
 		$data['po_parts'] = $this->Crud->get_data_by_id("po_parts_sub", $new_po_id, "po_id");
 
 		$child_part_list = $this->db->query('SELECT DISTINCT part_number,supplier_id FROM `child_part_master` where supplier_id = ' . $data['supplier'][0]->id . '');
@@ -420,13 +435,13 @@ class Newcontroller extends CommonController
 		$this->load->view('view_new_po_by_id_sub', $data);
 		$this->load->view('footer');
 	}
-	
+
 	public function view_challan_by_id_subcon()
 	{
 		$CI =& get_instance();
-        
-// Load the model
-$CI->load->model('SupplierParts');
+
+		// Load the model
+		$CI->load->model('SupplierParts');
 		$challan_id = $this->uri->segment('2');
 		$data['challan_id'] = $challan_id;
 		$data['challan_data'] = $this->Crud->get_data_by_id("challan_subcon", $challan_id, "id");
@@ -434,113 +449,99 @@ $CI->load->model('SupplierParts');
 		foreach ($data['child_part'] as $key => $c) {
 			$data['child_part'][$key]->child_part_data = [];
 			if ($c->sub_type == "customer_bom") {
-            	$data['child_part'][$key]->child_part_data = $this->SupplierParts->getSupplierPartByPartNumber($c->part_number);
-            }
+				$data['child_part'][$key]->child_part_data = $this->SupplierParts->getSupplierPartByPartNumber($c->part_number);
+			}
 		}
 		$data['process'] = $this->Crud->read_data("process");
 
 		$role_management_data = $this->db->query('SELECT id,sub_type,part_number,part_description FROM `child_part` ');
 		$data['challan_parts'] = $this->Crud->customQuery("
-			SELECT cps.*,cph.status as challan_parts_history_status,cph.qty as challan_parts_history_qty,cph.id as challan_parts_history_id,cph.accepeted_qty as challan_parts_history_accepeted_qty ,cp.part_number as part_number,cp.part_description as part_description
-			FROM `challan_parts_subcon` as cps
-			LEFT JOIN challan_parts_history as cph ON cph.part_id = cps.part_id 
-			LEFT JOIN child_part as cp ON cp.id = cps.part_id 
-			WHERE cps.challan_id = '$challan_id' ORDER BY cps.id DESC"
-		);
-		// pr($data['challan_parts'],1);
-		$data['customer'] = $this->Crud->get_data_by_id("customer", $data['challan_data'][0]->customer_id, "id");
-		
-		// $this->load->view('header');
-		$this->loadView('store/view_challan_by_id_subcon', $data);
-		// $this->load->view('footer');
-	}
-	public function get_po_sales_parts()
-	{
-		$po_id = $this->input->post('id');
-		$salesno = $this->input->post('salesno');
-		
-		$customer_tracking_parts = $this->Crud->get_data_by_id("parts_customer_trackings", $po_id, 'customer_po_tracking_id');
-		//$customer_part = $this->Crud->get_data_by_id("customer_part", $customer_tracking_parts[0]->part_id,'id');
+		SELECT cps.*,cph.status as challan_parts_history_status,cph.qty as challan_parts_history_qty,cph.id as challan_parts_history_id,cph.accepeted_qty as challan_parts_history_accepeted_qty ,cp.part_number as part_number,cp.part_description as part_description
+		FROM `challan_parts_subcon` as cps
+		LEFT JOIN challan_parts_history as cph ON cph.part_id = cps.part_id
+		LEFT JOIN child_part as cp ON cp.id = cps.part_id
+		WHERE cps.challan_id = '$challan_id' ORDER BY cps.id DESC"
+	);
+	// pr($data['challan_parts'],1);
+	$data['customer'] = $this->Crud->get_data_by_id("customer", $data['challan_data'][0]->customer_id, "id");
 
-		echo '<select>Select Part Number // Description // FG Stock // Rate // Tax Structure // Po Balance Qty';
-		if ($customer_tracking_parts) {
-			foreach ($customer_tracking_parts  as $val) {
-				$query = "SELECT * FROM customer_part WHERE id = " . $val->part_id . "";
+	// $this->load->view('header');
+	$this->loadView('store/view_challan_by_id_subcon', $data);
+	// $this->load->view('footer');
+}
+public function get_po_sales_parts()
+{
+	$po_id = $this->input->post('id');
+	$salesno = $this->input->post('salesno');
 
-				$result = $this->db->query($query);
-				if (count($result) > 0) {
-					//$data=$result->result_array();		
+	$customer_tracking_parts = $this->Crud->get_data_by_id("parts_customer_trackings", $po_id, 'customer_po_tracking_id');
+	//$customer_part = $this->Crud->get_data_by_id("customer_part", $customer_tracking_parts[0]->part_id,'id');
 
-					// $html.='<option value="">Select State</option>'; 
-					foreach ($result->result_array() as $key => $value) {
+	echo '<select>Select Part Number // Description // FG Stock // Rate // Tax Structure // Po Balance Qty';
+	if ($customer_tracking_parts) {
+		foreach ($customer_tracking_parts  as $val) {
+			$query = "SELECT * FROM customer_part WHERE id = " . $val->part_id . "";
 
-						$customer_parts_master_data = $this->CustomerPart->getCustomerPartByPartNumber($value['part_number']);
-						//$gst_structure = $this->Crud->get_data_by_id("gst_structure", $value['gst_id'], 'id');
-						$customer_part  = $this->Crud->get_data_by_id("customer_part", $val->part_id, 'id');
-						$customer_part_rate = $this->Crud->get_data_by_id("customer_part_rate", $val->part_id, 'customer_master_id');
-						//$sales_parts = $this->Crud->get_data_by_id("sales_parts", $val->part_id, 'part_id');
-						//$sales = $this->Crud->get_data_by_id("new_sales", $salesno, 'sales_number');
-						/*if ($sales[0]->status == 'lock') {
-							$balance_qty = (int) $val->qty - (int) $sales_parts[0]->qty;
-						} else {
-							$balance_qty = (int) $val->qty;
-						}*/
-						if(!empty($customer_part_rate[0]->rate))
-						{
-							echo '<option value="' . $value['id'] . '">' . $value['part_number'] . '//' . $value['part_description'] . '//' . $customer_parts_master_data[0]->fg_stock. '//' . $customer_part_rate[0]->rate .'//'. $customer_part[0]->packaging_qty .'</option>';
+			$result = $this->db->query($query);
+			if (count($result) > 0) {
+				//$data=$result->result_array();
 
-						}
-					}
+				// $html.='<option value="">Select State</option>';
+				foreach ($result->result_array() as $key => $value) {
 
-					//echo $html;
-				}
+					$customer_parts_master_data = $this->CustomerPart->getCustomerPartByPartNumber($value['part_number']);
+					//$gst_structure = $this->Crud->get_data_by_id("gst_structure", $value['gst_id'], 'id');
+					$customer_part  = $this->Crud->get_data_by_id("customer_part", $val->part_id, 'id');
+					$customer_part_rate = $this->Crud->get_data_by_id("customer_part_rate", $val->part_id, 'customer_master_id');
+					//$sales_parts = $this->Crud->get_data_by_id("sales_parts", $val->part_id, 'part_id');
+					//$sales = $this->Crud->get_data_by_id("new_sales", $salesno, 'sales_number');
+					/*if ($sales[0]->status == 'lock') {
+					$balance_qty = (int) $val->qty - (int) $sales_parts[0]->qty;
+				} else {
+				$balance_qty = (int) $val->qty;
+			}*/
+			if(!empty($customer_part_rate[0]->rate))
+			{
+				echo '<option value="' . $value['id'] . '">' . $value['part_number'] . '//' . $value['part_description'] . '//' . $customer_parts_master_data[0]->fg_stock. '//' . $customer_part_rate[0]->rate .'//'. $customer_part[0]->packaging_qty .'</option>';
+
 			}
-		} else {
-
-			echo '<option value=""></option>';
 		}
-		echo '</select>';
+
+		//echo $html;
 	}
-	
-	
-	public function view_new_sales_by_id_subcon()
-	{
-		$sales_id = $this->uri->segment('2');
+}
+} else {
 
-		$data['new_sales'] = $this->Crud->get_data_by_id("new_sales_subcon", $sales_id, "id");
-		$data['customer'] = $this->Crud->get_data_by_id("customer", $data['new_sales'][0]->customer_id, "id");
-		$data['gst_structure'] = $this->Crud->read_data("gst_structure");
-		$data['uom'] = $this->Crud->read_data("uom");
+	echo '<option value=""></option>';
+}
+echo '</select>';
+}
 
 
+public function view_new_sales_by_id_subcon()
+{
+	$sales_id = $this->uri->segment('2');
 
-		$data['po_parts'] = $this->Crud->get_data_by_id("sales_parts_subcon", $sales_id, "sales_id");
+	$data['new_sales'] = $this->Crud->get_data_by_id("new_sales_subcon", $sales_id, "id");
+	$data['customer'] = $this->Crud->get_data_by_id("customer", $data['new_sales'][0]->customer_id, "id");
+	$data['gst_structure'] = $this->Crud->read_data("gst_structure");
+	$data['uom'] = $this->Crud->read_data("uom");
 
-		$role_management_data2 = $this->db->query('SELECT * FROM `customer_part` WHERE type ="subcon_po"  ');
-		$data['child_part'] = $role_management_data2->result();
 
-		$this->load->view('header');
-		$this->load->view('view_new_sales_by_id_subcon', $data);
-		$this->load->view('footer');
-	}
 
-	public function view_po_by_supplier_id_sub()
-	{
-		$supplier_id = $this->uri->segment('2');
+	$data['po_parts'] = $this->Crud->get_data_by_id("sales_parts_subcon", $sales_id, "sales_id");
 
-		$data['supplier_data'] = $this->Crud->get_data_by_id("supplier", $supplier_id, "id");
-		$data['new_po_sub'] = $this->Crud->get_data_by_id("new_po_sub", $supplier_id, "supplier_id");
+	$role_management_data2 = $this->db->query('SELECT * FROM `customer_part` WHERE type ="subcon_po"  ');
+	$data['child_part'] = $role_management_data2->result();
 
-		$this->load->view('header');
-		$this->load->view('view_po_by_supplier_id_sub', $data);
-		$this->load->view('footer');
-	}
+	$this->load->view('header');
+	$this->load->view('view_new_sales_by_id_subcon', $data);
+	$this->load->view('footer');
+}
 
-	public function view_po_by_supplier_id()
-	{
-		$supplier_id = $this->uri->segment('2');
-		$data['supplier_data'] = $this->Crud->get_data_by_id("supplier", $supplier_id, "id");
-		$data['new_po'] = $this->Crud->customQuery("SELECT * FROM new_po WHERE clientId = ".$this->Unit->getSessionClientId()." AND supplier_id = ".$supplier_id);
+public function view_po_by_supplier_id_sub()
+{
+	$supplier_id = $this->uri->segment('2');
 
 		// $this->load->view('header');
 		$this->loadView('purchase/view_po_by_supplier_id', $data);
@@ -570,23 +571,24 @@ $CI->load->model('SupplierParts');
                 }
             }
 		}
-		// $this->load->view('header');
-		$this->loadView('purchase/expired_po', $data);
-		// $this->load->view('footer');
 	}
+	// $this->load->view('header');
+	$this->loadView('purchase/expired_po', $data);
+	// $this->load->view('footer');
+}
 
-	public function closed_po()
-	{
-		$data['new_po'] = $this->Crud->customQuery("SELECT * FROM new_po WHERE clientId = " . $this->Unit->getSessionClientId() . " AND status = 'accept_closed' ");
+public function closed_po()
+{
+	$data['new_po'] = $this->Crud->customQuery("SELECT * FROM new_po WHERE clientId = " . $this->Unit->getSessionClientId() . " AND status = 'accept_closed' ");
 
-		// $this->load->view('header');
-		$this->loadView('purchase/closed_po', $data);
-		// $this->load->view('footer');
-	}
-	public function rejected_po()
-	{	
-		$data['new_po'] = $this->Crud->customQuery("SELECT * FROM new_po WHERE clientId = 
-			" . $this->Unit->getSessionClientId() . " AND status = 'pending' AND expiry_po_date < '".date('Y-m-d')."'");
+	// $this->load->view('header');
+	$this->loadView('purchase/closed_po', $data);
+	// $this->load->view('footer');
+}
+public function rejected_po()
+{
+	$data['new_po'] = $this->Crud->customQuery("SELECT * FROM new_po WHERE clientId =
+		" . $this->Unit->getSessionClientId() . " AND status = 'pending' AND expiry_po_date < '".date('Y-m-d')."'");
 		// $this->load->view('header');
 		$this->loadView('purchase/rejected_po', $data);
 		// $this->load->view('footer');
@@ -595,7 +597,6 @@ $CI->load->model('SupplierParts');
 	{
 		$new_po_id = $this->uri->segment('2');
 		$data['supplier_list'] = $this->Crud->read_data("supplier");
-		// pr($data,1);
 		// $this->load->view('header');
 		// $this->load->view('new_po_list_supplier', $data);
 		$this->loadView('purchase/new_po_list_supplier', $data);
@@ -646,7 +647,7 @@ $CI->load->model('SupplierParts');
 		$return_arr = [
 			"message" =>$message,
 			"success" => $success
-			];
+		];
 		echo json_encode($return_arr);
 		exit();
 	}
@@ -657,7 +658,7 @@ $CI->load->model('SupplierParts');
 		$qty = $this->input->post('qty');
 
 		$data = array(
-		
+
 			"qty" => $qty,
 		);
 		$result = $this->Crud->update_data("parts_customer_trackings", $data, $id);
@@ -708,11 +709,11 @@ $CI->load->model('SupplierParts');
 			}
 		}
 		//}
-		
+
 		$return_arr = [
 			"message" =>$message,
 			"success" => $success
-			];
+		];
 		echo json_encode($return_arr);
 		exit();
 	}
@@ -763,7 +764,7 @@ $CI->load->model('SupplierParts');
 		$return_arr = [
 			"message" =>$message,
 			"success" => $success
-			];
+		];
 		echo json_encode($return_arr);
 		exit();
 	}
@@ -783,7 +784,7 @@ $CI->load->model('SupplierParts');
 		}
 	}
 
-	
+
 	public function update_sales_parts_subcon()
 	{
 		$id = $this->input->post('id');
@@ -890,18 +891,18 @@ $CI->load->model('SupplierParts');
 		$plus_price = $this->input->post('plus_price');
 		$minus_price = $this->input->post('minus_price');
 		$msg = "";
-		
+
 		if ($invoice_amount >= $minus_price && $invoice_amount <= $plus_price) {
 			$msg = "<script>alert('Updated Sucessfully.');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 			echo "<script>alert('Invoice amount does not match, Please verify.');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-		} 
-		
+		}
+
 		$data = array(
 			"invoice_amount" => round($invoice_amount,2),
 			"status" => $status,
 		);
-		
+
 		$result = $this->Crud->update_data("inwarding", $data, $inwarding_id);
 		if ($result) {
 			echo $msg;
@@ -987,7 +988,7 @@ $CI->load->model('SupplierParts');
 			echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
 	}
-	
+
 	public function lock_invoice_subcon()
 	{
 		$id = $this->input->post('id');
@@ -1063,14 +1064,14 @@ $CI->load->model('SupplierParts');
 	public function lock_parts_rejection_sales_invoice()
 	{
 		echo $id = $this->input->post('id');
-		
+
 		$data = array(
 			"status" => "completed",
 
 		);
 		$result = $this->Crud->update_data("rejection_sales_invoice", $data, $id);
 		if ($result) {
-			
+
 
 			echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
@@ -1209,7 +1210,7 @@ $CI->load->model('SupplierParts');
 		echo json_encode($return_arr);
 		exit();
 	}
-	
+
 	public function add_challan_parts_history()
 	{
 		$child_part_id = $this->input->post('child_part_id');
@@ -1247,7 +1248,7 @@ $CI->load->model('SupplierParts');
 			$req_qty = $req_qty - $rec_qty;
 			$challan_qty = $challan_parts_data[0]->remaning_qty;
 			echo "<br>challan_qty: " . $challan_qty;
-		
+
 			$challan_diff = $challan_qty - $req_qty;
 
 			if ($rec_qty == 0) {
@@ -1312,7 +1313,7 @@ $CI->load->model('SupplierParts');
 				"month" => $this->month,
 				"year" => $this->year
 			);
-			
+
 			$result = $this->Crud->insert_data("subcon_po_inwarding_history", $subcon_po_inwarding_history_array);
 
 			if ($result) {
@@ -1364,7 +1365,7 @@ $CI->load->model('SupplierParts');
 			$req_qty = $req_qty - $rec_qty;
 			$challan_qty = $challan_parts_data[0]->remaning_qty;
 			echo "<br>challan_qty: " . $challan_qty;
-			
+
 			$challan_diff = $challan_qty - $req_qty;
 
 			if ($rec_qty == 0) {
@@ -1384,16 +1385,16 @@ $CI->load->model('SupplierParts');
 				echo "<br>challan Diff :" . $challan_diff;
 				if ($challan_diff >= 0) {
 					echo "<br>received is not zero dif >= 0";
-				
+
 					$new_req_qty = $req_qty;
 					echo "<br>new_req_qty :" . $new_req_qty;
-				
+
 					$rec_qty = $rec_qty + $new_req_qty;
 					echo "<br>rec_qty :" . $rec_qty;
-				
+
 					$challan_history = $challan_qty - $new_req_qty;
 					echo "<br>challan_history :" . $challan_history;
-				
+
 					$new_sub_con = $sub_con_stock - $new_req_qty;
 					echo "<br>new_sub_con :" . $new_sub_con;
 				} else {
@@ -1535,7 +1536,7 @@ $CI->load->model('SupplierParts');
 			}
 		}
 	}
-	
+
 	public function add_sales_parts_subcon()
 	{
 		$customer_id = $this->input->post('customer_id');
@@ -1686,9 +1687,9 @@ $CI->load->model('SupplierParts');
 				"created_date" => $this->current_date,
 				"created_time" => $this->current_time,
 				"created_day" => $this->date,
-			"created_month" => $this->month,
-			"created_year" => $this->year,
-		
+				"created_month" => $this->month,
+				"created_year" => $this->year,
+
 			);
 
 
@@ -1701,8 +1702,8 @@ $CI->load->model('SupplierParts');
 		}
 
 	}
-	
-	
+
+
 	public function close_po()
 	{
 		$id = $this->input->post('id');
@@ -1718,6 +1719,7 @@ $CI->load->model('SupplierParts');
 		$message = "Something went wrong!";
 		$result = $this->Crud->update_data("new_po", $data, $new_po_Data[0]->id);
 		if ($result) {
+
 			$success = 1;
 			$message = "PO successfully closed.";
 			//  $this->addSuccessMessage('PO successfully closed.');
@@ -1726,6 +1728,7 @@ $CI->load->model('SupplierParts');
 			$message = "Error po_parts not found.";
 			// $this->addErrorMessage('Error po_parts not found.');
 			//  $this->redirectMessage();
+
 		}
 		$return_arr = [
 			"success" => $success,
@@ -1735,8 +1738,8 @@ $CI->load->model('SupplierParts');
 		echo json_encode($return_arr);
 		exit;
 	}
-	
-	
+
+
 	public function close_po_customer_po_tracking()
 	{
 		$id = $this->input->post('id');
@@ -1751,8 +1754,8 @@ $CI->load->model('SupplierParts');
 		$result = $this->Crud->update_data("customer_po_tracking", $data, $id);
 
 		if ($result) {
-			 $this->addSuccessMessage('PO successfully closed.');
-			 $this->redirectMessage();
+			$this->addSuccessMessage('PO successfully closed.');
+			$this->redirectMessage();
 		} else {
 			$this->addErrorMessage('Error po_parts not found.');
 			$this->redirectMessage();
@@ -1847,223 +1850,223 @@ $CI->load->model('SupplierParts');
 	}
 	/* public function add_grn_qty_subcon_view()
 	{
-		$inwarding_id = $this->input->post('inwarding_id');
-		$po_number = $this->input->post('new_po_id');
-		$grn_number = $this->input->post('grn_number');
-		$invoice_number = $this->input->post('invoice_number');
-		$part_id = $this->input->post('part_id');
-		$qty = $this->input->post('qty');
-		$po_part_id = $this->input->post('po_part_id');
-		$part_rate = $this->input->post('part_rate');
-		$tax_id = $this->input->post('tax_id');
-		$pending_qty = $this->input->post('pending_qty');
-		$challan_number = $this->input->post('challan_number');
-		
-		$inwarding_price = $part_rate * $qty;
+	$inwarding_id = $this->input->post('inwarding_id');
+	$po_number = $this->input->post('new_po_id');
+	$grn_number = $this->input->post('grn_number');
+	$invoice_number = $this->input->post('invoice_number');
+	$part_id = $this->input->post('part_id');
+	$qty = $this->input->post('qty');
+	$po_part_id = $this->input->post('po_part_id');
+	$part_rate = $this->input->post('part_rate');
+	$tax_id = $this->input->post('tax_id');
+	$pending_qty = $this->input->post('pending_qty');
+	$challan_number = $this->input->post('challan_number');
 
-		$gst_structure = $this->Crud->get_data_by_id("gst_structure", $tax_id, "id");
+	$inwarding_price = $part_rate * $qty;
 
-		$cgst_amount = ($inwarding_price * $gst_structure[0]->cgst) / 100;
-		$sgst_amount = ($inwarding_price * $gst_structure[0]->sgst) / 100;
-		$igst_amount = ($inwarding_price * $gst_structure[0]->igst) / 100;
+	$gst_structure = $this->Crud->get_data_by_id("gst_structure", $tax_id, "id");
 
-		$inwarding_price = $inwarding_price + $cgst_amount + $sgst_amount + $igst_amount;
-		$data = array(
-			"inwarding_id" => $inwarding_id,
-			"po_number" => $po_number,
-			"grn_number" => $grn_number,
-			"invoice_number" => $invoice_number,
-			"part_id" => $part_id,
-			"qty" => $qty,
-			"po_part_id" => $po_part_id,
-			"inwarding_price" => $inwarding_price,
-			"created_by" => $this->user_id,
-			"created_date" => $this->current_date,
-			"created_time" => $this->current_time,
-			"created_day" => $this->date,
-			"created_month" => $this->month,
-			"created_year" => $this->year,
+	$cgst_amount = ($inwarding_price * $gst_structure[0]->cgst) / 100;
+	$sgst_amount = ($inwarding_price * $gst_structure[0]->sgst) / 100;
+	$igst_amount = ($inwarding_price * $gst_structure[0]->igst) / 100;
+
+	$inwarding_price = $inwarding_price + $cgst_amount + $sgst_amount + $igst_amount;
+	$data = array(
+	"inwarding_id" => $inwarding_id,
+	"po_number" => $po_number,
+	"grn_number" => $grn_number,
+	"invoice_number" => $invoice_number,
+	"part_id" => $part_id,
+	"qty" => $qty,
+	"po_part_id" => $po_part_id,
+	"inwarding_price" => $inwarding_price,
+	"created_by" => $this->user_id,
+	"created_date" => $this->current_date,
+	"created_time" => $this->current_time,
+	"created_day" => $this->date,
+	"created_month" => $this->month,
+	"created_year" => $this->year,
+);
+$result = $this->Crud->insert_data("grn_details", $data);
+if ($result) {
+$pending_qty =
+$data = array(
+"pending_qty" => $pending_qty - $qty,
+);
+$result = $this->Crud->update_data("po_parts", $data, $po_part_id);
+
+if ($result) {
+
+if (!empty($challan_number)) {
+$challan_data = $this->Crud->get_data_by_id("challan", $challan_number, "id");
+if ($challan_data) {
+$arr = array(
+'challan_id' => $challan_data[0]->id,
+'part_id' => $part_id,
+);
+// print_r($arr);
+$challan_parts_data = $this->Crud->get_data_by_id_multiple("challan_parts", $arr);
+if ($challan_parts_data) {
+foreach ($challan_parts_data as $cc) {
+$challan_parts_qty = $cc->qty;
+$challan_parts_remaning_qty = $cc->remaning_qty;
+
+
+if ($qty > $challan_parts_qty) {
+echo "Entered Qty is grater than challan qty";
+} else {
+$challan_id = $challan_data[0]->id;
+$new_challan_qty = $challan_parts_remaning_qty - $qty;
+$challan_parts_history_data = array(
+"challan_id" => $challan_id,
+"challan_parts_id" => $cc->id,
+"po_id" => $po_number,
+"previois_qty" => $challan_parts_remaning_qty,
+"remaning_qty" => $new_challan_qty,
+);
+$result_challan_parts_history = $this->Crud->insert_data("challan_parts_history", $challan_parts_history_data);
+if ($result_challan_parts_history) {
+$data_update_challan_parts = array(
+"remaning_qty" => $new_challan_qty,
+);
+$update_challan_parts = $this->Crud->update_data("challan_parts", $data_update_challan_parts, $cc->id);
+if ($update_challan_parts) {
+$arr = array(
+'part_id' => $part_id,
+);
+// print_r($arr);
+$routing_data = $this->Crud->get_data_by_id_multiple("routing", $arr);
+if ($routing_data) {
+foreach ($routing_data as $rr) {
+$routing_part_id = $rr->routing_part_id;
+
+$routing_qty = $rr->qty;
+
+$new_sub_con_remove_qty = $qty * $routing_qty;
+
+
+$routing_part_detail_data = $this->SupplierParts->getSupplierPartById($routing_part_id);
+if ($routing_part_detail_data) {
+$exsisting_sub_con_stock = $routing_part_detail_data[0]->sub_con_stock;
+
+$sub_con_stock = $exsisting_sub_con_stock - $new_sub_con_remove_qty;
+$data_update_child_part = array(
+"sub_con_stock" => $sub_con_stock,
+);
+$update_challan_parts = $this->SupplierParts->updateStockById($data_update_child_part, $routing_part_id);
+if ($update_challan_parts) {
+echo "Success";
+} else {
+echo "Error while update routing_part_id data in child part";
+}
+} else {
+echo "routing child part not found in db";
+}
+}
+} else {
+echo "Routing Data Not Found!!!!";
+}
+} else {
+echo "Error While Updating challan_parts";
+}
+} else {
+echo "Error while adding data into challan_parts_history";
+}
+}
+}
+} else {
+echo "Challan Parts Data  Not Found !";
+// echo "<script>alert('Challan Parts Data  Not Found !');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+}
+} else {
+echo "Challan Number Not Found !";
+// echo "<script>alert('Challan Number Not Found !');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+}
+} else {
+echo "Successfully Added";
+echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+}
+} else {
+echo "none error po_parts update not found";
+}
+} else {
+echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+}
+}*/
+
+public function update_grn_qty()
+{
+	$verified_qty = $this->input->post('verified_qty');
+	$privious_qty = $this->input->post('privious_qty');
+	$grn_details_id = $this->input->post('grn_details_id');
+
+	$tax_id = $this->input->post('tax_id');
+	$part_rate = $this->input->post('part_rate');
+	$inwarding_price = $part_rate * $verified_qty;
+	$gst_structure = $this->Crud->get_data_by_id("gst_structure", $tax_id, "id");
+
+	$cgst_amount = ($inwarding_price * $gst_structure[0]->cgst) / 100;
+	$sgst_amount = ($inwarding_price * $gst_structure[0]->sgst) / 100;
+	$igst_amount = ($inwarding_price * $gst_structure[0]->igst) / 100;
+
+	$inwarding_price = $inwarding_price + $cgst_amount + $sgst_amount + $igst_amount;
+	if ($verified_qty == $privious_qty) {
+		$verified_status = "verified";
+	} else {
+		$verified_status = "not-verified";
+	}
+	$data = array(
+		"verified_qty" => $verified_qty,
+		"verfified_price" => round($inwarding_price,2),
+		"verified_status" => $verified_status,
+
+	);
+	$result = $this->Crud->update_data("grn_details", $data, $grn_details_id);
+
+	if ($result) {
+		echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+	} else {
+		echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+	}
+}
+
+public function update_grn_qty_accept_reject()
+{
+	$accept_qty = $this->input->post('accept_qty');
+	$grn_details_id = $this->input->post('grn_details_id');
+	$verified_qty = $this->input->post('verified_qty');
+	$remark = $this->input->post('remark');
+	$part_id = $this->input->post('part_id');
+	$deliveryUnit = $this->input->post('deliveryUnit');
+	$client_data = $this->Crud->get_data_by_id("client", $deliveryUnit, "client_unit");
+	$reject_qty = $verified_qty - $accept_qty;
+	//$child_part_master_data = $this->Crud->get_data_by_id("child_part_master", $part_id, "id");
+	$child_part_master_data_new = $this->SupplierParts->getSupplierPartById($part_id);
+	$stockColName = $this->Crud->getStockColNmForClientUnit($client_data[0]->id);
+	$prev_stock = $child_part_master_data_new[0]->$stockColName;
+	$new_stock = (float)$prev_stock + (float)$accept_qty;
+
+	$data = array(
+		"accept_qty" => $accept_qty,
+		"reject_qty" => $reject_qty,
+		"remark" => $remark,
+	);
+
+	$result = $this->Crud->update_data("grn_details", $data, $grn_details_id);
+
+	if ($result) {
+		$data22 = array(
+			$stockColName => $new_stock,
 		);
-		$result = $this->Crud->insert_data("grn_details", $data);
-		if ($result) {
-			$pending_qty =
-				$data = array(
-					"pending_qty" => $pending_qty - $qty,
-				);
-			$result = $this->Crud->update_data("po_parts", $data, $po_part_id);
 
-			if ($result) {
-
-				if (!empty($challan_number)) {
-					$challan_data = $this->Crud->get_data_by_id("challan", $challan_number, "id");
-					if ($challan_data) {
-						$arr = array(
-							'challan_id' => $challan_data[0]->id,
-							'part_id' => $part_id,
-						);
-						// print_r($arr);
-						$challan_parts_data = $this->Crud->get_data_by_id_multiple("challan_parts", $arr);
-						if ($challan_parts_data) {
-							foreach ($challan_parts_data as $cc) {
-								$challan_parts_qty = $cc->qty;
-								$challan_parts_remaning_qty = $cc->remaning_qty;
-
-
-								if ($qty > $challan_parts_qty) {
-									echo "Entered Qty is grater than challan qty";
-								} else {
-									$challan_id = $challan_data[0]->id;
-									$new_challan_qty = $challan_parts_remaning_qty - $qty;
-									$challan_parts_history_data = array(
-										"challan_id" => $challan_id,
-										"challan_parts_id" => $cc->id,
-										"po_id" => $po_number,
-										"previois_qty" => $challan_parts_remaning_qty,
-										"remaning_qty" => $new_challan_qty,
-									);
-									$result_challan_parts_history = $this->Crud->insert_data("challan_parts_history", $challan_parts_history_data);
-									if ($result_challan_parts_history) {
-										$data_update_challan_parts = array(
-											"remaning_qty" => $new_challan_qty,
-										);
-										$update_challan_parts = $this->Crud->update_data("challan_parts", $data_update_challan_parts, $cc->id);
-										if ($update_challan_parts) {
-											$arr = array(
-												'part_id' => $part_id,
-											);
-											// print_r($arr);
-											$routing_data = $this->Crud->get_data_by_id_multiple("routing", $arr);
-											if ($routing_data) {
-												foreach ($routing_data as $rr) {
-													$routing_part_id = $rr->routing_part_id;
-
-													$routing_qty = $rr->qty;
-
-													$new_sub_con_remove_qty = $qty * $routing_qty;
-
-
-													$routing_part_detail_data = $this->SupplierParts->getSupplierPartById($routing_part_id);
-													if ($routing_part_detail_data) {
-														$exsisting_sub_con_stock = $routing_part_detail_data[0]->sub_con_stock;
-
-														$sub_con_stock = $exsisting_sub_con_stock - $new_sub_con_remove_qty;
-														$data_update_child_part = array(
-															"sub_con_stock" => $sub_con_stock,
-														);
-														$update_challan_parts = $this->SupplierParts->updateStockById($data_update_child_part, $routing_part_id);
-														if ($update_challan_parts) {
-															echo "Success";
-														} else {
-															echo "Error while update routing_part_id data in child part";
-														}
-													} else {
-														echo "routing child part not found in db";
-													}
-												}
-											} else {
-												echo "Routing Data Not Found!!!!";
-											}
-										} else {
-											echo "Error While Updating challan_parts";
-										}
-									} else {
-										echo "Error while adding data into challan_parts_history";
-									}
-								}
-							}
-						} else {
-							echo "Challan Parts Data  Not Found !";
-							// echo "<script>alert('Challan Parts Data  Not Found !');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-						}
-					} else {
-						echo "Challan Number Not Found !";
-						// echo "<script>alert('Challan Number Not Found !');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-					}
-				} else {
-					echo "Successfully Added";
-					echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-				}
-			} else {
-				echo "none error po_parts update not found";
-			}
-		} else {
-			echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-		}
-	}*/
-	
-	public function update_grn_qty()
-	{
-		$verified_qty = $this->input->post('verified_qty');
-		$privious_qty = $this->input->post('privious_qty');
-		$grn_details_id = $this->input->post('grn_details_id');
-
-		$tax_id = $this->input->post('tax_id');
-		$part_rate = $this->input->post('part_rate');
-		$inwarding_price = $part_rate * $verified_qty;
-		$gst_structure = $this->Crud->get_data_by_id("gst_structure", $tax_id, "id");
-
-		$cgst_amount = ($inwarding_price * $gst_structure[0]->cgst) / 100;
-		$sgst_amount = ($inwarding_price * $gst_structure[0]->sgst) / 100;
-		$igst_amount = ($inwarding_price * $gst_structure[0]->igst) / 100;
-
-		$inwarding_price = $inwarding_price + $cgst_amount + $sgst_amount + $igst_amount;
-		if ($verified_qty == $privious_qty) {
-			$verified_status = "verified";
-		} else {
-			$verified_status = "not-verified";
-		}
-		$data = array(
-			"verified_qty" => $verified_qty,
-			"verfified_price" => round($inwarding_price,2),
-			"verified_status" => $verified_status,
-
-		);
-		$result = $this->Crud->update_data("grn_details", $data, $grn_details_id);
-
-		if ($result) {
+		$result22 = $this->SupplierParts->updateStockById($data22, $part_id);
+		if ($result22) {
 			echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-			echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			echo "<script>alert('Unable to Add2');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
+	} else {
+		echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 	}
-
-	public function update_grn_qty_accept_reject()
-	{
-		$accept_qty = $this->input->post('accept_qty');
-		$grn_details_id = $this->input->post('grn_details_id');
-		$verified_qty = $this->input->post('verified_qty');
-		$remark = $this->input->post('remark');
-		$part_id = $this->input->post('part_id');
-		$deliveryUnit = $this->input->post('deliveryUnit');
-		$client_data = $this->Crud->get_data_by_id("client", $deliveryUnit, "client_unit");
-		$reject_qty = $verified_qty - $accept_qty;
-		//$child_part_master_data = $this->Crud->get_data_by_id("child_part_master", $part_id, "id");
-		$child_part_master_data_new = $this->SupplierParts->getSupplierPartById($part_id);
-		$stockColName = $this->Crud->getStockColNmForClientUnit($client_data[0]->id);
-		$prev_stock = $child_part_master_data_new[0]->$stockColName;
-		$new_stock = (float)$prev_stock + (float)$accept_qty;
-		
-		$data = array(
-			"accept_qty" => $accept_qty,
-			"reject_qty" => $reject_qty,
-			"remark" => $remark,
-		);
-
-		$result = $this->Crud->update_data("grn_details", $data, $grn_details_id);
-
-		if ($result) {
-			$data22 = array(
-				$stockColName => $new_stock,
-			);
-
-			$result22 = $this->SupplierParts->updateStockById($data22, $part_id);
-			if ($result22) {
-				echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-			} else {
-				echo "<script>alert('Unable to Add2');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-			}
-		} else {
-			echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-		}
-	}
+}
 }

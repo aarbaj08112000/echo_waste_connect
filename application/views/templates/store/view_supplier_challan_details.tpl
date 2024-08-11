@@ -90,9 +90,12 @@
       <div class="sub-header-left pull-left breadcrumb">
         <h1>
           Store
-          <a hijacked="yes" href="#stock/issue_request/index" class="backlisting-link" title="Back to Issue Request Listing" >
+          <a hijacked="yes" href="javascript:void(0)" class="backlisting-link"  >
             <i class="ti ti-chevrons-right" ></i>
             <em >Challan</em></a>
+            <a hijacked="yes" href="javascript:void(0)" class="backlisting-link"  >
+              <i class="ti ti-chevrons-right" ></i>
+              <em >Supplier Challan Details</em></a>
           </h1>
           <br>
           <span >Supplier Challan</span>

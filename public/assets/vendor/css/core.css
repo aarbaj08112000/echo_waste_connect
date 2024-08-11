@@ -29295,7 +29295,7 @@ a.bg-vimeo:hover,a.bg-vimeo:focus {
 
 /* Handle */
 /* .layout-container ::-webkit-scrollbar-thumb {
-    background: white !important; 
+    background: white !important;
 } */
 /*page scrollber*/
 ::-webkit-scrollbar-thumb {
@@ -29339,4 +29339,8 @@ a.bg-vimeo:hover,a.bg-vimeo:focus {
 }
 .DTFC_LeftBodyLiner {
     overflow: hidden !important;
+}
+.no-btn{
+  background: none !important;
+  border: none !important;
 }

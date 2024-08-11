@@ -1,296 +1,378 @@
 
-<div  class="wrapper">
-<!-- Navbar -->
 <div class="content-wrapper">
-   <!-- Content Header (Page header) -->
-   <section class="content-header">
-      <div class="container-fluid">
-         <div class="row mb-2">
-            <div class="col-sm-6">
-               <h1>Client</h1>
-            </div>
-            <div class="col-sm-6">
-               <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active">Client</li>
-               </ol>
-            </div>
-         </div>
+  <!-- Content -->
+
+  <div class="container-xxl flex-grow-1 container-p-y">
+    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme filter-popup-block" style="width: 0px;">
+      <div class="app-brand demo justify-content-between">
+        <a href="javascript:void(0)" class="app-brand-link">
+          <span class="app-brand-text demo menu-text fw-bolder ms-2">Filter</span>
+        </a>
+        <div class="close-filter-btn d-block filter-popup cursor-pointer">
+          <i class="ti ti-x fs-8"></i>
+        </div>
       </div>
-      <!-- /.container-fluid -->
-   </section>
-   <!-- Main content -->
-   <section class="content">
-      <div class="container-fluid">
-         <div class="row">
-            <div class="col-12">
-               <!-- /.card -->
-               <div class="card">
-                  <%if ($isMultiClient == "true") %><!-- UPDATE CLIENT FOR SESSION -->
-                  <div class="card-header">
-                     <form action="<%base_url('update_session_unit') %>" method="POST" enctype="multipart/form-data">
-                        <div class="row">
-                           <div class="col-lg-2">
-                              <div style="">
-                                 <div class="form-group">
-                                    <label>Select Client Unit For Current User Session: </label>
-                                    <select name="clientUnit" id="clientId" class="form-control select2" id="">
-                                       <%foreach from=$client_list item=cl %>
-	                                       <option <%if ($filter_client === $cl->id) %>selected<%/if%> 
-	                                          value="<%$cl->id %>"><%$cl->client_unit %>
-	                                       </option>
-                                        <%/foreach%>
-                                    </select>
-                                 </div>
-                              </div>
-                           </div>
-                           <div class="col-lg-4">
-                              <label for="">&nbsp;</label> <br>
-                              <button class="btn btn-primary">Update</button>
-                           </div>
-                        </div>
-                     </form>
-                  </div>
-                  <%/if%>
-                  <%if ( $noOfClients == 0 || ($noOfClients == 1 && $isMultiClient == "true")) %>
-                  <div class="card-header">
-                     <!-- <h3 class="card-title">Client </h3> -->
-                     <!-- Button trigger modal -->
-                     <div><button type="button" class="btn btn-primary float-left" data-toggle="modal" data-target="#exampleModal">
-                        Add Client</button>
-                     </div>
-                     <!-- Modal -->
-                     <div class="modal fade" id="exampleModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog"  role=" document">
-                           <div class="modal-content">
-                              <div class="modal-header">
-                                 <h5 class="modal-title" id="exampleModalLabel">Add Client</h5>
-                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                 <span aria-hidden="true">&times;</span>
-                                 </button>
-                              </div>
-                              <div class="modal-body">
-                                 <form action="<%base_url('addClient') %>" method="POST">
-                                    <div class="row">
-                                       <div class="col-lg-12">
-                                          <div class="form-group">
-                                             <label for="Client_name">Client Unit</label><span class="text-danger">*</span>
-                                             <input type="text" maxlength="30" name="clientUnit" required class="form-control" id="exampleInputUnit" aria-describedby="unitHelp" placeholder="Client Unit">
-                                          </div>
-                                          <div class="form-group">
-                                             <label for="Client_name">Client Name</label><span class="text-danger">*</span>
-                                             <input type="text" name="clientName" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Client Name">
-                                          </div>
-                                          <div class="form-group">
-                                             <label for="contactPerson">Contact Person</label><span class="text-danger">*</span>
-                                             <input type="text" name="contactPerson" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Contact Person">
-                                          </div>
-                                          <div class="form-group">
-                                             <label for="Client_location">Client billing address</label><span class="text-danger">*</span>
-                                             <input type="text" name="clientBaddress" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Client Billing Address">
-                                          </div>
-                                          <div class="form-group">
-                                             <label for="Client_location">Client Shipping address</label><span class="text-danger">*</span>
-                                             <input type="text" name="clientSaddress" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Client Shipping Address">
-                                          </div>
-                                          <div class="form-group">
-                                             <label for="Client_location">Add GST Number</label><span class="text-danger">*</span>
-                                             <input type="text" name="gst_no" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Add GST Number">
-                                          </div>
-                                          <div class="form-group">
-                                             <label for="Client_location">Add PAN</label><span class="text-danger">*</span>
-                                             <input type="text" name="pan_no" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Add GST Number">
-                                          </div>
-                                          <div class="form-group">
-                                             <label for="Client_location">State</label><span class="text-danger">*</span>
-                                             <input type="text" name="state" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Add GST Number">
-                                          </div>
-                                          <div class="form-group">
-                                             <label for="Client_location">State Code</label><span class="text-danger">*</span>
-                                             <input type="text" name="state_no" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Add GST Number">
-                                          </div>
-                                          <!-- Example single danger button -->
-                                          <!-- <div class="form-group">
-                                             <label for="payment_terms">Payment Terms</label><span class="text-danger">*</span>
-                                             <input type="text" name="paymentTerms" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Payment Terms">
-                                             </div> -->
-                                          <div class="form-group">
-                                             <label for="payment_terms">Phone Number</label><span class="text-danger">*</span>
-                                             <input type="number" min="0" name="phone_no" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Payment Terms">
-                                          </div>
-                                          <div class="form-group">
-                                             <label for="payment_terms">Bank Details</label><span class="text-danger">*</span>
-                                             <input type="text" name="bank_details" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Bank Details">
-                                          </div>
-                                          <div class="form-group">
-                                             <label for="payment_terms">Address 1</label><span class="text-danger">*</span>
-                                             <input type="text" name="address1" required class="form-control" aria-describedby="emailHelp" placeholder="Address 1">
-                                          </div>
-                                          <div class="form-group">
-                                             <label for="payment_terms">Location</label><span class="text-danger">*</span>
-                                             <input type="text" name="location" required class="form-control" aria-describedby="emailHelp" placeholder="Location">
-                                          </div>
-                                          <div class="form-group">
-                                             <label for="payment_terms">Pin</label><span class="text-danger">*</span>
-                                             <input type="text" name="pin" required class="form-control" aria-describedby="emailHelp" placeholder="Pin">
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                       <button type="submit" class="btn btn-primary">Save changes</button>
-                                    </div>
-                                 </form>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-                  <%/if%>
-                  <!-- /.card-header -->
-                  <div class="card-body">
-                     <table id="example1" class="table table-bordered table-striped">
-                        <thead>
-                           <tr>
-                              <th>Sr. No.</th>
-                              <th>Client Unit</th>
-                              <th>Client Name</th>
-                              <th>Contact Person</th>
-                              <th>Client Billing Address</th>
-                              <th>Client Shipping Address</th>
-                              <th>GST Number</th>
-                              <th>Phone Number</th>
-                              <th>PAN NO</th>
-                              <th>State</th>
-                              <th>State Code</th>
-                              <th>Bank Details</th>
-                              <th>Address 1</th>
-                              <th>Location</th>
-                              <th>Pin</th>
-                              <th>Action</th>
-                           </tr>
-                        </thead>
-                        <tbody>
-                           <%assign var='i' value=1 %>
-                            <%if ($client_list) %>
-                                <%foreach from=$client_list item=t %>
-		                           <tr>
-		                              <td><%$i %></td>
-		                              <td><%$t->client_unit %></td>
-		                              <td><%$t->client_name %></td>
-		                              <td><%$t->contact_person %></td>
-		                              <td><%$t->billing_address %></td>
-		                              <td><%$t->shifting_address %></td>
-		                              <td><%$t->gst_number %></td>
-		                              <td><%$t->phone_no %></td>
-		                              <td><%$t->pan_no %></td>
-		                              <td><%$t->state %></td>
-		                              <td><%$t->state_no %></td>
-		                              <td><%$t->bank_details %></td>
-		                              <td><%$t->address1 %></td>
-		                              <td><%$t->location %></td>
-		                              <td><%$t->pin %></td>
-		                              <td>
-		                                 <button type="submit" data-toggle="modal" class="btn btn-sm btn-primary" data-target="#exampleModal2<%$i %>"> <i class="fas fa-edit"></i></button>
-		                                 <div class="modal fade" id="exampleModal2<%$i %>" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		                                    <div class="modal-dialog modal-lg" role="document">
-		                                       <div class="modal-content">
-		                                          <div class="modal-header">
-		                                             <h5 class="modal-title" id="exampleModalLabel">Add Tool</h5>
-		                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		                                             <span aria-hidden="true">&times;</span>
-		                                             </button>
-		                                          </div>
-		                                          <div class="modal-body">
-		                                             <form action="<%base_url('updateClient') %>" method="POST">
-		                                                <div class="row">
-		                                                   <div class="col-lg-12">
-		                                                      <div class="form-group">
-		                                                         <label>Contact Unit</label><span class="text-danger">*</span>
-		                                                         <input type="label" readonly value="<%$t->client_unit %>" name="uclientUnit" required class="form-control" id="exampleInputUnit" aria-describedby="unitHelp" placeholder="Client Unit">
-		                                                      </div>
-		                                                      <div class="form-group">
-		                                                         <label for="Client_name">Client Name</label><span class="text-danger">*</span>
-		                                                         <input type="text" value="<%$t->client_name  %>" name="uclientName" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Client Name">
-		                                                      </div>
-		                                                      <div class="form-group">
-		                                                         <label for="contact_person">Contact Person</label><span class="text-danger">*</span>
-		                                                         <input type="text" value="<%$t->contact_person  %>" name="ucontactPerson" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Client Code">
-		                                                      </div>
-		                                                      <div class="form-group">
-		                                                         <label for="Client_location">Client billing address</label><span class="text-danger">*</span>
-		                                                         <input type="text" value="<%$t->billing_address  %>" name="uclientBaddress" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Client Billing Address">
-		                                                      </div>
-		                                                      <div class="form-group">
-		                                                         <label for="Client_location">Client Shipping address</label><span class="text-danger">*</span>
-		                                                         <input type="text" value="<%$t->shifting_address %>" name="uclientSaddress" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Client Shipping Address">
-		                                                      </div>
-		                                                      <div class="form-group">
-		                                                         <label for="Client_location">Add GST Number</label><span class="text-danger">*</span>
-		                                                         <input type="text" value="<%$t->gst_number  %>" name="ugst_no" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Add GST Number">
-		                                                      </div>
-		                                                      <div class="form-group">
-		                                                         <label for="Client_location">Add PAN No</label><span class="text-danger">*</span>
-		                                                         <input type="text" value="<%$t->pan_no  %>" name="pan_no" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Add GST Number">
-		                                                      </div>
-		                                                      <div class="form-group">
-		                                                         <label for="Client_location">State</label><span class="text-danger">*</span>
-		                                                         <input type="text" value="<%$t->state  %>" name="state" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Add GST Number">
-		                                                      </div>
-		                                                      <div class="form-group">
-		                                                         <label for="Client_location">State Code</label><span class="text-danger">*</span>
-		                                                         <input type="text" value="<%$t->state_no  %>" name="state_no" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Add GST Number">
-		                                                      </div>
-		                                                      <div class="form-group">
-		                                                         <label for="payment_terms">Phone Number</label><span class="text-danger">*</span>
-		                                                         <input type="number" value="<%$t->phone_no  %>" min="0" name="uphone_no" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Payment Terms">
-		                                                         <input type="hidden" name="id" value="<%$t->id %>">
-		                                                      </div>
-		                                                      <div class="form-group">
-		                                                         <label for="payment_terms">Bank Details</label><span class="text-danger">*</span>
-		                                                         <input type="text" value="<%$t->bank_details  %>" name="bank_details" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Bank Details">
-		                                                      </div>
-		                                                      <div class="form-group">
-		                                                         <label for="payment_terms">Address 1</label><span class="text-danger">*</span>
-		                                                         <input type="text" value="<%$t->address1  %>" name="address1" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Address 1">
-		                                                      </div>
-		                                                      <div class="form-group">
-		                                                         <label for="payment_terms">Location</label><span class="text-danger">*</span>
-		                                                         <input type="text" value="<%$t->location  %>" name="location" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Location">
-		                                                      </div>
-		                                                      <div class="form-group">
-		                                                         <label for="payment_terms">Pin</label><span class="text-danger">*</span>
-		                                                         <input type="text" value="<%$t->pin %>" name="pin" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Pin">
-		                                                      </div>
-		                                                   </div>
-		                                                </div>
-		                                                <div class="modal-footer">
-		                                                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-		                                                   <button type="submit" class="btn btn-primary">Save changes</button>
-		                                                </div>
-		                                             </form>
-		                                          </div>
-		                                       </div>
-		                                    </div>
-		                                 </div>
-		                              </td>
-		                           </tr>
-	                           	<%assign var='i' value=$i+1 %>
-	                            <%/foreach%>
-                            <%/if%>
-                        </tbody>
-                     </table>
-                  </div>
-                  <!-- /.card-body -->
-               </div>
-               <!-- /.card -->
+      <nav class="sidebar-nav scroll-sidebar filter-block" data-simplebar="init">
+        <div class="simplebar-content" >
+          <ul class="menu-inner py-1">
+            <!-- Dashboard -->
+            <div class="filter-row">
+              <li class="nav-small-cap">
+                <span class="hide-menu">Part Number</span>
+                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+              </li>
+              <li class="sidebar-item">
+                <div class="input-group">
+                  <select name="child_part_id" class="form-control select2" id="part_number_search">
+                    <option value="">Select Part Number</option>
+                    <%foreach from=$supplier_part_list item=parts%>
+                    <option value="<%$parts->id%>"><%$parts->part_number %></option>
+                    <%/foreach%>
+                  </select>
+                </div>
+              </li>
             </div>
-            <!-- /.col -->
-         </div>
-         <!-- /.row -->
+            <div class="filter-row">
+              <li class="nav-small-cap">
+                <span class="hide-menu">Part Description</span>
+                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+              </li>
+              <li class="sidebar-item">
+                <div class="input-group">
+                  <input type="text" id="part_description_search" class="form-control" placeholder="Name">
+                </div>
+              </li>
+            </div>
+            <div class="filter-row">
+              <li class="nav-small-cap">
+                <span class="hide-menu">Name</span>
+                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+              </li>
+              <li class="sidebar-item">
+                <div class="input-group">
+                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
+                </div>
+              </li>
+            </div>
+            <div class="filter-row">
+              <li class="nav-small-cap">
+                <span class="hide-menu">Name</span>
+                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+              </li>
+              <li class="sidebar-item">
+                <div class="input-group">
+                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
+                </div>
+              </li>
+            </div>
+            <div class="filter-row">
+              <li class="nav-small-cap">
+                <span class="hide-menu">Name</span>
+                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+              </li>
+              <li class="sidebar-item">
+                <div class="input-group">
+                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
+                </div>
+              </li>
+            </div>
+
+          </ul>
+        </div>
+      </nav>
+      <div class="filter-popup-btn">
+        <button class="btn btn-outline-danger reset-filter">Reset</button>
+        <button class="btn btn-primary search-filter">Search</button>
       </div>
-      <!-- /.container-fluid -->
-   </section>
-   <!-- /.content -->
+    </aside>
+
+    <nav aria-label="breadcrumb">
+      <div class="sub-header-left pull-left breadcrumb">
+        <h1>
+          Admin
+          <a hijacked="yes" href="javascript:void(0)" class="backlisting-link" title="Back to Issue Request Listing" >
+            <i class="ti ti-chevrons-right" ></i>
+            <em >Master</em></a>
+          </h1>
+          <br>
+          <span >Client</span>
+        </div>
+      </nav>
+
+      <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
+        <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
+        <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
+        <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
+        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+        <%if ( $noOfClients == 0 || ($noOfClients == 1 && $isMultiClient == "true")) %>
+        <button type="button" class="btn btn-primary float-left" title="Add Client" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          <i class="ti ti-plus"></i></button>
+        </div>
+        <%/if%>
+      </div>
+
+      <div class="modal fade" id="exampleModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered"  role=" document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Add Client</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+
+              </button>
+            </div>
+            <div class="modal-body">
+              <form action="<%base_url('addClient') %>" method="POST">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="form-group">
+                      <label for="Client_name">Client Unit</label><span class="text-danger">*</span>
+                      <input type="text" maxlength="30" name="clientUnit" required class="form-control" id="exampleInputUnit" aria-describedby="unitHelp" placeholder="Client Unit">
+                    </div>
+                    <div class="form-group">
+                      <label for="Client_name">Client Name</label><span class="text-danger">*</span>
+                      <input type="text" name="clientName" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Client Name">
+                    </div>
+                    <div class="form-group">
+                      <label for="contactPerson">Contact Person</label><span class="text-danger">*</span>
+                      <input type="text" name="contactPerson" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Contact Person">
+                    </div>
+                    <div class="form-group">
+                      <label for="Client_location">Client billing address</label><span class="text-danger">*</span>
+                      <input type="text" name="clientBaddress" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Client Billing Address">
+                    </div>
+                    <div class="form-group">
+                      <label for="Client_location">Client Shipping address</label><span class="text-danger">*</span>
+                      <input type="text" name="clientSaddress" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Client Shipping Address">
+                    </div>
+                    <div class="form-group">
+                      <label for="Client_location">Add GST Number</label><span class="text-danger">*</span>
+                      <input type="text" name="gst_no" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Add GST Number">
+                    </div>
+                    <div class="form-group">
+                      <label for="Client_location">Add PAN</label><span class="text-danger">*</span>
+                      <input type="text" name="pan_no" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Add GST Number">
+                    </div>
+                    <div class="form-group">
+                      <label for="Client_location">State</label><span class="text-danger">*</span>
+                      <input type="text" name="state" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Add GST Number">
+                    </div>
+                    <div class="form-group">
+                      <label for="Client_location">State Code</label><span class="text-danger">*</span>
+                      <input type="text" name="state_no" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Add GST Number">
+                    </div>
+                    <!-- Example single danger button -->
+                    <!-- <div class="form-group">
+                    <label for="payment_terms">Payment Terms</label><span class="text-danger">*</span>
+                    <input type="text" name="paymentTerms" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Payment Terms">
+                  </div> -->
+                  <div class="form-group">
+                    <label for="payment_terms">Phone Number</label><span class="text-danger">*</span>
+                    <input type="number" min="0" name="phone_no" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Payment Terms">
+                  </div>
+                  <div class="form-group">
+                    <label for="payment_terms">Bank Details</label><span class="text-danger">*</span>
+                    <input type="text" name="bank_details" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Bank Details">
+                  </div>
+                  <div class="form-group">
+                    <label for="payment_terms">Address 1</label><span class="text-danger">*</span>
+                    <input type="text" name="address1" required class="form-control" aria-describedby="emailHelp" placeholder="Address 1">
+                  </div>
+                  <div class="form-group">
+                    <label for="payment_terms">Location</label><span class="text-danger">*</span>
+                    <input type="text" name="location" required class="form-control" aria-describedby="emailHelp" placeholder="Location">
+                  </div>
+                  <div class="form-group">
+                    <label for="payment_terms">Pin</label><span class="text-danger">*</span>
+                    <input type="text" name="pin" required class="form-control" aria-describedby="emailHelp" placeholder="Pin">
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Main content -->
+    <div class="card p-0 mt-4">
+      <div class="p-3">
+        <%if ($isMultiClient == "true") %><!-- UPDATE CLIENT FOR SESSION -->
+
+        <form action="<%base_url('update_session_unit') %>" method="POST" enctype="multipart/form-data">
+          <div class="row">
+            <div class="col-lg-2">
+              <div style="">
+                <div class="form-group">
+                  <label>Select Client Unit For Current User Session: </label>
+                  <select name="clientUnit" id="clientId" class="form-control select2" id="">
+                    <%foreach from=$client_list item=cl %>
+                    <option <%if ($filter_client === $cl->id) %>selected<%/if%>
+                      value="<%$cl->id %>"><%$cl->client_unit %>
+                    </option>
+                    <%/foreach%>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <label for="">&nbsp;</label> <br>
+              <button class="btn btn-primary">Update</button>
+            </div>
+          </div>
+        </form>
+        <%/if%>
+      </div>
+
+      <div class="table-responsive text-nowrap">
+        <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="client">
+          <thead>
+            <tr>
+              <th>Sr. No.</th>
+              <th>Client Unit</th>
+              <th>Client Name</th>
+              <th>Contact Person</th>
+              <th>Client Billing Address</th>
+              <th>Client Shipping Address</th>
+              <th>GST Number</th>
+              <th>Phone Number</th>
+              <th>PAN NO</th>
+              <th>State</th>
+              <th>State Code</th>
+              <th>Bank Details</th>
+              <th>Address 1</th>
+              <th>Location</th>
+              <th>Pin</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%assign var='i' value=1 %>
+            <%if ($client_list) %>
+            <%foreach from=$client_list item=t %>
+            <tr>
+              <td><%$i %></td>
+              <td><%$t->client_unit %></td>
+              <td><%$t->client_name %></td>
+              <td><%$t->contact_person %></td>
+              <td><%$t->billing_address %></td>
+              <td><%$t->shifting_address %></td>
+              <td><%$t->gst_number %></td>
+              <td><%$t->phone_no %></td>
+              <td><%$t->pan_no %></td>
+              <td><%$t->state %></td>
+              <td><%$t->state_no %></td>
+              <td><%$t->bank_details %></td>
+              <td><%$t->address1 %></td>
+              <td><%$t->location %></td>
+              <td><%$t->pin %></td>
+              <td>
+                <button type="submit" data-bs-toggle="modal" class="btn no-btn btn-primary" data-bs-target="#exampleModal2<%$i %>"> <i class="ti ti-edit"></i></button>
+                <div class="modal fade" id="exampleModal2<%$i %>" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Add Tool</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form action="<%base_url('updateClient') %>" method="POST">
+                          <div class="row">
+                            <div class="col-lg-12">
+                              <div class="form-group">
+                                <label>Contact Unit</label><span class="text-danger">*</span>
+                                <input type="label" readonly value="<%$t->client_unit %>" name="uclientUnit" required class="form-control" id="exampleInputUnit" aria-describedby="unitHelp" placeholder="Client Unit">
+                              </div>
+                              <div class="form-group">
+                                <label for="Client_name">Client Name</label><span class="text-danger">*</span>
+                                <input type="text" value="<%$t->client_name  %>" name="uclientName" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Client Name">
+                              </div>
+                              <div class="form-group">
+                                <label for="contact_person">Contact Person</label><span class="text-danger">*</span>
+                                <input type="text" value="<%$t->contact_person  %>" name="ucontactPerson" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Client Code">
+                              </div>
+                              <div class="form-group">
+                                <label for="Client_location">Client billing address</label><span class="text-danger">*</span>
+                                <input type="text" value="<%$t->billing_address  %>" name="uclientBaddress" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Client Billing Address">
+                              </div>
+                              <div class="form-group">
+                                <label for="Client_location">Client Shipping address</label><span class="text-danger">*</span>
+                                <input type="text" value="<%$t->shifting_address %>" name="uclientSaddress" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Client Shipping Address">
+                              </div>
+                              <div class="form-group">
+                                <label for="Client_location">Add GST Number</label><span class="text-danger">*</span>
+                                <input type="text" value="<%$t->gst_number  %>" name="ugst_no" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Add GST Number">
+                              </div>
+                              <div class="form-group">
+                                <label for="Client_location">Add PAN No</label><span class="text-danger">*</span>
+                                <input type="text" value="<%$t->pan_no  %>" name="pan_no" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Add GST Number">
+                              </div>
+                              <div class="form-group">
+                                <label for="Client_location">State</label><span class="text-danger">*</span>
+                                <input type="text" value="<%$t->state  %>" name="state" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Add GST Number">
+                              </div>
+                              <div class="form-group">
+                                <label for="Client_location">State Code</label><span class="text-danger">*</span>
+                                <input type="text" value="<%$t->state_no  %>" name="state_no" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Add GST Number">
+                              </div>
+                              <div class="form-group">
+                                <label for="payment_terms">Phone Number</label><span class="text-danger">*</span>
+                                <input type="number" value="<%$t->phone_no  %>" min="0" name="uphone_no" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Payment Terms">
+                                <input type="hidden" name="id" value="<%$t->id %>">
+                              </div>
+                              <div class="form-group">
+                                <label for="payment_terms">Bank Details</label><span class="text-danger">*</span>
+                                <input type="text" value="<%$t->bank_details  %>" name="bank_details" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Bank Details">
+                              </div>
+                              <div class="form-group">
+                                <label for="payment_terms">Address 1</label><span class="text-danger">*</span>
+                                <input type="text" value="<%$t->address1  %>" name="address1" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Address 1">
+                              </div>
+                              <div class="form-group">
+                                <label for="payment_terms">Location</label><span class="text-danger">*</span>
+                                <input type="text" value="<%$t->location  %>" name="location" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Location">
+                              </div>
+                              <div class="form-group">
+                                <label for="payment_terms">Pin</label><span class="text-danger">*</span>
+                                <input type="text" value="<%$t->pin %>" name="pin" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Pin">
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <%assign var='i' value=$i+1 %>
+            <%/foreach%>
+            <%/if%>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!--/ Responsive Table -->
+  </div>
+  <!-- /.col -->
+
+
+  <div class="content-backdrop fade"></div>
 </div>
-<!-- /.content-wrapper -->
+
+
+<script type="text/javascript">
+var base_url = <%$base_url|@json_encode%>
+</script>
+
+<script src="<%$base_url%>public/js/admin/client.js"></script>

@@ -1,212 +1,298 @@
-<div class="wrapper">
+
 <div class="content-wrapper">
-   <section class="content-header">
-      <div class="container-fluid">
-         <div class="row mb-2">
-            <div class="col-sm-6">
-               <h1>View Material Request 
-                  <span style="font-style:normal;color:blue;">
-                  MR-<%$machine_request_id %>
-                  </span>
-               </h1>
+  <!-- Content -->
+
+  <div class="container-xxl flex-grow-1 container-p-y">
+    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme filter-popup-block" style="width: 0px;">
+      <div class="app-brand demo justify-content-between">
+        <a href="javascript:void(0)" class="app-brand-link">
+          <span class="app-brand-text demo menu-text fw-bolder ms-2">Filter</span>
+        </a>
+        <div class="close-filter-btn d-block filter-popup cursor-pointer">
+          <i class="ti ti-x fs-8"></i>
+        </div>
+      </div>
+      <nav class="sidebar-nav scroll-sidebar filter-block" data-simplebar="init">
+        <div class="simplebar-content" >
+          <ul class="menu-inner py-1">
+            <!-- Dashboard -->
+            <div class="filter-row">
+              <li class="nav-small-cap">
+                <span class="hide-menu">Part Number</span>
+                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+              </li>
+              <li class="sidebar-item">
+                <div class="input-group">
+                  <select name="child_part_id" class="form-control select2" id="part_number_search">
+                    <option value="">Select Part Number</option>
+                    <%foreach from=$supplier_part_list item=parts%>
+                    <option value="<%$parts->id%>"><%$parts->part_number %></option>
+                    <%/foreach%>
+                  </select>
+                </div>
+              </li>
             </div>
-            <div class="col-sm-6">
-               <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="<%base_url('dashboard') %>">Home</a></li>
-                  <li class="breadcrumb-item active">View Material Request</li>
-               </ol>
+            <div class="filter-row">
+              <li class="nav-small-cap">
+                <span class="hide-menu">Part Description</span>
+                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+              </li>
+              <li class="sidebar-item">
+                <div class="input-group">
+                  <input type="text" id="part_description_search" class="form-control" placeholder="Name">
+                </div>
+              </li>
+            </div>
+            <div class="filter-row">
+              <li class="nav-small-cap">
+                <span class="hide-menu">Name</span>
+                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+              </li>
+              <li class="sidebar-item">
+                <div class="input-group">
+                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
+                </div>
+              </li>
+            </div>
+            <div class="filter-row">
+              <li class="nav-small-cap">
+                <span class="hide-menu">Name</span>
+                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+              </li>
+              <li class="sidebar-item">
+                <div class="input-group">
+                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
+                </div>
+              </li>
+            </div>
+            <div class="filter-row">
+              <li class="nav-small-cap">
+                <span class="hide-menu">Name</span>
+                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+              </li>
+              <li class="sidebar-item">
+                <div class="input-group">
+                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
+                </div>
+              </li>
+            </div>
+
+          </ul>
+        </div>
+      </nav>
+      <div class="filter-popup-btn">
+        <button class="btn btn-outline-danger reset-filter">Reset</button>
+        <button class="btn btn-primary search-filter">Search</button>
+      </div>
+    </aside>
+
+    <nav aria-label="breadcrumb">
+      <div class="sub-header-left pull-left breadcrumb">
+        <h1>
+          Production
+          <a hijacked="yes" href="javascript:void(0)" class="backlisting-link" title="Back to Issue Request Listing" >
+            <i class="ti ti-chevrons-right" ></i>
+            <em >View Material Request
+               </em></a>
+          </h1>
+          <br>
+          <span >View Material Request MR-<%$machine_request_id %></span>
+        </div>
+      </nav>
+
+      <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
+        <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
+        <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
+        <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
+        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+
+
+        <!-- <%if ($machine_request_parts==null || $machine_request_parts[0]->request_status == 'pending')  %> -->
+
+             <button type="button" class="btn btn-seconday" data-bs-toggle="modal"
+                data-bs-target="#addChildPart">
+             <i class="ti ti-plus"></i>
+             </button>
+
+        <!-- <%/if%> -->
+        <a class="btn btn-seconday" href="<%base_url('machine_request') %>"><i class="ti ti-arrow-left"></i></a>
+
+
+      </div>
+
+      <div class="modal fade" id="addChildPart" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Add Child Part</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+
+                  </button>
+               </div>
+               <div class="modal-body">
+                  <div class="form-group">
+                     <form action="<%base_url('add_machine_request_details') %>"
+                        method="POST" enctype="multipart/form-data">
+                  </div>
+                  <div class="form-group">
+                  <label for="on click url">Select Child Part<span
+                     class="text-danger">*</span></label>
+                  <select name="child_part_id" required id="" class="form-control select2">
+                  <option value="">Select</option>
+                  <%if ($child_part) %>
+                       <%foreach from=$child_part item=c %>
+                      <option value="<%$c->id %>">
+                      <%$c->part_number %>/<%$c->part_description %>
+                      </option>
+                    <%/foreach%>
+                   <%/if%>
+                  </select>
+                  </div>
+                  <div class="form-group">
+                  <label for="on click url">Enter Qty <span
+                     class="text-danger">*</span></label>
+                  <input type="number" step="any" required placeholder="Enter Qty"
+                     class="form-control" name="qty">
+                  <input type="hidden" value="<%$machine_request_id %>"
+                     step="any" name="machine_request_id" required placeholder="Enter Qty"
+                     class="form-control">
+                  </div>
+                  <div class="form-group">
+                  <label for="on click url">Enter Remark</label>
+                  <input type="text" step="any" placeholder="Enter Remark"
+                     class="form-control" name="remark">
+                  </div>
+               </div>
+               <div class="modal-footer">
+               <button type="button" class="btn btn-secondary"
+                  data-bs-dismiss="modal">Close</button>
+               <button type="submit" class="btn btn-primary">Save changes</button>
+               </form>
+               </div>
             </div>
          </div>
       </div>
-   </section>
-   <section class="content">
-      <div>
-         <div class="row">
-            <br>
-            <div class="col-lg-12">
-               <div class="modal fade" id="addChildPart" tabindex="-1" role="dialog"
-                  aria-labelledby="exampleModalLabel" aria-hidden="true">
-                  <div class="modal-dialog modal-lg" role="document">
-                     <div class="modal-content">
-                        <div class="modal-header">
-                           <h5 class="modal-title" id="exampleModalLabel">Add Child Part</h5>
-                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                           <span aria-hidden="true">&times;</span>
-                           </button>
-                        </div>
-                        <div class="modal-body">
-                           <div class="form-group">
-                              <form action="<%base_url('add_machine_request_details') %>"
-                                 method="POST" enctype="multipart/form-data">
-                           </div>
-                           <div class="form-group">
-                           <label for="on click url">Select Child Part<span
-                              class="text-danger">*</span></label>
-                           <select name="child_part_id" required id="" class="form-control select2">
-                           <option value="">Select</option>
-                           <%if ($child_part) %>
-                                <%foreach from=$child_part item=c %>
-		                           <option value="<%$c->id %>">
-		                           <%$c->part_number %>/<%$c->part_description %>
-		                           </option>
-	                           <%/foreach%>
-                            <%/if%>
-                           </select>
-                           </div>
-                           <div class="form-group">
-                           <label for="on click url">Enter Qty <span
-                              class="text-danger">*</span></label>
-                           <input type="number" step="any" required placeholder="Enter Qty"
-                              class="form-control" name="qty">
-                           <input type="hidden" value="<%$machine_request_id %>"
-                              step="any" name="machine_request_id" required placeholder="Enter Qty"
-                              class="form-control">
-                           </div>
-                           <div class="form-group">
-                           <label for="on click url">Enter Remark</label>
-                           <input type="text" step="any" placeholder="Enter Remark"
-                              class="form-control" name="remark">                      
-                           </div>
-                        </div>
-                        <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
-                           data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                        </form>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-               <div class="card">
-                  <div class="card-header">
-                     <div class="row">
-                        <div class="form-group">
-                           <a class="btn btn-dark" href="<%base_url('machine_request') %>">< Back </a>
-                        </div>
-                        <%if ($machine_request_parts==null || $machine_request_parts[0]->request_status == 'pending')  %>
-	                        <div class="form-group">&nbsp;
-	                           <button type="button" class="btn btn-primary" data-toggle="modal"
-	                              data-target="#addChildPart">
-	                           Add
-	                           </button>
-	                        </div>
-                        <%/if%>
-                     </div>
-                  </div>
-               </div>
-               <div class="card">
-                  <!-- /.card-header -->
-                  <div class="card-body">
-                     <table id="example1" class="table table-bordered table-striped">
-                        <thead>
-                           <tr>
-                              <th>Sr No</th>
-                              <th>Child Part </th>
-                              <th>UOM</th>
-                              <th>Requsted Qty</th>
-                              <th>Issued Qty</th>
-                              <th>Status</th>
-                              <th>Remark</th>
-                           </tr>
-                        </thead>
-                        <tbody>
-                           <%if ($machine_request_parts) %>
-                                <%assign var='i' value= 1 %>
-                                <%foreach from=$machine_request_parts item=req %>
-		                           <tr>
-		                              <td><%$i %></td>
-		                              <td><%$req->part_number %>/<%$req->part_description %></td>
-		                              <td><%$req->uom_name %></td>
-		                              <td><%$req->qty %></td>
-		                              <td>
-		                                 <%if ($req->status == "pending") %>
-		                                 <button type="button" class="btn btn-primary" data-toggle="modal"
-		                                    data-target="#addPromo<%$i %>">
-		                                 Issue Qty
-		                                 </button>
-		                                 <%else %>
-		                                    <%$req->accepted_qty %>
-		                                 <%/if%>
-		                                 <div class="modal fade" id="addPromo<%$i %>" tabindex="-1"
-		                                    role="dialog" aria-labelledby="exampleModalLabel"
-		                                    aria-hidden="true">
-		                                    <div class="modal-dialog modal-lg" role="document">
-		                                       <div class="modal-content">
-		                                          <div class="modal-header">
-		                                             <h5 class="modal-title" id="exampleModalLabel">Issue Qty</h5>
-		                                             <button type="button" class="close" data-dismiss="modal"
-		                                                aria-label="Close">
-		                                             <span aria-hidden="true">&times;</span>
-		                                             </button>
-		                                          </div>
-		                                          <div class="modal-body">
-		                                             <div class="form-group">
-		                                                <form
-		                                                   action="<%base_url('issue_material_request_qty') %>"
-		                                                   method="POST" enctype="multipart/form-data">
-		                                             </div>
-		                                             <div class="form-group">
-		                                             <label for="on click url">Enter Accept Qty
-		                                             (Current Stock:<%$req->stock %>)<span
-		                                                class="text-danger">*</span></label>
-		                                             <br>
-		                                             <%if ($req->stock > 0 && $req->qty <= $req->stock) %>
-			                                             <input required type="number" name="accepted_qty"
-			                                                placeholder="Enter Accept Qty"
-			                                                class="form-control" min="1"
-			                                                max="<%$req->qty %>" value="" id="">
-			                                             <input type="hidden" value="<%$machine_request_id %>"
-			                                                name="machine_request_id" required
-			                                                class="form-control">
-			                                             <input required type="hidden" name="qty"
-			                                                placeholder="Enter Accept Qty"
-			                                                class="form-control" min="1"
-			                                                value="<%$req->qty %>">
-			                                             <input required type="hidden" name="id"
-			                                                placeholder="Enter Accept Qty"
-			                                                class="form-control"
-			                                                value="<%$req->id %>" id="">
-			                                             <input required type="hidden" name="part_number"
-		                                                placeholder="Enter Accept Qty"
-		                                                class="form-control"
-		                                                value="<%$req->part_number %>"
-		                                                id="">
-		                                             <%assign var='disableSave' value="" %>
-		                                             <%else %>
-		                                             	Please Add Store Stock 
-		                                                <%assign var='disableSave' value="disabled" %>
-		                                             <%/if %>
-		                                             </div>
-		                                          </div>
-		                                          <div class="modal-footer">
-		                                          <button type="button" class="btn btn-secondary"
-		                                             data-dismiss="modal">Close</button>
-		                                          <button type="submit" <%$disableSave %> class="btn btn-primary">Save</button>
-		                                          </form>
-		                                          </div>
-		                                       </div>
-		                                    </div>
-		                                 </div>
-		                              </td>
-		                              <td><%$req->status %></td>
-		                              <td><%$req->remark %></td>
-		                           </tr>
-		                        <%assign var='i' value=$i+1 %>
-	                           <%/foreach%>
-                            <%/if%>
-                        </tbody>
-                     </table>
-                  </div>
-                  <!-- /.card-body -->
-               </div>
-               <!-- ./col -->
-            </div>
-         </div>
-         <!-- /.row -->
-         <!-- Main row -->
-         <!-- /.row (main row) -->
+        <!-- Main content -->
+      <div class="card p-0 mt-4">
+        <div class="col-sm-2">
+           <%if ($showDocRequestDetails=="true") %>
+           Format No: STR-F-02 <br>
+           Rev.Date : 3/3/2017 <br>
+           Rev.No.  : 00
+           <%/if%>
+        </div>
+        <div class="table-responsive text-nowrap">
+          <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="machine_request_details">
+            <thead>
+               <tr>
+                  <th>Sr No</th>
+                  <th>Child Part </th>
+                  <th>UOM</th>
+                  <th>Requsted Qty</th>
+                  <th>Issued Qty</th>
+                  <th>Status</th>
+                  <th>Remark</th>
+               </tr>
+            </thead>
+            <tbody>
+               <%if ($machine_request_parts) %>
+                    <%assign var='i' value= 1 %>
+                    <%foreach from=$machine_request_parts item=req %>
+                   <tr>
+                      <td><%$i %></td>
+                      <td><%$req->part_number %>/<%$req->part_description %></td>
+                      <td><%$req->uom_name %></td>
+                      <td><%$req->qty %></td>
+                      <td>
+                         <%if ($req->status == "pending") %>
+                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#addPromo<%$i %>">
+                         Issue Qty
+                         </button>
+                         <%else %>
+                            <%$req->accepted_qty %>
+                         <%/if%>
+                         <div class="modal fade" id="addPromo<%$i %>" tabindex="-1"
+                            role="dialog" aria-labelledby="exampleModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                               <div class="modal-content">
+                                  <div class="modal-header">
+                                     <h5 class="modal-title" id="exampleModalLabel">Issue Qty</h5>
+                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close">
+                                    
+                                     </button>
+                                  </div>
+                                  <div class="modal-body">
+                                     <div class="form-group">
+                                        <form
+                                           action="<%base_url('issue_material_request_qty') %>"
+                                           method="POST" enctype="multipart/form-data">
+                                     </div>
+                                     <div class="form-group">
+                                     <label for="on click url">Enter Accept Qty
+                                     (Current Stock:<%$req->stock %>)<span
+                                        class="text-danger">*</span></label>
+                                     <br>
+                                     <%if ($req->stock > 0 && $req->qty <= $req->stock) %>
+                                       <input required type="number" name="accepted_qty"
+                                          placeholder="Enter Accept Qty"
+                                          class="form-control" min="1"
+                                          max="<%$req->qty %>" value="" id="">
+                                       <input type="hidden" value="<%$machine_request_id %>"
+                                          name="machine_request_id" required
+                                          class="form-control">
+                                       <input required type="hidden" name="qty"
+                                          placeholder="Enter Accept Qty"
+                                          class="form-control" min="1"
+                                          value="<%$req->qty %>">
+                                       <input required type="hidden" name="id"
+                                          placeholder="Enter Accept Qty"
+                                          class="form-control"
+                                          value="<%$req->id %>" id="">
+                                       <input required type="hidden" name="part_number"
+                                        placeholder="Enter Accept Qty"
+                                        class="form-control"
+                                        value="<%$req->part_number %>"
+                                        id="">
+                                     <%assign var='disableSave' value="" %>
+                                     <%else %>
+                                      Please Add Store Stock
+                                        <%assign var='disableSave' value="disabled" %>
+                                     <%/if %>
+                                     </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary"
+                                     data-bs-dismiss="modal">Close</button>
+                                  <button type="submit" <%$disableSave %> class="btn btn-primary">Save</button>
+                                  </form>
+                                  </div>
+                               </div>
+                            </div>
+                         </div>
+                      </td>
+                      <td><%$req->status %></td>
+                      <td><%$req->remark %></td>
+                   </tr>
+                <%assign var='i' value=$i+1 %>
+                 <%/foreach%>
+                <%/if%>
+            </tbody>
+         </table>
+        </div>
       </div>
-      <!-- /.container-fluid -->
-   </section>
-   <!-- /.content -->
-</div>
+      <!--/ Responsive Table -->
+    </div>
+    <!-- /.col -->
+
+
+    <div class="content-backdrop fade"></div>
+  </div>
+
+
+
+
+  <script src="<%$base_url%>public/js/production/machine_request_details.js"></script>

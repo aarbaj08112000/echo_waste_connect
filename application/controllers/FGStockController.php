@@ -36,7 +36,7 @@ class FGStockController extends CommonController
 		}
 		$data['inhouse_parts'] = $this->InhouseParts->getUniquePartNumber();
 		$data['customer_parts'] = $this->CustomerPart->readCustomerParts();
-		
+
 		$this->loadView('store/fw_stock', $data);
 
 	}
@@ -65,13 +65,26 @@ class FGStockController extends CommonController
 		$query = $this->InhouseParts->updateStockById($data_update_child_part, $inhouse_parts_data[0]->id);
 		$query = $this->CustomerPart->updateStockById($data_update_new_stock_customer_partt, $customer_parts_master_id);
 
+		// if ($query) {
+		// 	$this->Crud->stock_report($customer_parts_master_data[0]->part_number, $inhouse_part_number, "fg_stock", "inhouse_parts", $customer_parts_master_data_old_fg_stock, $stock);
+		// 	$this->addSuccessMessage('Stock transferred successfully.');
+		// } else {
+		// 	$this->addErrorMessage('Unable to transfer stock');
+		// }
+		// $this->redirectMessage();
 		if ($query) {
 			$this->Crud->stock_report($customer_parts_master_data[0]->part_number, $inhouse_part_number, "fg_stock", "inhouse_parts", $customer_parts_master_data_old_fg_stock, $stock);
-			$this->addSuccessMessage('Stock transferred successfully.');
+			$success = 1;
+			$messages = "Stock transferred successfully.";
 		} else {
-			$this->addErrorMessage('Unable to transfer stock');
+			$success = 0;
+			$messages = "Unable to transfer stock";
 		}
-		$this->redirectMessage();
+
+		$return_arr['success']=$success;
+		$return_arr['messages']=$messages;
+		echo json_encode($return_arr);
+		exit;
 	}
 
 	public function customer_parts_admin($part_id_selected = null)
@@ -80,7 +93,7 @@ class FGStockController extends CommonController
 		if(empty($part_id_selected)){
 			$part_id_selected = $this->input->post("part_id_selected");
 		}
-		
+
 		if (!empty($part_id_selected)) {
 			$data['child_part'] = $this->CustomerPart->getCustomerPartById($part_id_selected);
 		} else {
@@ -94,7 +107,7 @@ class FGStockController extends CommonController
 	public function update_customer_parts_master_fg_stock() {
 		$id = $this->input->post('id');
 		$stock = $this->input->post('stock');
-		
+
 		$data = array(
 			"fg_stock" => $stock
 		);
@@ -104,7 +117,7 @@ class FGStockController extends CommonController
 			$this->addSuccessMessage('Stock updated successfully.');
 		} else {
 			$this->addErrorMessage('Unable to update stock. Please try again.');
-		}	
+		}
 		$this->customer_parts_admin($id);
 	}
 

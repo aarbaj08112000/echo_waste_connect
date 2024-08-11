@@ -29298,3 +29298,7 @@ a.bg-vimeo:hover,a.bg-vimeo:focus {
   right: unset !important;
   top: 28px;
 }
+.no-btn{
+  background: none !important;
+  border: none !important;
+}
