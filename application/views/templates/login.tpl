@@ -153,22 +153,49 @@ data-template="vertical-menu-template-free"
 
   <!-- Core JS -->
   <!-- build:js assets/vendor/js/core.js -->
-  <script src="public/assets/vendor/libs/jquery/jquery.js"></script>
+  <script src="<%$base_url%>public/js/admin/plugin/jquery.min.js"></script>
   <script src="public/assets/vendor/libs/popper/popper.js"></script>
   <script src="public/assets/vendor/js/bootstrap.js"></script>
   <script src="public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 
-  <script src="public/assets/vendor/js/menu.js"></script>
   <!-- endbuild -->
 
   <!-- Vendors JS -->
 
   <!-- Main JS -->
-
+<link rel="stylesheet" href="<%$base_url%>public/plugin/select2/select2.min.css">
+  <script  src="<%$base_url%>public/plugin/select2/select2.min.js"></script>
+  <link rel="stylesheet" href="<%$base_url%>plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js" integrity="sha512-WMEKGZ7L5LWgaPeJtw9MBM4i5w5OSBlSjTjCtSnvFJGSVD26gE5+Td12qN5pvWXhuWaWcVwF++F7aqu9cvqP0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-<script src="public/assets/js/main.js"></script>
 <script src="public/js/login.js"></script>
+<style>
+.select2.select2-container .select2-selection--single{
+  border-color: #c7cdd4;
+    display: block;
+    width: 100%;
+    padding: 0.3rem .5rem;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: -1.47;
+    height: auto;
+    color: #697a8d;
+    appearance: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: var(--bs-border-width) solid #d9dee3;
+    border-radius: var(--bs-border-radius);
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    -webkit-background-clip: text !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 26px;
+    position: absolute;
+    top: 13%;
+    right: 1px;
+    width: 20px;
+}
+</style>
 
   <!-- Page JS -->
 
