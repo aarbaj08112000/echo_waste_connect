@@ -99,56 +99,12 @@
                                 <!-- <button type="button" class="btn btn-primary float-left" data-toggle="modal" data-bs-target="#exampleModal">
                                     Add </button> -->
                             </div>
-                            <!-- Modal -->
-                            <!-- 
-                            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-lg" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Add </h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form action="<%base_url('add_job_card')%>" method="POST" enctype='multipart/form-data'>
-                                                <div class="row">
-                                                    <div class="col-lg-12">
-                                                        <div class="form-group">
-                                                            <label for="po_num">Select Customer Name / Customer Code / Part Number / Description </label><span class="text-danger">*</span>
-                                                            <select name="customer_part_id" id="" class="from-control select2">
-                                                                <%if $customer_part%>
-                                                                    <%foreach from=$customer_part item=c%>
-                                                                        <%assign var="customer" value=$this->Crud->get_data_by_id("customer", $c.customer_id, "id")%>
-                                                                        <option value="<%$c.id%>"><%$customer[0].customer_name%>/<%$customer[0].customer_code%>/<%$c.part_number%>/<%$c.part_description%></option>
-                                                                    <%/foreach%>
-                                                                <%/if%>
-                                                            </select>
 
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="po_num">Required Quantity </label><span class="text-danger">*</span>
-                                                            <input type="number" name="req_qty" placeholder="Enter Quantity" min="1" value="" class="form-control">
-
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-primary">Save changes</button>
-                                        </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div> -->
                            
                             <!-- /.card-header -->
                             <div class="card-body">
                             <div class="table-responsive text-nowrap">
-                                <table id="example1" class="table table-bordered table-striped">
+                                <table id="example1" class="table  table-striped">
                                     <thead>
                                         <tr>
                                             <th>Sr.No.</th>
@@ -163,7 +119,7 @@
                                             <th>E-Invoice Status</th>
                                             <th>Is EWay-Bill Available</th>
                                             <th>Total Price (Rs.)</th>
-                                            <th>Actions</th>
+                                            <th style="width: 10%;">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -179,14 +135,14 @@
                                                         <td><%$c->sales_number%></td>
                                                         <td><%$c->customer_name%></td>
                                                         <td>
-                                                            <a class="btn btn-primary btn-sm" href="<%$base_url%>view_new_sales_by_id/<%$c->id%>"><i class="fas fa-eye"></i></a>
+                                                            <a class="" href="<%$base_url%>view_new_sales_by_id/<%$c->id%>"><i class="ti ti-eye"></i></i></a>
                                                         </td>
                                                         <td>
-                                                            <a class="btn btn-primary btn-sm" href="<%$base_url%>view_PDI_inspection_report/<%$c->id%>"><i class="fas fa-eye"></i></a>
+                                                            <a class="" href="<%$base_url%>view_PDI_inspection_report/<%$c->id%>"><i class="ti ti-eye"></i></a>
                                                         </td>
                                                         <td>
                                                             <%if $c->status != "pending"%>
-                                                            <a class="btn btn-primary btn-sm" href="<%$base_url%>view_e_invoice_by_id/<%$c->id%>"><i class="fas fa-eye"></i></a>
+                                                            <a class="" href="<%$base_url%>view_e_invoice_by_id/<%$c->id%>"><i class="ti ti-eye"></i></a>
                                                             <%/if%>
                                                         </td>
                                                         <td><%$c->status%></td>
@@ -199,14 +155,14 @@
                                                         <td>
                                                             
                                                             <%if $c->status != "Cancelled" && (empty($c->Status) || $c->Status == "CANCELLED")%>
-                                                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#cancelInvoice<%$srNo%>">Cancel</button>&nbsp;
+                                                            <a type="button" class="" data-bs-toggle="modal" data-bs-target="#cancelInvoice<%$srNo%>"><i class="ti ti-circle-x"></i></a>&nbsp;
                                                             <%/if%>
                                                             <%if $c->status == "pending"%>
-                                                            <button type="button" data-bs-toggle="modal" class="btn btn-danger btn-sm" data-bs-target="#deleteInvoice<%$srNo%>"><i class="fas fa-trash"></i></button>
+                                                            <a type="button" data-bs-toggle="modal" class="" data-bs-target="#deleteInvoice<%$srNo%>"><i class="ti ti-trash"></i></a>
                                                             <%/if%>
 
                                                             <div class="modal fade" id="cancelInvoice<%$srNo%>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                                <div class="modal-dialog">
+                                                                <div class="modal-dialog modal-dialog-centered">
                                                                     <div class="modal-content">
                                                                         <div class="modal-header">
                                                                             <h5 class="modal-title" id="exampleModalLabel">Update Status</h5>
@@ -238,7 +194,7 @@
                                                             
                                                             <!-- delete model -->
                                                             <div class="modal fade" id="deleteInvoice<%$srNo%>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                                <div class="modal-dialog">
+                                                                <div class="modal-dialog modal-dialog-centered">
                                                                     <div class="modal-content">
                                                                         <div class="modal-header">
                                                                             <h5 class="modal-title" id="exampleModalLabel">Delete Invoice</h5>

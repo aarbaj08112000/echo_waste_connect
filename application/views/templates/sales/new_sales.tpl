@@ -35,8 +35,8 @@
                                     </div>
                                     <div class="col-lg-4">
                                        
-                                            <div class="form-group">
-                                                <label for="">Customer <span class="text-danger">*</span></label>
+                                            <div class="form-group mb-3">
+                                                <label for="" class="form-label">Customer <span class="text-danger">*</span></label>
                                                 <select name="customer_id" id="customer_tracking"  class="form-control select2">
                                                     <option value=''>Select</option>
                                                     <%if !empty($customer)%>
@@ -48,8 +48,8 @@
                                             </div>
                                     </div>
                                     <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="">Part Number // Description // FG Stock // Rate // Tax Structure
+                                        <div class="form-group mb-3">
+                                            <label for="" class="form-label">Part Number // Description // FG Stock // Rate // Tax Structure
                                             <span class="text-danger">*</span> </label>
                                             <select name="part_id" id="part_id"  class="form-control select2">
                                                 <option value=''>Please select</option>
@@ -58,8 +58,8 @@
                                     </div>
                                     
                                     <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="">Mode Of Transport<span class="text-danger">*</span></label>
+                                        <div class="form-group mb-3">
+                                            <label for="" class="form-label">Mode Of Transport<span class="text-danger">*</span></label>
                                             <select name="mode" class="form-control" >
                                                 <option value="">Select</option>
                                                 <option value="1">Road</option>
@@ -70,8 +70,8 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="">Transporter<span class="text-danger">*</span></label>
+                                        <div class="form-group mb-3">
+                                            <label for="" class="form-label">Transporter<span class="text-danger">*</span></label>
                                             <select name="transporter"  class="form-control select2">
                                                 <option value="">Select Transporter</option>
                                                 <%if !empty($transporter)%>
@@ -83,8 +83,8 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="">Vehicle No.<span class="text-danger">*</span></label>
+                                        <div class="form-group mb-3">
+                                            <label for="" class="form-label">Vehicle No.<span class="text-danger">*</span></label>
                                             <input type="text" 
                                                    placeholder="Enter Vehicle No" 
                                                    value="" 
@@ -93,31 +93,31 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="">L.R No </label>
+                                        <div class="form-group mb-3">
+                                            <label for="" class="form-label">L.R No </label>
                                             <input type="text" placeholder="Enter L.R No" value="" name="lr_number" class="form-control">
                                         </div>
                                     </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="">Distance of Transportation<span class="text-danger">*</span></label>
+                                    <div class="col-lg-4 ">
+                                        <div class="form-group mb-3">
+                                            <label for="" class="form-label">Distance of Transportation<span class="text-danger">*</span></label>
                                             <input type="text" placeholder="Enter Distance of Transportation" value="" name="distance"  class="form-control">
                                         </div>
                                     </div>
-                                    <div>&nbsp;</div>
-                                    <div class="col-lg-8">
-                                        <label>Shipping Address: </label><br>
+                                   
+                                    <div class="col-lg-4 form-group">
+                                        <label class="form-label"   >Shipping Address: </label><br>
                                         <div class="row" style="border:1px;">
-                                            <div class="col-lg-2">
-                                                <div class="form-group">   
+                                            <div class="col-lg-5">
+                                                <div class="form-group mb-3 mt-2">   
                                                     <input type="radio" name="ship_addressType" checked value="customer" onchange="toggleConsigneeSelection()">
-                                                    <br><label>Same as Customer</label><br>
+                                                    &nbsp;<label>Same as Customer</label><br>
                                                 </div>
                                             </div>
                                             <div class="col-lg-5">
-                                                <div class="form-group">   
+                                                <div class="form-group mb-3 mt-2">   
                                                     <input type="radio" name="ship_addressType" value="consignee" onchange="toggleConsigneeSelection()">
-                                                    <br><label>Select Consignee Address</label><br>
+                                                    &nbsp;<label >Select Consignee Address</label><br>
                                                 </div>
                                                 <div class="form-group">
                                                     <select name="consignee" id="consigneeSelect"  disabled class="form-control">
@@ -132,13 +132,15 @@
                                             </div>
                                         </div>
                                     </div>
+                                    
                                     <div class="col-lg-2">
                                         <div class="form-group">
-                                            <label for="">Remark</label>
+                                            <label for="" class="form-label">Remark</label>
                                             <input type="text" placeholder="Enter Remark" value="" name="remark" class="form-control">
                                         </div>
                                     </div>
-                                    <div class="col-lg-2">
+                                    <br>
+                                    <div class="col-lg-5">
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-danger mt-4">Generate</button>
                                         </div>
