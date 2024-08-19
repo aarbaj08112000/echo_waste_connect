@@ -4602,9 +4602,60 @@ class Welcome extends CommonController
 		// $data['flash_suc'] = $this->session->flashdata('success');
 		// $data['entitlements'] = $this->session->userdata['entitlements'];
 
-		foreach ($data['customer_parts_master'] as $u) {
-			$data['grades_data'][$u->grade_id]  = $this->Crud->get_data_by_id("grades", $u->grade_id, "id");
-		}
+		$column[] = [
+            "data" => "part_number",
+            "title" => "Part Number",
+            "width" => "14%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "part_description",
+            "title" => "Part Description",
+            "width" => "16%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "fg_stock",
+            "title" => "FG Stock",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "stock_rate",
+            "title" => "Rate",
+            "width" => "10%",
+            "className" => "dt-center",
+			
+        ];
+        $column[] = [
+            "data" => "action",
+            "title" => "Action",
+            "width" => "17%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+       
+
+		// foreach ($data['customer_parts_master'] as $u) {
+		// 	$data['grades_data'][$u->grade_id]  = $this->Crud->get_data_by_id("grades", $u->grade_id, "id");
+		// }
+
+		$data["data"] = $column;
+        $data["is_searching_enable"] = false;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Employee data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
+		$data['part_drop_data'] = $this->welcome_model->getCustomerPartNumber();
 		
 		$this->getPage('customer/customer_parts_master', $data);
 	}
@@ -9293,71 +9344,72 @@ class Welcome extends CommonController
 	}
 	public function subcon_supplier_challan_part_report()
 	{
-		$display_arr = [];
-		$data['selected_customer_part_number'] = $this->input->post('selected_customer_part_number');
-		$data['selected_supplier_id'] = $this->input->post('selected_supplier_id');
-		// if(!empty($selected_customer_part_number) && !empty($selected_supplier_id))
-		// {
 
-		$role_management_data = $this->db->query('SELECT * FROM challan_parts');
-		$data['challan_parts'] = $role_management_data->result();
-
-
-		// }
-		$role_management_data = $this->db->query('SELECT id,part_number,part_description FROM `child_part`');
-		$data['customer_parts_data'] = $role_management_data->result();
-		$role_management_data = $this->db->query('SELECT * FROM `supplier`');
-		$data['supplier'] = $role_management_data->result();
-		foreach ($data['challan_parts'] as $c) {
-			$current_stock = "";
-			$type = "";
-
-			$child_part_data[$c->id] = $this->Crud->get_data_by_id("child_part", $c->part_id, "id");
-			$customer_data[$c->id] = $this->Crud->get_data_by_id("customer", $c->customer_id, "id");
-			$challan_data[$c->id] = $this->Crud->get_data_by_id("challan", $c->challan_id, "id");
-			$supplier_id = $challan_data[$c->id][0]->supplier_id;
-			$supplier_data[$c->id] = $this->Crud->get_data_by_id("supplier", $supplier_id, "id");
-			$date1 = date_create(date('Y-m-d'));
-			$date2 = date_create($challan_data[0]->created_date);
-			$diff = date_diff($date1, $date2);
-			$data['aging'][$c->id] = $diff->format("%R%a");
-			$array_main = array(
-				"supplier_id" => $supplier_id,
-				"child_part_id" => $c->part_id,
-			);
-			$value_qty = 0;
-			$value_qty_remaning = 0;
-			$child_part_master_data[$c->id] = $this->Crud->get_data_by_id_multiple_condition("child_part_master", $array_main);
-			if ($child_part_master_data) {
-				$data['value_qty'][$c->id] = $c->qty * $child_part_master_data[$c->id][0]->part_rate;
-				$data['value_qty_remaning'][$c->id] = $c->remaning_qty * $child_part_master_data[$c->id][0]->part_rate;
-			}
-			
-			$main_total = $main_total + $data['value_qty'][$c->id];
-			$main_total_2 = $main_total_2 + $data['value_qty_remaning'][$c->id];
-			
-			$show="no";
-			if(!empty($data['selected_customer_part_number']))
-			{
-				if($child_part_data[$c->id][0]->part_number == $data['selected_customer_part_number'])
-				{
-					$show="yes";
-				}
-			}
-			else if(!empty($data['selected_supplier_id']))
-			{
-				
-				if($supplier_data[$c->id][0]->id == $data['selected_supplier_id'])
-				{
-					$show="yes";
-				}
-			}
-			else
-			{
-				$show="yes";
-			}
-			$display_arr[$c->id]['show'] = $show;
-		}
+		$column[] = [
+            "data" => "supplier_name",
+            "title" => "Supplier",
+            "width" => "14%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "part_number",
+            "title" => "Child Part",
+            "width" => "16%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "challan_number",
+            "title" => "Challan No",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "created_date",
+            "title" => "Challan Date",
+            "width" => "10%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "aging",
+            "title" => "Aging Date",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "qty",
+            "title" => "Challan Qty",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "remaning_qty",
+            "title" => "Remaning qty",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "process",
+            "title" => "Process",
+            "width" => "7%",
+            "className" => "dt-center status-row",
+        ];
+        $column[] = [
+            "data" => "value_qty",
+            "title" => "Value (Challan Qty)",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+       
+        $column[] = [
+            "data" => "value_qty_remaning",
+            "title" => "Value (Remaining Qty)",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+		
+		
+		
+		$data['box_data'] = $this->welcome_model->getSubConReportView();
 		$data['display_arr'] = $display_arr;
 		$data['child_part_data'] = $child_part_data;
 		$data['customer_data'] = $customer_data;
