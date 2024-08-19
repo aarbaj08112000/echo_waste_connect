@@ -546,6 +546,16 @@ public function view_po_by_supplier_id_sub()
 		// $this->load->view('header');
 		$this->loadView('purchase/view_po_by_supplier_id', $data);
 		// $this->load->view('footer');
+}
+public function view_po_by_supplier_id()
+	{
+		$supplier_id = $this->uri->segment('2');
+		$data['supplier_data'] = $this->Crud->get_data_by_id("supplier", $supplier_id, "id");
+		$data['new_po'] = $this->Crud->customQuery("SELECT * FROM new_po WHERE clientId = ".$this->Unit->getSessionClientId()." AND supplier_id = ".$supplier_id);
+
+		// $this->load->view('header');
+		$this->loadView('purchase/view_po_by_supplier_id', $data);
+		// $this->load->view('footer');
 	}
 	public function pending_po()
 	{
@@ -571,7 +581,7 @@ public function view_po_by_supplier_id_sub()
                 }
             }
 		}
-	}
+	
 	// $this->load->view('header');
 	$this->loadView('purchase/expired_po', $data);
 	// $this->load->view('footer');
@@ -867,6 +877,7 @@ public function rejected_po()
 	}
 	public function update_challan_parts_subcon()
 	{
+		
 		$id = $this->input->post('id');
 		$qty = $this->input->post('qty');
 		$sales_parts_data = $this->Crud->get_data_by_id("challan_parts_subcon", $id, "id");
@@ -874,16 +885,27 @@ public function rejected_po()
 			"qty" => $qty,
 
 		);
+		$success = 0;
+		$messages = "Something went wrong.";
 		$result = $this->Crud->update_data("challan_parts_subcon", $data, $id);
 		if ($result) {
-			echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$messages = "Updated Sucessfully";
+			$success = 1;
+			// echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-			echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$messages = "'Error 410 :  Not Updated";
+			// echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
+		$result = [];
+		$result['messages'] = $messages;
+		$result['success'] = $success;
+		echo json_encode($result);
+		exit();
 	}
 
 	public function validate_invoice_amount()
 	{
+		
 		$inwarding_id = $this->input->post('inwarding_id');
 		$invoice_amount = $this->input->post('invoice_amount');
 		$status = $this->input->post('status');
@@ -891,11 +913,16 @@ public function rejected_po()
 		$plus_price = $this->input->post('plus_price');
 		$minus_price = $this->input->post('minus_price');
 		$msg = "";
-
+		$success = 0;
+		$messages = "Something went wrong.";
 		if ($invoice_amount >= $minus_price && $invoice_amount <= $plus_price) {
-			$msg = "<script>alert('Updated Sucessfully.');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$success = 1;
+			// $msg = "<script>alert('Updated Sucessfully.');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$messages = "Updated Sucessfully";
 		} else {
-			echo "<script>alert('Invoice amount does not match, Please verify.');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$success = 0;
+			$messages = "Invoice amount does not match, Please verify.";
+			// echo "<script>alert('Invoice amount does not match, Please verify.');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
 
 		$data = array(
@@ -905,10 +932,18 @@ public function rejected_po()
 
 		$result = $this->Crud->update_data("inwarding", $data, $inwarding_id);
 		if ($result) {
-			echo $msg;
+			// $success = 1;
+			// echo $msg;
 		} else {
-			echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$success = 0;
+			$messages = "Error 410 :  Not Updated";
+			// echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
+		$result = [];
+		$result['messages'] = $messages;
+		$result['success'] = $success;
+		echo json_encode($result);
+		exit();
 	}
 
 
@@ -1449,7 +1484,7 @@ public function rejected_po()
 	}
 	public function add_challan_parts_history_challan()
 	{
-
+		
 		$qty = $this->input->post('qty');
 		$supplier_challan_number = $this->input->post('supplier_challan_number');
 		$challan_id = $this->input->post('challan_id');
@@ -1468,12 +1503,22 @@ public function rejected_po()
 			"year" => $this->year,
 		);
 		$result = $this->Crud->insert_data("challan_parts_history", $challan_parts_history_insert_array);
-
+		$success = 0;
+		$messages = "Somthing went Wrong";
 		if ($result) {
-			echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$success = 1;
+			$messages = "Successfully Added";
+			// echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-			echo "<script>alert('Unab le to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$messages = "Unab le to Add";
+			// echo "<script>alert('Unab le to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
+		$return_arr = [];
+		$return_arr['success'] = $success;
+		$return_arr['message'] = $messages;
+		echo json_encode($return_arr);
+
+		exit();
 	}
 	// add new
 	public function add_po_parts_sub()
@@ -1706,20 +1751,21 @@ public function rejected_po()
 
 	public function close_po()
 	{
+		
 		$id = $this->input->post('id');
 		$closed_remark = $this->input->post('remark');
 		$po_number = $this->input->post('po_number');
 		$new_po_Data = $this->Crud->get_data_by_id("new_po", $po_number, "po_number");
-
+		
 		$data = array(
 			"status" => "accept_closed",
 			"closed_remark" => $closed_remark,
 		);
+		
 		$success = 0;
 		$message = "Something went wrong!";
 		$result = $this->Crud->update_data("new_po", $data, $new_po_Data[0]->id);
 		if ($result) {
-
 			$success = 1;
 			$message = "PO successfully closed.";
 			//  $this->addSuccessMessage('PO successfully closed.');
@@ -1782,6 +1828,7 @@ public function rejected_po()
 	}
 	public function update_challan_parts_history_challan()
 	{
+		// pr("ok",1);
 		$id = $this->input->post('challan_parts_history_id');
 		$accepeted_qty = $this->input->post('accepeted_qty');
 		$part_id = $this->input->post('part_id');
@@ -1800,9 +1847,10 @@ public function rejected_po()
 		$exsisting_qty_rejection_stock = $child_part_master_data_new[0]->rejection_stock;
 		$exsisting_qty_subcon = $child_part_master_data_new[0]->sub_con_stock;
 		$new_sub = $exsisting_qty_subcon - $qty;
+		$success = 0;
+		$messages = "Somthing went Wrong";
 		if (!empty($accepeted_qty)) {
 			$new_qty = $exsisting_qty + $accepeted_qty;
-
 			$update_child_part_array = array(
 				"stock" => $new_qty,
 			);
@@ -1837,16 +1885,23 @@ public function rejected_po()
 			);
 			$result2 = $this->Crud->update_data("challan_parts", $update_challan_parts_array, $challan_parts_data[0]->id);
 			if ($result2) {
-
-
-
-				echo "<script>alert('Updated Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$success = 1;
+				$messages = "Updated Added";
+				// echo "<script>alert('Updated Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				echo "none error po_parts update not found";
+				$messages ="none error po_parts update not found";
+				// echo "none error po_parts update not found";
 			}
 		} else {
-			echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$messages = "Unable to Add";
+			// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
+		$return_arr = [];
+		$return_arr['success'] = $success;
+		$return_arr['messages'] = $messages;
+		echo json_encode($return_arr);
+
+		exit();
 	}
 	/* public function add_grn_qty_subcon_view()
 	{
@@ -2022,12 +2077,21 @@ public function update_grn_qty()
 
 	);
 	$result = $this->Crud->update_data("grn_details", $data, $grn_details_id);
-
+	$success = 0;
+	$messages = "Something went wrong";
 	if ($result) {
-		echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		$success = 1;
+		$messages = "Successfully Added";
+		// echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 	} else {
-		echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		$messages = "Unable to Add";
+		// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 	}
+	$return_arr = [];
+	$return_arr['success'] = $success;
+	$return_arr['messages'] = $messages;
+	echo json_encode($return_arr);
+	exit();
 }
 
 public function update_grn_qty_accept_reject()

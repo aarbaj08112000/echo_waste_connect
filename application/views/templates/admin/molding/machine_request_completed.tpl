@@ -18,64 +18,20 @@
             <!-- Dashboard -->
             <div class="filter-row">
               <li class="nav-small-cap">
-                <span class="hide-menu">Part Number</span>
+                <span class="hide-menu">Status</span>
                 <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
               </li>
               <li class="sidebar-item">
                 <div class="input-group">
-                  <select name="child_part_id" class="form-control select2" id="part_number_search">
-                    <option value="">Select Part Number</option>
-                    <%foreach from=$supplier_part_list item=parts%>
-                    <option value="<%$parts->id%>"><%$parts->part_number %></option>
-                    <%/foreach%>
+                  <select name="child_part_id" class="form-control select2" id="status_search">
+                    <option value="">Select Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="Completed">Completed</option>
                   </select>
                 </div>
               </li>
             </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Part Description</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="part_description_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
+            
 
           </ul>
         </div>
@@ -110,69 +66,25 @@
 
 
         <!-- Main content -->
-      <div class="card p-0 mt-4">
-        <div class="ps-2 mt-2">
-          <form action="<%base_url('machine_request_completed') %>" method="POST" enctype="multipart/form-data">
-             <div class="row">
-                <div class="col-lg-2">
-                   <div>
-                      <div class="form-group">
-                         <label for="on click url">Status<span class="text-danger"></span></label> <br>
-                         <select name="filter_by_status" class="form-control select2" id="">
-                            <option <%if ($filter_by_status == 'pending' ) %>selected<%/if%> value="pending">Pending</option>
-                            <option <%if ($filter_by_status == 'Completed' ) %>selected<%/if%> value="Completed">Completed</option>
-
-                         </select>
-                      </div>
-                   </div>
-                </div>
-                <div class="col-lg-8">
-                   <label for="">&nbsp;</label> <br>
-                   <button class="btn btn-secondary">Search </button>
-                </div>
-
-             </div>
-          </form>
-
-        </div>
-
+       
+        <div class="w-100">
+        <input type="text" name="reason" placeholder="Filter Search" class="form-control serarch-filter-input m-3 me-0" id="serarch-filter-input" fdprocessedid="bxkoib">
+      </div>
+      <div class="card p-0 mt-4  w-100">
         <div class="table-responsive text-nowrap">
           <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="machine_request_completed">
-            <thead>
-               <tr>
-                  <th style="word-wrap;">Request No</th>
-                  <th>Machine </th>
-                  <th>Operator </th>
-                  <th>Customer Part </th>
-                  <th>Child Part </th>
-                  <th>UOM</th>
-                  <th>Requested Qty</th>
-                  <th>Issued Qty</th>
-                  <th>Status</th>
-                  <th>Remark</th>
-               </tr>
-            </thead>
-            <tbody>
-               <%if ($machine_request_parts)  %>
-                    <%foreach from=$machine_request_parts item=request %>
-                 <tr>
-                    <td>MR-<%$request->id %></td>
-                    <td><%$request->machine_name %>
-                    <td><%$request->operator_name %>
-                    <td><%$request->part_no %>/<%$request->part_description %>
-                    <td><%$request->child_part_no %>/<%$request->child_desc %></td>
-                    <td><%$request->uom_name %></td>
-                    <td><%$request->qty %></td>
-                    <td><%$request->accepted_qty %></td>
-                    <td><%$request->status %></td>
-                    <td><%$request->remark %></td>
-                 </tr>
-                 <%/foreach%>
-                <%/if%>
-            </tbody>
+          <thead>
+          <tr>
+              <%foreach from=$data key=key item=val%>
+              <th><b>Search <%$val['title']%></b></th>
+              <%/foreach%>
+          </tr>
+      </thead>
+      <tbody></tbody>
          </table>
         </div>
       </div>
+      
       <!--/ Responsive Table -->
     </div>
     <!-- /.col -->
@@ -182,6 +94,21 @@
   </div>
 
 
-
+  <script>
+  var column_details =  <%$data|json_encode%>;
+  var page_length_arr = <%$page_length_arr|json_encode%>;
+  var is_searching_enable = <%$is_searching_enable|json_encode%>;
+  var is_top_searching_enable =  <%$is_top_searching_enable|json_encode%>;
+  var is_paging_enable =  <%$is_paging_enable|json_encode%>;
+  var is_serverSide =  <%$is_serverSide|json_encode%>;
+  var no_data_message =  <%$no_data_message|json_encode%>;
+  var is_ordering =  <%$is_ordering|json_encode%>;
+  var sorting_column = <%$sorting_column%>;
+  var api_name =  <%$api_name|json_encode%>;
+  var base_url = <%$base_url|json_encode%>;
+  var start_date = <%$start_date|json_encode%>;
+  var end_date = <%$end_date|json_encode%>;
+  var filter_by_status = <%$filter_by_status|json_encode%>
+</script>
 
   <script src="<%$base_url%>public/js/production/machine_request_completed.js"></script>

@@ -1,7 +1,7 @@
 
 <div class="content-wrapper">
   <!-- Content -->
-
+ 
   <div class="container-xxl flex-grow-1 container-p-y">
     <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme filter-popup-block" style="width: 0px;">
       <div class="app-brand demo justify-content-between">
@@ -18,15 +18,16 @@
             <!-- Dashboard -->
             <div class="filter-row">
               <li class="nav-small-cap">
-                <span class="hide-menu">Part Number</span>
+                <span class="hide-menu">Challan</span>
                 <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
               </li>
               <li class="sidebar-item">
                 <div class="input-group">
-                  <select name="child_part_id" class="form-control select2" id="part_number_search">
-                    <option value="">Select Part Number</option>
-                    <%foreach from=$supplier_part_list item=parts%>
-                    <option value="<%$parts->id%>"><%$parts->part_number %></option>
+                  <select name="child_part_id" class="form-control select2" id="challan_search">
+                    <option value="">Select Challan</option>
+                    <%foreach from=$challanNo_list item=challan%>
+                    
+                    <option value="<%$challan->id%>" <%if $challan_id == $challan->id %>selected<%/if%>><%$challan->challan_number %></option>
                     <%/foreach%>
                   </select>
                 </div>
@@ -34,48 +35,21 @@
             </div>
             <div class="filter-row">
               <li class="nav-small-cap">
-                <span class="hide-menu">Part Description</span>
+                <span class="hide-menu">Supplier</span>
                 <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
               </li>
               <li class="sidebar-item">
                 <div class="input-group">
-                  <input type="text" id="part_description_search" class="form-control" placeholder="Name">
+                  <select name="child_part_id" class="form-control select2" id="supplier_search">
+                    <option value="">Select Supplier</option>
+                    <%foreach from=$supplier item=supplier_val%>
+                    <option value="<%$supplier_val->id%>" <%if  $supplier_id == $supplier_val->id %>selected<%/if%>><%$supplier_val->supplier_name %></option>
+                    <%/foreach%>
+                  </select>
                 </div>
               </li>
             </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
+            
 
           </ul>
         </div>
@@ -203,46 +177,16 @@
       <!-- Main content -->
       <div class="card p-0 mt-4">
         <div class="table-responsive text-nowrap">
-          <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="view_add_challan">
+        <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="view_add_challan">
             <thead>
-               <tr>
-                  <th>Sr. No.</th>
-                  <th>Challan Number</th>
-                  <th>Remark</th>
-                  <th>Vehicle Number</th>
-                  <th>Mode Of Transport</th>
-                  <th>Transporter</th>
-                  <th>L.R number</th>
-                  <th>Date</th>
-                  <th>Supplier</th>
-                  <th>Status</th>
-                  <th>View Details</th>
-               </tr>
-            </thead>
-            <tbody>
-               <%assign var='i' value=1%>
-               <%if ($challan) %>
-                    <%foreach from=$challan item=c %>
-                   <tr>
-                      <td><%$i %></td>
-                      <td><%$c->challan_number %></td>
-                      <td><%$c->remark %></td>
-                      <td><%$c->vechical_number %></td>
-                      <td><%$c->mode %></td>
-                      <td><%$c->transpoter %></td>
-                      <td><%$c->l_r_number %></td>
-                      <td><%$c->created_date %></td>
-                      <td><%$c->supplier_name %></td>
-                      <td><%$c->status %></td>
-                      <td class="text-center">
-                         <a  href="<%base_url('view_challan_by_id/') %><%$c->id %>" title="View Deatils"><i class="fas fa-eye"></i></a>
-                      </td>
-                   </tr>
-                  <%assign var='i' value=$i+1%>
+                <tr>
+                    <%foreach from=$data key=key item=val%>
+                    <th><b>Search <%$val['title']%></b></th>
                     <%/foreach%>
-                <%/if%>
-            </tbody>
-         </table>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
         </div>
       </div>
       <!--/ Responsive Table -->
@@ -305,6 +249,20 @@
           var customer_id = $("#customer_tracking").val();
       });
   </script>
-
+ <script>
+ var column_details =  <%$data|json_encode%>;
+ var page_length_arr = <%$page_length_arr|json_encode%>;
+ var is_searching_enable = <%$is_searching_enable|json_encode%>;
+ var is_top_searching_enable =  <%$is_top_searching_enable|json_encode%>;
+ var is_paging_enable =  <%$is_paging_enable|json_encode%>;
+ var is_serverSide =  <%$is_serverSide|json_encode%>;
+ var no_data_message =  <%$no_data_message|json_encode%>;
+ var is_ordering =  <%$is_ordering|json_encode%>;
+ var sorting_column = <%$sorting_column%>;
+ var api_name =  <%$api_name|json_encode%>;
+ var base_url = <%$base_url|json_encode%>;
+ var challan_id =  <%$challan_id|json_encode%>;
+ var supplier_id = <%$supplier_id|json_encode%>;
+</script>
 
   <script src="<%$base_url%>public/js/store/view_add_challan.js"></script>

@@ -292,7 +292,8 @@ class P_Molding extends CommonController
 		$data['reject_remark'] = $this->Crud->read_data("reject_remark");
 
 
-
+		$data['start_date'] = date("Y/m/01");
+		$data['end_date'] = date("Y/m/d");
 		$this->loadView('admin/molding/p_q_molding_production', $data);
 
 	}
@@ -320,8 +321,8 @@ class P_Molding extends CommonController
 			LEFT JOIN operator as op ON op.id = mp.operator_id
 			LEFT JOIN customer_part as cp ON cp.id = mp.customer_part_id
 			WHERE mp.clientId  = ".$this->Unit->getSessionClientId()." 
-			AND mp.status = 'completed' 
-			AND mp.month = ". $created_month . " AND mp.year = " . $created_year);
+			AND mp.status = 'completed' ");
+			// AND mp.month = ". $created_month . " AND mp.year = " . $created_year
 		// pr($data['molding_production'],1);
 		$month_arr = [];
 		for ($i = 1; $i <= 12; $i++) {
@@ -330,7 +331,8 @@ class P_Molding extends CommonController
             array_push($month_arr,['month_data'=>$month_data,'month_number'=>$month_number]);
         }
        	$data['month_arr'] = $month_arr;
-       	// pr($data,1);
+       	$data['start_date'] = date("Y/m/01");
+		$data['end_date'] = date("Y/m/d");
 		$this->loadView('admin/molding/view_p_q_molding_production', $data);
 	}
 
@@ -355,7 +357,8 @@ class P_Molding extends CommonController
 		$remark = $this->input->post('remark');
 		$downtime_reason = $this->input->post('downtime_reason');
 		$wastage = $this->input->post('wastage');
-
+		$success = 0;
+		$messages = "Something went wrong.";
 		$bom_data = $this->Crud->get_data_by_id("bom", $customer_part_id, "customer_part_id");
 		if ($bom_data) {
 			$flag = 0;
@@ -367,12 +370,10 @@ class P_Molding extends CommonController
 
 					if ($required_bom_qty > $current_machine_mold_issue_stock) {
 						$flag = 1;
-						echo "Please add machine mold stock of Child Part number : " . $child_part[0]->part_number . " , Required Qty :" . $required_bom_qty . "  and current machine mold stock is :" . $current_machine_mold_issue_stock;
-						echo "<br>";
+						$messages = "Please add machine mold stock of Child Part number : " . $child_part[0]->part_number . " , Required Qty :" . $required_bom_qty . "  and current machine mold stock is :" . $current_machine_mold_issue_stock;
 					}
 				} else {
-					echo "child part not found: " . $b->child_part_id;
-					echo "<br>";
+					$messages = "child part not found: " . $b->child_part_id;
 				}
 			}
 
@@ -389,8 +390,7 @@ class P_Molding extends CommonController
 						$update_data = array("machine_mold_issue_stock" => $new_machine_mold_issue_stock);
 						$update = $this->SupplierParts->updateStockById($update_data, $b->child_part_id);
 					} else {
-						echo "child part not found: " . $b->child_part_id;
-						echo "<br>";
+						$messages = "child part not found: " . $b->child_part_id;
 					}
 				}
 
@@ -404,7 +404,8 @@ class P_Molding extends CommonController
 				$routing_data = $this->Crud->read_data_where("molding_production", $data);
 
 				if ($routing_data) {
-					echo "<script>alert('already present');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+					$messages = 'already present';
+					// echo "<script>alert('already present');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 				} else {
 
 
@@ -448,15 +449,24 @@ class P_Molding extends CommonController
 					$customer_master_update = $this->CustomerPart->updateStockById($update_fg_stock_details, $customer_master[0]->id);
 
 					if ($customer_master_update) {
-						echo "<script>alert('successfully added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+						$success = 1;
+						$messages = "successfully added";
+						// echo "<script>alert('successfully added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 					} else {
-						echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
+						$messages = "'Error IN User  Adding ,try again";
+						// echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
 					}
 				}
 			}
 		} else {
-			echo "please add BOM data ";
+			$messages = "please add BOM data ";
 		}
+
+		$result = [];
+		$result['messages'] = $messages;
+		$result['success'] = $success;
+		echo json_encode($result);
+		exit();
 	}
 
 
@@ -525,7 +535,8 @@ class P_Molding extends CommonController
 		$customer_part_id = (int)$this->input->post('customer_part_id');
 		$accepted_qty = $semi_finished_location + $deflashing_assembly_location + $final_inspection_location;
 		$sum = (int)$accepted_qty + $onhold_qty;
-
+		$success = 0;
+		$messages = "Something went wrong.";
 		if ($sum <= $qty) {
 
 			$customer_part_data = $this->Crud->get_data_by_id("customer_part", $customer_part_id, "id");
@@ -626,31 +637,33 @@ class P_Molding extends CommonController
 						);
 						$result3 = $this->Crud->update_data("molding_stock_transfer", $data_update_child_part_molding_stock_transfer, $molding_stock_transfer_id);
 						if ($result3) {
-							echo "<script>alert('Stock Transfered successfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+							$messages  = "Stock Transfered successfully";
+							$success = 1;
+							// echo "<script>alert('Stock Transfered successfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 						}
 					} else {
-						echo "Out Of molding_production_qty Sotck  in customer part: " . $customer_part_data[0]->part_number;
-						echo "<br>";
-						echo "<br>";
-						echo "current Molding Production Qty: " . $current_molding_production_qty . "<br>";
-						echo "<br>";
-						echo "<br>";
-						echo "required Molding Production Qty  : " . $addition . "<br>";
-						echo "<br>";
-						echo "<br>";
+						$messages  =  "Out Of molding_production_qty Sotck  in customer part: " . $customer_part_data[0]->part_number . "<br> current Molding Production Qty: " . $current_molding_production_qty . "<br> 
+						 <br> required Molding Production Qty  : " . $addition ;
 					}
 				} else {
-					echo "item part  id : " . $customer_part_data[0]->part_number . "Not Found in customer_part table Please try again ";
+					$messages =  "item part  id : " . $customer_part_data[0]->part_number . "Not Found in customer_part table Please try again ";
 				}
-
-				echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$messages = "Updated Successfully";
+				$success = 1;
+				// echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				echo "error while updating";
+				$messages =  "error while updating";
 			}
 		} else {
-			echo "miss matched qty";
+			$messages =  "miss matched qty";
 			// echo "<script>alert('Qty Mis Matched please add again ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
+
+		$result = [];
+		$result['messages'] = $messages;
+		$result['success'] = $success;
+		echo json_encode($result);
+		exit();
 	}
 
 	public function add_mold_maintenance()
@@ -709,6 +722,7 @@ class P_Molding extends CommonController
 	public function add_machine_request()
 	{
 
+	
 		$clientUnit = $this->session->userdata['clientUnit'];
 
 		$data = array(
@@ -725,13 +739,22 @@ class P_Molding extends CommonController
 		);
 
 		$inser_query = $this->Crud->insert_data("machine_request", $data);
-
+		$success = 0;
+		$messages = "Something went wrong.";
 		if ($inser_query) {
-				$this->addSuccessMessage('Added Successfully.');
-			} else {
-				$this->addErrorMessage('Failed to add record.Try again.');
-			}
-			$this->redirectMessage();
+			$success = 1;
+			$messages = "Added Successfully.";
+				// $this->addSuccessMessage('Added Successfully.');
+		} else {
+			$messages = "AFailed to add record.Try again.";
+				// $this->addErrorMessage('Failed to add record.Try again.');
+		}
+			// $this->redirectMessage();
+		$result = [];
+		$result['messages'] = $messages;
+		$result['success'] = $success;
+		echo json_encode($result);
+		exit();
 
 	}
 
@@ -961,25 +984,12 @@ class P_Molding extends CommonController
 		$this->machine_request($clientUnit);
 	}
 
-	public function machine_request($clientUnit=null)
+	
+	public function machine_request()
 	{
-		
+
 		$clientUnit = $this->Unit->getSessionClientId();
 		$data['filter_client'] = $clientUnit;
-
-		$data['machine_request'] = $this->Crud->customQuery("SELECT m_req.id as id, m.name as machine_name, o.name as operator_name, 
-		part.part_number, part.part_description, m_req.created_date, m_req.created_time, m_req.status, req_parts.id as req_parts,
-		m_req.customer_parts_master_id
-					FROM machine m, operator o, customer_part part, machine_request m_req
-					LEFT JOIN machine_request_parts req_parts
-					ON m_req.id = req_parts.machine_request_id
-					WHERE m_req.machine_id = m.id 
-					AND m_req.operator_id = o.id
-					AND m_req.customer_part_id = part.id
-					AND m_req.delivery_unit = ".$clientUnit." 
-					GROUP by m_req.id
-					order by m_req.created_date desc");
-
 		$data['operator'] = $this->Crud->read_data("operator");
 		$data['machine'] = $this->Crud->read_data("machine");
 		
@@ -991,7 +1001,110 @@ class P_Molding extends CommonController
 
 		$data['showDocRequestDetails'] = $this->showMaterialRequestDetails();
 		$data['isMultiClient'] = $this->session->userdata['isMultipleClientUnits'];
-		$this->loadView('admin/molding/machine_request', $data);
+		/* datatable */
+        $column[] = [
+            "data" => "request_no",
+            "title" => "Request No",
+            "width" => "14%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "machine_name",
+            "title" => "Machine Mold",
+            "width" => "20%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "operator_name",
+            "title" => "Operator",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "customer_part",
+            "title" => "Customer Part",
+            "width" => "10%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "created_date",
+            "title" => "Created Date",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "status",
+            "title" => "Status",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "action",
+            "title" => "Actions",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $data["data"] = $column;
+        $data["is_searching_enable"] = true;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Part GRN data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
+        $data["start_date"] = date('01/m/Y');
+		 $data["end_date"] = date('d/m/Y');
+		$this->loadView('admin/molding/machine_request', $data,"Yes","Yes");
+		// $this->getPage('purchase/test', $data,"NO","NO");
+	}
+	public function get_machine_request_view()
+	{
+		$post_data = $this->input->post();
+        $column_index = array_column($post_data["columns"], "data");
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+            if ($key == 0) {
+                $order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+                $order_by .=
+                    "," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+		
+		$data = $this->CustomerPart->get_machine_request_view_data(
+            $condition_arr,
+            $post_data["search"]
+        );
+		// pr($data,1);
+
+		foreach ($data as $key => $value) {
+			// $edit_data = base64_encode(json_encode($value)); 
+			$value['request_no'] = "MR-".$value['request_no'];
+			$data[$key]['request_no'] = '<a href="'.base_url("machine_request_details/").$value['id'].'" title="'.$value['request_no'].'">'.$value['request_no'].'</a>';
+			$data[$key]['action'] = '<i class="ti ti-trash delete-request" data-id="'.$value['id'].'" data-request-code="'.$value['request_no'].'" title="delete"></i>';
+			if($value['req_parts']){
+				$data[$key]['action'] = display_no_character();
+			}
+			
+		}
+		$data["data"] = $data;
+        $total_record = $this->CustomerPart->get_machine_request_view_count([], $post_data["search"]);
+        $data["recordsTotal"] = $total_record['total_record'] != null ? $total_record['total_record'] : 0 ;
+        $data["recordsFiltered"] = $total_record['total_record'] != null ? $total_record['total_record'] : 0 ;
+        echo json_encode($data);
+        exit();
+		
 	}
 
 
@@ -1014,7 +1127,7 @@ class P_Molding extends CommonController
 		echo '</select>';
 	} */
 
-	public function machine_request_completed()
+	public function machine_request_completed1()
 	{
 		$filter_by_status = $this->input->post('filter_by_status');
 		$clientUnit = $this->session->userdata['clientUnit'];
@@ -1041,9 +1154,143 @@ class P_Molding extends CommonController
 			AND m_req.status = '".$filter_by_status."' 
 			ORDER BY m_req.id DESC");
 
-		$data['showDocRequestDetails'] = $this->showMaterialRequestDetails();
 		$data['filter_by_status'] = $filter_by_status;
 		$this->loadView('admin/molding/machine_request_completed', $data);
+	}
+	public function machine_request_completed()
+	{
+		
+		
+		$data['filter_by_status'] = "pending";
+		/* datatable */
+        $column[] = [
+            "data" => "request_no",
+            "title" => "Request No",
+            "width" => "14%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "machine_name",
+            "title" => "Machine",
+            "width" => "10%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "operator_name",
+            "title" => "Operator",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "customer_part",
+            "title" => "Customer Part",
+            "width" => "15%",
+            "className" => "dt-center",
+        ];
+		$column[] = [
+            "data" => "child_part",
+            "title" => "Child Part",
+            "width" => "15%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "uom_name",
+            "title" => "UOM",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "qty",
+            "title" => "Requested Qty",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+		$column[] = [
+            "data" => "accepted_qty",
+            "title" => "Issued Qty",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+		
+		$column[] = [
+            "data" => "status",
+            "title" => "Status",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        // $column[] = [
+        //     "data" => "action",
+        //     "title" => "Actions",
+        //     "width" => "7%",
+        //     "className" => "dt-center",
+        // ];
+		$column[] = [
+            "data" => "remark",
+            "title" => "Remark",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $data["data"] = $column;
+        $data["is_searching_enable"] = true;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Part GRN data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
+        $data["start_date"] = date('01/m/Y');
+		 $data["end_date"] = date('d/m/Y');
+		$this->loadView('admin/molding/machine_request_completed', $data,"Yes","Yes");
+		// $this->getPage('purchase/test', $data,"NO","NO");
+	}
+	public function get_machine_request_completed_view()
+	{
+		$post_data = $this->input->post();
+        $column_index = array_column($post_data["columns"], "data");
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+            if ($key == 0) {
+                $order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+                $order_by .=
+                    "," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+		
+		$data = $this->CustomerPart->get_machine_request_completed_view_data(
+            $condition_arr,
+            $post_data["search"]
+        );
+		// pr($data,1);
+
+		foreach ($data as $key => $value) {
+			// $edit_data = base64_encode(json_encode($value)); 
+			$value['request_no'] = "MR-".$value['request_no'];
+			$data[$key]['request_no'] = '<a href="'.base_url("machine_request_details/").$value['id'].'" title="'.$value['request_no'].'">'.$value['request_no'].'</a>';
+			$data[$key]['remark'] = display_no_character($value['remark']);
+			$data[$key]['child_part'] = display_no_character($value['child_part']);
+			$data[$key]['customer_part'] = display_no_character($value['customer_part']);
+			
+			
+		}
+		$data["data"] = $data;
+        $total_record = $this->CustomerPart->get_machine_request_completed_count([], $post_data["search"]);
+        $data["recordsTotal"] = $total_record['total_record'] != null ? $total_record['total_record'] : 0 ;
+        $data["recordsFiltered"] = $total_record['total_record'] != null ? $total_record['total_record'] : 0 ;
+        echo json_encode($data);
+        exit();
+		
 	}
 
 
@@ -1130,7 +1377,7 @@ class P_Molding extends CommonController
 		}
 	}
 
-	public function molding_stock_transfer()
+	public function molding_stock_transfer1()
 	{
 
 		$role_management_data = $this->db->query('SELECT *  FROM `customer_parts_master` WHERE molding_production_qty >= 1 ');
@@ -1144,6 +1391,104 @@ class P_Molding extends CommonController
 			ORDER BY ms.id DESC
 		");
 		$this->loadView('admin/molding/molding_stock_transfer', $data);
+	}
+	public function molding_stock_transfer()
+	{
+		
+		
+		$data['filter_by_status'] = "pending";
+		/* datatable */
+      
+		$column[] = [
+            "data" => "child_part",
+            "title" => "Child Part",
+            "width" => "15%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "final_inspection_location",
+            "title" => "Final Inspection Qty",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "status",
+            "title" => "Status",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+		$column[] = [
+            "data" => "transfer",
+            "title" => "Transfer",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+		
+		$column[] = [
+            "data" => "date",
+            "title" => "Date & Time",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        
+        $data["data"] = $column;
+        $data["is_searching_enable"] = true;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Part GRN data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
+        $data["start_date"] = date('01/m/Y');
+		 $data["end_date"] = date('d/m/Y');
+		$this->loadView('admin/molding/molding_stock_transfer', $data,"Yes","Yes");
+		// $this->getPage('purchase/test', $data,"NO","NO");
+	}
+	public function get_molding_stock_transfer_view()
+	{
+		$post_data = $this->input->post();
+        $column_index = array_column($post_data["columns"], "data");
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+            if ($key == 0) {
+                $order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+                $order_by .=
+                    "," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+		
+		$data = $this->CustomerPart->get_molding_stock_transfer_view_data(
+            $condition_arr,
+            $post_data["search"]
+        );
+		
+
+		foreach ($data as $key => $value) {
+			$data[$key]['transfer'] = "Stock Transferred";
+			if($value['status'] == "pending"){
+				$data[$key]['transfer'] = '<a class="btn btn-warning" href="'.base_url('molding_stock_transfer_click/').$value['id'].'">Click To Transfer Stock</a>';
+			}
+			
+		}
+		$data["data"] = $data;
+        $total_record = $this->CustomerPart->get_molding_stock_transfer_count([], $post_data["search"]);
+        $data["recordsTotal"] = $total_record['total_record'] != null ? $total_record['total_record'] : 0 ;
+        $data["recordsFiltered"] = $total_record['total_record'] != null ? $total_record['total_record'] : 0 ;
+        echo json_encode($data);
+        exit();
+		
 	}
 
 

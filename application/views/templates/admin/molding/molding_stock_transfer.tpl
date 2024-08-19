@@ -3,88 +3,7 @@
   <!-- Content -->
 
   <div class="container-xxl flex-grow-1 container-p-y">
-    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme filter-popup-block" style="width: 0px;">
-      <div class="app-brand demo justify-content-between">
-        <a href="javascript:void(0)" class="app-brand-link">
-          <span class="app-brand-text demo menu-text fw-bolder ms-2">Filter</span>
-        </a>
-        <div class="close-filter-btn d-block filter-popup cursor-pointer">
-          <i class="ti ti-x fs-8"></i>
-        </div>
-      </div>
-      <nav class="sidebar-nav scroll-sidebar filter-block" data-simplebar="init">
-        <div class="simplebar-content" >
-          <ul class="menu-inner py-1">
-            <!-- Dashboard -->
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Part Number</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <select name="child_part_id" class="form-control select2" id="part_number_search">
-                    <option value="">Select Part Number</option>
-                    <%foreach from=$supplier_part_list item=parts%>
-                    <option value="<%$parts->id%>"><%$parts->part_number %></option>
-                    <%/foreach%>
-                  </select>
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Part Description</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="part_description_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-
-          </ul>
-        </div>
-      </nav>
-      <div class="filter-popup-btn">
-        <button class="btn btn-outline-danger reset-filter">Reset</button>
-        <button class="btn btn-primary search-filter">Search</button>
-      </div>
-    </aside>
+    
 
     <nav aria-label="breadcrumb">
       <div class="sub-header-left pull-left breadcrumb">
@@ -102,9 +21,7 @@
       <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
         <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
         <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
-        <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
-        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
-
+       
         <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal"
            data-bs-target="#addPromo">
            Add Request
@@ -156,59 +73,44 @@
          </div>
       </div>
         <!-- Main content -->
-      <div class="card p-0 mt-4">
-
+        <div class="w-100">
+        <input type="text" name="reason" placeholder="Filter Search" class="form-control serarch-filter-input m-3 me-0" id="serarch-filter-input" fdprocessedid="bxkoib">
+      </div>
+      <div class="card p-0 mt-4  w-100">
         <div class="table-responsive text-nowrap">
           <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="molding_stock_transfer">
-            <thead>
-               <tr>
-                  <th>Sr No</th>
-                  <th>Part Number / Description</th>
-                  <!-- <th>Semi Finished Qty</th>
-                     <th>Deflashing / Assembly Qty</th> -->
-                  <th>Final Inspection Qty</th>
-                  <th>Status</th>
-                  <th>Transfer</th>
-                  <th>Date & Time</th>
-               </tr>
-            </thead>
-            <tbody>
-               <%if ($molding_stock_transfer) %>
-                    <%assign var='i' value=1 %>
-                    <%foreach from=$molding_stock_transfer item=u %>
-                 <tr>
-                    <td><%$i %></td>
-                    <td><%$u->part_number %> /
-                       <%$u->part_description %>/
-                    </td>
-                    <td><%$u->final_inspection_location %></td>
-                    <td><%$u->status %></td>
-                    <td><%if ($u->status == "pending") %>
-                       <a class="btn btn-warning"
-                          href="<%base_url('molding_stock_transfer_click/') %><%$u->id %>">Click
-                       To
-                       Transfer Stock</a>
-                       <%else %>
-                          Stock Transferred
-                       <%/if%>
-                    </td>
-                    <td><%$u->created_date %> / <%$u->created_time %></td>
-                 </tr>
-                  <%assign var='i' value=$i+1 %>
-                  <%/foreach%>
-                <%/if%>
-            </tbody>
+          <thead>
+          <tr>
+              <%foreach from=$data key=key item=val%>
+              <th><b>Search <%$val['title']%></b></th>
+              <%/foreach%>
+          </tr>
+      </thead>
+      <tbody></tbody>
          </table>
         </div>
       </div>
-      <!--/ Responsive Table -->
-    </div>
     <!-- /.col -->
 
 
     <div class="content-backdrop fade"></div>
   </div>
-
+  <script>
+  var column_details =  <%$data|json_encode%>;
+  var page_length_arr = <%$page_length_arr|json_encode%>;
+  var is_searching_enable = <%$is_searching_enable|json_encode%>;
+  var is_top_searching_enable =  <%$is_top_searching_enable|json_encode%>;
+  var is_paging_enable =  <%$is_paging_enable|json_encode%>;
+  var is_serverSide =  <%$is_serverSide|json_encode%>;
+  var no_data_message =  <%$no_data_message|json_encode%>;
+  var is_ordering =  <%$is_ordering|json_encode%>;
+  var sorting_column = <%$sorting_column%>;
+  var api_name =  <%$api_name|json_encode%>;
+  var base_url = <%$base_url|json_encode%>;
+  var start_date = <%$start_date|json_encode%>;
+  var end_date = <%$end_date|json_encode%>;
+  var filter_by_status = <%$filter_by_status|json_encode%>
+</script>
 
 
 

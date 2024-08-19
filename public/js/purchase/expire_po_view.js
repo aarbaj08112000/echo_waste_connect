@@ -73,7 +73,7 @@ const page = {
         	$(".dataTables_length select").select2({
 	            minimumResultsForSearch: Infinity
 	        });
-        },1000)
+        },500)
         
     },
     filter: function(){

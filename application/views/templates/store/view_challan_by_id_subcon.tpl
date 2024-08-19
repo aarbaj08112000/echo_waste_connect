@@ -8,88 +8,7 @@
 
   <%/if%>
   <div class="container-xxl flex-grow-1 container-p-y">
-    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme filter-popup-block" style="width: 0px;">
-      <div class="app-brand demo justify-content-between">
-        <a href="javascript:void(0)" class="app-brand-link">
-          <span class="app-brand-text demo menu-text fw-bolder ms-2">Filter</span>
-        </a>
-        <div class="close-filter-btn d-block filter-popup cursor-pointer">
-          <i class="ti ti-x fs-8"></i>
-        </div>
-      </div>
-      <nav class="sidebar-nav scroll-sidebar filter-block" data-simplebar="init">
-        <div class="simplebar-content" >
-          <ul class="menu-inner py-1">
-            <!-- Dashboard -->
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Part Number</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <select name="child_part_id" class="form-control select2" id="part_number_search">
-                    <option value="">Select Part Number</option>
-                    <%foreach from=$supplier_part_list item=parts%>
-                    <option value="<%$parts->id%>"><%$parts->part_number %></option>
-                    <%/foreach%>
-                  </select>
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Part Description</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="part_description_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-
-          </ul>
-        </div>
-      </nav>
-      <div class="filter-popup-btn">
-        <button class="btn btn-outline-danger reset-filter">Reset</button>
-        <button class="btn btn-primary search-filter">Search</button>
-      </div>
-    </aside>
+   
 
     <nav aria-label="breadcrumb">
       <div class="sub-header-left pull-left breadcrumb">
@@ -106,10 +25,7 @@
       <!-- <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Tables /</span> Basic Tables</h4> -->
 
       <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
-        <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
-        <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
-        <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
-        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+       
         <!-- <button type="button" class="btn btn-seconday" title="Add Challan Subcon" data-bs-toggle="modal" data-bs-target="#exampleModal">
         <i class="ti ti-plus"></i> </button> -->
         <a href="<%base_url('view_add_challan_subcon') %>" class="btn btn-seconday"><i class="ti ti-arrow-left" title="Back"></i></a>
@@ -123,27 +39,27 @@
         <div class="card p-0 mt-4">
           <div class="card-header">
             <div class="row">
-              <div class="col-lg-3">
-                <div class="form-group">
-                  <label for="">Challan Number <span class="text-danger">*</span> </label>
-                  <input type="text" readonly value="<%$challan_data[0]->challan_number %>" class="form-control">
-                </div>
+              <div class="tgdp-rgt-tp-sect">
+                <p class="tgdp-rgt-tp-ttl">Challan Number</p>
+                <p class="tgdp-rgt-tp-txt"><%$challan_data[0]->challan_number %></p>
               </div>
-              <div class="col-lg-3">
-                <div class="form-group">
-                  <label for="">Customer Name <span class="text-danger">*</span> </label>
-                  <input type="text" readonly value="<%$customer[0]->customer_name %>" class="form-control">
-                </div>
+              <div class="tgdp-rgt-tp-sect">
+                <p class="tgdp-rgt-tp-ttl">Customer Name</p>
+                <p class="tgdp-rgt-tp-txt"><%display_no_character($customer[0]->customer_name) %></p>
               </div>
-              <div class="col-lg-3">
-                <div class="form-group">
-                  <label for="">Challan Date & Time <span class="text-danger">*</span>
-                  </label>
-                  <input type="text" readonly value="<%$challan_data[0]->created_date %> / <%$challan_data[0]->created_time %>" class="form-control">
-                </div>
+              <div class="tgdp-rgt-tp-sect">
+                <p class="tgdp-rgt-tp-ttl">Challan Date & Time</p>
+                <p class="tgdp-rgt-tp-txt"><%$challan_data[0]->created_date %> / <%$challan_data[0]->created_time %></p>
               </div>
+              <div class="tgdp-rgt-tp-sect">
+                <p class="tgdp-rgt-tp-ttl">Status</p>
+                <p class="tgdp-rgt-tp-txt"><%$challan_data[0]->status %></p>
+              </div>
+             
+              
               <div class="col-lg-3">
-                <%if ($challan_data[0]->status != "completed") %>
+              
+                <%if ($challan_data[0]->status != "completed" && $challan_parts ) %>
                   <button type="submit" data-bs-toggle="modal" class="btn  btn-primary mt-4" data-bs-target="#challanCOmplete">
                   Complete Challan
                   </button>
@@ -160,7 +76,7 @@
                         </button>
                       </div>
                       <div class="modal-body">
-                        <form action="<%base_url('change_challan_status_subcon') %>" method="POST">
+                        <form action="<%base_url('change_challan_status_subcon') %>" method="POST" class="change_challan_status_subcon_form">
                           <div class="row">
                             <div class="col-lg-12">
                               <div class="form-group">
@@ -183,14 +99,17 @@
               </div>
             </div>
           </div>
+        </div>
+        <%if ($challan_data[0]->status != "completed") %>
+        <div class="card p-0 mt-4">
           <div class="card-header">
+          <form action="javascript:void(0);" class=" custom-form add_challan_parts_subcon" method="post">
             <div class="row">
               <div class="col-lg-3">
                 <div class="form-group">
-                  <form action="<%base_url('add_challan_parts_subcon') %>" method="post">
                     <label for="">Select Part Number // Description // Current Stock<span class="text-danger">*</span> </label>
                     <select name="part_id" id="" required class="form-control select2">
-                      <%if ($challan_data[0]->status == "completed") %>
+                      <%if ($challan_data[0]->status == "completed" ) %>
                             Challan Completed
                       <%else %>
                         <%if ($child_part) %>
@@ -209,8 +128,8 @@
               </div>
               <div class="col-lg-3">
               <div class="form-group">
-              <label for="">Enter input Qty <span class="text-danger">*</span> </label>
-              <input type="number" step="any" name="qty" placeholder="Enter QTY " required class="form-control">
+              <label for="">Enter Qty <span class="text-danger">*</span> </label>
+              <input type="text" step="any" name="qty" placeholder="Enter QTY "  class="form-control required-input onlyNumericInput">
               <input type="hidden" name="challan_id" value="<%$challan_data[0]->id %>" required class="form-control">
               </div>
               </div>
@@ -229,7 +148,7 @@
               <div class="col-lg-3">
               <div class="form-group">
               <%if ($challan_data[0]->status == "completed") %>
-                   Challan Completed
+                  <!-- Challan Completed -->
               <%else %>
                 <button type="submit" class="btn btn-primary mt-4">Add Part TO
                 challan</button>
@@ -239,10 +158,9 @@
               </form>
             </div>
           </div>
-          <div class="card-header">
+          <div class="card-header hide">
             <%if ($po_parts) %>
                 <%if ($new_po[0]->status == "pending") %>
-
                     <%if ($this->session->userdata['type'] == 'admin' || $this->session->userdata['type'] == 'Admin') %>
                   <button type="button" class="btn btn-danger ml-1" data-bs-toggle="modal" data-bs-target="#lock">
                   Lock PO
@@ -360,38 +278,42 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <%/if%>
+        <div class="card p-0 mt-4">
           <div class="table-responsive text-nowrap">
-            <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="view_add_challan_subcon">
+            <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped scrollable" style="border-collapse: collapse;" border-color="#e1e1e1" id="view_add_challan_subcon">
               <thead>
                 <tr>
-                  <th>Sr No</th>
-                  <th>Part Number</th>
-                  <th>Part Description</th>
-                  <th>Qty </th>
-                  <th>Process</th>
-                  <th>HSN</th>
-                  <th>Value</th>
-                  <th>Remaining Qty </th>
-                  <th>Edit / Delete</th>
-                  <th>Action</th>
-                  <th>History</th>
+                  <!-- <th>Sr No</th> -->
+                  <th style="width: 15%;">Part Number</th>
+                  <th style="width: 15%;">Part Description</th>
+                  <th style="width: 15%;">Qty </th>
+                  <th style="width: 15%;">Process</th>
+                  <th style="width: 15%;">HSN</th>
+                  <th style="width: 15%;">Value</th>
+                  <th style="width: 15%;">Remaining Qty </th>
+                  <th style="width: 20%;">Edit / Delete</th>
+                  <th style="width: 15%;">Action</th>
+                  <th style="width: 15%;">History</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody style="max-height: 20em;">
                 <%if ($challan_parts) %>
                 <%assign var='i' value=1%>
                 <%assign var='final_po_amount' value=0%>
                 <%foreach from=$challan_parts item=p %>
                 <tr>
-                  <td><%$i %></td>
-                  <td><%$p->part_number %></td>
-                  <td><%$p->part_description %></td>
-                  <td><%$p->qty %></td>
-                  <td><%$p->process %></td>
-                  <td><%$p->hsn %></td>
-                  <td><%$p->value %></td>
-                  <td><%$p->remaning_qty %></td>
-                  <td>
+                  <!-- <td><%$i %></td> -->
+                  <td style="width: 15%;"><%$p->part_number %></td>
+                  <td style="width: 15%;"><%$p->part_description %></td>
+                  <td style="width: 15%;"><%$p->qty %></td>
+                  <td style="width: 15%;"><%$p->process %></td>
+                  <td style="width: 15%;"><%$p->hsn %></td>
+                  <td style="width: 15%;"><%$p->value %></td>
+                  <td style="width: 15%;"><%$p->remaning_qty %></td>
+                  <td style="width: 20%;">
                     <%if ($challan_data[0]->status != "completed") %>
                     <!-- Button trigger modal -->
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModa123123123123l<%$i %>">
@@ -411,14 +333,14 @@
 
                             </button>
                           </div>
+                          <form action="javascript:void(0);" class="update_challan_parts_subcon custom-form update_challan_parts_subcon_<%$p->id %>" method="POST" data-id="<%$p->id %>">
                           <div class="modal-body">
                             <div class="row">
                               <div class="col-lg-12">
                                 <div class="form-group">
-                                  <form action="<%base_url('update_challan_parts_subcon') %>" method="POST">
                                     <label for="">Enter Qty <span class="text-danger">*</span>
                                     </label>
-                                    <input type="number" name="qty" value="<%$p->qty %>" placeholder="Enter QTY " required class="form-control">
+                                    <input type="text" name="qty" value="<%$p->qty %>" placeholder="Enter QTY "  class="form-control required-input onlyNumericInput">
                                     <input type="hidden" name="id" value="<%$p->id %>" placeholder="Enter QTY " required class="form-control">
                                   </div>
                                 </div>
@@ -445,7 +367,7 @@
                           </div>
                           <div class="modal-body">
                             <div class="row">
-                              <form action="<%base_url('delete') %>" method="POST">
+                              <form action="javascript:void(0)" method="POST" class="delete_item">
                                 <div class="col-lg-12">
                                   <div class="form-group">
                                     <label for=""> <b>Are You Sure Want To
@@ -458,7 +380,7 @@
                               </div>
                               <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Update</button>
+                                <button type="submit" class="btn btn-primary">Delete</button>
                               </div>
                             </div>
                           </form>
@@ -468,7 +390,7 @@
                       Can't Update , This  is <%$new_sales[0]->status %>
                       <%/if%>
                     </td>
-                    <td>
+                    <td style="width: 15%;">
                       <%if ($p->challan_parts_history_id != '') %>
                       <%if ($p->challan_parts_history_status == "completed") %>
                       Stock updated
@@ -568,7 +490,7 @@
                                   </div>
                                 </div>
                               </td>
-                              <td>
+                              <td style="width: 15%;">
                                 <a class="btn btn-primary" href="<%base_url('view_challan_parts_history_subcon/') %><%$p->challan_id %>/<%$p->part_id %>">History</a>
                               </td>
                             </tr>
@@ -585,10 +507,10 @@
                             <%/if%>
                           </tfoot>
                         </table>
-                      </div>
-                    </div>
+              </div>
+          </div>
                     <!--/ Responsive Table -->
-                  </div>
+          </div>
                   <!-- /.col -->
 
 
@@ -600,4 +522,4 @@
                 <script type="text/javascript">
                 var base_url = <%$base_url|@json_encode%>
                 </script>
-                <script src="<%$base_url%>public/js/store/view_add_challan_subcon.js"></script>
+                <script src="<%$base_url%>public/js/store/view_challan_by_id_subcon.js"></script>

@@ -78,14 +78,20 @@ const app = {
     $('.onlyNumericInput').on('keypress', function(event) {
         var charCode = (event.which) ? event.which : event.keyCode;
 
+       var value = $(this).val();
+       if (value.includes('.')  && charCode == 46 ) {
+          event.preventDefault();
+       }
         // Allow only digits (0-9) and some specific control keys
-        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-            event.preventDefault();
-        }
+          if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode !== 46) {
+              event.preventDefault();
+          }
+        
     });
   },
   removeValidationMessage: function(){
-    $(document).on("change input",".custom-form input.required-input",function(){
+    $(".modal").attr("tabindex","n")
+    $(document).on("change input",".custom-form .required-input",function(){
         var value = $(this).val();
         if (value !=''){
           $(this).parents(".form-group").find("label.error").remove()

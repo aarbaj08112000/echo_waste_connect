@@ -206,5 +206,301 @@ class CustomerPart extends CI_Model {
         return $data;
     }
 
+    // datable machine request 
+    /* for datable */
+    public function get_machine_request_view_data(
+        $condition_arr = [],
+        $search_params = ""
+    ) {
+        $clientUnit = $this->Unit->getSessionClientId();
+       
+        $this->db->select(
+            'm_req.id as request_no,m_req.id as id, m.name as machine_name, o.name as operator_name, 
+		CONCAT(part.part_number ,"<br>(",part.part_description,")") as customer_part,CONCAT(m_req.created_date," ",m_req.created_time) as created_date, m_req.created_time, m_req.status, req_parts.id as req_parts,
+		m_req.customer_parts_master_id'
+        );
+        $this->db->from(" machine_request m_req");
+        $this->db->join("operator as o", "m_req.operator_id = o.id",'left');
+        $this->db->join("customer_part as part", "m_req.customer_part_id = part.id",'left');
+        $this->db->join("machine as m", "m_req.machine_id = m.id ",'left');
+        $this->db->join("machine_request_parts as req_parts", "m_req.id = req_parts.machine_request_id",'left');
+        $this->db->where(" m_req.delivery_unit",$clientUnit);
+        $this->db->group_by(" m_req.id");
+        if (count($condition_arr) > 0) {
+            $this->db->limit($condition_arr["length"], $condition_arr["start"]);
+            if ($condition_arr["order_by"] != "") {
+                $this->db->order_by($condition_arr["order_by"]);
+            }
+        }
+
+        if (is_array($search_params) && count($search_params) > 0) {
+            if ($search_params["date_range_filter"] != "") {
+                $date = explode(" - ",$search_params["date_range_filter"]);
+                $start_date = str_replace("/","-",$date[0]);
+                $end_date = str_replace("/","-",$date[1]);
+                $this->db->where('STR_TO_DATE(m_req.created_date,"%d-%m-%Y") BETWEEN STR_TO_DATE("' . $start_date . '","%d-%m-%Y") AND  STR_TO_DATE(    "' . $end_date . '","%d-%m-%Y")', null, false);
+            }
+            if ($search_params["value"] != "") {
+                $search = $search_params["value"];
+                $this->db->group_start(); // Start a group for 'like' queries
+                $this->db->like('m_req.id', $search);
+                $this->db->or_like(' m.name', $search);
+                $this->db->or_like('o.name', $search);
+                $this->db->or_like('part.part_number', $search);
+                $this->db->or_like('part.part_description', $search);
+                $this->db->or_like('m_req.created_date', $search);
+                $this->db->or_like('m_req.created_time', $search);
+                $this->db->or_like('m_req.status', $search);
+                $this->db->group_end(); // End the group
+            }
+            
+        }
+
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+
+        // pr($this->db->last_query(),1);
+        return $ret_data;
+    }
+    public function get_machine_request_view_count(
+        $condition_arr = [],
+        $search_params = ""
+    ) {
+        $clientUnit = $this->Unit->getSessionClientId();
+        $this->db->select(
+            'count(m_req.id ) as total_record'
+        );
+        $this->db->from(" machine_request m_req");
+        $this->db->join("operator as o", "m_req.operator_id = o.id",'left');
+        $this->db->join("customer_part as part", "m_req.customer_part_id = part.id",'left');
+        $this->db->join("machine as m", "m_req.machine_id = m.id ",'left');
+        $this->db->join("machine_request_parts as req_parts", "m_req.id = req_parts.machine_request_id",'left');
+        $this->db->where(" m_req.delivery_unit",$clientUnit);
+        $this->db->group_by(" m_req.id");
+        if (is_array($search_params) && count($search_params) > 0) {
+            if ($search_params["date_range_filter"] != "") {
+                $date = explode(" - ",$search_params["date_range_filter"]);
+                $start_date = str_replace("/","-",$date[0]);
+                $end_date = str_replace("/","-",$date[1]);
+                $this->db->where('STR_TO_DATE(m_req.created_date,"%d-%m-%Y") BETWEEN STR_TO_DATE("' . $start_date . '","%d-%m-%Y") AND  STR_TO_DATE(    "' . $end_date . '","%d-%m-%Y")', null, false);
+            }
+            if ($search_params["value"] != "") {
+                $search = $search_params["value"];
+                $this->db->group_start(); // Start a group for 'like' queries
+                $this->db->like('m_req.id', $search);
+                $this->db->or_like(' m.name', $search);
+                $this->db->or_like('o.name', $search);
+                $this->db->or_like('part.part_number', $search);
+                $this->db->or_like('part.part_description', $search);
+                $this->db->or_like('m_req.created_date', $search);
+                $this->db->or_like('m_req.created_time', $search);
+                $this->db->or_like('m_req.status', $search);
+                $this->db->group_end(); // End the group
+            }
+            
+        }
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
+
+        // pr($this->db->last_query(),1);
+        return $ret_data;
+    }
+
+    public function get_machine_request_completed_view_data(
+        $condition_arr = [],
+        $search_params = ""
+    ) {
+        $clientUnit = $this->Unit->getSessionClientId();
+        $this->db->select('
+            m_req.id AS id,
+            m_req.id AS request_no, 
+            m.name AS machine_name, 
+            o.name AS operator_name, 
+            CONCAT(part_master.part_number,"<br>(", part.part_description,")") AS customer_part, 
+            CONCAT(child.part_number,"<br>(",child.part_description,")") AS child_part, 
+            u.uom_name, 
+            req_parts.qty, 
+            req_parts.status, 
+            req_parts.accepted_qty, 
+            req_parts.remark, 
+            m_req.created_date, 
+            m_req.created_time, 
+            m_req.status
+        ');
+        $this->db->from('machine_request m_req');
+        $this->db->join('machine m', 'm_req.machine_id = m.id');
+        $this->db->join('operator o', 'm_req.operator_id = o.id');
+        $this->db->join('machine_request_parts req_parts', 'm_req.id = req_parts.machine_request_id');
+        $this->db->join('child_part child', 'req_parts.child_part_id = child.id');
+        $this->db->join('uom u', 'child.uom_id = u.id');
+        $this->db->join('customer_parts_master part_master', 'm_req.customer_parts_master_id = part_master.id', 'left');
+        $this->db->join('customer_part part', 'm_req.customer_part_id = part.id', 'left');
+        $this->db->where('m_req.delivery_unit', $clientUnit);
+      
+        if (count($condition_arr) > 0) {
+            $this->db->limit($condition_arr["length"], $condition_arr["start"]);
+            if ($condition_arr["order_by"] != "") {
+                $this->db->order_by($condition_arr["order_by"]);
+            }
+        }
+
+        if (is_array($search_params) && count($search_params) > 0) {
+            if ($search_params["status_search"] != "") {
+                $this->db->where('m_req.status',$search_params["status_search"]);
+            }
+            if ($search_params["value"] != "") {
+                $search = $search_params["value"];
+                $this->db->group_start(); // Start a group for 'like' queries
+                $this->db->like('m_req.id', $search);
+                $this->db->or_like(' m.name', $search);
+                $this->db->or_like('o.name', $search);
+                $this->db->or_like('part.part_number', $search);
+                $this->db->or_like('part.part_description', $search);
+                $this->db->or_like('child.part_number', $search);
+                $this->db->or_like('child.part_description', $search);
+                $this->db->or_like('u.uom_name', $search);
+                $this->db->or_like('req_parts.qty', $search);
+                $this->db->or_like('req_parts.status', $search);
+                $this->db->or_like('req_parts.accepted_qty', $search);
+                $this->db->or_like('req_parts.remark', $search);
+                $this->db->or_like('req_parts.accepted_qty', $search);
+                $this->db->or_like('req_parts.accepted_qty', $search);
+                $this->db->or_like('m_req.created_date', $search);
+                $this->db->or_like('m_req.created_time', $search);
+                $this->db->or_like('m_req.status', $search);
+                $this->db->group_end(); // End the group
+            }
+            
+        }
+
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+
+        // pr($this->db->last_query(),1);
+        return $ret_data;
+    }
+    public function get_machine_request_completed_count(
+        $condition_arr = [],
+        $search_params = ""
+    ) {
+        $clientUnit = $this->Unit->getSessionClientId();
+            $this->db->select('
+            count(m_req.id ) AS total_record
+        ');
+        $this->db->from('machine_request m_req');
+        $this->db->join('machine m', 'm_req.machine_id = m.id');
+        $this->db->join('operator o', 'm_req.operator_id = o.id');
+        $this->db->join('machine_request_parts req_parts', 'm_req.id = req_parts.machine_request_id');
+        $this->db->join('child_part child', 'req_parts.child_part_id = child.id');
+        $this->db->join('uom u', 'child.uom_id = u.id');
+        $this->db->join('customer_parts_master part_master', 'm_req.customer_parts_master_id = part_master.id', 'left');
+        $this->db->join('customer_part part', 'm_req.customer_part_id = part.id', 'left');
+        $this->db->where('m_req.delivery_unit', $clientUnit);
+        if (is_array($search_params) && count($search_params) > 0) {
+            if ($search_params["status_search"] != "") {
+                $this->db->where('m_req.status',$search_params["status_search"]);
+            }
+            if ($search_params["value"] != "") {
+                $search = $search_params["value"];
+                $this->db->group_start(); // Start a group for 'like' queries
+                $this->db->like('m_req.id', $search);
+                $this->db->or_like(' m.name', $search);
+                $this->db->or_like('o.name', $search);
+                $this->db->or_like('part.part_number', $search);
+                $this->db->or_like('part.part_description', $search);
+                $this->db->or_like('child.part_number', $search);
+                $this->db->or_like('child.part_description', $search);
+                $this->db->or_like('u.uom_name', $search);
+                $this->db->or_like('req_parts.qty', $search);
+                $this->db->or_like('req_parts.status', $search);
+                $this->db->or_like('req_parts.accepted_qty', $search);
+                $this->db->or_like('req_parts.remark', $search);
+                $this->db->or_like('req_parts.accepted_qty', $search);
+                $this->db->or_like('req_parts.accepted_qty', $search);
+                $this->db->or_like('m_req.created_date', $search);
+                $this->db->or_like('m_req.created_time', $search);
+                $this->db->or_like('m_req.status', $search);
+                $this->db->group_end(); // End the group
+            }
+        }
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
+
+        // pr($this->db->last_query(),1);
+        return $ret_data;
+    }
+    
+    public function get_molding_stock_transfer_view_data(
+        $condition_arr = [],
+        $search_params = ""
+    ) {
+        $clientUnit = $this->Unit->getSessionClientId();
+        $this->db->select('
+             ms.*,CONCAT(c.part_number ,"<br>(",c.part_description,")") as child_part,CONCAT(ms.created_date," ",ms.created_time) as date
+        ');
+        $this->db->from('molding_stock_transfer ms');
+        $this->db->join('customer_part c', ' c.id = ms.customer_part_id');
+        $this->db->where('ms.clientId', $clientUnit);
+      
+        if (count($condition_arr) > 0) {
+            $this->db->limit($condition_arr["length"], $condition_arr["start"]);
+            if ($condition_arr["order_by"] != "") {
+                $this->db->order_by($condition_arr["order_by"]);
+            }
+        }
+
+        if (is_array($search_params) && count($search_params) > 0) {
+            if ($search_params["value"] != "") {
+                $search = $search_params["value"];
+                $this->db->group_start(); // Start a group for 'like' queries
+                $this->db->or_like('c.part_number', $search);
+                $this->db->or_like('c.part_description', $search);
+                $this->db->or_like('ms.created_date', $search);
+                $this->db->or_like('ms.created_time', $search);
+                $this->db->or_like('ms.final_inspection_location', $search);
+                $this->db->or_like('ms.status', $search);
+                $this->db->group_end(); // End the group
+            }
+            
+        }
+
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+
+        // pr($this->db->last_query(),1);
+        return $ret_data;
+    }
+    public function get_molding_stock_transfer_count(
+        $condition_arr = [],
+        $search_params = ""
+    ) {
+        $clientUnit = $this->Unit->getSessionClientId();
+        $this->db->select('
+            count(ms.id) as total_record
+        ');
+        $this->db->from('molding_stock_transfer ms');
+        $this->db->join('customer_part c', ' c.id = ms.customer_part_id');
+        $this->db->where('ms.clientId', $clientUnit);
+        if (is_array($search_params) && count($search_params) > 0) {
+            if ($search_params["value"] != "") {
+                $search = $search_params["value"];
+                $this->db->group_start(); // Start a group for 'like' queries
+                $this->db->or_like('c.part_number', $search);
+                $this->db->or_like('c.part_description', $search);
+                $this->db->or_like('ms.created_date', $search);
+                $this->db->or_like('ms.created_time', $search);
+                $this->db->or_like('ms.final_inspection_location', $search);
+                $this->db->or_like('ms.status', $search);
+                $this->db->group_end(); // End the group
+            }
+            
+        }
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
+
+        // pr($this->db->last_query(),1);
+        return $ret_data;
+    }
+
 }
 ?>

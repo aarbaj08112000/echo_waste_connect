@@ -102,8 +102,10 @@ const page = {
         $('.dataTables_length').find('label').contents().filter(function() {
             return this.nodeType === 3; // Filter out text nodes
         }).remove();
-        $(".dataTables_length select").select2({
-            minimumResultsForSearch: Infinity
+        table.on('init.dt', function() {
+            $(".dataTables_length select").select2({
+                minimumResultsForSearch: Infinity
+            });
         });
     },
     filter: function(){

@@ -271,6 +271,335 @@ class Welcome_model extends CI_Model
 	}
 
     
+
+    /* aaded for datable */
+    public function get_inwarding_view_data(
+        $condition_arr = [],
+        $search_params = ""
+    ) {
+        $current_date = date('Y-m-d');
+        $clientId = $this->Unit->getSessionClientId();
+        $this->db->select(
+            'p.*,s.supplier_name'
+        );
+        $this->db->from("new_po as p");
+        $this->db->join("supplier as s", "s.id = p.supplier_id",'left');
+        $this->db->where("p.clientId",$clientId);
+        $this->db->where("p.status","accept");
+        $this->db->where("p.expiry_po_date >=",$current_date);
+        if (count($condition_arr) > 0) {
+            $this->db->limit($condition_arr["length"], $condition_arr["start"]);
+            if ($condition_arr["order_by"] != "") {
+                $this->db->order_by($condition_arr["order_by"]);
+            }
+        }
+
+        if (is_array($search_params) && count($search_params) > 0) {
+            // if ($search_params["part_number"] != "") {
+            //     $this->db->where("cp.id", $search_params["part_number"]);
+            // }
+            // if ($search_params["part_description"] != "") {
+            //     $this->db->like(
+            //         "cp.part_description",
+            //         $search_params["part_description"]
+            //     );
+            // }
+            // if ($search_params["employee_name"] != "") {
+            //     $this->db->or_like(
+            //         "em.first_name",
+            //         $search_params["employee_name"]
+            //     );
+            //     $this->db->or_like(
+            //         "em.last_name",
+            //         $search_params["employee_name"]
+            //     );
+            // }
+            // if ($search_params["employee_code"] != "") {
+            //     $this->db->like(
+            //         "em.employee_code",
+            //         $search_params["employee_code"]
+            //     );
+            // }
+            // if ($search_params["join_date"] != "") {
+            //     $this->db->where(
+            //         "em.employment_date >=",
+            //         mysqlFormat($search_params["join_date_from"])
+            //     );
+            //     $this->db->where(
+            //         "em.employment_date <=",
+            //         mysqlFormat($search_params["join_date_to"])
+            //     );
+            // }
+            // if ($search_params["email"] != "") {
+            //     $this->db->like(
+            //         "em.email",
+            //         $search_params["email"]
+            //     );
+            // }
+            // if ($search_params["department"] != "") {
+            //     $this->db->where(
+            //         "d.department_id",
+            //         $search_params["department"]
+            //     );
+            // }
+            // if ($search_params["designation"] != "") {
+            //     $this->db->where(
+            //         "de.id",
+            //         $search_params["designation"]
+            //     );
+            // }
+        }
+
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+
+        // pr($this->db->last_query(),1);
+        return $ret_data;
+    }
+    public function get_inwarding_view_count(
+        $condition_arr = [],
+        $search_params = ""
+    ) {
+        $current_date = date('Y-m-d');
+        $clientId = $this->Unit->getSessionClientId();
+        $this->db->select(
+            'count(p.po_number) as total_record'
+        );
+        $this->db->from("new_po as p");
+        $this->db->join("supplier as s", "s.id = p.supplier_id",'left');
+        $this->db->where("p.clientId",$clientId);
+        $this->db->where("p.status","accept");
+        $this->db->where("p.expiry_po_date >=",$current_date);
+        if (count($condition_arr) > 0) {
+            $this->db->limit($condition_arr["length"], $condition_arr["start"]);
+            if ($condition_arr["order_by"] != "") {
+                $this->db->order_by($condition_arr["order_by"]);
+            }
+        }
+
+        if (is_array($search_params) && count($search_params) > 0) {
+            // if ($search_params["part_number"] != "") {
+            //     $this->db->where("cp.id", $search_params["part_number"]);
+            // }
+            // if ($search_params["part_description"] != "") {
+            //     $this->db->like(
+            //         "cp.part_description",
+            //         $search_params["part_description"]
+            //     );
+            // }
+            // if ($search_params["employee_name"] != "") {
+            //     $this->db->or_like(
+            //         "em.first_name",
+            //         $search_params["employee_name"]
+            //     );
+            //     $this->db->or_like(
+            //         "em.last_name",
+            //         $search_params["employee_name"]
+            //     );
+            // }
+            // if ($search_params["employee_code"] != "") {
+            //     $this->db->like(
+            //         "em.employee_code",
+            //         $search_params["employee_code"]
+            //     );
+            // }
+            // if ($search_params["join_date"] != "") {
+            //     $this->db->where(
+            //         "em.employment_date >=",
+            //         mysqlFormat($search_params["join_date_from"])
+            //     );
+            //     $this->db->where(
+            //         "em.employment_date <=",
+            //         mysqlFormat($search_params["join_date_to"])
+            //     );
+            // }
+            // if ($search_params["email"] != "") {
+            //     $this->db->like(
+            //         "em.email",
+            //         $search_params["email"]
+            //     );
+            // }
+            // if ($search_params["department"] != "") {
+            //     $this->db->where(
+            //         "d.department_id",
+            //         $search_params["department"]
+            //     );
+            // }
+            // if ($search_params["designation"] != "") {
+            //     $this->db->where(
+            //         "de.id",
+            //         $search_params["designation"]
+            //     );
+            // }
+        }
+
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
+
+        // pr($this->db->last_query(),1);
+        return $ret_data;
+    }
+
+     /* for datable */
+     public function get_grn_validation_view_data(
+        $condition_arr = [],
+        $search_params = ""
+    ) {
+        
+        $clientId = $this->Unit->getSessionClientUnitName();
+        $this->db->select(
+            'i.delivery_unit as delivery_unit,i.id as id,i.po_id as po_id,i.invoice_number as invoice_number,i.invoice_date as invoice_date,i.grn_number as grn_number,i.grn_date as grn_date,np.po_number as po_number,s.supplier_name as supplier_name'
+        );
+        $this->db->from("inwarding as i");
+        $this->db->join("new_po as np", " i.po_id = np.id",'left');
+        $this->db->join("supplier as s", "s.id = np.supplier_id",'left');
+        $this->db->where("i.delivery_unit",$this->Unit->getSessionClientUnitName());
+        $this->db->where("i.STATUS","generate_grn");
+        if (count($condition_arr) > 0) {
+            $this->db->limit($condition_arr["length"], $condition_arr["start"]);
+            if ($condition_arr["order_by"] != "") {
+                $this->db->order_by($condition_arr["order_by"]);
+            }
+        }
+
+        if (is_array($search_params) && count($search_params) > 0) {
+            if ($search_params["part_number"] != "") {
+                $this->db->where("cp.id", $search_params["part_number"]);
+            }
+            if ($search_params["part_description"] != "") {
+                $this->db->like(
+                    "cp.part_description",
+                    $search_params["part_description"]
+                );
+            }
+            // if ($search_params["employee_name"] != "") {
+            //     $this->db->or_like(
+            //         "em.first_name",
+            //         $search_params["employee_name"]
+            //     );
+            //     $this->db->or_like(
+            //         "em.last_name",
+            //         $search_params["employee_name"]
+            //     );
+            // }
+            // if ($search_params["employee_code"] != "") {
+            //     $this->db->like(
+            //         "em.employee_code",
+            //         $search_params["employee_code"]
+            //     );
+            // }
+            // if ($search_params["join_date"] != "") {
+            //     $this->db->where(
+            //         "em.employment_date >=",
+            //         mysqlFormat($search_params["join_date_from"])
+            //     );
+            //     $this->db->where(
+            //         "em.employment_date <=",
+            //         mysqlFormat($search_params["join_date_to"])
+            //     );
+            // }
+            // if ($search_params["email"] != "") {
+            //     $this->db->like(
+            //         "em.email",
+            //         $search_params["email"]
+            //     );
+            // }
+            // if ($search_params["department"] != "") {
+            //     $this->db->where(
+            //         "d.department_id",
+            //         $search_params["department"]
+            //     );
+            // }
+            // if ($search_params["designation"] != "") {
+            //     $this->db->where(
+            //         "de.id",
+            //         $search_params["designation"]
+            //     );
+            // }
+        }
+
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+
+        // pr($this->db->last_query(),1);
+        return $ret_data;
+    }
+    public function get_grn_validation_data_count(
+        $condition_arr = [],
+        $search_params = ""
+    ) {
+        $clientId = $this->Unit->getSessionClientId();
+        $this->db->select(
+            'count(i.id) as total_record'
+        );
+        $this->db->from("inwarding as i");
+        $this->db->join("new_po as np", " i.po_id = np.id",'left');
+        $this->db->join("supplier as s", "s.id = np.supplier_id",'left');
+        $this->db->where("i.delivery_unit",$this->Unit->getSessionClientUnitName());
+        $this->db->where("i.STATUS","generate_grn");
+        if (is_array($search_params) && count($search_params) > 0) {
+            if ($search_params["part_number"] != "") {
+                $this->db->where("cp.id", $search_params["part_number"]);
+            }
+            if ($search_params["part_description"] != "") {
+                $this->db->like(
+                    "cp.part_description",
+                    $search_params["part_description"]
+                );
+            }
+            // if ($search_params["employee_name"] != "") {
+            //     $this->db->or_like(
+            //         "em.first_name",
+            //         $search_params["employee_name"]
+            //     );
+            //     $this->db->or_like(
+            //         "em.last_name",
+            //         $search_params["employee_name"]
+            //     );
+            // }
+            // if ($search_params["employee_code"] != "") {
+            //     $this->db->like(
+            //         "em.employee_code",
+            //         $search_params["employee_code"]
+            //     );
+            // }
+            // if ($search_params["join_date"] != "") {
+            //     $this->db->where(
+            //         "em.employment_date >=",
+            //         mysqlFormat($search_params["join_date_from"])
+            //     );
+            //     $this->db->where(
+            //         "em.employment_date <=",
+            //         mysqlFormat($search_params["join_date_to"])
+            //     );
+            // }
+            // if ($search_params["email"] != "") {
+            //     $this->db->like(
+            //         "em.email",
+            //         $search_params["email"]
+            //     );
+            // }
+            // if ($search_params["department"] != "") {
+            //     $this->db->where(
+            //         "d.department_id",
+            //         $search_params["department"]
+            //     );
+            // }
+            // if ($search_params["designation"] != "") {
+            //     $this->db->where(
+            //         "de.id",
+            //         $search_params["designation"]
+            //     );
+            // }
+        }
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
+
+        // pr($this->db->last_query(),1);
+        return $ret_data;
+    }
+
+    
 }
 
 ?>

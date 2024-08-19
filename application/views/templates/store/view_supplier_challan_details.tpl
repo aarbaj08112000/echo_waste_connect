@@ -89,13 +89,11 @@
     <nav aria-label="breadcrumb">
       <div class="sub-header-left pull-left breadcrumb">
         <h1>
-          Store
+        Challan
           <a hijacked="yes" href="javascript:void(0)" class="backlisting-link"  >
             <i class="ti ti-chevrons-right" ></i>
-            <em >Challan</em></a>
-            <a hijacked="yes" href="javascript:void(0)" class="backlisting-link"  >
-              <i class="ti ti-chevrons-right" ></i>
-              <em >Supplier Challan Details</em></a>
+            <em >Supplier Challan Details</em></a>
+           
           </h1>
           <br>
           <span >Supplier Challan</span>
@@ -104,10 +102,12 @@
       <!-- <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Tables /</span> Basic Tables</h4> -->
 
       <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
-        <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
+        <!--<button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
         <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
-        <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
-        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+         <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
+        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button> -->
+        <a class="btn btn-seconday" href="<%base_url('view_supplier_challan')%>">
+              <i class="ti ti-arrow-left" title="Back"></i></a>
       </div>
 
 
