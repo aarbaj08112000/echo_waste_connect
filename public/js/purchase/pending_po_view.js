@@ -76,6 +76,7 @@ const page = {
 	        });
         },1000)
         
+        
     },
     filter: function(){
         let that = this;

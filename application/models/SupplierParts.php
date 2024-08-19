@@ -266,6 +266,25 @@ class SupplierParts extends CI_Model {
                     $search_params["part_description"]
                 );
             }
+            if ($search_params["value"] != "") {
+                $search = $search_params["value"];
+                $this->db->group_start(); // Start a group for 'like' queries
+                $this->db->like('cp.part_number', $search);
+                $this->db->or_like('cp.part_description', $search);
+                $this->db->or_like('cs.safty_buffer_stk', $search);
+                $this->db->or_like('cp.hsn_code', $search);
+                $this->db->or_like('cp.sub_type', $search);
+                $this->db->or_like('cp.store_rack_location', $search);
+                $this->db->or_like('u.uom_name', $search);
+                $this->db->or_like('cp.max_uom', $search);
+                $this->db->or_like('cp.store_stock_rate', $search);
+                $this->db->or_like('cp.weight', $search);
+                $this->db->or_like('cp.size', $search);
+                $this->db->or_like('cp.thickness', $search);
+                $this->db->or_like('cp.grade', $search);
+                $this->db->group_end(); // End the group
+            }
+
             // if ($search_params["employee_name"] != "") {
             //     $this->db->or_like(
             //         "em.first_name",
@@ -867,6 +886,89 @@ class SupplierParts extends CI_Model {
         $planning_data = $query->result();
         
         return $planning_data;
+    }
+
+    // for challa view datatable 
+    /* for datable */
+    public function get_challan_search_view_data(
+        $condition_arr = [],
+        $search_params = ""
+    ) {
+       
+        $challanId = $search_params['challan_id'];
+        $supplierId = $search_params['supplier_id'];
+        $suppCriteria = "";
+        $chalCriteria = "";
+       
+        $this->db->select(
+            'c.id as id,c.challan_number as challan_number,c.remark as remark,c.vechical_number as vechical_number,c.mode as mode,c.transpoter as transpoter,c.l_r_number as l_r_number,c.created_date as created_date,c.status as status,s.supplier_name,s.id as sup_id'
+        );
+        $this->db->from("challan as c");
+        $this->db->join("supplier as s", "c.supplier_id = s.id",'left');
+        $this->db->where("c.clientId",$this->Unit->getSessionClientId());
+    
+       
+        if (count($condition_arr) > 0) {
+            $this->db->limit($condition_arr["length"], $condition_arr["start"]);
+            if ($condition_arr["order_by"] != "") {
+                $this->db->order_by($condition_arr["order_by"]);
+            }
+        }
+        
+        if (is_array($search_params) && count($search_params) > 0) {
+            if ($search_params["challan_id"] != "") {
+                $this->db->where("c.id", $search_params["challan_id"]);
+            }
+            if ($search_params["supplier_id"] != "") {
+                $this->db->where("c.supplier_id", $search_params["supplier_id"]);
+            }
+           
+           
+        }
+
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+
+        // pr($this->db->last_query(),1);
+        return $ret_data;
+    }
+    public function get_challan_search_data_count(
+        $condition_arr = [],
+        $search_params = ""
+    ) {
+        $challanId = $search_params['challan_id'];
+        $supplierId = $search_params['supplier_id'];
+        $suppCriteria = "";
+        $chalCriteria = "";
+        if($challanId == "ALL"){
+		}else if(empty($challanId) && empty($supplierId)) {
+		}else{
+			$suppCriteria = empty($supplierId)? " c.supplier_id is NOT NULL " : "c.supplier_id = ".$supplierId;
+			$chalCriteria = empty($challanId)  ? "c.id is NOT NULL " : " c.id =".$challanId;
+		}
+        $this->db->select(
+            'count(c.id) as total_record'
+        );
+        $this->db->from("challan as c");
+        $this->db->join("supplier as s", "c.supplier_id = s.id",'left');
+        $this->db->where("c.clientId",$this->Unit->getSessionClientId());
+        if($chalCriteria != "" && $chalCriteria != ''){
+            $this->db->where(".$suppCriteria." AND ".$chalCriteria.");
+        }
+        if (is_array($search_params) && count($search_params) > 0) {
+            if ($search_params["challan_id"] != "") {
+                $this->db->where("c.id", $search_params["challan_id"]);
+            }
+            if ($search_params["supplier_id"] != "") {
+                $this->db->where("c.supplier_id", $search_params["supplier_id"]);
+            }
+            
+        }
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
+
+        // pr($this->db->last_query(),1);
+        return $ret_data;
     }
 
 }

@@ -4,99 +4,15 @@
   <!-- Content -->
 
   <div class="container-xxl flex-grow-1 container-p-y">
-    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme filter-popup-block" style="width: 0px;">
-      <div class="app-brand demo justify-content-between">
-        <a href="javascript:void(0)" class="app-brand-link">
-          <span class="app-brand-text demo menu-text fw-bolder ms-2">Filter</span>
-        </a>
-        <div class="close-filter-btn d-block filter-popup cursor-pointer">
-          <i class="ti ti-x fs-8"></i>
-        </div>
-      </div>
-      <nav class="sidebar-nav scroll-sidebar filter-block" data-simplebar="init">
-        <div class="simplebar-content" >
-          <ul class="menu-inner py-1">
-            <!-- Dashboard -->
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Part Number</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <select name="child_part_id" class="form-control select2" id="part_number_search">
-                    <option value="">Select Part Number</option>
-                    <%foreach from=$supplier_part_list item=parts%>
-                    <option value="<%$parts->id%>"><%$parts->part_number %></option>
-                    <%/foreach%>
-                  </select>
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Part Description</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="part_description_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-
-          </ul>
-        </div>
-      </nav>
-      <div class="filter-popup-btn">
-        <button class="btn btn-outline-danger reset-filter">Reset</button>
-        <button class="btn btn-primary search-filter">Search</button>
-      </div>
-    </aside>
 
     <nav aria-label="breadcrumb">
       <div class="sub-header-left pull-left breadcrumb">
         <h1>
-          Store
+        Inwarding
           <a hijacked="yes" href="javascript:void(0)" class="backlisting-link"  >
             <i class="ti ti-chevrons-right" ></i>
-            <em >Inwarding</em></a>
-            <a hijacked="yes" href="javascript:void(0)" class="backlisting-link"  >
-              <i class="ti ti-chevrons-right" ></i>
-              <em >Part GRN</em></a>
+            <em >Part GRN</em></a>
+           
           </h1>
           <br>
           <span >Inwarding PO Invoice Details</span>
@@ -105,10 +21,7 @@
       <!-- <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Tables /</span> Basic Tables</h4> -->
 
       <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
-        <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
-        <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
-        <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
-        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+       
         <a class="btn btn-seconday"
            href="<%base_url('inwarding_invoice/') %><%$new_po_id %>" title="Back">
         <i class="ti ti-arrow-left"></i> </a>
@@ -118,110 +31,98 @@
 
       <!-- Main content -->
       <div class="card p-0 mt-4">
-           <div class="container">
+           <div class="">
               <div class="row">
                  <div class="col-12">
                     <!-- /.card -->
-
                        <div class="card-header">
                           <div class="row">
-                             <div class="col-lg-3">
-                                <div class="form-group">
-                                   <label for="">GRN Number</label>
-                                   <input type="text" readonly value="<%if ($status == 'verifed') %><%$inwarding_data[0]->grn_number %><%else %><%/if%>" class="form-control">
-                                </div>
-                             </div>
-                             <div class="col-lg-3">
-                                <div class="form-group">
-                                   <label for="">PO Number</label>
-                                   <input type="text" readonly value="<%$new_po[0]->po_number %>"
-                                      class="form-control">
-                                </div>
-                             </div>
-                             <div class="col-lg-3">
-                                <div class="form-group">
-                                   <label for="">PO Date</label>
-                                   <input type="text" readonly value="<%$new_po[0]->po_date %>"
-                                      class="form-control">
-                                </div>
-                             </div>
-                             <div class="col-lg-3">
-                                <div class="form-group">
-                                   <label for="">PO Status</label>
-                                   <input type="text" readonly value="<%if ($new_po[0]->status == 'accpet') %>Released
-                                    <%else %><%$new_po[0]->status%><%/if%>" class="form-control">
-                                </div>
-                             </div>
-                             <div class="col-lg-3">
-                                <div class="form-group">
-                                   <label for="">Supplier Name</label>
-                                   <input type="text" readonly
-                                      value="<%$supplier[0]->supplier_name %>" class="form-control">
-                                </div>
-                             </div>
-                             <div class="col-lg-3">
-                                <div class="form-group">
-                                   <label for="">Supplier Number</label>
-                                   <input type="text" readonly
-                                      value="<%$supplier[0]->supplier_number %>"
-                                      class="form-control">
-                                </div>
-                             </div>
-                             <div class="col-lg-3">
-                                <div class="form-group">
-                                   <label for="">Supplier GST</label>
-                                   <input type="text" readonly value="<%$supplier[0]->gst_number %>"
-                                      class="form-control">
-                                </div>
-                             </div>
-                             <div class="col-lg-3">
-                                <div class="form-group">
-                                   <label for="">Inwarding Status</label>
-                                   <input type="text" readonly
-                                      value="<%$inwarding_data[0]->status %>" class="form-control">
-                                </div>
-                             </div>
-                             <div class="col-lg-3">
-                                <div class="form-group">
-                                   <label for="">Invoice Number</label>
-                                   <input type="text" readonly
-                                      value="<%$inwarding_data[0]->invoice_number %>"
-                                      class="form-control">
-                                </div>
-                             </div>
-                             <div class="col-lg-3">
-                                <div class="form-group">
-                                   <label for="">Invoice Amount</label>
-                                   <input type="text" readonly
-                                      value="<%$inwarding_data[0]->invoice_amount %>"
-                                      class="form-control">
-                                </div>
-                             </div>
-                             <div class="col-lg-3">
-                                <div class="form-group">
-                                   <label for="">Software Calculated Amount</label>
-                                   <input type="text" readonly value="<%$actual_price %>"
-                                      class="form-control">
-                                </div>
-                             </div>
-                             <div class="col-lg-3">
-                                <div class="form-group">
-                                   <label for="">Invoice Amount Validation Status</label>
-                                   <input type="text" readonly value="<%$status %>"
-                                      class="form-control">
-                                </div>
-                             </div>
+                              <div class="tgdp-rgt-tp-sect">
+                                 <p class="tgdp-rgt-tp-ttl">GRN Number</p>
+                                 <p class="tgdp-rgt-tp-txt">
+                                 <%if ($status == 'verifed') %><%$inwarding_data[0]->grn_number %><%else %><%display_no_character()%><%/if%>
+                                 </p>
+                              </div>
+                            
+                              <div class="tgdp-rgt-tp-sect">
+                                 <p class="tgdp-rgt-tp-ttl">PO Number</p>
+                                 <p class="tgdp-rgt-tp-txt">
+                                 <%display_no_character($new_po[0]->po_number) %>
+                                 </p>
+                              </div>
+                              <div class="tgdp-rgt-tp-sect">
+                                 <p class="tgdp-rgt-tp-ttl">PO Date</p>
+                                 <p class="tgdp-rgt-tp-txt">
+                                 <%display_no_character($new_po[0]->po_date) %>
+                                 </p>
+                              </div>
+                            
+                              <div class="tgdp-rgt-tp-sect">
+                                 <p class="tgdp-rgt-tp-ttl">PO Status</p>
+                                 <p class="tgdp-rgt-tp-txt">
+                                 <%if ($new_po[0]->status == 'accpet') %>Released
+                                 <%else %><%$new_po[0]->status%><%/if%>
+                                 </p>
+                              </div>
+                              <div class="tgdp-rgt-tp-sect">
+                                 <p class="tgdp-rgt-tp-ttl">Supplier Name</p>
+                                 <p class="tgdp-rgt-tp-txt">
+                                 <%display_no_character($supplier[0]->supplier_name) %>
+                                 </p>
+                              </div>
+                              <div class="tgdp-rgt-tp-sect">
+                                 <p class="tgdp-rgt-tp-ttl">Supplier Number</p>
+                                 <p class="tgdp-rgt-tp-txt">
+                                 <%display_no_character($supplier[0]->supplier_number) %>
+                                 </p>
+                              </div>
+                              <div class="tgdp-rgt-tp-sect">
+                                 <p class="tgdp-rgt-tp-ttl">Supplier GST</p>
+                                 <p class="tgdp-rgt-tp-txt">
+                                 <%display_no_character($supplier[0]->gst_number) %>
+                                 </p>
+                              </div>
+                              <div class="tgdp-rgt-tp-sect">
+                                 <p class="tgdp-rgt-tp-ttl">Inwarding Status</p>
+                                 <p class="tgdp-rgt-tp-txt">
+                                 <%display_no_character($inwarding_data[0]->status) %>
+                                 </p>
+                              </div>
+                              <div class="tgdp-rgt-tp-sect">
+                                 <p class="tgdp-rgt-tp-ttl">Invoice Number</p>
+                                 <p class="tgdp-rgt-tp-txt">
+                                 <%display_no_character($inwarding_data[0]->invoice_number) %>
+                                 </p>
+                              </div>
+                              <div class="tgdp-rgt-tp-sect">
+                                 <p class="tgdp-rgt-tp-ttl">Invoice Amount</p>
+                                 <p class="tgdp-rgt-tp-txt">
+                                 <%display_no_character($inwarding_data[0]->invoice_amount) %>
+                                 </p>
+                              </div>
+                              <div class="tgdp-rgt-tp-sect">
+                                 <p class="tgdp-rgt-tp-ttl">Software Calculated Amount</p>
+                                 <p class="tgdp-rgt-tp-txt">
+                                 <%$actual_price %>
+                                 </p>
+                              </div>
+                              <div class="tgdp-rgt-tp-sect">
+                                 <p class="tgdp-rgt-tp-ttl">Invoice Amount Validation Status</p>
+                                 <p class="tgdp-rgt-tp-txt">
+                                 <%display_no_character($status) %>
+                                 </p>
+                              </div>
+                             
                              <%if ($isMultiClient == "true") %>
-                             <div class="col-lg-3">
-                                <div class="form-group">
-                                   <label for="">Delivery Location</label>
-                                   <input type="label" readonly value="<%$inwarding_data[0]->delivery_unit %>"
-                                      class="form-control">
-                                </div>
-                             </div>
+                             <div class="tgdp-rgt-tp-sect">
+                                 <p class="tgdp-rgt-tp-ttl">Delivery Location</p>
+                                 <p class="tgdp-rgt-tp-txt">
+                                 <%display_no_character($inwarding_data[0]->delivery_unit) %>
+                                 </p>
+                              </div>
                              <%/if%>
-                             <div class="col-lg-3">
-                                <div class="form-group">
+                             <div class="col-lg-12">
+                                <div class="">
                                    <!-- <a class="btn btn-dark mt-4"
                                       href="<%base_url('inwarding_invoice/') %><%$new_po_id %>">
                                    < Back </a> &nbsp; -->
@@ -255,17 +156,16 @@
                                             </div>
                                             <div class="modal-body">
                                                <form
-                                                  action="<%base_url('validate_invoice_amount') %>"
-                                                  method="POST">
+                                                  action="javascript:void(0);" class="validate_invoice_amount custom-form " method="post">
                                                   <div class="row">
                                                      <div class="col-lg-12">
                                                         <div class="form-group">
                                                            <label> Invoice Amount </label><span
                                                               class="text-danger">*</span>
-                                                           <input type="number" step="any"
+                                                           <input type="text" step="any"
                                                               name="invoice_amount"
                                                               placeholder="Invoice Amount"
-                                                              value="" class="form-control">
+                                                              value="" class="form-control required-input onlyNumericInput">
                                                            <input type="hidden" name="inwarding_id"
                                                               value="<%$inwarding_id %>"
                                                               class="form-control">
@@ -292,25 +192,26 @@
                                                   </div>
                                                </form>
                                             </div>
-                                         </div>
+                                        
+                                      </div>
                                       </div>
                                    </div>
                                    <div class="modal fade" id="exampleModalgenerate" tabindex="-1"
                                       role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                      <div class="modal-dialog " role="document">
+                                      <div class="modal-dialog modal-dialog-centered " role="document">
                                          <div class="modal-content">
                                             <div class="modal-header">
                                                <h5 class="modal-title" id="exampleModalLabel">Generate GRN
                                                </h5>
-                                               <button type="button" class="close" data-bs-dismiss="modal"
+                                               <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                   aria-label="Close">
                                                <span aria-hidden="true">&times;</span>
                                                </button>
                                             </div>
                                             <div class="modal-body">
                                                <form
-                                                  action="<%base_url('generate_grn') %>"
-                                                  method="POST">
+                                                  action="javascript:void(0);"
+                                                  method="POST" class="generate_grn">
                                                   <div class="row">
                                                      <div class="col-lg-12">
                                                         <div class="form-group">
@@ -340,251 +241,7 @@
                              </div>
                           </div>
                        </div>
-                       <div class="card-body">
-                          <table class="table table-bordered table-striped" id="example1">
-                             <thead>
-                                <tr>
-                                   <th>Sr No</th>
-                                   <th>Part Number</th>
-                                   <th>Part Description</th>
-                                   <th>UOM</th>
-                                   <th>PO QTY</th>
-                                   <th>Balance QTY</th>
-                                   <th>Price</th>
-                                   <th>Inwarding Qty</th>
-                                   <th>Action </th>
-                                </tr>
-                             </thead>
-                             <tbody>
-                               	<%if ($po_parts) %>
-                                       <%assign var="i" value=1%>
-                             		   <%assign var="final_po_amount" value=0%>
-                                       <%foreach from=$po_parts item=p %>
-
-                                           <%* //It will  select all matching child part master as we have multiple child part master for single child part id *%>
-                                           <%assign var="child_part_data" value=$p->child_part_data%>
-                                           <%*// $gst_structure_data = $this->Crud->get_data_by_id("gst_structure", $p->tax_id, "id"); *%>
-                                   		   <%assign var="uom_data" value=$p->uom_data%>
-                                   		   <%assign var="part_rate_new" value=0%>
-                                           <%if (empty($p->rate)) %>
-                                           		<%assign var="part_rate_new" value=$child_part_data[0]->part_rate%>
-                                           <%else %>
-                                           		<%assign var="part_rate_new" value=$p->rate%>
-                                           <%/if%>
-
-                                           <%*//here we are only geting rate of only one from above list *%>
-                                           <%assign var="total_rate" value=$part_rate_new * $p->qty%>
-                                           <%assign var="final_po_amount" value=$final_po_amount + $total_rate%>
-                                   		   <%assign var="grn_details_data" value=$p->grn_details_data%>
-                                   		   <%assign var="data_present" value='no'%>
-                                           <%if ($grn_details_data) %>
-                                           		<%assign var="data_present" value='yes'%>
-                                           <%else %>
-                                           		<%assign var="data_present" value='no'%>
-                                           <%/if%>
-                                           <%assign var="subcon_po_inwarding_master" value=$p->subcon_po_inwarding_master%>
-                                           <%if (empty($new_po[0]->process_id)) %>
-                                <tr>
-                                   <td><%$p->id %></td>
-                                   <td><%$child_part_data[0]->part_number %></td>
-                                   <td><%$child_part_data[0]->part_description %></td>
-                                   <td><%$uom_data[0]->uom_name %></td>
-                                   <td><%$p->qty %></td>
-                                   <td><%$p->pending_qty %></td>
-                                   <td><%$part_rate_new %></td>
-                                   <td>
-                                      <%if ($inwarding_data[0]->status == "accepted") %>
-                                            <%$grn_details_data[0]->qty %>
-                                       <%else if ($data_present == "yes") %>
-                                            <%$grn_details_data[0]->qty %>
-                                       <%else if ($inwarding_data[0]->status == "generate_grn") %>
-                                            NA
-                                       <%else%>
-                                      <form action="<%base_url('add_grn_qty') %>" method="post">
-                                         <input type="number" required step="any"
-                                            max="<%$p->pending_qty %>"
-                                            placeholder="Inwarding Qty"
-                                            name="qty"
-                                            class="form-control">
-                                         <input type="hidden" name="inwarding_id"
-                                            value="<%$inwarding_id  %>" class="form-control">
-                                         <input type="hidden"
-                                            name="new_po_id" value="<%$new_po_id %>"
-                                            class="form-control">
-                                         <input type="hidden"
-                                            name="part_id" value="<%$p->part_id %>"
-                                            class="form-control">
-                                         <input type="hidden"
-                                            name="invoice_number"
-                                            value="<%$inwarding_data[0]->invoice_number %>"
-                                            class="form-control">
-                                         <input type="hidden"
-                                            name="grn_number"
-                                            value="<%$inwarding_data[0]->grn_number %>"
-                                            class="form-control">
-                                         <input type="hidden"
-                                            name="po_part_id" value="<%$p->id %>"
-                                            class="form-control">
-                                         <input type="hidden"
-                                            name="pending_qty" value="<%$p->pending_qty %>"
-                                            class="form-control">
-                                         <input type="hidden"
-                                            name="part_rate" value="<%$part_rate_new %>"
-                                            class="form-control">
-                                         <input type="hidden"  name="tax_id"
-                                            value="<%$p->tax_id %>" class="form-control">
-                                         <input type="hidden" name="invoice_number"
-                                            value="<%$invoice_number %>" class="form-control">
-                                        <%/if%>
-                                   </td>
-                                   <td>
-                                   <%if ($data_present == "yes" && $status != "verifed") %>
-                                   <button type="button" class="btn btn-primary " title="Update" data-bs-toggle="modal" data-bs-target="#exampleModa<%$i %>l">
-                                   <i class="fa fa-edit"></i>
-                                   </button>
-                                   <div class="modal fade" id="exampleModa<%$i %>l" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                   <div class="modal-dialog " role="document">
-                                   <div class="modal-content">
-                                   <div class="modal-header">
-                                   <h5 class="modal-title" id="exampleModalLabel">Update Details</h5>
-                                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-
-                                   </button>
-                                   </div>
-                                   <div class="modal-body">
-                                   <form action="<%base_url('edit_grn_qty') %>" method="POST">
-                                   <div class="row">
-                                   <div class="col-lg-12">
-                                   <div class="form-group">
-                                   <label> Inwarding Qty </label><span class="text-danger">*</span>
-                                   <input type="number" required step="any"
-                                      max="<%$p->pending_qty %>"
-                                      name="qty"
-                                      value="<%$grn_details_data[0]->qty %>"
-                                      class="form-control">
-                                   <input type="hidden"
-                                      name="inwarding_id"
-                                      value="<%$inwarding_id %>" class="form-control">
-                                   <input type="hidden"
-                                      name="new_po_id" value="<%$new_po_id %>"
-                                      class="form-control">
-                                   <input type="hidden"
-                                      name="part_id" value="<%$p->part_id %>"
-                                      class="form-control">
-                                   <input type="hidden"
-                                      name="invoice_number"
-                                      value="<%$inwarding_data[0]->invoice_number %>"
-                                      class="form-control">
-                                   <input type="hidden"
-                                      name="grn_number"
-                                      value="<%$inwarding_data[0]->grn_number %>"
-                                      class="form-control">
-                                   <input type="hidden"
-                                      name="po_part_id" value="<%$p->id %>"
-                                      class="form-control">
-                                   <input type="hidden"
-                                      name="part_rate" value="<%$part_rate_new %>"
-                                      class="form-control">
-                                   <input type="hidden"
-                                      name="pending_qty" value="<%$p->pending_qty %>"
-                                      class="form-control">
-                                   <input type="hidden"
-                                      name="tax_id"
-                                      value="<%$p->tax_id %>" class="form-control">
-                                   </div>
-                                   <div class="modal-footer">
-                                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                   <button type="submit" class="btn btn-primary">Save</button>
-                                   </div>
-                                   </form>
-                                   </div>
-                                   </div>
-                                   </div>
-                                   </div>
-                                   <%else if ($status == "not-verifed") %>
-                                   <button type="submit" class="btn btn-info">Submit</button>
-                                   </form>
-                                   <%/if%>
-                                   </td>
-                                </tr>
-                                <%else %>
-                                <tr>
-        	                        <td><%$i %></td>
-        	                        <td><%$child_part_data[0]->part_number %></td>
-        	                        <td><%$child_part_data[0]->part_description %></td>
-        	                        <td><%$uom_data[0]->uom_name %></td>
-        	                        <td><%$p->qty %></td>
-        	                        <td><%$p->pending_qty %></td>
-        	                        <td><%$part_rate_new %></td>
-        	                        <td>
-        	                        <%if ($inwarding_data[0]->status == "accepted") %>
-        	                               <%$grn_details_data[0]->qty %>
-        	                        <%else if ($data_present == "yes") %>
-        	                               <%$grn_details_data[0]->qty %>
-        	                        <%else %>
-        	                        <%if (empty($subcon_po_inwarding_master[0]->inwarding_qty)) %>
-        	                        <form action="<%base_url('add_grn_qty_subcon_view') %>"
-        	                           method="post">
-        	                        <input type="number" required step="any"
-        	                           max="<%$p->pending_qty %>"
-        	                           placeholder="Inwarding Qty" name="qty"
-        	                           class="form-control">
-        	                        <input type="hidden" name="inwarding_id"
-        	                           value="<%$inwarding_id %>" class="form-control">
-        	                        <input type="hidden" placeholder="Inwarding Qty"
-        	                           name="new_po_id" value="<%$new_po_id %>"
-        	                           class="form-control">
-        	                        <input type="hidden" placeholder="Inwarding Qty"
-        	                           name="part_id_new"
-        	                           value="<%$child_part_data[0]->child_part_id %>"
-        	                           class="form-control">
-        	                        <input type="hidden" placeholder="Inwarding Qty"
-        	                           name="part_id" value="<%$p->part_id %>"
-        	                           class="form-control">
-        	                        <input type="hidden" placeholder="number invoice"
-        	                           name="invoice_number"
-        	                           value="<%$inwarding_data[0]->invoice_number %>"
-        	                           class="form-control">
-        	                        <input type="hidden" placeholder="Inwarding Qty"
-        	                           name="grn_number"
-        	                           value="<%$inwarding_data[0]->grn_number %>"
-        	                           class="form-control">
-        	                        <input type="hidden" placeholder="Inwarding Qty"
-        	                           name="po_part_id" value="<%$p->id %>"
-        	                           class="form-control">
-        	                        <input type="hidden" placeholder="Inwarding Qty"
-        	                           name="pending_qty" value="<%$p->pending_qty %>"
-        	                           class="form-control">
-        	                        <input type="hidden" placeholder="Inwarding Qty"
-        	                           name="part_rate" value="<%$part_rate_new %>"
-        	                           class="form-control">
-        	                        <input type="hidden" placeholder="Inwarding Qty" name="tax_id"
-        	                           value="<%$p->tax_id %>" class="form-control">
-        	                        <%else %>
-        	                               <%$subcon_po_inwarding_master[0]->inwarding_qty %>
-        	                        <%/if%>
-        	                        <%/if%>
-        	                        </td>
-        	                        <td>
-        	                        <%if ($subcon_po_inwarding_master) %>
-        	                        <a class="btn btn-info"
-        	                           href="<%base_url('grn_subcon_view/') %><%$p->part_id %>/<%$new_po_id %>/<%$inwarding_data[0]->id %>/<%$p->part_id %>"><i class="fas fa-eye"></i></a>
-        	                        <%else if ($data_present == "yes") %>
-
-        	                        <%else if ($status == "not-verifed") %>
-        		                        <button type="submit" class="btn btn-info">Submit</button>
-        		                        </form>
-        	                        <%/if%>
-        	                        </td>
-                                </tr>
-                                <%/if%>
-                                <%assign var='i' value=$i+1%>
-                                   <%/foreach%>
-                                <%/if%>
-
-                             </tbody>
-                          </table>
-                          </div>
+                       
                           </div>
                           <!-- /.card-body -->
                        </div>
@@ -592,6 +249,263 @@
                     </div>
                     <!-- /.col -->
                  </div>
+      <div class="card p-0 mt-4">
+                 <div class="table-responsive-border">
+                 <table  width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped scrollable" style="border-collapse: collapse;" border-color="#e1e1e1" id="view_add_challan">
+                 <thead>
+                    <tr>
+                       <!-- <th>Sr No</th> -->
+                       <th>Part Number</th>
+                       <th>Part Description</th>
+                       <th>UOM</th>
+                       <th>PO QTY</th>
+                       <th>Balance QTY</th>
+                       <th>Price</th>
+                       <th>Inwarding Qty</th>
+                       <th class="text-center">Action </th>
+                    </tr>
+                 </thead>
+                 <tbody  style="max-height: 20em;">
+                      <%if ($po_parts) %>
+                           <%assign var="i" value=1%>
+                          <%assign var="final_po_amount" value=0%>
+                           <%foreach from=$po_parts item=p %>
+
+                               <%* //It will  select all matching child part master as we have multiple child part master for single child part id *%>
+                               <%assign var="child_part_data" value=$p->child_part_data%>
+                               <%*// $gst_structure_data = $this->Crud->get_data_by_id("gst_structure", $p->tax_id, "id"); *%>
+                                <%assign var="uom_data" value=$p->uom_data%>
+                                <%assign var="part_rate_new" value=0%>
+                               <%if (empty($p->rate)) %>
+                                     <%assign var="part_rate_new" value=$child_part_data[0]->part_rate%>
+                               <%else %>
+                                     <%assign var="part_rate_new" value=$p->rate%>
+                               <%/if%>
+
+                               <%*//here we are only geting rate of only one from above list *%>
+                               <%assign var="total_rate" value=$part_rate_new * $p->qty%>
+                               <%assign var="final_po_amount" value=$final_po_amount + $total_rate%>
+                                <%assign var="grn_details_data" value=$p->grn_details_data%>
+                                <%assign var="data_present" value='no'%>
+                               <%if ($grn_details_data) %>
+                                     <%assign var="data_present" value='yes'%>
+                               <%else %>
+                                     <%assign var="data_present" value='no'%>
+                               <%/if%>
+                               <%assign var="subcon_po_inwarding_master" value=$p->subcon_po_inwarding_master%>
+                               <%if (empty($new_po[0]->process_id)) %>
+                    <tr>
+                      <!-- <td><%$p->id %></td> -->
+                       <td><%$child_part_data[0]->part_number %></td>
+                       <td><%$child_part_data[0]->part_description %></td>
+                       <td><%$uom_data[0]->uom_name %></td>
+                       <td><%$p->qty %></td>
+                       <td><%$p->pending_qty %></td>
+                       <td><%$part_rate_new %></td>
+                       <td>
+                          <%if ($inwarding_data[0]->status == "accepted") %>
+                                <%$grn_details_data[0]->qty %>
+                           <%else if ($data_present == "yes") %>
+                                <%$grn_details_data[0]->qty %>
+                           <%else if ($inwarding_data[0]->status == "generate_grn") %>
+                                NA
+                           <%else%>
+                          <form action="javascript:void(0);" class="add_grn_qty_form custom-form add_grn_qty_form_<%$p->id %>" method="post" data-id="<%$p->id %>">
+                          <div class="form-group">
+                          <label for="tool_number" style="display:none ;">Inwarding Qty </label>
+                          <input type="text"  step="any"
+                                max="<%$p->pending_qty %>"
+                                placeholder="Inwarding Qty"
+                                name="qty"
+                                class="form-control required-input onlyNumericInput">
+                        </div>
+                             
+                             <input type="hidden" name="inwarding_id"
+                                value="<%$inwarding_id  %>" class="form-control">
+                             <input type="hidden"
+                                name="new_po_id" value="<%$new_po_id %>"
+                                class="form-control">
+                             <input type="hidden"
+                                name="part_id" value="<%$p->part_id %>"
+                                class="form-control">
+                             <input type="hidden"
+                                name="invoice_number"
+                                value="<%$inwarding_data[0]->invoice_number %>"
+                                class="form-control">
+                             <input type="hidden"
+                                name="grn_number"
+                                value="<%$inwarding_data[0]->grn_number %>"
+                                class="form-control">
+                             <input type="hidden"
+                                name="po_part_id" value="<%$p->id %>"
+                                class="form-control">
+                             <input type="hidden"
+                                name="pending_qty" value="<%$p->pending_qty %>"
+                                class="form-control">
+                             <input type="hidden"
+                                name="part_rate" value="<%$part_rate_new %>"
+                                class="form-control">
+                             <input type="hidden"  name="tax_id"
+                                value="<%$p->tax_id %>" class="form-control">
+                             <input type="hidden" name="invoice_number"
+                                value="<%$invoice_number %>" class="form-control">
+                            <%/if%>
+                       </td>
+                       <td  class="text-center">
+                       <%if ($data_present == "yes" && $status != "verifed") %>
+                       <button type="button" class="btn btn-primary " title="Update" data-bs-toggle="modal" data-bs-target="#exampleModa<%$i %>l">
+                       <i class="fa fa-edit"></i>
+                       </button>
+                       <div class="modal fade" id="exampleModa<%$i %>l" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                       <div class="modal-dialog modal-dialog-centered" role="document">
+                       <div class="modal-content">
+                       <div class="modal-header">
+                       <h5 class="modal-title" id="exampleModalLabel">Update Details</h5>
+                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+
+                       </button>
+                       </div>
+                       <div class="modal-body ">
+                       <form  action="javascript:void(0);" class="edit_grn_qty_form custom-form edit_grn_qty_form_<%$p->id %>" method="post" data-id="<%$p->id %>">
+                       <div class="row">
+                       <div class="col-lg-12">
+                       <div class="form-group">
+                       <label> Inwarding Qty </label><span class="text-danger">*</span>
+                       <input type="text"  step="any"
+                          max="<%$p->pending_qty %>"
+                          name="qty"
+                          value="<%$grn_details_data[0]->qty %>"
+                          class="form-control required-input onlyNumericInput">
+                       <input type="hidden"
+                          name="inwarding_id"
+                          value="<%$inwarding_id %>" class="form-control">
+                       <input type="hidden"
+                          name="new_po_id" value="<%$new_po_id %>"
+                          class="form-control">
+                       <input type="hidden"
+                          name="part_id" value="<%$p->part_id %>"
+                          class="form-control">
+                       <input type="hidden"
+                          name="invoice_number"
+                          value="<%$inwarding_data[0]->invoice_number %>"
+                          class="form-control">
+                       <input type="hidden"
+                          name="grn_number"
+                          value="<%$inwarding_data[0]->grn_number %>"
+                          class="form-control">
+                       <input type="hidden"
+                          name="po_part_id" value="<%$p->id %>"
+                          class="form-control">
+                       <input type="hidden"
+                          name="part_rate" value="<%$part_rate_new %>"
+                          class="form-control">
+                       <input type="hidden"
+                          name="pending_qty" value="<%$p->pending_qty %>"
+                          class="form-control">
+                       <input type="hidden"
+                          name="tax_id"
+                          value="<%$p->tax_id %>" class="form-control">
+                       </div>
+                       <div class="modal-footer">
+                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                       <button type="submit" class="btn btn-primary">Save</button>
+                       </div>
+                       </form>
+                       </div>
+                       </div>
+                       </div>
+                       </div>
+                       <%else if ($status == "not-verifed") %>
+                       <button type="submit" class="btn btn-info">Submit</button>
+                       </form>
+                       <%else%>
+                       <%display_no_character()%>
+                       <%/if%>
+                       </td>
+                    </tr>
+                    <%else %>
+                     
+                    <tr>
+                       <!-- <td><%$i %></td> -->
+                       <td><%$child_part_data[0]->part_number %></td>
+                       <td><%$child_part_data[0]->part_description %></td>
+                       <td><%$uom_data[0]->uom_name %></td>
+                       <td><%$p->qty %></td>
+                       <td><%$p->pending_qty %></td>
+                       <td><%$part_rate_new %></td>
+                       <td >
+                       <%if ($inwarding_data[0]->status == "accepted") %>
+                              <%$grn_details_data[0]->qty %>
+                       <%else if ($data_present == "yes") %>
+                              <%$grn_details_data[0]->qty %>
+                       <%else %>
+                       <%if (empty($subcon_po_inwarding_master[0]->inwarding_qty)) %>
+                       <form action="<%base_url('add_grn_qty_subcon_view') %>"
+                          method="post">
+                       <input type="number" required step="any"
+                          max="<%$p->pending_qty %>"
+                          placeholder="Inwarding Qty" name="qty"
+                          class="form-control">
+                       <input type="hidden" name="inwarding_id"
+                          value="<%$inwarding_id %>" class="form-control">
+                       <input type="hidden" placeholder="Inwarding Qty"
+                          name="new_po_id" value="<%$new_po_id %>"
+                          class="form-control">
+                       <input type="hidden" placeholder="Inwarding Qty"
+                          name="part_id_new"
+                          value="<%$child_part_data[0]->child_part_id %>"
+                          class="form-control">
+                       <input type="hidden" placeholder="Inwarding Qty"
+                          name="part_id" value="<%$p->part_id %>"
+                          class="form-control">
+                       <input type="hidden" placeholder="number invoice"
+                          name="invoice_number"
+                          value="<%$inwarding_data[0]->invoice_number %>"
+                          class="form-control">
+                       <input type="hidden" placeholder="Inwarding Qty"
+                          name="grn_number"
+                          value="<%$inwarding_data[0]->grn_number %>"
+                          class="form-control">
+                       <input type="hidden" placeholder="Inwarding Qty"
+                          name="po_part_id" value="<%$p->id %>"
+                          class="form-control">
+                       <input type="hidden" placeholder="Inwarding Qty"
+                          name="pending_qty" value="<%$p->pending_qty %>"
+                          class="form-control">
+                       <input type="hidden" placeholder="Inwarding Qty"
+                          name="part_rate" value="<%$part_rate_new %>"
+                          class="form-control">
+                       <input type="hidden" placeholder="Inwarding Qty" name="tax_id"
+                          value="<%$p->tax_id %>" class="form-control">
+                       <%else %>
+                              <%$subcon_po_inwarding_master[0]->inwarding_qty %>
+                       <%/if%>
+                       <%/if%>
+                       </td>
+                       <td class="text-center">
+                       <%if ($subcon_po_inwarding_master) %>
+                       <a class="btn btn-info"
+                          href="<%base_url('grn_subcon_view/') %><%$p->part_id %>/<%$new_po_id %>/<%$inwarding_data[0]->id %>/<%$p->part_id %>"><i class="fas fa-eye"></i></a>
+                       <%else if ($data_present == "yes") %>
+                           
+                       <%else if ($status == "not-verifed") %>
+                          <button type="submit" class="btn btn-info">Submit</button>
+                          </form>
+                          <%else%>
+                          <%display_no_character()%>
+                       <%/if%>
+                       </td>
+                    </tr>
+                    <%/if%>
+                    <%assign var='i' value=$i+1%>
+                       <%/foreach%>
+                    <%/if%>
+
+                 </tbody>
+              </table>
+                 </div>
+
+      </div>
                  <!-- /.row -->
               </div>
               <!-- /.container-fluid -->
@@ -606,6 +520,8 @@
   </div>
 
 
-
+  <script type="text/javascript">
+  var base_url = <%$base_url|@json_encode%>
+</script>
 
   <script src="<%$base_url%>public/js/store/view_supplier_challan.js"></script>

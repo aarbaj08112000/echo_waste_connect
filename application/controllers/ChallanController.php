@@ -34,38 +34,129 @@ class ChallanController extends CommonController {
 		$queryList = "SELECT c.id, c.challan_number FROM `challan` as c WHERE c.clientId =  ".$this->Unit->getSessionClientId()." order by c.id desc";
 		$data['challanNo_list'] = $this->Crud->customQuery($queryList);
 		$data['supplier'] = $this->Crud->read_data("supplier");
-
-		if($challanId == "ALL"){
-			$query ="SELECT c.*,s.supplier_name,s.id as sup_id
-						FROM `supplier` as s, `challan` as c
-						WHERE
-						c.clientId =  ".$this->Unit->getSessionClientId()."
-						AND c.supplier_id = s.id
-						order by c.id desc";
-		}else if(empty($challanId) && empty($supplierId)) {
-			$query ="SELECT c.*,s.supplier_name,s.id as sup_id
-						FROM `supplier` as s, `challan` as c
-						WHERE
-						c.clientId =  ".$this->Unit->getSessionClientId()."
-						AND c.supplier_id = s.id
-						order by c.id desc limit 10 ";
-		}else{
-			$suppCriteria = empty($supplierId)? " c.supplier_id is NOT NULL " : "c.supplier_id = ".$supplierId;
-			$chalCriteria = empty($challanId)  ? "c.id is NOT NULL " : " c.id =".$challanId;
-			$query = "SELECT c.*,s.supplier_name,s.id as sup_id
-					FROM `supplier` as s, `challan` as c
-		    		WHERE
-					c.clientId =  ".$this->Unit->getSessionClientId()."
-					AND c.supplier_id = s.id and ( ".$suppCriteria." AND ".$chalCriteria." ) order by c.id asc";
-		}
-		$data['challan'] = $this->Crud->customQuery($query);
+		
+		
 		$data['consignee_list'] = $this->Crud->read_data_acc("consignee");
-
 		//set search selection
 		$data['challan_id']=$challanId;
 		$data['supplier_id']=$supplierId;
 
+		$column[] = [
+            "data" => "challan_number",
+            "title" => "Challan Number",
+            "width" => "10%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "remark",
+            "title" => "Remark",
+            "width" => "13%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "vechical_number",
+            "title" => "Vechical Number",
+            "width" => "12%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "mode",
+            "title" => "Mode Of Transport",
+            "width" => "10%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "transpoter",
+            "title" => "Transporter",
+            "width" => "8%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "l_r_number",
+            "title" => "L.R number",
+            "width" => "8%",
+            "className" => "dt-center",
+        ];
+		$column[] = [
+				"data" => "created_date",
+				"title" => "Date",
+				"width" => "7%",
+				"className" => "dt-center",
+		];
+		
+        $column[] = [
+            "data" => "supplier_name",
+            "title" => "Supplier",
+            "width" => "7%",
+            "className" => "dt-center status-row",
+        ];
+
+		$column[] = [
+            "data" => "status",
+            "title" => "Status",
+            "width" => "7%",
+            "className" => "dt-center status-row",
+        ];
+
+		$column[] = [
+            "data" => "view_details",
+            "title" => "View Details",
+            "width" => "7%",
+            "className" => "dt-center status-row",
+        ];
+        
+        $data["data"] = $column;
+        $data["is_searching_enable"] = false;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No GRN Validation data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
+
 		$this->loadView('store/view_add_challan', $data);
+	}
+	public function get_challan_search_data()
+	{
+		$post_data = $this->input->post();
+        $column_index = array_column($post_data["columns"], "data");
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+            if ($key == 0) {
+                $order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+                $order_by .=
+                    "," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+		$data = $this->SupplierParts->get_challan_search_view_data(
+            $condition_arr,
+            $post_data["search"]
+        );
+		// pr($data,1);
+		foreach ($data as $key => $value) {
+			$edit_data = base64_encode(json_encode($value)); 
+			$data[$key]['view_details'] = '<a href="'.base_url("view_challan_by_id/").$value['id'].'" class="" title="View"><i class="ti ti-eye"></i></a>';
+		}	
+		// pr($data,1);
+		$data["data"] = $data;
+        $total_record = $this->SupplierParts->get_challan_search_data_count([], $post_data["search"]);
+        $data["recordsTotal"] = $total_record['total_record'];
+        $data["recordsFiltered"] = $total_record['total_record'];
+        echo json_encode($data);
+        exit();
+		
 	}
 
 	public function view_challan_by_id()
@@ -97,6 +188,7 @@ class ChallanController extends CommonController {
 
 	public function add_challan_parts()
 	{
+		
 		$challan_id = $this->input->post('challan_id');
 
 		$challanPartCount = $this->db->query('SELECT COUNT(*) as count FROM `challan_parts` where challan_id = ' . $challan_id)->row();
@@ -117,10 +209,12 @@ class ChallanController extends CommonController {
 		);
 
 		$challan_parts = $this->Crud->get_data_by_id_multiple_condition("challan_parts", $uniqueCheck);
-
+		$success = 0;
+		$messages = "Somthing went Wrong";
 		if ($challan_parts) {
-			$this->addWarningMessage("Part already present.");
-			$this->redirectMessage();
+			$messages = "Part already present.";
+			// $this->addWarningMessage("Part already present.");
+			// $this->redirectMessage();
 		} else {
 			$child_part_data = $this->SupplierParts->getSupplierPartById($this->input->post('part_id'));
 			$data = array(
@@ -141,19 +235,23 @@ class ChallanController extends CommonController {
 			$current_stock = $child_part_data[0]->stock;
 
 			if ((float)$qty > (float)$current_stock) {
-				$this->addWarningMessage("Store stock quantity is less than entered quantity.");
-				$this->redirectMessage();
+				$messages = "Store stock quantity is less than entered quantity.";
+				// $this->addWarningMessage("Store stock quantity is less than entered quantity.");
+				// $this->redirectMessage();
 			} else {
 				$inser_query = $this->Crud->insert_data("challan_parts", $data);
 				if ($inser_query) {
 					$updateResult = $this->db->query("update child_part set stock = stock - ".$qty.", sub_con_stock = sub_con_stock + ".$qty."
 					where child_part.id =".$part_id);
 					if($updateResult){
-						$this->addSuccessMessage("Part added.");
+						$messages = "Part added.";
+						$success = 1;
+						// $this->addSuccessMessage("Part added.");
 					}else{
-						$this->addErrorMessage("Error while adding quantity to stock.");
+						$messages = "Error while adding quantity to stock.";
+						// $this->addErrorMessage("Error while adding quantity to stock.");
 					}
-					$this->redirectMessage();
+					// $this->redirectMessage();
 
 						/*
 						$current_stock = $child_part_data[0]->stock;
@@ -174,15 +272,25 @@ class ChallanController extends CommonController {
 						}*/
 
 				} else {
-					$this->addErrorMessage("Error while adding quantity.");
-					$this->redirectMessage();
+					$messages = "Error while adding quantity.";
+					// $this->addErrorMessage("Error while adding quantity.");
+					// $this->redirectMessage();
 				}
 			}
 		}
+
+		$return_arr = [];
+		$return_arr['success'] = $success;
+		$return_arr['messages'] = $messages;
+		echo json_encode($return_arr);
+
+		exit();
 	}
 
 	public function delete_challan_part()
 	{
+
+		// pr("ok",1);
 		$id = $this->input->post('id');
 		$partQty = $this->input->post('partQty');
 		$part_id = $this->input->post('part_id');
@@ -193,21 +301,31 @@ class ChallanController extends CommonController {
 			"id" => $id
 		);
 		$result = $this->Crud->delete_data($table_name, $data);
-
+		$success = 0;
+		$messages = "Somthing went Wrong";
 		if ($result) {
 			//select stock,sub_con_stock from child_part where id = 1
 			//97,1003
 			$updateResult = $this->db->query("update child_part set stock = stock + ".$partQty.", sub_con_stock = sub_con_stock - ".$partQty."
 			where child_part.id =".$part_id);
 			if($updateResult){
-				$this->addSuccessMessage("Part successfully deleted.");
+				$success = 1;
+				$messages = "Part successfully deleted.";
+				// $this->addSuccessMessage("Part successfully deleted.");
 			}else{
-				$this->addErrorMessage("Error while updating Qty to stock.");
+				$messages = "Error while updating Qty to stock.";
+				// $this->addErrorMessage("Error while updating Qty to stock.");
 			}
 		} else {
-			$this->addErrorMessage("Failed to delete part.");
+			$messages = "Failed to delete part.";
+			// $this->addErrorMessage("Failed to delete part.");
 		}
-		$this->redirectMessage();
+		$return_arr = [];
+		$return_arr['success'] = $success;
+		$return_arr['messages'] = $messages;
+		echo json_encode($return_arr);
+
+		exit();
 	}
 
 	private function getPage($viewPage,$viewData){

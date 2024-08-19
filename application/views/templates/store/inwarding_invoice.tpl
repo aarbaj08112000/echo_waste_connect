@@ -3,99 +3,15 @@
   <!-- Content -->
 
   <div class="container-xxl flex-grow-1 container-p-y">
-    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme filter-popup-block" style="width: 0px;">
-      <div class="app-brand demo justify-content-between">
-        <a href="javascript:void(0)" class="app-brand-link">
-          <span class="app-brand-text demo menu-text fw-bolder ms-2">Filter</span>
-        </a>
-        <div class="close-filter-btn d-block filter-popup cursor-pointer">
-          <i class="ti ti-x fs-8"></i>
-        </div>
-      </div>
-      <nav class="sidebar-nav scroll-sidebar filter-block" data-simplebar="init">
-        <div class="simplebar-content" >
-          <ul class="menu-inner py-1">
-            <!-- Dashboard -->
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Part Number</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <select name="child_part_id" class="form-control select2" id="part_number_search">
-                    <option value="">Select Part Number</option>
-                    <%foreach from=$supplier_part_list item=parts%>
-                    <option value="<%$parts->id%>"><%$parts->part_number %></option>
-                    <%/foreach%>
-                  </select>
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Part Description</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="part_description_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-
-          </ul>
-        </div>
-      </nav>
-      <div class="filter-popup-btn">
-        <button class="btn btn-outline-danger reset-filter">Reset</button>
-        <button class="btn btn-primary search-filter">Search</button>
-      </div>
-    </aside>
-
+   
     <nav aria-label="breadcrumb">
       <div class="sub-header-left pull-left breadcrumb">
         <h1>
-          Store
+        Inwarding
           <a hijacked="yes" href="javascript:void(0)" class="backlisting-link"  >
             <i class="ti ti-chevrons-right" ></i>
-            <em >Inwarding</em></a>
-            <a hijacked="yes" href="javascript:void(0)" class="backlisting-link"  >
-              <i class="ti ti-chevrons-right" ></i>
-              <em >Part GRN</em></a>
+            <em >Part GRN</em></a>
+            
           </h1>
           <br>
           <span >Inwarding PO Invoice Numbers</span>
@@ -104,10 +20,8 @@
       <!-- <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Tables /</span> Basic Tables</h4> -->
 
       <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
-        <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
-        <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
-        <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
-        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+       
+       
         <button type="button" class="btn btn-seconday" title="Add Invoice Number" data-bs-toggle="modal" data-bs-target="#exampleModal">
           <i class="ti ti-plus"></i></button>
           <a class="btn btn-seconday" type="button" href="<%base_url('inwarding') %>"><i class="ti ti-arrow-left" title="Back To Item Part List"></i></a>
@@ -188,12 +102,13 @@
 
       <!-- Main content -->
       <div class="card p-0 mt-4">
+      
         <div class="table-responsive text-nowrap">
-          <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="view_add_challan">
+          <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped scrollable" style="border-collapse: collapse;" border-color="#e1e1e1" id="view_add_challan">
 
               <thead>
                 <tr>
-                  <th>Sr No</th>
+                  <!-- <th>Sr No</th> -->
                   <th>Invoice Number</th>
                   <th>Invoice Date</th>
                   <th>GRN Date</th>
@@ -204,16 +119,16 @@
                   <?php if($isMultiClient == "true") { ?>
                     <th>Delivery Location</th>
                   <?php } ?>
-                  <th>View Details</th>
+                  <th class="text-center">View Details</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody style="max-height: 20em;">
                 <%assign var='i' value=1%>
                 <%if ($inwarding_data) %>
                 <%foreach from=$inwarding_data item=t %>
                 <%assign var='grn_number' value=$t->grn_number %>
                 <tr>
-                  <td><%$i %></td>
+                  <!-- <td><%$i %></td> -->
                   <td><%$t->invoice_number %></td>
                   <td><%$t->invoice_date %></td>
                   <td><%$t->grn_date %></td>
@@ -231,48 +146,73 @@
                   <%if ($isMultiClient == "true") %>
                   <td><%$t->delivery_unit %></td>
                   <%/if%>
-                  <td>
+                  <td class="text-center">
                     <a href="<%base_url('inwarding_details/') %><%$t->id %>/<%$new_po_id %>" class="btn btn-primary" href="">Inwarding Details</a>
                   </td>
                 </tr>
                 <%assign var='i' value=$i+1%>
                 <%/foreach%>
+                <%else%>
+                <td colspan="9" class="text-center">No Data Found</td>
                 <%/if%>
               </tbody>
             </table>
 
 
-            <table id="example1" class="table table-bordered table-striped mb-5">
-              <thead>
-                <tr>
-                  <th>Sr No</th>
-                  <th>Part Number</th>
-                  <th>Part Description</th>
-                  <th>Balance QTY </th>
-                </tr>
-              </thead>
-
-              <tbody>
-                <%assign var='flag' value=0%>
-                <%if ($po_parts) %>
-                <%assign var='final_po_amount' value=0%>
-                <%assign var='i' value=1%>
-                <%foreach from=$po_parts item=p %>
-                <%assign var='qty' value=0%>
-                <%assign var='qty' value=$p->pending_qty%>
-                <%assign var='flag' value=$flag + $qty%>
-                <tr>
-                  <td><%$i %></td>
-                  <td><%$p->child_part_data->part_number %></td>
-                  <td><%$p->child_part_data->part_description %></td>
-                  <td><%$qty %></td>
-                </tr>
-                <%assign var='i' value=$i+1%>
-                <%/foreach%>
-                <%/if%>
-              </tbody>
-            </table>
+          
         </div>
+        
+      </div>
+      <div class="card p-0 mt-4">
+      <div class="tabTitle position-relative">
+                <h2 id="cc_sh_sys_static_field_3" style="    width: 98%;
+">
+                    <span class="d-inline-block mt-3">
+                    PO Parts
+                    
+                    </span>
+                    <div class="  d-grid gap-2 d-md-flex justify-content-md-end " style="    float: inline-end;">
+
+                <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
+                <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
+                
+                 
+              </div>
+                    
+                </h2>
+                
+            </div>
+    
+      <table id="inwardin_product" class="table table-striped">
+      <thead>
+        <tr>
+          <!--<th>Sr No</th> -->
+          <th>Part Number</th>
+          <th>Part Description</th>
+          <th>Balance QTY </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <%assign var='flag' value=0%>
+        <%if ($po_parts) %>
+        <%assign var='final_po_amount' value=0%>
+        <%assign var='i' value=1%>
+        <%foreach from=$po_parts item=p %>
+        <%assign var='qty' value=0%>
+        <%assign var='qty' value=$p->pending_qty%>
+        <%assign var='flag' value=$flag + $qty%>
+        <tr>
+          <!--<td><%$i %></td>-->
+          <td><%$p->child_part_data->part_number %></td>
+          <td><%$p->child_part_data->part_description %></td>
+          <td><%$qty %></td>
+        </tr>
+        <%assign var='i' value=$i+1%>
+        <%/foreach%>
+        <%/if%>
+      </tbody>
+    </table>
       </div>
       <!--/ Responsive Table -->
     </div>

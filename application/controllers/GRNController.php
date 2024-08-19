@@ -317,6 +317,8 @@ class GRNController extends CommonController
 					"created_year" => $this->year
 				);
 
+				$success = 0;
+				$messages = "Somthing went wrong.";
 				$result = $this->Crud->insert_data("grn_details", $data);
 				if ($result) {
 					$pending_qty =
@@ -326,13 +328,21 @@ class GRNController extends CommonController
 					$result = $this->Crud->update_data("po_parts", $data, $po_part_id);
 
 					if ($result) {
-						echo "<script>alert('Successfully Added');document.location='" . base_url('inwarding_details/') . $inwarding_id . "/" . $po_number . "'</script>";
+						$success = 1;
+						$messages = "Successfully Added";
 					} else {
-						echo "none error po_parts update not found";
+						// echo "none error po_parts update not found";
+						$messages = "none error po_parts update not found";
 					}
 				} else {
-					echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+					$messages = "Unable to Add";
+					// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 				}
+				$result = [];
+				$result['messages'] = $messages;
+				$result['success'] = $success;
+				echo json_encode($result);
+				exit();
 			}
 
 
@@ -456,7 +466,8 @@ class GRNController extends CommonController
 					);
 
 					$new_pending_qty = $pending_qty - ($qty - $old_qty );
-
+					$success = 0;
+					$messages = "Something went wrong.";
 					$update_result = $this->Crud->update_data("grn_details", $update_data, $grn_details[0]->id);
 					if ($update_result) {
 						$data = array(
@@ -465,25 +476,33 @@ class GRNController extends CommonController
 
 						$result = $this->Crud->update_data("po_parts", $data, $po_part_id);
 						if ($result) {
-							$this->addSuccessMessage('Details updated.');
-							$this->redirectMessage('inwarding_details/'. $inwarding_id . "/" . $po_number);
-							exit();
+							$success = 1;
+							$messages = "Details updated.";
+							// $this->addSuccessMessage('Details updated.');
 						} else {
-							$this->addErrorMessage('PO parts are not updated or not found.');
+							$messages = "PO parts are not updated or not found.";
+							//$this->addErrorMessage('PO parts are not updated or not found.');
 						}
 					} else {
-						$this->addErrorMessage('Unable to update the details.');
+						$messages = "Unable to update the details.";
+						//$this->addErrorMessage('Unable to update the details.');
 					}
 				}else{
-					$this->addErrorMessage('No GRN details found for this part.');
+					$messages = "No GRN details found for this part.";
+					// $this->addErrorMessage('No GRN details found for this part.');
 				}
 
-				$this->redirectMessage();
+				$result = [];
+				$result['messages'] = $messages;
+				$result['success'] = $success;
+				echo json_encode($result);
+				exit();
 			}
 
 
 			public function generate_grn()
 			{
+				
 				$inwarding_id = $this->input->post('inwarding_id');
 				$status = $this->input->post('status');
 
@@ -502,13 +521,23 @@ class GRNController extends CommonController
 					"status" => $status
 				);
 
-				$result = $this->Crud->update_data("inwarding", $data, $inwarding_id);
 
+				$result = $this->Crud->update_data("inwarding", $data, $inwarding_id);
+				$success = 0;
+				$messages = "Something went wrong.";
 				if ($result) {
-					echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+					$success = 1;
+					$messages = "Successfully Added";
+					// echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 				} else {
-					echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+					$messages = "Unable to Add";
+					// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 				}
+				$result = [];
+				$result['messages'] = $messages;
+				$result['success'] = $success;
+				echo json_encode($result);
+				exit();
 			}
 
 			public function update_status_grn_inwarding()

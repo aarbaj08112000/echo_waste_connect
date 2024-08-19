@@ -16,66 +16,19 @@
         <div class="simplebar-content" >
           <ul class="menu-inner py-1">
             <!-- Dashboard -->
+            
             <div class="filter-row">
               <li class="nav-small-cap">
-                <span class="hide-menu">Part Number</span>
+                <span class="hide-menu">Date</span>
                 <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
               </li>
               <li class="sidebar-item">
                 <div class="input-group">
-                  <select name="child_part_id" class="form-control select2" id="part_number_search">
-                    <option value="">Select Part Number</option>
-                    <%foreach from=$supplier_part_list item=parts%>
-                    <option value="<%$parts->id%>"><%$parts->part_number %></option>
-                    <%/foreach%>
-                  </select>
+                <input type="text" name="datetimes" class="form-control" id="date_range_filter" fdprocessedid="49vxsk">
                 </div>
               </li>
             </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Part Description</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="part_description_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
+            
 
           </ul>
         </div>
@@ -123,64 +76,74 @@
 
                   </button>
                </div>
+               <form action="javascript:void(0)" class="custom-form add_machine_request" method="POST"
+               enctype="multipart/form-data">
                <div class="modal-body">
-                  <div class="form-group">
-                     <form action="<%base_url('add_machine_request') %>" method="POST"
-                        enctype="multipart/form-data">
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <div class="form-group">
+                          <label for="on click url">Select Operator<span
+                            class="text-danger">*</span></label>
+                          <select name="operator_id"   class="form-control select2 required-input"  style="width: 100%;">
+                            <%if ($operator) %>
+                            <%foreach from=$operator item=c %>
+                            <option value="<%$c->id %>"><%$c->name %>
+                            </option>
+                            <%/foreach%>
+                            <%/if%>
+                          </select>
+                      </div>
+                    </div>
+                    <div class="col-lg-12">
+                      <div class="form-group">
+                          <label for="on click url">Select Machine<span
+                            class="text-danger">*</span></label>
+                          <select name="machine_id"  class="form-control select2 required-input"  style="width: 100%;">
+                            <%if ($machine) %>
+                            <%foreach from=$machine item=c %>
+                            <option value="<%$c->id %>">
+                                <%$c->name %>
+                            </option>
+                            <%/foreach%>
+                            <%/if%>
+                          </select>
+                      </div>
+                    </div>
+                    <div class="col-lg-12">
+                      <div class="form-group">
+                          <label for="on click url">Select Customer/Part Number/Part Description<span
+                            class="text-danger">*</span></label>
+                          <br><span style="font-style:italic;color:blue;">Note: This is list of parts which are defined in BOM</span>
+                          <select name="customer_part_id"  class="form-control select2 required-input"  style="width: 100%;">
+                            <option value="">Select</option>
+                            <%if ($customer_part) %>
+                            <%foreach from=$customer_part item=c %>
+                            <option value="<%$c->id %>">
+                                <%$c->customer_name %>/<%$c->part_number %>/<%$c->part_description %>
+                            </option>
+                            <%/foreach%>
+                            <%/if%>
+                          </select>
+                      </div>
+                    </div>
                   </div>
-                  <div class="form-group">
-                  <label for="on click url">Select Operator<span
-                     class="text-danger">*</span></label>
-                  <select name="operator_id" required id="" class="form-control select2">
-                   <%if ($operator) %>
-                       <%foreach from=$operator item=c %>
-                      <option value="<%$c->id %>"><%$c->name %>
-                      </option>
-                   <%/foreach%>
-                   <%/if%>
-                  </select>
-                  </div>
-                  <div class="form-group">
-                  <label for="on click url">Select Machine<span
-                     class="text-danger">*</span></label>
-                  <select name="machine_id" required id="" class="form-control select2">
-                  <%if ($machine) %>
-                       <%foreach from=$machine item=c %>
-                      <option value="<%$c->id %>">
-                      <%$c->name %>
-                      </option>
-                   <%/foreach%>
-                   <%/if%>
-                  </select>
-                  </div>
-                  <div class="form-group">
-                  <label for="on click url">Select Customer/Part Number/Part Description<span
-                     class="text-danger">*</span></label>
-                  <br><span style="font-style:italic;color:blue;">Note: This is list of parts which are defined in BOM</span>
-                  <select name="customer_part_id" required class="form-control select2">
-                  <option value="">Select</option>
-                  <%if ($customer_part) %>
-                       <%foreach from=$customer_part item=c %>
-                      <option value="<%$c->id %>">
-                      <%$c->customer_name %>/<%$c->part_number %>/<%$c->part_description %>
-                      </option>
-                    <%/foreach%>
-                   <%/if%>
-                  </select>
-                  </div>
-               </div>
+                </div>
                <div class="modal-footer">
                <button type="button" class="btn btn-secondary"
                   data-bs-dismiss="modal">Close</button>
                <button type="submit" class="btn btn-primary">Save changes</button>
-               </form>
+               
                </div>
+               </form>
             </div>
          </div>
       </div>
 
         <!-- Main content -->
-      <div class="card p-0 mt-4">
+      <div class="w-100">
+        <input type="text" name="reason" placeholder="Filter Search" class="form-control serarch-filter-input m-3 me-0" id="serarch-filter-input" fdprocessedid="bxkoib">
+      </div>
+      <div class="card p-0 mt-4  w-100">
         <div class="col-sm-2">
            <%if ($showDocRequestDetails=="true") %>
            Format No: STR-F-02 <br>
@@ -190,73 +153,14 @@
         </div>
         <div class="table-responsive text-nowrap">
           <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="machine_request">
-            <thead>
-               <tr>
-                  <th style="word-wrap;">Request No</th>
-                  <th>Machine Mold </th>
-                  <th>Operator</th>
-                  <th>Customer Part</th>
-                  <th>Date & Time</th>
-                  <th>Status</th>
-                  <th>Details</th>
-                  <th>Actions</th>
-               </tr>
-            </thead>
-            <tbody>
-               <%if ($machine_request) %>
-                    <%assign var='i' value=1 %>
-                    <%foreach from=$machine_request item=c %>
-                        <%if ($c->req_parts) %>
-                          <%assign var='delete' value=false %>
-                        <%else %>
-                            <%assign var='delete' value=true %>
-                        <%/if%>
-                   <tr>
-                      <td>MR-<%$c->id %></td>
-                      <td><%$c->machine_name %></td>
-                      <td><%$c->operator_name %></td>
-                      <td><%$c->part_number %>/<%$c->part_description %></td>
-                      <td><%$c->created_date %>/<%$c->created_time %></td>
-                      <td><%$c->status %></td>
-                      <td>
-                         <a class="text-center"
-                            href="<%base_url('machine_request_details/') %><%$c->id %>"><i class="ti ti-eye"></i></a>
-                      </td>
-                      <td>
-                         <%if ($delete == true) %>
-                           <button type="button" class="no-btn text-center" data-bs-toggle="modal" data-bs-target="#addPromo<%$i %>">
-                           <i class="ti ti-trash"></i>
-                           </button>
-                         <%/if%>
-                         <div class="modal fade" id="addPromo<%$i %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                               <div class="modal-content">
-                                  <div class="modal-header">
-                                     <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
-                                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                     <span aria-hidden="true">&times;</span>
-                                     </button>
-                                  </div>
-                                  <div class="modal-body">
-                                     <form action="<%base_url('delete') %>" method="POST" enctype="multipart/form-data">
-                                        <label for="">Are You Sure Want To Delete This ?</label>
-                                        <input type="hidden" value="<%$c->id %>" name="id" class="form-control">
-                                        <input type="hidden" value="machine_request" name="table_name" class="form-control">
-                                  </div>
-                                  <div class="modal-footer">
-                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                  <button type="submit" class="btn btn-danger">Delete </button>
-                                  </form>
-                                  </div>
-                               </div>
-                            </div>
-                         </div>
-                      </td>
-                   </tr>
-                <%assign var='i' value=$i+1 %>
-                <%/foreach%>
-                <%/if%>
-            </tbody>
+          <thead>
+          <tr>
+              <%foreach from=$data key=key item=val%>
+              <th><b>Search <%$val['title']%></b></th>
+              <%/foreach%>
+          </tr>
+      </thead>
+      <tbody></tbody>
          </table>
         </div>
       </div>
@@ -269,6 +173,20 @@
   </div>
 
 
-
+  <script>
+    var column_details =  <%$data|json_encode%>;
+    var page_length_arr = <%$page_length_arr|json_encode%>;
+    var is_searching_enable = <%$is_searching_enable|json_encode%>;
+    var is_top_searching_enable =  <%$is_top_searching_enable|json_encode%>;
+    var is_paging_enable =  <%$is_paging_enable|json_encode%>;
+    var is_serverSide =  <%$is_serverSide|json_encode%>;
+    var no_data_message =  <%$no_data_message|json_encode%>;
+    var is_ordering =  <%$is_ordering|json_encode%>;
+    var sorting_column = <%$sorting_column%>;
+    var api_name =  <%$api_name|json_encode%>;
+    var base_url = <%$base_url|json_encode%>;
+    var start_date = <%$start_date|json_encode%>;
+    var end_date = <%$end_date|json_encode%>;
+</script>
 
   <script src="<%$base_url%>public/js/production/machine_request.js"></script>

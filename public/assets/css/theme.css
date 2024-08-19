@@ -170,6 +170,11 @@ table.dataTable thead .sorting, table.dataTable thead .sorting_asc, table.dataTa
     height: 100% !important;
     
 }
+.serarch-filter-input {
+    width: 17%;
+    float: right;
+    padding: 9px;
+}
 .select2-container.select2-container--default.select2-container--open .select2-dropdown--below {
     width: 824.5px;
     margin-top: 0px;
@@ -395,6 +400,11 @@ form .error:not(li):not(input) {
 tfoot {
     border-color: #ffe6e6 !important;
 }
+textarea:focus, input:focus{
+    outline: none;
+}
+
+
 
 
 

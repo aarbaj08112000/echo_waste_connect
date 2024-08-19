@@ -859,7 +859,7 @@ class Welcome extends CommonController
 		$data['entitlements'] = $this->session->userdata('entitlements');
 		$this->loadView('customer/customer_master', $data);
 	}
-	public function inwarding()
+	public function inwarding1()
 	{
 		$current_date = date('Y-m-d');
 		$data['new_po'] = $this->Crud->customQuery("SELECT p.*,s.supplier_name FROM `new_po` p
@@ -872,18 +872,228 @@ class Welcome extends CommonController
 		$this->loadView('store/inwarding', $data);
 		// $this->load->view('footer');
 	}
+	public function inwarding()
+	{
 
+		/* datatable */
+        $column[] = [
+            "data" => "po_number",
+            "title" => "PO Number",
+            "width" => "14%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "supplier_name",
+            "title" => "Supplier Name",
+            "width" => "20%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "po_date",
+            "title" => "PO Date",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "created_date",
+            "title" => "Created Date",
+            "width" => "10%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "expiry_po_date",
+            "title" => "Expiry PO Date",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "download_po",
+            "title" => "Download PDF PO",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "action",
+            "title" => "Close PO",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $data["data"] = $column;
+        $data["is_searching_enable"] = false;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Part GRN data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
+        // $ajax_json['teacher_data'] = $this->session->userdata();
+        // pr($ajax_json['designation'],1);
+		$this->loadView('store/inwarding', $data,"Yes","Yes");
+		// $this->getPage('purchase/test', $data,"NO","NO");
+	}
+	public function get_inwarding_view()
+	{
+		$post_data = $this->input->post();
+        $column_index = array_column($post_data["columns"], "data");
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+            if ($key == 0) {
+                $order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+                $order_by .=
+                    "," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+		
+		$data = $this->welcome_model->get_inwarding_view_data(
+            $condition_arr,
+            $post_data["search"]
+        );
+		// pr($data,1);
+
+		foreach ($data as $key => $value) {
+			// $edit_data = base64_encode(json_encode($value)); 
+			$data[$key]['po_number'] = '<a href="'.base_url().'inwarding_invoice/'.$value['id'].'"  class="po-number">'.$value['po_number'].'</a>';
+			$data[$key]['download_po'] = '<a href="'.base_url().'download_my_pdf/'.$value['id'].'" class="btn btn-primary">Download</a>';
+			$data[$key]['action'] = '<a data-id="'.$value['id'].'" href="javascript:void(0)" class="btn btn-danger close-po">Close</a>';
+		}
+		$data["data"] = $data;
+        $total_record = $this->welcome_model->get_inwarding_view_count([], $post_data["search"]);
+        $data["recordsTotal"] = $total_record['total_record'];
+        $data["recordsFiltered"] = $total_record['total_record'];
+        echo json_encode($data);
+        exit();
+		
+	}
+
+	
 	public function grn_validation()
 	{
+
 		$new_po_id = $this->uri->segment('2');
 		$data['new_po_id'] = $this->uri->segment('2');
-
-
-		$data['inwarding_data'] = $this->Crud->customQuery("SELECT i.*,np.po_number as po_number,s.supplier_name as supplier_name FROM inwarding i LEFT JOIN new_po np ON i.po_id = np.id LEFT JOIN supplier s ON s.id = np.supplier_id WHERE i.delivery_unit = '".$this->Unit->getSessionClientUnitName()."'  AND  i.STATUS = 'generate_grn'");
-		// pr($data['inwarding_data'],1);
-		// $this->load->view('header');
+		$session_data = $this->session->userdata();
+		$isMultiClient = $session_data['isMultipleClientUnits'];
+		
+		/* datatable */
+        $column[] = [
+            "data" => "po_number",
+            "title" => "PO Number",
+            "width" => "10%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "supplier_name",
+            "title" => "Supplier Name",
+            "width" => "13%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "invoice_number",
+            "title" => "Invoice Number",
+            "width" => "12%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "invoice_date",
+            "title" => "Invoice Date",
+            "width" => "10%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "grn_number",
+            "title" => "GRN Number",
+            "width" => "8%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "grn_date",
+            "title" => "GRN Date",
+            "width" => "8%",
+            "className" => "dt-center",
+        ];
+		if($isMultiClient == true){
+			$column[] = [
+				"data" => "delivery_unit",
+				"title" => "Delivery Unit",
+				"width" => "7%",
+				"className" => "dt-center",
+			];
+		}
+        $column[] = [
+            "data" => "view_details",
+            "title" => "View Details",
+            "width" => "7%",
+            "className" => "dt-center status-row",
+        ];
+        
+        $data["data"] = $column;
+        $data["is_searching_enable"] = false;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No GRN Validation data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
+        // $ajax_json['teacher_data'] = $this->session->userdata();
+        // pr($ajax_json['designation'],1);
+		// $this->getPage('purchase/child_part_view', $data,"Yes","Yes");
 		$this->loadView('store/grn_validation', $data);
-		// $this->load->view('footer');
+		// $this->getPage('purchase/test', $data,"NO","NO");
+	}
+
+	public function get_grn_validation_data()
+	{
+		$post_data = $this->input->post();
+        $column_index = array_column($post_data["columns"], "data");
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+            if ($key == 0) {
+                $order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+                $order_by .=
+                    "," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+		$data = $this->welcome_model->get_grn_validation_view_data(
+            $condition_arr,
+            $post_data["search"]
+        );
+		
+		foreach ($data as $key => $value) {
+			$edit_data = base64_encode(json_encode($value)); 
+			$data[$key]['view_details'] = '<a href="'.base_url("inwarding_details_validation/").$value['id'].'/'.$value['po_id'].'" class="btn btn-danger">Validation Details</a></td>';
+		}
+		// pr($data,1);
+		$data["data"] = $data;
+        $total_record = $this->welcome_model->get_grn_validation_data_count([], $post_data["search"]);
+        $data["recordsTotal"] = $total_record['total_record'];
+        $data["recordsFiltered"] = $total_record['total_record'];
+        echo json_encode($data);
+        exit();
+		
 	}
 	public function accept_reject_validation()
 	{
@@ -3005,7 +3215,7 @@ class Welcome extends CommonController
 		$data['challan_data'] = $this->Crud->customQuery("SELECT * FROM challan
 			WHERE clientId = ".$this->Unit->getSessionClientId()."
 			AND supplier_id =".$supplier_id);
-
+		$data['supplier_id'] = $supplier_id;
 		// $this->load->view('header');
 		$this->loadView('store/view_supplier_challan_details', $data);
 		// $this->load->view('footer');
@@ -4261,11 +4471,9 @@ class Welcome extends CommonController
 			'challan_id' => $challan_id,
 			'part_id' => $part_id,
 		);
+		$data['challan_id'] = $challan_id;
 		// print_r($arr);
 		$data['challan_parts_data'] = $this->Crud->get_data_by_id_multiple("challan_parts_history", $challan_parts_get_array);
-
-
-
 		// $this->load->view('header');
 		$this->loadView('store/view_challan_parts_history', $data);
 		// $this->load->view('footer');
@@ -4608,19 +4816,16 @@ class Welcome extends CommonController
 		// get_data_by_id_multiple_condition
 		$challan_parts = $this->Crud->get_data_by_id_multiple_condition("challan_parts_subcon", $data2);
 
-		// print_r($challan_parts);
-
+		$message = "Something went wrong";
+		$success = 0;
 		if ($challan_parts) {
-
-			// echo "<script>ale rt('Data Already Present');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-			echo "Data Already Present";
+			$message = "Data Already Present";
 		} else {
 			$child_part_data = $this->SupplierParts->getSupplierPartById($part_id);
 			$current_stock = $child_part_data[0]->stock;
 
 			if ((float)$qty > (float)$current_stock) {
-				echo "Store Stock  Qty is Less than Entered Qty";
-
+				$message = "Store Stock  Qty is Less than Entered Qty";
 				// echo "<script>alert('error : Store Stock  Qty is Less than Entered Qty');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
 				$inser_query = $this->Crud->insert_data("challan_parts_subcon", $data);
@@ -4638,18 +4843,28 @@ class Welcome extends CommonController
 						$update = $this->SupplierParts->updateStockById($data23333, $part_id);
 
 						if ($update) {
-							echo "<script>alert('Added Successfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+							$message = "Added Successfully";
+							$success = 1;
+							// echo "<script>alert('Added Successfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 						} else {
-							echo "<script>alert('Error While Update Qty');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+							$message = "Error While Update Qty";
+							// echo "<script>alert('Error While Update Qty');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 						}
 					} else {
-						echo "Error";
+						$message = "Error";
 					}
 				} else {
-					echo "Error";
+					$message = "Error";
 				}
 			}
 		}
+
+		$return_arr = [
+			"message" =>$message,
+			"success" => $success
+			];
+		echo json_encode($return_arr);
+		exit();
 	}
 	public function update_p_q()
 	{
@@ -5680,11 +5895,11 @@ class Welcome extends CommonController
 				$picture4 = $uploadData['file_name'];
 			} else {
 				$picture4 = '';
-				echo "no 1";
+				// echo "no 1";
 			}
 		} else {
 			$picture4 = '';
-			echo "no 2";
+			// echo "no 2";
 		}
 		$qty = $this->input->post('qty');
 		$supplier_id = $this->input->post('supplier_id');
@@ -5802,6 +6017,14 @@ class Welcome extends CommonController
 				}
 			}
 		}
+		$return_arr = [];
+		$return_arr['messages'] = $messages;
+		$return_arr['success'] = $success;
+
+		echo json_encode($return_arr);
+
+		exit();
+
 	}
 
 	public function add_stock_down()
@@ -6173,33 +6396,51 @@ class Welcome extends CommonController
 	}
 	public function change_challan_status()
 	{
+		
 		$challan_id = $this->input->post('challan_id');
 		$data = array(
 			"status" => "completed",
 		);
-
+		$success = 0;
+		$messages = "Somthing went Wrong";
 		$result = $this->Crud->update_data("challan", $data, $challan_id);
 		if ($result) {
-			echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$success = 1;
+			$messages = "Updated Sucessfully";
+			// echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-			echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$messages ="Unable to Add";
+			// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
+		$return_arr = [];
+		$return_arr['success'] = $success;
+		$return_arr['messages'] = $messages;
+		echo json_encode($return_arr);
+
+		exit();
 	}
 	public function change_challan_status_subcon()
 	{
 		$challan_id = $this->input->post('challan_id');
-
-
 		$data = array(
 			"status" => "completed",
 		);
-
+		$success = 0;
+		$messages = "Something went wrong.";
 		$result = $this->Crud->update_data("challan_subcon", $data, $challan_id);
 		if ($result) {
-			echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$messages = "Updated Sucessfully";
+			$success = 1;
+			// echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-			echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$messages = "'Unable to Add";
+			// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
+		$result = [];
+		$result['messages'] = $messages;
+		$result['success'] = $success;
+		echo json_encode($result);
+		exit();
 	}
 	public function update_job_card()
 	{

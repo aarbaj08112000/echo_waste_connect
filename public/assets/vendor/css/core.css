@@ -5312,8 +5312,8 @@ textarea.form-control-lg {
     display: none;
     width: 100%;
     height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
+    /* overflow-x: hidden;
+    overflow-y: auto; */
     outline: 0
 }
 
@@ -29343,4 +29343,65 @@ a.bg-vimeo:hover,a.bg-vimeo:focus {
 .no-btn{
   background: none !important;
   border: none !important;
+}
+
+
+.scrollable tbody,
+.scrollable th,
+.scrollable td
+{
+	display: block;
+	width: 100%;
+}
+
+
+.scrollable tbody
+{
+	overflow-y: scroll;
+}
+
+.scrollable thead,
+.scrollable tfoot
+{
+	-ms-overflow-style: none;
+}
+
+.scrollable thead::-webkit-scrollbar,
+.scrollable tfoot::-webkit-scrollbar
+{
+	visibility: hidden;
+}
+
+.scrollable tbody
+{   
+	position: relative;
+	-ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+.scrollable tr
+{
+	display: flex;
+}
+
+.scrollable tbody th,
+.scrollable tbody td
+{
+	border-top: none;
+}
+
+.scrollable th:not(:last-child),
+.scrollable td:not(:last-child)
+{
+	border-right: none;
+}
+.table-responsive-border table{
+    border: none;
+}
+.table-responsive-border table thead{
+    border: none;
+    border-radius: 8px 10px 0px 0px;
+    flex: 1;
+}
+.scrollable.table thead tr th{
+    padding: 19px 17px 9px 16px !important;
 }

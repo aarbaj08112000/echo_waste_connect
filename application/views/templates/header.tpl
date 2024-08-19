@@ -43,7 +43,6 @@
       <!-- Core CSS -->
       <link rel="stylesheet" href="<%$base_url%>public/assets/vendor/css/core.css" class="template-customizer-core-css" />
       <link rel="stylesheet" href="<%$base_url%>public/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
-      <link rel="stylesheet" href="<%$base_url%>public/assets/css/demo.css" />
       <link rel="stylesheet" href="<%$base_url%>public/assets/css/theme.css" />
       <!-- Vendors CSS -->
       <link rel="stylesheet" href="<%$base_url%>public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
@@ -85,9 +84,21 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
       <!-- toastr -->
 
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.min.css">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
+
+      <!-- date picker  -->
+      <script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+      <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
       <script type="text/javascript">
-         var theme_color = "#ea1c31";
-      </script>
+      var theme_color = "#ea1c31";
+   </script>
+      <!-- swal toaster 
+      <link rel="stylesheet" href="<%$base_url%>public/plugin/sweetalert2/sweetalert2.min.css">
+      <script src="<%$base_url%>public/plugin/sweetalert2/sweetalert2.all.min.js"></script>-->
+
+      
    </head>
    <body>
       <!-- Layout wrapper -->

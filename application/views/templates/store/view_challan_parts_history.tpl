@@ -16,14 +16,18 @@
         </div>
       </nav>
 
-
+      <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
+      <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
+        <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
+         <a href="<%base_url('view_challan_by_id') %>/<%$challan_id%>" class="btn btn-seconday"><i class="ti ti-arrow-left" title="Back"></i></a>
+      </div>
       <!-- Main content -->
       <div class="card p-0 mt-4">
         <div class="table-responsive text-nowrap">
           <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="inwarding">
             <thead>
                <tr>
-                  <th>Sr. No.</th>
+                  <!-- <th>Sr. No.</th> -->
                   <th>Supplier Challan Number</th>
                   <th>Qty</th>
                   <th>Accepted Qty</th>
@@ -37,7 +41,7 @@
                   <%if ($challan_parts_data) %>
                       <%foreach from=$challan_parts_data item=s %>
                    <tr>
-                      <td><%$i %></td>
+                      <!-- <td><%$i %></td> -->
                       <td><%$s->supplier_challan_number %></td>
                       <td><%$s->qty %></td>
                       <td><%$s->accepeted_qty %></td>
@@ -59,4 +63,4 @@
 
     <div class="content-backdrop fade"></div>
   </div>
-  <script src="<%$base_url%>public/js/store/inwarding.js"></script>
+  <script src="<%$base_url%>public/js/store/view_challan_history.js"></script>

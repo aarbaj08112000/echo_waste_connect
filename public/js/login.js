@@ -31,7 +31,12 @@ $(document).ready(function($) {
    },
     errorPlacement: function(error, element)
     {
-      error.insertAfter( element );
+      console.log(element[0].localName)
+      if(element[0].localName == "select"){
+        $(element).parents("div").find(".select2-container").append(error);
+      }else{
+        error.insertAfter( element );
+      }
     },
     submitHandler: function(form) {
       var formdata = new FormData(form);
@@ -63,5 +68,7 @@ $(document).ready(function($) {
   $.validator.addMethod("strongPassword", function(value, element) {
    return this.optional(element) || /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value);
  }, "Your password must include at least one uppercase letter, one lowercase letter, one digit, and one special character");
-
+ $("#clientId").select2({
+  minimumResultsForSearch: Infinity
+ })
 });

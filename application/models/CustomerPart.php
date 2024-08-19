@@ -209,48 +209,5 @@ class CustomerPart extends CI_Model {
         return $data;
     }
 
-    public function getPoTrakingView($condition_arr = [],$search_params = ""){
-        
-        $this->db->select('cpt.*,c.customer_name');
-        $this->db->from('customer_po_tracking cpt');
-        $this->db->join('customer c', 'cpt.customer_id = c.id');
-       
-        if(is_valid_array($search_params) && $search_params['customer_id'] > 0){
-            $this->db->where('cpt.customer_id', $search_params['customer_id']);
-        }
-        // pr($condition_arr,1);
-        if($condition_arr["order_by"] == ''){    
-            $this->db->order_by('cpt.id', 'DESC');
-        }
-        
-        if (count($condition_arr) > 0) {
-            $this->db->limit($condition_arr["length"], $condition_arr["start"]);
-            if ($condition_arr["order_by"] != "") {
-                $this->db->order_by($condition_arr["order_by"]);
-            }
-        }
-        $result_obj = $this->db->get();
-        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
-        // pr($this->db->last_query(),1);
-        return $ret_data;
-    }
-
-    public function getPoTrakingViewCount( $condition_arr = [],$search_params = ""){
-        $this->db->select('count(cpt.id) as total_record');
-        $this->db->from('customer_po_tracking cpt');
-        $this->db->join('customer c', 'cpt.customer_id = c.id');
-       
-       
-        if(is_valid_array($search_params) && $search_params['customer_id'] > 0){
-            $this->db->where('cpt.customer_id', $search_params['customer_id']);
-        }
-
-        $result_obj = $this->db->get();
-        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
-
-        
-        return $ret_data;
-    }
-
 }
 ?>
