@@ -1017,9 +1017,12 @@ class NewEInvoiceController extends CommonController {
         $data['einvoice_res_data'] = $this->Crud->get_data_by_id_multiple_condition("einvoice_res", $sales); 
 									 
 		$data['$new_sales'] = $this->Crud->get_data_by_id("new_sales", $sales_id, "id");
-		$this->load->view('header');
-		$this->load->view('view_e_invoice_by_id', $data);
-		$this->load->view('footer');
+		$data['sales_id'] = $sales_id;
+		// $this->load->view('header');
+		// $this->load->view('view_e_invoice_by_id', $data);
+		// $this->load->view('footer');
+		$this->loadView('sales/view_e_invoice_by_id',$data);
+		
 	}
 	
   /**

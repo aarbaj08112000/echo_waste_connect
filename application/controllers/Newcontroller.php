@@ -468,7 +468,8 @@ $CI->load->model('SupplierParts');
 				$query = "SELECT * FROM customer_part WHERE id = " . $val->part_id . "";
 
 				$result = $this->db->query($query);
-				if (count($result) > 0) {
+				// pr($result,1);
+				if (count($result->result_array()) > 0) {
 					//$data=$result->result_array();		
 
 					// $html.='<option value="">Select State</option>'; 
@@ -660,12 +661,21 @@ $CI->load->model('SupplierParts');
 		
 			"qty" => $qty,
 		);
+		$ret_arr = [];
+		$msg = '';
+		$success = 1;
 		$result = $this->Crud->update_data("parts_customer_trackings", $data, $id);
 		if ($result) {
-			echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			// echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$msg = 'Updated Sucessfully';
 		} else {
-			echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			// echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$msg = 'Updated Sucessfully';
+			$success = 0;
 		}
+		$ret_arr['msg'] = $msg;
+		$ret_arr['success'] =  $success;
+		echo json_encode($ret_arr);
 		//}
 	}
 	public function update_po_parts_amendment_approve()
@@ -1736,15 +1746,16 @@ $CI->load->model('SupplierParts');
 			"remark" => $remark,
 			"reason" => $reason
 		);
+		
 		$result = $this->Crud->update_data("customer_po_tracking", $data, $id);
-
-		if ($result) {
-			 $this->addSuccessMessage('PO successfully closed.');
-			 $this->redirectMessage();
-		} else {
-			$this->addErrorMessage('Error po_parts not found.');
-			$this->redirectMessage();
-		}
+		
+		// if ($result) {
+		// 	 $this->addSuccessMessage('PO successfully closed.');
+		// 	 $this->redirectMessage();
+		// } else {
+		// 	$this->addErrorMessage('Error po_parts not found.');
+		// 	$this->redirectMessage();
+		// }
 	}
 	public function close_po_new()
 	{

@@ -122,9 +122,9 @@
                                            
                                         </button>
                                     </div>
+                                    <form action="<%$base_url%>add_customer_parts_master" method="POST" id="addCustomerPartsForm" enctype="multipart/form-data">
                                     <div class="modal-body">
                                         <div class="form-group">
-                                            <form action="<%$base_url%>add_customer_parts_master" method="POST" enctype="multipart/form-data">
                                         </div>
                                         <div class="form-group">
                                             <label for="on click url">Part Number<span class="text-danger">*</span></label> <br>
@@ -142,9 +142,9 @@
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                         <button type="submit" class="btn btn-primary">Save changes</button>
+                                        </div>
+                                        </div>
                                         </form>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="card">
@@ -220,18 +220,18 @@
                                     </div>
 
                                     <div class="modal-body">
+                                    <form action="<%$base_url%>update_customer_parts_master" id="updateCustomerPartsForm" method="POST" enctype="multipart/form-data">
                                         <div class="row">
                                             <div class="col-lg-12">
-                                                <form action="<%$base_url%>update_customer_parts_master" method="POST" enctype="multipart/form-data">
                                                     <div class="form-group">
                                                         <label> Part Description</label><span class="text-danger">*</span>
                                                         <input type="hidden" readonly value="<%$id%>" name="id" required class="form-control" id="part_id" placeholder="Enter Safety/buffer stock" aria-describedby="emailHelp">
-                                                        <input required type="text" name="part_description" placeholder="Enter Part Description" class="form-control" value="<%$u->part_description%>" id="edit-part-des">
+                                                        <input  type="text" name="part_description" placeholder="Enter Part Description" class="form-control" value="<%$u->part_description%>" id="edit-part-des">
                                                     </div>
 
                                                     <div class="form-group">
                                                         <label>Rate<span class="text-danger">*</span></label> <br>
-                                                        <input required type="number" step="any" name="fg_rate" placeholder="Enter Rate" class="form-control" value="<%$u->fg_rate%>" id="part-rate"required>
+                                                        <input  type="number" step="any" name="fg_rate" placeholder="Enter Rate" class="form-control" value="<%$u->fg_rate%>" id="part-rate"required>
                                                     </div>
                                             </div>
                                         </div>
@@ -240,9 +240,9 @@
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                         <button type="submit" class="btn btn-primary">Save changes</button>
-                                        </form>
-                                    </div>
-                                </div>
+                                        </div>
+                                        </div>
+                                        </form> 
                             </div>
                         </div>
                             <!-- /.card-body -->

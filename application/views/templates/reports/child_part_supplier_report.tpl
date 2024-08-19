@@ -119,7 +119,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="<%base_url('updatechildpart_supplier')%>" method="POST" enctype='multipart/form-data'>
+                <form id="updateChildPartForm" method="POST" enctype='multipart/form-data'>
                     <div class="row">
                         <div class="col-lg-12">
 

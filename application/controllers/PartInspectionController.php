@@ -134,6 +134,7 @@ class PartInspectionController extends CommonController
         );
 
         $this->getPage('view_PDI_inspection_report', $data);
+        
     }
 
     public function auto_submit_inspection_report_observations()

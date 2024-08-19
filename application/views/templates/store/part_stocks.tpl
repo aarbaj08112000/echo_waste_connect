@@ -125,14 +125,23 @@
               <form action="<%base_url('transfer_child_store_to_store_stock')%>" method="POST" enctype="multipart/form-data">
                 <label for="">Stock Qty <span class="text-danger">*</span></label>
                 <input type="number" step="any" class="form-control" value="" max="<%$po->$stock_column_name %>" name="stock" required placeholder="Transfer Qty">
-                <input type="hidden" class="form-control" value="<%$po->part_number%>" name="part_number" required>
-                <input type="hidden" class="form-control" value="<%$po->childPartId%>" name="child_part_id" required>
+                <input type="hidden" class="form-control" value="<%$po->part_number%>" name="part_number" id="part_number">
+                <input type="hidden" class="form-control" value="<%$po->childPartId%>" name="child_part_id" id="part_id">
             </div>
             <div class="col-lg-12">
               <br>
               <label for="">Supplier Part no / Description </label>
-              <select name="customer_part_number" required id="" class="form-control select2">
+              <br>
+              <%$filter_part_id|pr%>
+              <select name="customer_part_number" required id="suppler_parts" class="form-control select2">
                 <option value="">Select Part</option>
+
+                <%foreach  $supplier_part_select_list as  $val%>
+    
+                <%if $filter_part_id neq $val->id%>
+                <option value="<%$val->id%>"><%$val->part_number%> / <%$val->part_description%></option>
+                <%/if%>
+                <%/foreach%>         
                
               </select>
             </div>
@@ -222,9 +231,12 @@
             </div>
             <div class="col-lg-12">
               <label for="">Select Customer Part Number / Customer Name </label>
-              <select name="customer_part_number" required id="" class="form-control select2">
+              <select name="customer_part_number" required id="customer_part_number" class="form-control select2">
+              
                 <option value="">Select Part</option>
-                
+                <%foreach  $customer_part_data_new_updated as  $val%>
+                <option value="<%$val->part_number%>"><%$val->part_number%></option>
+                <%/foreach%>                
               </select>
             </div>
           </div>
@@ -251,5 +263,7 @@
             var sorting_column = <%$sorting_column%> ;
             var api_name = <%$api_name|json_encode%> ;
             var base_url = <%$base_url|json_encode%> ;
+            var supplier_part_select_list = <%$supplier_part_select_list|json_encode%>;
+           
           </script>
 <script src="<%$base_url%>/public/js/reports/supplier_part_stock_report.js"></script>

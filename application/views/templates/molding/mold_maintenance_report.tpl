@@ -106,8 +106,8 @@
                                                 <%/if%>
                                                 <td><%$mold_maintenance_docs[$u['mold_name']][0]->pm_date%></td>
                                                 
-                                                <td>
-                                                    <button type="button" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#uplddoc<%$i%>">
+                                                <td> 
+                                                    <button type="button" class="btn btn-xs btn-primary doc_upload" data-bs-toggle="modal" data-bs-target="#uplddoc" data-value = "<%$u['encrpted_data']%>">
                                                       <i class="fas fa-upload" aria-hidden="true"></i>
                                                     </button>
                     
@@ -115,43 +115,7 @@
                                                         <a title="Download" class="btn btn-xs btn-success" download href="<%$base_url%>documents/<%$mold_maintenance_docs[$u['mold_name']][0]->doc%>"><i class="fas fa-download" aria-hidden="true"></i> </a>
                                                     <%/if%>
                   
-                                                    <div class="modal fade" id="uplddoc<%$i%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                        <div class="modal-dialog modal-lg" role="document">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title" id="exampleModalLabel">Upload Document</h5>
-                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                        <span aria-hidden="true">&times;</span>
-                                                                    </button>
-                                                                </div>
-                                                            <form  id="form111" action="<%$base_url%>upload_mold_maintenance_doc" method="POST" id="form111" enctype="multipart/form-data">
-                                                                <div class="modal-body">
-                                                                    <div class="form-group">
-                                                                        <label for="on click url">PM Date<span class="text-danger">*</span></label>
-                                                                        <br>
-                                                                        <input required type="date" name="pm_date" class="form-control" max="<%$smarty.now|date_format:'%Y-%m-%d'%>">
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label for="on click url">Document<span class="text-danger">*</span></label>
-                                                                        <br>
-                                                                        <input required type="file" name="doc" class="form-control" value="" id="fileInput111" onchange="checkFileSize(111)">
-                                                                        <input type="hidden" name="no_of_cavity" value="<%$u['no_of_cavity']%>" class="form-control">
-                                                                        <input type="hidden" name="mold_name" value="<%$u['mold_name']%>" class="form-control">
-                                                                        <input type="hidden" name="customer_part_id" value="<%$u['customer_part_id']%>" class="form-control">
-                                                                        <input type="hidden" name="target_life" value="<%$u['target_life']%>" class="form-control">         
-                                                                        <input type="hidden" name="target_over_life" value="<%$u['target_over_life']%>" class="form-control">
-                                                                        <input type="hidden" name="current_molding_prod_qty" value="<%$u['tot']%>" class="form-control">
-                                                                        <input required type="hidden" value="<%$u['id']%>" name="id" placeholder="Enter Mold Life Over Frequency" class="form-control">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                    <button type="submit" class="btn btn-primary">Save changes</button>
-                                                                </div>
-                                                            </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    
                                                 </td>
                                                 <td>
                                                     <%if !empty($mold_maintenance_docs[$u['mold_name']][0]->doc)%>
@@ -172,4 +136,44 @@
     </section>
 </div>
 </div>
+<div class="modal fade" id="uplddoc" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog modal-lg" role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="exampleModalLabel">Upload Document</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                                                        
+                                                                    </button>
+                                                                </div>
+                                                            <form  id="form111"  method="POST"  enctype="multipart/form-data">
+                                                                <div class="modal-body">
+                                                                    <div class="form-group">
+                                                                        <label for="on click url">PM Date<span class="text-danger">*</span></label>
+                                                                        <br>
+                                                                        <input required type="date" name="pm_date" class="form-control" max="<%$smarty.now|date_format:'%Y-%m-%d'%>">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="on click url">Document<span class="text-danger">*</span></label>
+                                                                        <br>
+                                                                        <input required type="file" name="doc" class="form-control" value="" id="fileInput111" >
+                                                                        <input type="hidden" name="no_of_cavity" id="no_of_cavity" value="<%$u['no_of_cavity']%>" class="form-control">
+                                                                        <input type="hidden" name="mold_name"  id="mold_name" value="<%$u['mold_name']%>" class="form-control">
+                                                                        <input type="hidden" name="customer_part_id" id="customer_part_id" value="<%$u['customer_part_id']%>" class="form-control">
+                                                                        <input type="hidden" name="target_life" id="target_life" value="<%$u['target_life']%>" class="form-control">         
+                                                                        <input type="hidden" name="target_over_life" id="target_over_life" value="<%$u['target_over_life']%>" class="form-control">
+                                                                        <input type="hidden" name="current_molding_prod_qty" id="current_molding_prod_qty" value="<%$u['tot']%>" class="form-control">
+                                                                        <input required type="hidden" value="<%$u['id']%>" id="mold_id" name="id" placeholder="Enter Mold Life Over Frequency" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                                                </div>
+                                                            </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
 <script src="<%$base_url%>/public/js/reports/mold_maintainance_report.js"></script>
+<script>
+let base_url = "<%$base_url%>";
+</script>

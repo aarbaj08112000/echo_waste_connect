@@ -1,6 +1,7 @@
 var table = '';
 var file_name = "part_stocks";
 var pdf_title = "Supplier Parts (Item) Stock";
+var filter_id = '';
 // var myModal = new bootstrap.Modal(document.getElementById('child_part_update'))
 const page = {
     init: function(){
@@ -10,7 +11,7 @@ const page = {
         $(document).on("click",".edit-fg",function(){
             var data = $(this).attr("data-value");
             data = JSON.parse(atob(data)); 
-            console.log(data)
+            console.log(data);
             var option = '';
             if(data.sub_type == 'Regular grn' || data.sub_type == 'RM' ){
                 option = '<option  value="Regular grn">Regular GRN</option><option  value="RM">RM</option>';
@@ -23,24 +24,11 @@ const page = {
             }else if(data.sub_type == 'asset'){
                 option = '<option sub_type value="asset" >Asset</option>';
             }
-            $("#sub_type").html(option).select2();
-            $("label.error").remove();
-            $("input.error").removeClass('error');
-            $("#part_id").val(data.part_id);
+           
+            $("#part_id").val(data.childPartId);
             $("#part_number").val(data.part_number);
-            $("#part_description").val(data.part_description);
-            $("#saft__stk").val(data.buffer_stock);
-            $("#hsn_code").val(data.hsn_code);
-            $("#sub_type").val(data.sub_type).trigger("change");
-            $("#store_rack_location").val(data.store_rack_location);
-            $("#store_stock_rate").val(data.store_stock_rate);
-            $("#weight").val(data.weight);
-            $("#size").val(data.size);
-            $("#thickness").val(data.thickness);
-            $("#uom_id").val(data.uom_id).trigger("change");
-            $("#max_uom").val(data.max_uom);
-            $("#grade").val(data.grade);
-            myModal.show();
+            
+            // myModal.show();
         })
 
     },

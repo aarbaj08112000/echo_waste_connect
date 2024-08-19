@@ -19,6 +19,7 @@ class POTrackingController extends CommonController {
 		$data['customer_data'] = $this->Crud->read_data("customer");
 		// $this->getPage('customer_po_tracking', $data);
 		$this->loadView('customer/customer_po_tracking',$data);
+
 	}
 	
 	
@@ -36,11 +37,16 @@ class POTrackingController extends CommonController {
 			"po_number" => $po_number,
 			"customer_id" => $customer_id
 		);
+		$ret_arr =[];
+		$msg = '';
+		$sucess = 1;
 		
 		$check = $this->Crud->read_data_where("customer_po_tracking", $data);
 		if ($check != 0) {
-			$this->addErrorMessage('Record already exists for this customer. Enter different PO Number');
-			$this->redirectMessage();
+			$msg = 'Record already exists for this customer. Enter different PO Number';
+			$sucess = 0;
+			// $this->addErrorMessage('Record already exists for this customer. Enter different PO Number');
+			// $this->redirectMessage();
 			//echo "<script>alert('Error 403 : PO Number  Already Exists , Enter Different PO Number ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 			if (!empty($_FILES['uploadedDoc']['name'])) {
@@ -55,7 +61,7 @@ class POTrackingController extends CommonController {
 				if ($this->upload->do_upload('uploadedDoc')) {
 					$uploadData = $this->upload->data();
 					$uploadedDocument = $uploadData['file_name'];
-					echo "uploadedDocument: ".$uploadedDocument;
+					// echo "uploadedDocument: ".$uploadedDocument;
 				} else {
 					$uploadedDocument = '';
 				}
@@ -82,14 +88,22 @@ class POTrackingController extends CommonController {
 
 			$result = $this->Crud->insert_data("customer_po_tracking", $data);
 			if ($result) {
-				$this->addSuccessMessage('PO Successfully Added');
-				$this->redirectMessage('view_customer_tracking_id/'.$result);
+				// $this->addSuccessMessage('PO Successfully Added');
+				// $this->redirectMessage('view_customer_tracking_id/'.$result);
+				$msg = 'PO Successfully Added';
+				$sucess = 1;
+				$ret_arr['url'] = 'view_customer_tracking_id/'.$result;
 				//echo "<script>alert('Successfully Added');document.location='" . base_url('view_customer_tracking_id/') . $result . "'</script>";
 			} else {
-				$this->addErrorMessage('Failed to add PO');
-				$this->redirectMessage();
+				// $this->addErrorMessage('Failed to add PO');
+				// $this->redirectMessage();
+				$msg = 'Failed to add PO';
+				$sucess = 0;
 			}
 		}
+		$ret_arr['msg'] = $msg;
+		$ret_arr['sucess'] = $sucess;
+		echo json_encode($ret_arr);
 	}
 	
 	public function customer_po_tracking_all() {
@@ -173,13 +187,14 @@ class POTrackingController extends CommonController {
         $data["base_url"] = base_url();
 		$customer_data_raw = $this->CustomerPart->getPoTrakingView();
 		$data['customer_data'] = array_column($customer_data_raw,'customer_name','customer_id');
-		
+		// pr($data,1);
 		$this->loadView('customer/customer_po_tracking_all', $data);
 	}
 
 	public function customerPoTrackingAjax(){
 
 		$post_data = $this->input->post();
+		
         $column_index = array_column($post_data["columns"], "data");
         $order_by = "";
         foreach ($post_data["order"] as $key => $val) {
@@ -203,7 +218,7 @@ class POTrackingController extends CommonController {
 				$po_doc = '<a download href="' . base_url('documents/' . $val['uploadedDoc']) . '" id="" class="btn btn-sm btn-primary remove_hoverr"><i class="fas fa-download"></i></a>';
 			}
 		
-			$po_doc .= '<button type="button" data-value = '.$encode_data.' class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#upload_modal"><i class="fas fa-upload"></i></button>';
+			$po_doc .= '<button type="button" data-value = '.$encode_data.' class="btn btn-sm btn-primary upload_doc" data-bs-toggle="modal"  data-bs-target="#upload_modal"><i class="fas fa-upload"></i></button>';
 			
 			$action = '<button type="button" data-value = '.$encode_data.' class="btn btn-primary edit-part" data-bs-toggle="modal" data-bs-target="#edit_modal"><i class="fa fa-edit"></i> Edit</button>
 					   <button type="button" data-value = '.$encode_data.' class="btn btn-danger close-po" data-bs-toggle="modal" data-bs-target="#close_modal">Close PO</button>';
@@ -289,8 +304,13 @@ class POTrackingController extends CommonController {
 			"customer_po_tracking_id" => $customer_po_tracking_id,
 		);
 		$check = $this->Crud->read_data_where("parts_customer_trackings", $data);
+		$ret_arr = [];
+		$msg = '';
+		$sucess = 1;
 		if ($check != 0) {
-			echo "<script>alert('Part Number Already Exists , Please Select Different Part Number ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			// echo "<script>alert('Part Number Already Exists , Please Select Different Part Number ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$msg = 'Part Number Already Exists , Please Select Different Part Number.';
+			$sucess = 0;
 		} else {
 			$data = array(
 				"qty" => $qty,
@@ -303,13 +323,21 @@ class POTrackingController extends CommonController {
 				"created_month" => $this->month,
 				"created_year" => $this->year,
 			);
+			
 			$result = $this->Crud->insert_data("parts_customer_trackings", $data);
 			if ($result) {
-				echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				// echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$msg = 'Successfully Added';
+				
 			} else {
-				echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$msg = 'Unable to Add';
+				$sucess = 0;
 			}
 		}
+		$ret_arr['msg'] = $msg;
+		$ret_arr['sucess'] = $sucess;
+		echo json_encode($ret_arr);
 	}
 
 	private function getPage($viewPage,$viewData){

@@ -89,8 +89,8 @@
                                                 <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                 </button>
                                             </div>
+                                            <form action="<%$base_url%>add_consignee" method="POST" id="add_consnee">
                                             <div class="modal-body">
-                                                <form action="<%$base_url%>add_consignee" method="POST">
                                                     <div class="row">
                                                         <div class="col-lg-12">
 
@@ -136,9 +136,9 @@
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                         <button type="submit" class="btn btn-primary">Save changes</button>
                                                     </div>
-                                                </form>
-
-                                            </div>
+                                                    
+                                                    </div>
+                                                    </form>
 
                                         </div>
                                     </div>
@@ -233,48 +233,48 @@
                 <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
+            <form action="<%$base_url%>update_consignee" id="update_form" method="POST">
             <div class="modal-body">
-                <form action="<%$base_url%>update_consignee" method="POST">
                     <div class="row">
                         <div class="col-lg-12">
 
                             <div class="form-group">
                                 <label for="customer_name">Consignee Name</label><span class="text-danger">*</span>
-                                <input value="<%$t->consignee_name%>" type="text" name="uconsignee_name" required class="form-control" id="uconsignee_name" aria-describedby="emailHelp" placeholder="Consignee Name">
-                                <input value="<%$t->c_id%>" type="hidden" name="consignee_id" required class="form-control" id="consignee_ref">
-                                <input value="<%$t->address_id%>" type="hidden" name="address_id" required class="form-control" id="addressRef">
+                                <input value="<%$t->consignee_name%>" type="text" name="uconsignee_name"  class="form-control" id="uconsignee_name" aria-describedby="emailHelp" placeholder="Consignee Name">
+                                <input value="<%$t->c_id%>" type="hidden" name="consignee_id"  class="form-control" id="uconsignee_ref">
+                                <input value="<%$t->address_id%>" type="hidden" name="address_id"  class="form-control" id="uaddressRef">
                             </div>
                             <div class="form-group">
                                 <label for="customer_name">Location</label><span class="text-danger">*</span>
-                                <input value="<%$t->location%>" type="text" name="ulocation" required class="form-control" id="location" aria-describedby="location" placeholder="Location">
+                                <input value="<%$t->location%>" type="text" name="ulocation"  class="form-control" id="ulocation" aria-describedby="location" placeholder="Location">
                             </div>
                             <div class="form-group">
                                 <label for="customer_location">Address</label><span class="text-danger">*</span>
-                                <input type="text" name="uaddress" value="<%$t->address%>" required class="form-control" id="address" aria-describedby="emailHelp" placeholder="Address">
+                                <input type="text" name="uaddress" value="<%$t->address%>"  class="form-control" id="uaddress" aria-describedby="emailHelp" placeholder="Address">
                             </div>
                             <div class="form-group">
                                 <label for="customer_location">State</label><span class="text-danger">*</span>
-                                <input type="text" name="ustate" value="<%$t->state%>" required class="form-control" id="state" aria-describedby="emailHelp" placeholder="State">
+                                <input type="text" name="ustate" value="<%$t->state%>"  class="form-control" id="ustate" aria-describedby="emailHelp" placeholder="State">
                             </div>
                             <div class="form-group">
                                 <label for="customer_location">State No </label><span class="text-danger">*</span>
-                                <input type="text" name="ustate_no" value="<%$t->state_no%>" required class="form-control" id="state_num" aria-describedby="emailHelp" placeholder="State No">
+                                <input type="text" name="ustate_no" value="<%$t->state_no%>"  class="form-control" id="ustate_num" aria-describedby="emailHelp" placeholder="State No">
                             </div>
                             <div class="form-group">
                                 <label for="customer_location">PIN</label><span class="text-danger">*</span>
-                                <input type="text" name="upin_code" value="<%$t->pin_code%>" required class="form-control" id="PIN" aria-describedby="emailHelp" placeholder="PIN ">
+                                <input type="text" name="upin_code" value="<%$t->pin_code%>"  class="form-control" id="uPIN" aria-describedby="emailHelp" placeholder="PIN ">
                             </div>
                             <div class="form-group">
                                 <label for="customer_location">GST Number</label><span class="text-danger">*</span>
-                                <input type="text" name="ugst_number" value="<%$t->gst_number%>" required class="form-control" id="gst_no" aria-describedby="emailHelp" placeholder="GST Number">
+                                <input type="text" name="ugst_number" value="<%$t->gst_number%>"  class="form-control" id="ugst_no" aria-describedby="emailHelp" placeholder="GST Number">
                             </div>
                             <div class="form-group">
                                 <label for="customer_location">PAN No</label><span class="text-danger">*</span>
-                                <input type="text" name="upan_no" value="<%$t->pan_no%>" required class="form-control" id="pan" aria-describedby="emailHelp" placeholder="PAN No">
+                                <input type="text" name="upan_no" value="<%$t->pan_no%>"  class="form-control" id="upan" aria-describedby="emailHelp" placeholder="PAN No">
                             </div>
                             <div class="form-group">
                                 <label for="customer_name">Phone No</label><span class="text-danger">*</span>
-                                <input type="text" name="uphone_no" value="<%$t->phone_no%>" required class="form-control" id="phone" aria-describedby="phone" placeholder="Phone No">
+                                <input type="text" name="uphone_no" value="<%$t->phone_no%>"  class="form-control" id="uphone" aria-describedby="phone" placeholder="Phone No">
                             </div>
                         </div>
                     </div>
@@ -282,8 +282,8 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary">Update</button>
                     </div>
-                </form>
-            </div>
+                    </div>
+                    </form>
         </div>
     </div>
 </div>

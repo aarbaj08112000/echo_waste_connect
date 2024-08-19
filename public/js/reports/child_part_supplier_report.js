@@ -19,7 +19,30 @@ const page = {
             $("#part_id").val(data.id);
             $("#supplier_id").val(data.supplier_id);
             // myModal.show();
-        })
+        }),
+        $('#updateChildPartForm').on('submit', function(e){
+           
+            e.preventDefault();
+            var formData = new FormData(this); 
+            $.ajax({
+                url: base_url+'updatechildpart_supplier',
+                type: 'POST',
+                data: formData,
+                contentType: false, // Required for FormData
+                processData: false, // Required for FormData
+                success: function(response){
+                    var result = JSON.parse(response);
+                    alert(result.message);
+                    if(result.success) {
+                        location.reload(); // Reload the page to reflect changes
+                    }
+                },
+                error: function(xhr, status, error){
+                    console.log('Error:', error);
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
 
     },
     dataTable: function(){

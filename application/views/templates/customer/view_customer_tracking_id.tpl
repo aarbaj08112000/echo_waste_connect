@@ -1,31 +1,23 @@
-<div  class="wrapper">
+<div  class="wrapper container-xxl flex-grow-1 container-p-y">
+
+<nav aria-label="breadcrumb">
+<div class="sub-header-left pull-left breadcrumb">
+  <h1>
+    Planning & Sales
+    <a hijacked="yes"  class="backlisting-link" title="Back to Issue Request Listing" >
+      <i class="ti ti-chevrons-right" ></i>
+      <em >Customer Po Tracking</em></a>
+  </h1>
+  <br>
+  <span >Customer Po Tracking</span>
+</div>
+</nav>
+
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        
-                       <%assign var ='expired' value="no"%>
-                        <%if empty($new_po[0]->process_id)%>
-                            <%assign var = 'type' value="normal"%>
-                        <%else%> 
-                            <%assign var = 'type' value="Subcon grn"%>
-                        <%/if%>
-                        <a  class="btn btn-danger" href="<%$base_url%>customer_po_tracking_all">
-                            < Back</a>
-                    </div>
-                    <div class="col-sm-6">
-                        <!-- <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="<%$base_url%>generate_po">Home </a></li>
-                            <li class="breadcrumb-item active"></li>
-                        </ol> -->
-                    </div>
-                </div>
-            </div>
-        </section>
+      
         <section class="content">
-            <div class="container-fluid">
+            <div class="">
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
@@ -98,10 +90,10 @@
                             </div>
                             <div class="card-header">
                                 <%if true || $new_po[0]->expiry_po_date <= date('Y-m-d') || true%>
+                                <form action="<%$base_url%>add_parts_customer_trackings" method="post" id='myForm'>
                                     <div class="row">
                                         <div class="col-lg-5">
                                             <div class="form-group">
-                                                <form action="<%$base_url%>add_parts_customer_trackings" method="post">
                                                     <label for="">Select Part Number // Description <span class="text-danger">*</span> </label>
                                                     <select name="part_id" id="" required class="form-control select2">
                                                         <%if $customer_part_data%>
@@ -117,7 +109,7 @@
                                         <div class="col-lg-2">
                                             <div class="form-group">
                                                 <label for="">Enter Qty <span class="text-danger">*</span> </label>
-                                                <input type="number" step="any" name="qty" placeholder="Enter QTY " required class="form-control">
+                                                <input type="text" step="any" name="qty" placeholder="Enter QTY "  class="form-control onlyNumericInput">
                                                 <input type="hidden" name="customer_po_tracking_id" value="<%$customer_po_tracking[0]->id%>" required class="form-control">
                                             </div>
                                         </div>
@@ -125,10 +117,12 @@
                                             <div class="form-group">
                                                 <button type="submit" class="btn btn-info btn-lg mt-4">Add Part to Tracking
                                                 </button>
+                                                <a  class="btn btn-danger mt-4" href="<%$base_url%>customer_po_tracking_all">
+                                                < Back</a>
                                             </div>
                                         </div>
-                                       </form>
-                                    </div>
+                                        </div>
+                                        </form>
                                 <%else%>
                                     Po  Expired!!
                                 <%/if%>
@@ -137,7 +131,7 @@
                                 <%if $po_parts%>
                                     <%if $new_po[0]->status == "pending"%>
                                         <%if $smarty.session.type == 'admin' || $smarty.session.type == 'Admin'%>
-                                            <button type="button" class="btn btn-danger ml-1" data-toggle="modal" data-target="#lock">
+                                            <button type="button" class="btn btn-danger ml-1" data-bs-toggle="modal" data-bs-target="#lock">
                                                 Lock PO
                                             </button>
                                         <%/if%>
@@ -145,16 +139,16 @@
                                 <%/if%>
                                 <%if $new_po[0]->status == "lock"%>
                                     <%if $smarty.session.type == 'admin' || $smarty.session.type == 'Admin'%>
-                                        <button type="button" class="btn btn-success ml-1" data-toggle="modal" data-target="#accpet">
+                                        <button type="button" class="btn btn-success ml-1" data-bs-toggle="modal" data-bs-target="#accpet">
                                             Accept (Released) PO
                                         </button>
-                                        <button type="button" class="btn btn-danger ml-1" data-toggle="modal" data-target="#delete">
+                                        <button type="button" class="btn btn-danger ml-1" data-bs-toggle="modal" data-bs-target="#delete">
                                             Reject (delete) PO
                                         </button>
                                     <%/if%>
                                 <%else%>
                                     <%if $new_po[0]->status != "pending"%>
-                                        <button type="button" disabled class="btn btn-success ml-1" data-toggle="modal" data-target="#accpet">
+                                        <button type="button" disabled class="btn btn-success ml-1" data-bs-toggle="modal" data-bs-target="#accpet">
                                             PO Already Released
                                         </button>
                                         <a href="<%$base_url%>download_my_pdf/<%$new_po[0]->id%>" class="btn btn-primary" href="">Download</a>
@@ -166,7 +160,7 @@
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="exampleModalLabel">Update</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
@@ -183,7 +177,7 @@
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                 <button type="submit" class="btn btn-primary">Update</button>
                                             </div>
                                         </div>
@@ -195,7 +189,7 @@
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="exampleModalLabel">Update</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
@@ -212,7 +206,7 @@
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                 <button type="submit" class="btn btn-primary">Update</button>
                                             </div>
                                         </div>
@@ -224,13 +218,13 @@
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
+                                            <form action="<%$base_url%>delete_po" method="POST">
                                             <div class="modal-body">
                                                 <div class="row">
-                                                    <form action="<%$base_url%>delete_po" method="POST">
                                                         <div class="col-lg-12">
                                                             <div class="form-group">
                                                                 <label for=""><b>Are You Sure Want To Delete This PO?</b> </label>
@@ -242,7 +236,7 @@
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                 <button type="submit" class="btn btn-primary">Update</button>
                                             </div>
                                         </div>
@@ -251,7 +245,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <table class="table table-bordered table-striped" id="example1">
+                                <table class="table table-striped" id="example1">
                                     <thead>
                                         <tr>
                                             <th>Sr No</th>
@@ -294,10 +288,10 @@
                                                     <td>
                                                         <%if $new_po[0]->status == "pending"%>
                                                             <!-- Button trigger modal -->
-                                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal<%$i%>">
+                                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal<%$i%>">
                                                                 Edit
                                                             </button>
-                                                            <button type="button" class="btn btn-danger ml-1" data-toggle="modal" data-target="#exampleModaldelete<%$i%>">
+                                                            <button type="button" class="btn btn-danger ml-1" data-bs-toggle="modal" data-bs-target="#exampleModaldelete<%$i%>">
                                                                 Delete
                                                             </button>
 
@@ -307,40 +301,40 @@
                                                                     <div class="modal-content">
                                                                         <div class="modal-header">
                                                                             <h5 class="modal-title" id="exampleModalLabel">Update</h5>
-                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                                                 <span aria-hidden="true">&times;</span>
                                                                             </button>
                                                                         </div>
+                                                                        <form action="<%$base_url%>update_parts_customer_trackings" method="POST" id="update_qty">
                                                                         <div class="modal-body">
                                                                             <div class="col-lg-12">
                                                                                 <div class="form-group">
-                                                                                    <form action="<%$base_url%>update_parts_customer_trackings" method="POST">
                                                                                         <label for="">Enter Qty <span class="text-danger">*</span></label>
-                                                                                        <input type="number" name="qty" value="<%$p->qty%>" placeholder="Enter QTY " required class="form-control">
+                                                                                        <input type="text" name="qty" value="<%$p->qty%>" placeholder="Enter QTY " required class="form-control onlyNumericInput">
                                                                                         <input type="hidden" name="id" value="<%$p->id%>" required class="form-control">
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                         <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                                             <button type="submit" class="btn btn-primary">Update</button>
                                                                         </div>
                                                                     </div>
+                                                                    </div>
                                                                     </form>
-                                                                </div>
                                                             </div>
                                                             <div class="modal fade" id="exampleModaldelete<%$i%>" tabindex="-1" aria-labelledby="" aria-hidden="true">
                                                                 <div class="modal-dialog">
                                                                     <div class="modal-content">
                                                                         <div class="modal-header">
                                                                             <h5 class="modal-title" id="exampleModalLabel">Update</h5>
-                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                                                 <span aria-hidden="true">&times;</span>
                                                                             </button>
                                                                         </div>
                                                                         <div class="modal-body">
                                                                             <div class="row">
-                                                                                <form action="<%$base_url%>delete" method="POST">
+                                                                                <form action="<%$base_url%>delete" method="POST" id="delete_form">
                                                                                     <div class="col-lg-12">
                                                                                         <div class="form-group">
                                                                                             <label for=""> <b>Are You Sure Want To Delete This ? </b> </label>
@@ -351,7 +345,7 @@
                                                                             </div>
                                                                         </div>
                                                                         <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                                             <button type="submit" class="btn btn-primary">Update</button>
                                                                         </div>
                                                                     </div>
@@ -389,3 +383,124 @@
 <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+
+<script>
+
+$("#myForm").validate({
+    rules: {
+        part_id: "required",
+        qty: {
+            required: true,
+            number: true
+        }
+    },
+    messages: {
+        part_id: "Please select a part number",
+        qty: {
+            required: "Please enter a quantity",
+            number: "Please enter a valid number"
+        }
+    },
+    submitHandler: function(form) {
+        // Handle form submission
+        $.ajax({
+            url: form.action,
+            type: form.method,
+            data: $(form).serialize(),
+            success: function(response) {
+                // alert('Form submitted successfully!');
+                if(response != '' && response != null && typeof response != 'undefined'){
+                    let res = JSON.parse(response);
+                    if(res['sucess'] == 1){
+                        toastr.success(res['msg']);
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    }else{
+                        toastr.error(res['msg']);
+                    }
+                }
+                // Handle success response here
+            },
+            error: function(xhr, status, error) {
+                toastr.error('Form submission failed');
+                // Handle error response here
+            }
+        });
+    }
+
+    
+});
+
+$("#update_qty").validate({
+        rules: {
+            qty: {
+                required: true,
+                number: true
+            }
+        },
+        messages: {
+            qty: {
+                required: "Please enter the quantity",
+                number: "Please enter a valid number"
+            }
+        },
+        submitHandler: function(form) {
+            // Custom submit handler
+            $.ajax({
+                url: form.action,
+                type: form.method,
+                data: $(form).serialize(),
+                success: function(response) {
+                    // Handle the success response here
+                    if(response != '' && response != null && typeof response != 'undefined'){
+                        let res = JSON.parse(response);
+                        if(res['success'] == 1){
+                            toastr.success(res['msg']);
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        }else{
+                            toastr.error(res['msg']);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Handle the error response here
+                    toastr.error('Form submission failed');
+                    // console.error('Form submission failed:', error);
+                }
+            });
+        }
+    });
+
+    $("#delete_form").on("submit", function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Perform AJAX request
+        $.ajax({
+            url: $(this).attr("action"),
+            type: $(this).attr("method"),
+            data: $(this).serialize(),
+            success: function(response) {
+                // Handle the success response here
+                console.log('Form submitted successfully!');
+                console.log(response);
+                
+                // Optionally, close modal and refresh page or show a success message
+                // You might want to use something like:
+                // $('#your-modal-id').modal('hide');
+                toastr.success('Record deleted successfully.');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+                
+            },
+            error: function(xhr, status, error) {
+                // Handle the error response here
+                console.error('Form submission failed:', error);
+            }
+        });
+    });
+
+</script>

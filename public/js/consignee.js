@@ -21,16 +21,16 @@ const datatable = {
             console.log(data)
            
             $("#uconsignee_name").val(data['consignee_name']);
-            $("#consignee_id").val(data.c_id);
-            $("#address_id").val(data.address_id);
-            $("#state_num").val(data.state_no);
-            $("#state").val(data.state);
-            $("#gst_no").val(data.gst_number);
-            $("#phone").val(data.phone_no);
-            $("#pan").val(data.pan_no);
-            $("#address").val(data.address);
-            $("#location").val(data.location);
-            $("#PIN").val(data.pin_code);
+            $("#uconsignee_ref").val(data.c_id);
+            $("#uaddressRef").val(data.address_id);
+            $("#ustate_num").val(data.state_no);
+            $("#ustate").val(data.state);
+            $("#ugst_no").val(data.gst_number);
+            $("#uphone").val(data.phone_no);
+            $("#upan").val(data.pan_no);
+            $("#uaddress").val(data.address);
+            $("#ulocation").val(data.location);
+            $("#uPIN").val(data.pin_code);
             myModal.show();
         })
     },
@@ -102,6 +102,115 @@ const datatable = {
 
 }
 
+const validationFunc = () => {
+    $("#update_form").validate({
+        rules: {
+            uconsignee_name: "required",
+            ulocation: "required",
+            uaddress: "required",
+            ustate: "required",
+            ustate_no: "required",
+            upin_code: "required",
+            ugst_number: "required",
+            upan_no: "required",
+            uphone_no: "required"
+        },
+        messages: {
+            uconsignee_name: "Please enter the consignee name",
+            ulocation: "Please enter the location",
+            uaddress: "Please enter the address",
+            ustate: "Please enter the state",
+            ustate_no: "Please enter the state number",
+            upin_code: "Please enter the PIN code",
+            ugst_number: "Please enter the GST number",
+            upan_no: "Please enter the PAN number",
+            uphone_no: "Please enter the phone number"
+        },
+        submitHandler: function(form) {
+            // Custom submit handler
+            $.ajax({
+                url: form.action,
+                type: form.method,
+                data: $(form).serialize(),
+                success: function(response) {
+                    // Handle the success response here
+                    if(response != '' && response != null && typeof response != 'undefined'){
+                        let res = JSON.parse(response);
+                        if(res['sucess'] == 1){
+                            toastr.success(res['msg'])
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        }else{
+                            toastr.error(res['msg']);
+                        }
+                       
+                    }
+                    
+
+                },
+                error: function(xhr, status, error) {
+                    // Handle the error response here
+                    toastr.error('Unable to Update consignee..')
+                }
+            });
+        }
+    });
+
+    $("#add_consnee").validate({
+        rules: {
+            cconsignee_name: "required",
+            clocation: "required",
+            caddress: "required",
+            cstate: "required",
+            cstate_no: "required",
+            cpin_code: "required",
+            gst_number: "required",
+            cpan_no: "required",
+            cphone_no: "required"
+        },
+        messages: {
+            cconsignee_name: "Please enter the consignee name",
+            clocation: "Please enter the location",
+            caddress: "Please enter the address",
+            cstate: "Please enter the state",
+            cstate_no: "Please enter the state number",
+            cpin_code: "Please enter the PIN code",
+            gst_number: "Please enter the GST number",
+            cpan_no: "Please enter the PAN number",
+            cphone_no: "Please enter the phone number"
+        },
+        submitHandler: function(form) {
+            // Custom submit handler
+            $.ajax({
+                url: form.action,
+                type: form.method,
+                data: $(form).serialize(),
+                success: function(response) {
+                    // Handle the success response here
+                    if(response != '' && response != null && typeof response != 'undefined'){
+                        let res = JSON.parse(response);
+                        if(res['sucess'] == 1){
+                            toastr.success(res['msg'])
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        }else{
+                            toastr.error(res['msg']);
+                        }
+                       
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Handle the error response here
+                    console.error('Form submission failed:', error);
+                }
+            });
+        }
+    });
+}
+
 $(document).ready(function () {
     datatable.init();    
+    validationFunc();
 })

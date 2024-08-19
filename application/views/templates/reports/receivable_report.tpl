@@ -101,8 +101,8 @@
                                 </div>
                             <!-- /.card-body -->
                         </div>
-                        <button type="submit" data-bs-toggle="modal" class="btn btn-sm btn-primary"
-                                                            data-bs-target="#exampleModal2"> <i class="fas fa-edit"></i></button>
+                        <%* <button type="submit" data-bs-toggle="modal" class="btn btn-sm btn-primary"
+                                                            data-bs-target="#exampleModal2"> <i class="fas fa-edit"></i></button> *%>
 
                         <div class="modal fade" id="update_report_data" role="dialog"
                         aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: none;">
@@ -118,8 +118,8 @@
                                 </div>
                                 <div class="modal-body">
 
-                                    <form action="<%$base_url%>update_receivable_report" method="POST">
-                                        <input type="hidden" name="sales_number" required value="<%$po->sales_number%>">
+                                    <form id="updateReceivableForm" method="POST">
+                                        <input type="hidden" name="sales_number" id="sales_number" value="<%$po->sales_number%>">
                                         <div class="row">
                                             <div class="col-lg-12">
                                                 <div class="form-group">

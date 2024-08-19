@@ -7,10 +7,18 @@ const page = {
         this.filter();
         this.formValidation();
        
+        $(document).on("click",".upload_doc",function(){
+            var data = $(this).attr("data-value");
+            data = JSON.parse(atob(data)); 
+            $('#uid').val(data['id']);
+           
+        })
+
         $(document).on("click",".edit-part",function(){
             var data = $(this).attr("data-value");
             data = JSON.parse(atob(data)); 
             $('#end_date').val(data['po_end_date'])
+            $('#part_id').val(data['id'])
            
         })
         $(document).on("click",".close-po",function(){
@@ -18,6 +26,7 @@ const page = {
             data = JSON.parse(atob(data)); 
            $('#remarks').val(data['remark']);
            $('#reason').val(data['reason']);
+           $('#close_id').val(data['id']);
 
            
         })
@@ -146,6 +155,95 @@ const page = {
     }
 }
 
+const uploadDoc = () => {
+    $('#uploadForm').on('submit', function (e) {
+        e.preventDefault(); // Prevent the default form submission
+
+        // Create a FormData object to handle file upload
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: $(this).attr('action'), // Get the form action URL
+            type: 'POST',                 // Set the request type
+            data: formData,               // Send form data
+            contentType: false,           // Prevent jQuery from setting content type
+            processData: false,           // Prevent jQuery from processing the data
+            success: function (response) {
+                // Handle success response
+                toastr.success('File uploaded successfully.')
+                // Optionally, close the modal or perform other actions
+                $('.modal').modal('hide');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                // Handle error response
+                alert('Error uploading file: ' + textStatus);
+            }
+        });
+    });
+
+    $('#updateForm').on('submit', function (e) {
+        e.preventDefault(); // Prevent the default form submission
+
+        // Create a FormData object to handle the form data
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: $(this).attr('action'), // Get the form action URL
+            type: 'POST',                 // Set the request type
+            data: formData,               // Send form data
+            contentType: false,           // Prevent jQuery from setting content type
+            processData: false,           // Prevent jQuery from processing the data
+            success: function (response) {
+                // Handle success response
+                toastr.success('Updated Succesfully');
+                // Optionally, close the modal or perform other actions
+                $('.modal').modal('hide');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                // Handle error response
+                alert('Error saving changes: ' + textStatus);
+            }
+        });
+    });
+
+    $('#closePoForm').on('submit', function (e) {
+        e.preventDefault(); // Prevent the default form submission
+       
+        
+        // Create a FormData object to handle the form data
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: $(this).attr('action'), // Get the form action URL
+            type: 'POST',                 // Set the request type
+            data: formData,               // Send form data
+            contentType: false,           // Prevent jQuery from setting content type
+            processData: false,           // Prevent jQuery fromx processing the data
+            success: function (response) {
+                // Handle success response
+                toastr.success('Closed Succesfully');
+                // Optionally, close the modal or perform other actions
+                $('.modal').modal('hide');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                // Handle error response
+                alert('Error closing PO: ' + textStatus);
+            }
+        });
+    });
+
+}
+
 $( document ).ready(function() {
     page.init();
+    uploadDoc();
 });

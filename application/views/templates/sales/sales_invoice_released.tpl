@@ -96,7 +96,7 @@
 
                                 </h3>
                                 <!-- Button trigger modal -->
-                                <!-- <button type="button" class="btn btn-primary float-left" data-toggle="modal" data-target="#exampleModal">
+                                <!-- <button type="button" class="btn btn-primary float-left" data-toggle="modal" data-bs-target="#exampleModal">
                                     Add </button> -->
                             </div>
                             <!-- Modal -->
@@ -106,7 +106,7 @@
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="exampleModalLabel">Add </h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
@@ -137,7 +137,7 @@
 
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                             <button type="submit" class="btn btn-primary">Save changes</button>
                                         </div>
                                         </form>
@@ -199,10 +199,10 @@
                                                         <td>
                                                             
                                                             <%if $c->status != "Cancelled" && (empty($c->Status) || $c->Status == "CANCELLED")%>
-                                                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#cancelInvoice<%$srNo%>">Cancel</button>&nbsp;
+                                                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#cancelInvoice<%$srNo%>">Cancel</button>&nbsp;
                                                             <%/if%>
                                                             <%if $c->status == "pending"%>
-                                                            <button type="button" data-toggle="modal" class="btn btn-danger btn-sm" data-target="#deleteInvoice<%$srNo%>"><i class="fas fa-trash"></i></button>
+                                                            <button type="button" data-bs-toggle="modal" class="btn btn-danger btn-sm" data-bs-target="#deleteInvoice<%$srNo%>"><i class="fas fa-trash"></i></button>
                                                             <%/if%>
 
                                                             <div class="modal fade" id="cancelInvoice<%$srNo%>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -210,7 +210,7 @@
                                                                     <div class="modal-content">
                                                                         <div class="modal-header">
                                                                             <h5 class="modal-title" id="exampleModalLabel">Update Status</h5>
-                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                                                 <span aria-hidden="true">&times;</span>
                                                                             </button>
                                                                         </div>
@@ -228,7 +228,7 @@
                                                                             </div>
                                                                         </div>
                                                                         <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                                                             <button type="submit" class="btn btn-primary">Update</button>
                                                                         </div>
                                                                     </div>
@@ -242,7 +242,7 @@
                                                                     <div class="modal-content">
                                                                         <div class="modal-header">
                                                                             <h5 class="modal-title" id="exampleModalLabel">Delete Invoice</h5>
-                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                                                 <span aria-hidden="true">&times;</span>
                                                                             </button>
                                                                         </div>
@@ -259,7 +259,7 @@
                                                                             </div>
                                                                         </div>
                                                                         <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                                                             <button type="submit" class="btn btn-primary">Delete</button>
                                                                         </div>
                                                                     </div>

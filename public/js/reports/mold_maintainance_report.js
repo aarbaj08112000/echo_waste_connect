@@ -12,10 +12,41 @@ const datatable = {
         $(document).on('click','.reset-filter',function(e){
            that.resetFilter();
         })
-        $(document).on("click",".edit-part",function(){
-            var data = $(this).attr("data-value");
-            data = JSON.parse(atob(data)); 
+        $(document).on("click",".doc_upload",function(){
+            let data = $(this).attr("data-value");
+            data = JSON.parse(atob(data)); 4
+            console.log(data);
+            $('#no_of_cavity').val(data.no_of_cavity);
+            $('#mold_name').val(data.mold_name);
+            $('#customer_part_id').val(data.customer_part_id);
+            $('#target_life').val(data.target_life);
+            $('#target_over_life').val(data.target_over_life);
+            $('#current_molding_prod_qty').val(data.tot);
+            $('#mold_id').val(data.id);
         })
+        $("#form111").on('submit', function (e) {
+            e.preventDefault();
+    
+            $.ajax({
+                url: base_url+'upload_mold_maintenance_doc', // Change this to your actual URL
+                type: "POST",
+                data: new FormData(this),
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (response) {
+                    if (response) {
+                        alert('Uploaded Successfully');
+                        location.reload(); // Reload the page or redirect as needed
+                    } else {
+                        alert('Not Uploaded');
+                    }
+                },
+                error: function (response) {
+                    alert('Error occurred while uploading');
+                }
+            });
+        });
     },
     dataTable:function(){
       table =  new DataTable('#example1',{

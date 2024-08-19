@@ -10,12 +10,108 @@ const page = {
         $(document).on("click",".edit-part",function(){
             var data = $(this).attr("data-value");
             data = JSON.parse(atob(data)); 
+            
            $('#edit-part-des').val(data['part_description']);
-           $('#part-rate').val(data['fg_rate']);
+           $('#part-rate').val(data['stock_rate']);
            $('#part_id').val(data['id']);
-            myModal.show();
+            // myModal.show();
         })
+        // $(document).on('click','[type="submit"]',function(){
+        //     let parent_form = $(this).closest('form').attr('id');
+        //     console.log(parent_form);
+        //     let valid_ = $(`#${parent_form}`).valid();
+        //     $(this).parents('.modal-footer').find('[data-bs-dismiss="modal"]').trigger('click');
+        // })
+        this.validationFunc();
+    },
+    validationFunc:function(){
 
+        // adding new part.
+
+        $('#addCustomerPartsForm').validate({
+            rules: {
+               part_number: {
+                  required: true
+               },
+               part_description: {
+                  required: true
+               },
+               fg_rate: {
+                  required: true,
+                  number: true
+               }
+            },
+            messages: {
+               part_number: {
+                  required: "Please enter the part number"
+               },
+               part_description: {
+                  required: "Please enter the part description"
+               },
+               fg_rate: {
+                  required: "Please enter a rate",
+                  number: "Please enter a valid number"
+               }
+            },
+            submitHandler: function(form) {
+               $.ajax({
+                  url: form.action,
+                  type: form.method,
+                  data: $(form).serialize(),
+                  success: function(response) {
+                     // handle success response
+                     toastr.success('Part Updated Sucessfully.')
+                     setTimeout(() => {
+                        window.location.reload();
+                     }, 1000);
+                  },
+                  error: function(xhr, status, error) {
+                     // handle error response
+                     toastr.error('An error occurred. Please try again!');
+                  }
+               });
+            }
+         });
+
+         // Updating the part
+        $('#updateCustomerPartsForm').validate({
+            rules: {
+               part_description: {
+                  required: true
+               },
+               fg_rate: {
+                  required: true,
+                  number: true
+               }
+            },
+            messages: {
+               part_description: {
+                  required: "Please enter the part description"
+               },
+               fg_rate: {
+                  required: "Please enter a rate",
+                  number: "Please enter a valid number"
+               }
+            },
+            submitHandler: function(form) {
+               $.ajax({
+                  url: form.action,
+                  type: form.method,
+                  data: $(form).serialize(),
+                  success: function(response) {
+                     // handle success response
+                     toastr.success('Part Updated Sucessfully.')
+                     setTimeout(() => {
+                        window.location.reload();
+                     }, 1000);
+                  },
+                  error: function(xhr, status, error) {
+                     // handle error response
+                     toastr.error('An error occurred. Please try again!');
+                  }
+               });
+            }
+         });
     },
     dataTable: function(){
         var data = this.serachParams();

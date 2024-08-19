@@ -1479,9 +1479,13 @@ class P_Molding extends CommonController
 		foreach($data['mold_maintenance'] as $key => $val){
 			$mold_maintenance_docs[$val['mold_name']] = $this->Crud->get_data_by_id("mold_maintenance", $val['mold_name'], "mold_name");
 			$data['customer_part_filter_data'][] = $val['customer_name']. '/'.$val['part_number'].'/'.$val['part_description'];
+			$data['mold_maintenance'][$key]['encrpted_data'] = base64_encode(json_encode($val));
 		}
+		// pr($data['mold_maintenance'],1);
+		$data['current_date'] = date("Y-m-d");
 		$data['mold_maintenance_docs'] = $mold_maintenance_docs;
 		// pr($mold_maintenance_docs,1);
+		
 		$this->loadView('molding/mold_maintenance_report',$data);
 
 	}

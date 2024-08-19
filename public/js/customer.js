@@ -20,21 +20,22 @@ const datatable = {
             data = JSON.parse(atob(data)); 
             console.log(data)
            
-            $("#customer_id").val(data['id']);
-            $("#customer_name").val(data.customer_name);
-            $("#customer_code").val(data.customer_code);
-            $("#customer_address").val(data.billing_address);
-            $("#customer_shifting_address").val(data.shifting_address);
-            $("#customer_state").val(data.state);
-            $("#customer_state_no").val(data.state_no);
-            $("#payment_terms").val(data.payment_terms);
-            $("#vendor_code").val(data.vendor_code);
-            $("#pan_no").val(data.pan_no);
-            $("#bank_details").val(data.bank_details);
-            $("#pos").val(data.pos);
-            $("#address1").val(data.address1);
-            $("#location").val(data.location);
-            $("#pin").val(data.pin);
+            $("#ucustomer_id").val(data['id']);
+            $("#ucustomer_name").val(data.customer_name);
+            $("#ucustomer_code").val(data.customer_code);
+            $("#ucustomer_address").val(data.billing_address);
+            $("#ucustomer_shifting_address").val(data.shifting_address);
+            $("#ucustomer_state").val(data.state);
+            $("#ucustomer_state_no").val(data.state_no);
+            $("#upayment_terms").val(data.payment_terms);
+            $("#uvendor_code").val(data.vendor_code);
+            $("#upan_no").val(data.pan_no);
+            $("#ubank_details").val(data.bank_details);
+            $("#upos").val(data.pos);
+            $("#uaddress1").val(data.address1);
+            $("#ulocation").val(data.location);
+            $("#upin").val(data.pin);
+            $('#customer_id').val(data.id)
             myModal.show();
         })
     },
@@ -106,6 +107,237 @@ const datatable = {
 
 }
 
+const validationFunc = () => {
+    $('#addCustomerForm').validate({
+        rules: {
+           customerName: {
+              required: true
+           },
+           customerCode: {
+              required: true
+           },
+           customerLocation: {
+              required: true
+           },
+           customerSaddress: {
+              required: true
+           },
+           state: {
+              required: true
+           },
+           state_no: {
+              required: true
+           },
+           gst_no: {
+              required: true
+           },
+           vendor_code: {
+              required: true
+           },
+           pan_no: {
+              required: true
+           },
+           paymentTerms: {
+              required: true,
+              number: true,
+              min: 0
+           },
+           pos: {
+              required: true
+           },
+           address1: {
+              required: true
+           },
+           location: {
+              required: true
+           },
+           pin: {
+              required: true
+           }
+        },
+        messages: {
+           customerName: {
+              required: "Please enter the customer name"
+           },
+           customerCode: {
+              required: "Please enter the customer code"
+           },
+           customerLocation: {
+              required: "Please enter the customer billing address"
+           },
+           customerSaddress: {
+              required: "Please enter the customer shipping address"
+           },
+           state: {
+              required: "Please enter the state"
+           },
+           state_no: {
+              required: "Please enter the state number"
+           },
+           gst_no: {
+              required: "Please enter the GST number"
+           },
+           vendor_code: {
+              required: "Please enter the vendor code"
+           },
+           pan_no: {
+              required: "Please enter the PAN number"
+           },
+           paymentTerms: {
+              required: "Please enter the payment terms",
+              number: "Please enter a valid number",
+              min: "Value must be greater than or equal to 0"
+           },
+           pos: {
+              required: "Please enter the pos"
+           },
+           address1: {
+              required: "Please enter the address"
+           },
+           location: {
+              required: "Please enter the location"
+           },
+           pin: {
+              required: "Please enter the pin"
+           }
+        },
+        submitHandler: function(form) {
+           $.ajax({
+              url: form.action,
+              type: form.method,
+              data: $(form).serialize(),
+              success: function(response) {
+                 // handle success response
+                 toastr.success('Customer Added succesfully.');
+                 setTimeout(() => {
+                    window.location.reload();
+                 }, 1000);
+              },
+              error: function(xhr, status, error) {
+                 // handle error response
+                 toastr.error('An error occurred. Please try again!');
+              }
+           });
+        }
+     });
+
+     $('#updateCustomerForm').validate({
+        rules: {
+           ucustomerName: {
+              required: true
+           },
+           ucustomerCode: {
+              required: true
+           },
+           ubillingaddress: {
+              required: true
+           },
+           ushiftingAddress: {
+              required: true
+           },
+           ustate: {
+              required: true
+           },
+           state_no: {
+              required: true
+           },
+           ugst_no: {
+              required: true
+           },
+           upaymentTerms: {
+              required: true
+           },
+           vendor_code: {
+              required: true
+           },
+           pan_no: {
+              required: true
+           },
+           bank_details: {
+              required: true
+           },
+           pos: {
+              required: true
+           },
+           address1: {
+              required: true
+           },
+           location: {
+              required: true
+           },
+           pin: {
+              required: true
+           }
+        },
+        messages: {
+           ucustomerName: {
+              required: "Please enter the customer name"
+           },
+           ucustomerCode: {
+              required: "Please enter the customer code"
+           },
+           ubillingaddress: {
+              required: "Please enter the customer billing address"
+           },
+           ushiftingAddress: {
+              required: "Please enter the customer shipping address"
+           },
+           ustate: {
+              required: "Please enter the state"
+           },
+           state_no: {
+              required: "Please enter the state number"
+           },
+           ugst_no: {
+              required: "Please enter the GST number"
+           },
+           upaymentTerms: {
+              required: "Please enter the payment terms"
+           },
+           vendor_code: {
+              required: "Please enter the vendor code"
+           },
+           pan_no: {
+              required: "Please enter the PAN number"
+           },
+           bank_details: {
+              required: "Please enter the bank details"
+           },
+           pos: {
+              required: "Please enter the pos"
+           },
+           address1: {
+              required: "Please enter the address"
+           },
+           location: {
+              required: "Please enter the location"
+           },
+           pin: {
+              required: "Please enter the pin"
+           }
+        },
+        submitHandler: function(form) {
+           $.ajax({
+              url: form.action,
+              type: form.method,
+              data: $(form).serialize(),
+              success: function(response) {
+                 // handle success response
+                 toastr.success('Customer Updated succesfully.');
+                 setTimeout(() => {
+                    window.location.reload();
+                 }, 1000);
+              },
+              error: function(xhr, status, error) {
+                 // handle error response
+                 toastr.error('An error occurred. Please try again!');
+              }
+           });
+        }
+     });
+}
+
 $(document).ready(function () {
     datatable.init();    
+    validationFunc();
 })

@@ -1,20 +1,30 @@
-<div class="wrapper">
+<style>
+.select2-container--default{
+    width: 100%!important;
+}
+</style>
+<div class="wrapper container-xxl flex-grow-1 container-p-y">
+
+<nav aria-label="breadcrumb">
+      <div class="sub-header-left pull-left breadcrumb">
+        <h1>
+          Planning & Sales
+          <a hijacked="yes"  class="backlisting-link" title="Back to Issue Request Listing" >
+            <i class="ti ti-chevrons-right" ></i>
+            <em >Planning data</em></a>
+        </h1>
+        <br>
+        <span >Planning data</span>
+      </div>
+    </nav>
 
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-5">
-                        <h1>Planning Data</h1>
-                    </div>
-                </div>
-            </div>
-        </section>
+        
 
         <!-- Main content -->
         <section class="content">
-            <div class="container-fluid">
+            <div class="">
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
@@ -22,12 +32,12 @@
                                 <!-- <div class="col-6"> -->
                                 <h3 class="card-title"></h3>
                                 <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-primary" data-toggle="modal"
-                                    data-target="#exampleModal">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal">
                                     Add Planing</button>
                                 <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-primary" data-toggle="modal"
-                                    data-target="#exampleModal1212">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal1212">
                                     Add FG Stock</button>
                                 <!-- Modal -->
                                 <div class="modal fade" id="exampleModal1212" role="dialog"
@@ -36,14 +46,13 @@
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="exampleModal1212Label">Add FG Stock</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                     aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
+                                            <form action="<%$base_url%>add_planning_fg_stock" method="POST" id="planningFgStockForm">
                                             <div class="modal-body">
-                                                <form action="<%$base_url%>add_planning_fg_stock"
-                                                    method="POST">
                                                     <div class="row">
                                                     <div class="col-lg-12">
                                                             <div class="form-group">
@@ -84,8 +93,8 @@
                                                                     <label for="contractorName">Production
                                                                         Quantity</label><span
                                                                         class="text-danger">*</span>
-                                                                    <input type="number" required name="fg_stock"
-                                                                        class="form-control">
+                                                                    <input type="text"  name="fg_stock"
+                                                                        class="form-control onlyNumericInput">
                                                                     <input type="hidden" required name="financial_year"
                                                                         value="<%$financial_year%>"
                                                                         class="form-control">
@@ -97,13 +106,13 @@
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary"
-                                                                data-dismiss="modal">Close</button>
+                                                                data-bs-dismiss="modal">Close</button>
                                                             <button type="submit" class="btn btn-primary">Save
                                                                 changes</button>
                                                         </div>
                                                     </div>
-                                                </form>
-                                            </div>
+                                                    </form> 
+                                                    </div>
 
                                         </div>
                                     </div>
@@ -115,8 +124,8 @@
                                     Monthly MRP Req</a>
                                 <!-- </div>
                                 <div class="col-6" style="align:right;"> -->
-                                <button type="button" class="btn btn-info" data-toggle="modal"
-                                    data-target="#exportCustomerPartsOnly">
+                                <button type="button" class="btn btn-info" data-bs-toggle="modal"
+                                    data-bs-target="#exportCustomerPartsOnly">
                                     Export Format</button>
 
                                 <!-- Export Modal -->
@@ -126,7 +135,7 @@
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="exampleModalLabel">Export Customer Data for Planning Data</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                     aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
@@ -157,7 +166,7 @@
                                                 <input type="hidden" value="<%$month%>"
                                                     class="hidden" name="month">
                                                 <button type="button" class="btn btn-secondary"
-                                                    data-dismiss="modal">Cancel</button>
+                                                    data-bs-dismiss="modal">Cancel</button>
                                                 <button type="submit" class="btn btn-primary">Export</button>
                                             </div>
                                             </form>
@@ -165,8 +174,8 @@
                                     </div>
                                 </div>
 
-                                <button type="button" class="btn btn-info" data-toggle="modal"
-                                    data-target="#importCustomerPartsOnly">
+                                <button type="button" class="btn btn-info" data-bs-toggle="modal"
+                                    data-bs-target="#importCustomerPartsOnly">
                                     Import Data</button>
                                 
                                  <!-- Import Modal -->
@@ -176,7 +185,7 @@
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="exampleModalLabel">Import Planning Data</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                     aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
@@ -212,7 +221,7 @@
                                                 <input type="hidden" value="<%$segment_3%>"
                                                     class="hidden">
                                                 <button type="button" class="btn btn-secondary"
-                                                    data-dismiss="modal">Cancel</button>
+                                                    data-bs-dismiss="modal">Cancel</button>
                                                 <button type="submit" class="btn btn-primary">Import</button>
                                             </div>
                                             </form>
@@ -227,14 +236,13 @@
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="exampleModalLabel">Add Planing</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                     aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
+                                            <form action="<%$base_url%>add_planning_data" method="POST" id="planningForm">
                                             <div class="modal-body">
-                                                <form action="<%$base_url%>add_planning_data"
-                                                    method="POST">
                                                     <div class="row">
                                                         <div class="col-lg-12">
                                                             <div class="form-group">
@@ -274,8 +282,8 @@
                                                                 <div class="form-group">
                                                                     <label for="contractorName">Enter Schedule Qty
                                                                     </label><span class="text-danger">*</span>
-                                                                    <input type="number" required name="schedule_qty"
-                                                                        class="form-control">
+                                                                    <input type="text"  name="schedule_qty"
+                                                                        class="form-control onlyNumericInput">
                                                                     <input type="hidden" required name="financial_year"
                                                                         value="<%$financial_year%>"
                                                                         class="form-control">
@@ -287,12 +295,12 @@
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary"
-                                                                data-dismiss="modal">Close</button>
+                                                                data-bs-dismiss="modal">Close</button>
                                                             <button type="submit" class="btn btn-primary">Save
                                                                 changes</button>
                                                         </div>
-                                                </form>
-                                            </div>
+                                                        </div>
+                                                        </form>
 
                                         </div>
                                     </div>
@@ -428,8 +436,8 @@
                                             <!-- Edit Modal -->
                                     </td>
                                     <td>
-                                        <button title="Edit" type="button" class="btn btn-primary" data-toggle="modal"
-                                            data-target="#editenew<%$i%>">
+                                        <button title="Edit" type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#editenew<%$i%>">
                                             <i class="fa fa-edit"></i>
                                         </button>
                                                                                <div class="modal fade" id="editenew<%$i%>" tabindex="-1"
@@ -439,7 +447,7 @@
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="exampleModalLabel">Update</h5>
-                                                        <button type="button" class="close" data-dismiss="modal"
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
@@ -450,8 +458,8 @@
                                                             <div class="form-group">
                                                                 <label for="contractorName">Enter Schedule Qty</label>
                                                                 <span class="text-danger">*</span>
-                                                                <input type="number" value="<%$planing_data[0]->schedule_qty%>" required name="schedule_qty"
-                                                                    class="form-control">
+                                                                <input type="text" value="<%$planing_data[0]->schedule_qty%>"  name="schedule_qty"
+                                                                    class="form-control onlyNumericInput">
                                                                 <input required value="<%$t->id%>"
                                                                     type="hidden" class="form-control"
                                                                     name="planning_id">
@@ -471,7 +479,7 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary"
-                                                            data-dismiss="modal">Close</button>
+                                                            data-bs-dismiss="modal">Close</button>
                                                         <button type="submit" class="btn btn-primary">Save
                                                             changes</button>
                                                         </form>
@@ -514,6 +522,121 @@
 
 <script>
     $(document).ready(function() {
+
+    $('#planningForm').validate({
+        // Define validation rules
+        rules: {
+            customer_id: {
+                required: true
+            },
+            customer_part_id: {
+                required: true
+            },
+            month_id: {
+                required: true
+            },
+            schedule_qty: {
+                required: true,
+                number: true
+            }
+        },
+        // Define validation messages
+        messages: {
+            customer_id: {
+                required: "Please select a customer."
+            },
+            customer_part_id: {
+                required: "Please select a customer part number."
+            },
+            month_id: {
+                required: "Please select a month."
+            },
+            schedule_qty: {
+                required: "Please enter the schedule quantity.",
+                number: "Please enter a valid number."
+            }
+        },
+        // Handle form submission
+        submitHandler: function (form) {
+            $.ajax({
+                url: $(form).attr('action'), // Get the form action URL
+                type: 'POST',                // Set the request type
+                data: $(form).serialize(),   // Serialize the form data
+                success: function (response) {
+                    // Handle success response
+                    toastr.success('Planning data added successfully!');
+                    // Optionally, close the modal or perform other actions
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                    $('.modal').modal('hide');
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    // Handle error response
+                    toastr.error('Error adding planning data: ' + textStatus);
+                }
+            });
+        }
+    });
+
+
+    $('#planningFgStockForm').validate({
+        // Define validation rules
+        rules: {
+            customer_id: {
+                required: true
+            },
+            customer_part_id1: {
+                required: true
+            },
+            month_id: {
+                required: true
+            },
+            fg_stock: {
+                required: true,
+                number: true
+            }
+        },
+        // Define validation messages
+        messages: {
+            customer_id: {
+                required: "Please select a customer."
+            },
+            customer_part_id1: {
+                required: "Please select a customer part number."
+            },
+            month_id: {
+                required: "Please select a month."
+            },
+            fg_stock: {
+                required: "Please enter the production quantity.",
+                number: "Please enter a valid number."
+            }
+        },
+        // Handle form submission
+        submitHandler: function (form) {
+            $.ajax({
+                url: $(form).attr('action'), // Get the form action URL
+                type: 'POST',                // Set the request type
+                data: $(form).serialize(),   // Serialize the form data
+                success: function (response) {
+                    // Handle success response
+                    toastr.success('Planning fg stock added successfully!');
+                    // Optionally, close the modal or perform other actions
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                    // Optionally, close the modal or perform other actions
+                    $('.modal').modal('hide');
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    // Handle error response
+                    toastr.error('Error adding planning FG Stock data: ' + textStatus);
+                }
+            });
+        }
+    });
+
         var customer_id = $("#customer_tracking").val();
         $.ajax({
             url: '<%$base_url%>PlanningController/get_customer_parts_for_planning',

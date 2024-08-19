@@ -72,6 +72,7 @@ class CustomerPart extends CI_Model {
      * Read specific part details including stock
      */
     public function getCustomerPartById($id) {
+       
         $part_details = $this->Crud->customQuery("SELECT parts.*, stock.* 
             FROM  customer_parts_master parts
             LEFT JOIN customer_parts_master_stock stock
@@ -79,6 +80,7 @@ class CustomerPart extends CI_Model {
             AND stock.clientId = " . $this->Unit->getSessionClientId() . " 
             WHERE parts.id = ".$id."
             ORDER BY parts.id desc");
+            // pr($this->db->last_query(),1);
         return $part_details;
     }
 
@@ -125,7 +127,8 @@ class CustomerPart extends CI_Model {
             if($stockResult){
                 return $this->Crud->update_data_column("customer_parts_master_stock", $update_data, $id, "customer_parts_master_id ");
             }
-        }       
+        } 
+       
     }
 
     

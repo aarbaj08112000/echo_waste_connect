@@ -143,14 +143,14 @@
                 <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
+            <form action="<%$base_url%>add_part" method="post"id="uploadForm" enctype='multipart/form-data'>
             <div class="modal-body">
-                <form action="<%$base_url%>add_part" method="post" enctype='multipart/form-data'>
                     <div class="text-center">
                         <div class="form-group">
                             <label for="exampleInputEmail1">Upload File<span class="text-danger">*</span>
                             <input required type="file" name="cad_file" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Asset Number">
                         </div>
-                        <input value="<%$s->id%>" type="hidden" name="uid" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Customer Name">
+                        <input value="<%$s->id%>" type="hidden" name="uid" required class="form-control" id="uid" aria-describedby="emailHelp" placeholder="Customer Name">
                         <input type="hidden" name="table_name" value="customer_po_tracking">
                         <input type="hidden" name="column_name" value="uploadedDoc">
                     </div>
@@ -158,8 +158,8 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary">Save</button>
                     </div>
-                </form>
-            </div>
+                    </div>
+                    </form>
         </div>
     </div>
 </div>
@@ -172,8 +172,8 @@
                 <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close">
                 </button>
             </div>
+            <form action="<%$base_url%>update_customer_po_tracking_all" method="POST" id="updateForm" enctype="multipart/form-data">
             <div class="modal-body">
-                <form action="<%$base_url%>update_customer_po_tracking_all" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="">End Date<span class="text-danger">*</span></label>
                         <input required value="<%$s->po_end_date%>" type="date" class="form-control" name="end_date" id="end_date">
@@ -199,16 +199,16 @@
                             
                         </button>
                     </div>
+                    <form action="<%$base_url%>close_po_customer_po_tracking" method="POST" id="closePoForm" enctype="multipart/form-data">
                     <div class="modal-body">
-                        <form action="<%$base_url%>close_po_customer_po_tracking" method="POST" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label for="">Are you sure to close <u>PO Number : <%$s->po_number%></u> ?</label>
                                 <br><br>
-                                <input required value="<%$s->id%>" type="hidden" class="form-control" name="id">
+                                <input required value="<%$s->id%>" type="hidden" class="form-control" name="id" id='close_id'>
                                 <label for="">Remark<span class="text-danger"></span></label>
                                 <input type="text" name="remark" placeholder="Enter Remark " class="form-control" id="remarks"/>
                                 <label for="">Reason<span class="text-danger">*</span> </label>
-                                <select name="reason" required id="reason" class="form-control select2">
+                                <select name="reason"  id="reason" class="form-control select2">
                                     <option value="">Select</option>
                                     <option value="Withdraw">Withdraw</option>
                                     <option value="Completed">Completed</option>

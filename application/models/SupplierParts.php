@@ -639,7 +639,7 @@ class SupplierParts extends CI_Model {
 
     public function getIncomeReportView($condition_arr = [],$search_params = []){
         $this->db->select('
-        grn.*, 
+        grn.*,grn.qty as grn_qty, 
         po.*, 
         inward.*, 
         supplier.*, 

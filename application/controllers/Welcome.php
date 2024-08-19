@@ -450,7 +450,7 @@ class Welcome extends CommonController
 			'orderable' => false
         ];
         $column[] = [
-            "data" => "qty",
+            "data" => "grn_qty",
             "title" => "Received Qty",
             "width" => "17%",
             "className" => "dt-center",
@@ -4512,7 +4512,7 @@ class Welcome extends CommonController
             "className" => "dt-center",
         ];
         $column[] = [
-            "data" => "fg_rate",
+            "data" => "stock_rate",
             "title" => "Rate",
             "width" => "10%",
             "className" => "dt-center",
@@ -5627,9 +5627,9 @@ class Welcome extends CommonController
 				"po_id" => $id
 			);
 			$result2 = $this->Crud->delete_data("po_parts", $data2);
-			echo "<script>alert(' Deleted Sucessfully');document.location='" . base_url('new_po_list_supplier') . "'</script>";
+			// echo "<script>alert(' Deleted Sucessfully');document.location='" . base_url('new_po_list_supplier') . "'</script>";
 		} else {
-			echo "<script>alert(' Not Deleted');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			// echo "<script>alert(' Not Deleted');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
 	}
 
@@ -7944,9 +7944,9 @@ class Welcome extends CommonController
 		$pos = $this->input->post('pos');
 		$address1 = $this->input->post('address1');
 		$location = $this->input->post('location');
-		$pin = $this->input->post('pin');
-
-		$data = array(
+		$pin = $this->input->post('upin');
+		// pr($_POST,1);	
+		$data = array(	
 			"customer_name" => $customerName,
 			"customer_code" => $customerCode,
 			"billing_address" => $billingaddress,
@@ -7964,6 +7964,7 @@ class Welcome extends CommonController
 			"pin" => $pin,
 
 		);
+		
 		$result = $this->Crud->update_data("customer", $data, $id);
 		if ($result) {
 			$this->addSuccessMessage('Customer updated sucessfully.');
@@ -9794,7 +9795,7 @@ class Welcome extends CommonController
 		$id = $this->input->post('uid');
 		$table = $this->input->post('table_name');
 		$col_name = $this->input->post('column_name');
-
+		// pr($_POST,1);
 		if (!empty($_FILES['cad_file']['name'])) {
 			$image_path = "./documents/";
 			$config['allowed_types'] = '*';
@@ -10032,7 +10033,7 @@ class Welcome extends CommonController
 
 		$part_description = $this->input->post('part_description');
 		$fg_rate = $this->input->post('fg_rate');
-
+		
 		$data = array(
 			"part_description" => $part_description
 		);
