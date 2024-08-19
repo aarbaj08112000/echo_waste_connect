@@ -114,6 +114,7 @@ class SalesController extends CommonController
 
 	public function generate_new_sales()
 	{
+		
 		$customer_id = $this->input->post('customer_id');
 		$remark = $this->input->post('remark');
 		$clientUnit = $this->Unit->getSessionClientId();
@@ -166,17 +167,24 @@ class SalesController extends CommonController
 
 
 		$result = $this->Crud->insert_data("new_sales", $data);
+		$ret_arr = [];
 		if ($result) {
-			$this->addSuccessMessage('Sales invoice created.');
-			$this->redirectMessage('view_new_sales_by_id/' . $result);
+			// $this->addSuccessMessage('Sales invoice created.');
+			// $this->redirectMessage('view_new_sales_by_id/' . $result);
+			$ret_arr['url'] = 'view_new_sales_by_id/' . $result;
+			$ret_arr['sucess'] = 1;
 		} else {
-			$this->addErrorMessage('Unable to create sales invoice.');
-			$this->redirectMessage();
+			// $this->addErrorMessage('Unable to create sales invoice.');
+			// $this->redirectMessage();
+			$ret_arr['sucess'] = 0;
 		}
+		echo json_encode($ret_arr);
 	}
+
 
 	public function generate_new_sales_update()
 	{
+		
 		$id = $this->input->post('id');
 		$remark = $this->input->post('remark');
 		$mode = $this->input->post('mode');
@@ -282,8 +290,9 @@ class SalesController extends CommonController
 		// $child_part_list = $this->db->query('SELECT DISTINCT part_number,supplier_id FROM `customer_part` where supplier_id = ' . $data['supplier'][0]->id . '');
 		// $data['child_part'] = $child_part_list->result();
 		$data['e_invoice_status'] = $this->Crud->get_data_by_id("einvoice_res", $this->uri->segment('2'), "new_sales_id");
-		// pr($data['e_invoice_status'],1);
-		foreach ($variable as $p) {
+		
+//		pr($data['po_parts'],1);
+		foreach ($data['po_parts']  as $p) {
 			$data['child_part_data'][$p->part_id] = $this->Crud->get_data_by_id("customer_part", $p->part_id, "id");
 			$data['gst_structure2'][$p->part_id] = $this->Crud->get_data_by_id("gst_structure", $p->tax_id, "id");
 		}
@@ -294,6 +303,7 @@ class SalesController extends CommonController
 
 	public function add_sales_parts()
 	{
+		
 		$customer_id = $this->input->post('customer_id');
 		$po_id = $this->input->post('po_id');
 		$sales_id = $this->input->post('sales_id');
@@ -305,9 +315,12 @@ class SalesController extends CommonController
 		$salesdata = $this->db->query('SELECT sales_id FROM `sales_parts` where sales_id = ' . $sales_id . ' ');
 		$salesdata_result = $salesdata->result();
 		$added_saled_count = count($salesdata_result);
+		$ret_arr = [];
 
 		if ($added_saled_count == '7') {
-			echo "<script>alert('Already 7 Parts Added.');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			// echo "<script>alert('Already 7 Parts Added.');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$msg = 'Already 7 Parts Added.';
+			$sucess = 0;
 		}
 
 		$customer_part = $this->Crud->get_data_by_id("customer_part", $part_id, "id");
@@ -324,9 +337,10 @@ class SalesController extends CommonController
 
 		$po_part_details = $this->Crud->get_data_by_id_multiple_condition("parts_customer_trackings", $po_part_criteria);
 		if ($qty > $po_part_details[0]->qty) {
-			$this->addErrorMessage("Insufficient PO Part balance qty. PO Part balance qty is " . $po_part_details[0]->qty);
-			$this->redirectMessage();
-			exit();
+			// $this->addErrorMessage("Insufficient PO Part balance qty. PO Part balance qty is " . $po_part_details[0]->qty);
+			// $this->redirectMessage();
+			$msg = "Insufficient PO Part balance qty. PO Part balance qty is " . $po_part_details[0]->qty;
+			$sucess = 0;
 		}
 
 		$prod_qty_new = 0;
@@ -357,9 +371,11 @@ class SalesController extends CommonController
 		}
 		
 		if ($qty > $customer_parts_master_data[0]->fg_stock) {
-			$this->addErrorMessage("Please check FG stock");
-			$this->redirectMessage();
-			exit();
+			// $this->addErrorMessage("Please check FG stock");
+			// $this->redirectMessage();
+			$msg = 'Please check FG stock';
+			$sucess = 0;
+		
 		} else {
 			$customer_part_rate = $this->Crud->get_data_by_id("customer_part_rate", $part_id, "customer_master_id");
 			$total_rate_old = $customer_part_rate[0]->rate * $qty;
@@ -384,9 +400,11 @@ class SalesController extends CommonController
 			);
 			$check = $this->Crud->read_data_where("sales_parts", $data);
 			if ($check) {
-				$this->addErrorMessage("Part Already Exists To This Invoice Number , Enter Different Part");
-				$this->redirectMessage();
-				exit();
+				// $this->addErrorMessage("Part Already Exists To This Invoice Number , Enter Different Part");
+				// $this->redirectMessage();
+				$msg = 'Part Already Exists To This Invoice Number , Enter Different Part';
+				$sucess = 0;
+				
 			} else {
 				$customer_po_tracking_data = $this->Crud->get_data_by_id("customer_po_tracking", $po_id, "id");
 
@@ -421,13 +439,21 @@ class SalesController extends CommonController
 
 				$result = $this->Crud->insert_data("sales_parts", $data);
 				if ($result) {
-					$this->addSuccessMessage("Part added successfully.");
+					// $this->addSuccessMessage("Part added successfully.");
+					$msg = 'Part added successfully.';
+					$sucess = 1;
 				} else {
-					$this->addErrorMessage("Unable to add part. Please try again.");
+					// $this->addErrorMessage("Unable to add part. Please try again.");
+					$msg = 'Unable to add part. Please try again.';
+					$sucess = 1;
 				}
-				$this->redirectMessage();
+				// $this->redirectMessage();
 			}
 		}
+		$ret_arr['msg'] = $msg;
+		$ret_arr['sucess'] = $sucess;
+		
+		echo json_encode($ret_arr);
 	}
 
 	public function lock_invoice()
@@ -855,7 +881,7 @@ class SalesController extends CommonController
             "className" => "dt-center",
         ];
 		
-
+		
         $data["data"] = $column;
         $data["is_searching_enable"] = false;
         $data["is_paging_enable"] = true;

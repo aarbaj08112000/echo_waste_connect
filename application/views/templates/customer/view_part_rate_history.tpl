@@ -1,33 +1,35 @@
-<div style="width:2000px" class="wrapper">
+<div  class="wrapper container-xxl flex-grow-1 container-p-y">
     <!-- Navbar -->
 
     <!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
+    <nav aria-label="breadcrumb">
+    <div class="sub-header-left pull-left breadcrumb">
+      <h1>
+        Planning & Sales
+        <a hijacked="yes" href="<%$base_url%>customer_master" class="backlisting-link" title="Back to Issue Request Listing" >
+          <i class="ti ti-chevrons-right" ></i>
+          <em >Customer Master</em></a>
+      </h1>
+      <br>
+      <span >Customer Part Rate History</span>
+    </div>
+  </nav>
+  <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
+    <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
+    <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
+    
+  </div>
 
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>Customer Part Price</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="<%$base_url%>">Home</a></li>
-                            <li class="breadcrumb-item active">Customer Part</li>
-                        </ol>
-                    </div>
-                </div>
-            </div><!-- /.container-fluid -->
-        </section>
-
+      
         <!-- Main content -->
         <section class="content">
-            <div class="container-fluid">
+            <div class="">
                 <div class="row">
                     <div class="col-12">
 
@@ -119,20 +121,7 @@
                                             <th>Price Supporting Document </th>
                                         </tr>
                                     </thead>
-                                    <tfoot>
-                                        <tr>
-                                            <th>Sr. No.</th>
-                                            <th>Revision Number</th>
-                                            <th>Revision Date</th>
-                                            <th>Revision Remark</th>
-                                            <th>Customer Name</th>
-                                            <th>Part Number</th>
-                                            <th>Part Description</th>
-                                            <th>Part Rate</th>
-                                            <th>Customer Part Type</th>
-                                            <th>Price Supporting Document </th>
-                                        </tr>
-                                    </tfoot>
+                                   
                                     <tbody>
                                         <%assign var="i" value=1%>
                                         <%if $customer_part_rate%>
@@ -173,3 +162,4 @@
     </div>
     <!-- /.content-wrapper -->
 </div>
+<script src="<%$base_url%>/public/js/planning_and_sales/customer_part_rate_history.js"></script>

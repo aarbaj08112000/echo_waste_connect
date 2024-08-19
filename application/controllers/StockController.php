@@ -233,7 +233,7 @@ class StockController extends CommonController
 		if(!empty($filter_part_id)) {
 			$data['filter_part_id'] = $filter_part_id;
 		}
-
+		
 		$data['customer_part_data_new_updated'] = $this->Crud->customQuery('SELECT DISTINCT part_number, id FROM `customer_parts_master` ');
 		if($fetchedList == true){
 			$data['supplier_part_select_list']  = $data['child_part_list'];
@@ -280,25 +280,25 @@ class StockController extends CommonController
 			$plastic_prod_details = $value[$plastic_prod_column_name];
 			if($value['stock'] > 0){
 				$stock_temp = base64_encode(json_encode($value)); 
-				$stock_temp_html = '<button type="button" class="btn btn-primary" data-bs-toggle="modal" class="edit-fg" data-value='.$stock_temp.' data-bs-target="#storeToStore">
+				$stock_temp_html = '<button type="button" class="btn btn-primary edit-fg" data-bs-toggle="modal"  data-value='.$stock_temp.' data-bs-target="#storeToStore">
 											'.$value['stock'].'
 											</button>';
 			}
 			if($value[$stock_column_name] > 0 && ($role == "Admin" || $role=="stores")){
 				$fg_data = base64_encode(json_encode($value)); 
-				$transfer_fg = '<button type="button" class="btn btn-primary" data-bs-toggle="modal" class="edit-fg" data-value='.$fg_data.' data-bs-target="#fgtransfer">
+				$transfer_fg = '<button type="button" class="btn btn-primary fg_data_edit" data-bs-toggle="modal"  data-value='.$fg_data.' data-bs-target="#fgtransfer">
 											Transfer FG Stock
 											</button>';
 			}
 			if($value[$sheet_prod_column_name] > 0 && ($role == "Admin")){
 				$product__data = base64_encode(json_encode($value)); 
-				$production_stocks = '<button type="button" class="btn btn-primary" data-bs-toggle="modal" data--bs-target="#prodToStore" data-value='.$product__data.'>
+				$production_stocks = '<button type="button" class="btn btn-primary product-store" data-bs-toggle="modal" data-bs-target="#prodToStore" data-value='.$product__data.'>
 										  '.$value[$sheet_prod_column_name].'
 										  </button>';
 			}
 			if($value[$plastic_prod_column_name] > 0 && ($role == "Admin")){
 				$plastic_prod_column_name_data = base64_encode(json_encode($value)); 
-				$plastic_prod_details = '<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#prodToStorePlastic" data-value='.$plastic_prod_column_name_data.'>
+				$plastic_prod_details = '<button type="button" class="btn btn-primary product-store-plas" data-bs-toggle="modal" data-bs-target="#prodToStorePlastic" data-value='.$plastic_prod_column_name_data.'>
 										'.$value[$plastic_prod_column_name].'
 										</button>';
 			}

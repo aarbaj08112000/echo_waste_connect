@@ -356,9 +356,14 @@ class MasterController extends CommonController {
 	{
 		$data['consignee_list'] = $this->Crud->CustomQuery("SELECT c.id as c_id, c.*,a.* FROM consignee c, 
 			address_master a where c.address_id = a.id");
-		$this->load->view('header');
-		$this->load->view('consignee', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		
+		foreach ($data['consignee_list'] as $key => $value) {
+			$data['consignee_list'][$key]->encode_data = base64_encode(json_encode($value));
+		}
+		
+		$this->loadView('customer/consignee', $data);	
+		// $this->load->view('footer');
 		
 	}
 	
@@ -379,11 +384,16 @@ class MasterController extends CommonController {
 			"consignee_name" => $consignee_name,
 			"location" => $location
 		);
-		
+		$ret_arr = [];
+		$msg = '';
+		$sucess = 1;
 		$check = $this->Crud->read_data_where("consignee", $data);
 		if ($check != 0) {
-			$this->addWarningMessage('Record already exists with Consignee Name and Location');
-			$this->redirectToParent();
+			// $this->addWarningMessage('Record already exists with Consignee Name and Location');
+			// $this->redirectToParent();
+			$sucess = 0;
+			$msg = 'Record already exists with Consignee Name and Location. Can not add duplicate entry.';
+			
 		} else {
 			$address_data = array(
 				"address" => $address,
@@ -411,15 +421,25 @@ class MasterController extends CommonController {
 			
 				$result = $this->Crud->insert_data("consignee", $consignee_data);
 				if ($result) {
-					$this->addSuccessMessage('Consignee added successfully.');
+					// $this->addSuccessMessage('Consignee added successfully.');
+					$sucess = 1;
+					$msg = 'Consignee added successfully.';
 				} else {
-					$this->addErrorMessage('Failed to add Consignee. Please try again.');
+					//$this->addErrorMessage('Failed to add Consignee. Please try again.');
+					$sucess = 1;
+					$msg = 'Failed to add Consignee. Please try again.';
 				}
 			} else {
-				$this->addErrorMessage('Failed to add Consignee. Please try again.');
+				// $this->addErrorMessage('Failed to add Consignee. Please try again.');
+				$sucess = 1;
+				$msg = 'Failed to add Consignee. Please try again.';
+				
 			}
-			$this->redirectToParent();
+			// $this->redirectToParent();
 		}
+		$ret_arr['msg'] = $msg;
+		$ret_arr['sucess'] = $sucess;
+		echo json_encode($ret_arr);
 	}
 	
 	
@@ -442,11 +462,17 @@ class MasterController extends CommonController {
 			"consignee_name" => $consignee_name,
 			"location" => $location
 		);
+		$ret_arr = [];
+		$msg = '';
+		$sucess = 1;
 
 		$data_result = $this->Crud->read_data_where_result("consignee", $data)->result();
+		
 		if(!empty($data_result) && $data_result[0]->id != $id) {
-			$this->addWarningMessage('Record already exists with Consignee Name and Location. Can not add duplicate entry.');
-			$this->redirectToParent();
+			// $this->addWarningMessage('Record already exists with Consignee Name and Location. Can not add duplicate entry.');
+			// $this->redirectToParent();
+			$sucess = 0;
+			$msg = 'Record already exists with Consignee Name and Location. Can not add duplicate entry.';
 		} else {
 
 			$address_data = array(
@@ -472,14 +498,25 @@ class MasterController extends CommonController {
 
 				$result = $this->Crud->update_data("consignee", $consignee_data, $id);
 				if ($result) {
-					$this->addSuccessMessage('Consignee updated successfully.');
+					// $this->addSuccessMessage('Consignee updated successfully.');
+					$sucess = 1;
+					$msg = 'Consignee updated successfully.';
 				} else {
-					$this->addErrorMessage('Failed to update. Please try again.');
+					// $this->addErrorMessage('Failed to update. Please try again.');
+					$sucess = 0;
+					$msg = 'Failed to update. Please try again.';
 				}
 			} else {
-				$this->addErrorMessage('Failed to update. Please try again.');
+				// $this->addErrorMessage('Failed to update. Please try again.');
+				$sucess = 0;
+				$msg = 'Failed to update. Please try again.';
 			}
-			$this->redirectToParent();
+			// $this->redirectToParent();
+			
+			
 		}
+		$ret_arr['msg'] = $msg;
+		$ret_arr['sucess'] = $sucess;
+		echo json_encode($ret_arr);
 	}
 }

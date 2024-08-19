@@ -450,7 +450,7 @@ class Welcome extends CommonController
 			'orderable' => false
         ];
         $column[] = [
-            "data" => "qty",
+            "data" => "grn_qty",
             "title" => "Received Qty",
             "width" => "17%",
             "className" => "dt-center",
@@ -846,6 +846,11 @@ class Welcome extends CommonController
 		// $this->load->view('header');
 		// $this->load->view('customer', $data);
 		// $this->load->view('footer');
+		foreach ($data['customers'] as $key => $val) {
+			
+			$data['customers'][$key]->encode_data = base64_encode(json_encode($val));
+		}
+		
 		$this->loadView('customer/customer',$data);
 	}
 	public function customer_master()
@@ -3446,7 +3451,7 @@ class Welcome extends CommonController
         $base_url = $this->config->item("base_url");
 		$data = $this->SupplierParts->getChildSupplierReportData($condition_arr,$post_data["search"]);
 		foreach ($data as $key => $value) {
-			$edit_data = base64_encode(json_encode($value));
+			$edit_data = base64_encode(json_encode($value)); 
 			$data[$key]['rev_history'] = '<button type="submit" data-toggle="modal" class="btn btn-sm btn-primary" data-target="#exampleModaledit2<%$i%>"> <i class="fas fa-edit" data-edit ='. $edit_data.'></i></button>  ' . "<a href='" . base_url() . "price_revision/" . $value['part_number'] . "/" . $value['supplier_id'] . "' class='btn btn-primary btn-sm'> <i class='fas fa-history'></i></a>";
 			$data[$key]['quotation_doc'] = "<a href='" . base_url('documents') . "/" . $val['part_number'] . $val['quotation_document'] . "' download>Download</a>";
 		}
@@ -4383,17 +4388,54 @@ class Welcome extends CommonController
 	public function customer_parts_master()
 	{
 
-		$data['customer_parts_master'] = $this->CustomerPart->readCustomerParts();
-		$data['grades'] = $this->Crud->read_data("grades");
-		$data['flash_err'] = $this->session->flashdata('errors');
-		$data['flash_suc'] = $this->session->flashdata('success');
-		$data['entitlements'] = $this->session->userdata['entitlements'];
+		// $data['customer_parts_master'] = $this->CustomerPart->readCustomerParts();
+		// $data['grades'] = $this->Crud->read_data("grades");
+		// $data['flash_err'] = $this->session->flashdata('errors');
+		// $data['flash_suc'] = $this->session->flashdata('success');
+		// $data['entitlements'] = $this->session->userdata['entitlements'];
 
 		foreach ($data['customer_parts_master'] as $u) {
 			$data['grades_data'][$u->grade_id]  = $this->Crud->get_data_by_id("grades", $u->grade_id, "id");
 		}
-
+		
 		$this->getPage('customer/customer_parts_master', $data);
+	}
+
+	public function getCustomerpartsAjax(){
+
+		$customer_part_id  = $this->input->post("customer_part_id");
+		$post_data = $this->input->post();
+		
+        $column_index = array_column($post_data["columns"], "data");
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+			if ($key == 0) {
+				$order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+				$order_by .=
+				"," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+		
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+		$customer_data = $this->welcome_model->getDataForCustomerParts($condition_arr, $post_data["search"]);
+
+		foreach ($customer_data as $key => $value) {
+			$edit_data = base64_encode(json_encode($value)); 
+			
+			$customer_data[$key]['action'] = "<button type='button' class='btn btn-primary edit-part' data-bs-toggle='modal' data-bs-target='#editpart' data-value = " . $edit_data . "><i class='far fa-edit'></i></button>";
+
+		}
+
+		$data["data"] = $customer_data;
+        $total_record = $this->welcome_model->getDataForCustomerPartsCount([], $post_data["search"]);
+		
+        $data["recordsTotal"] = $total_record['total_count'];
+        $data["recordsFiltered"] = $total_record['total_count'];
+        echo json_encode($data);
 	}
 
 	public function downtime_master()
@@ -5226,14 +5268,16 @@ class Welcome extends CommonController
 				}
 			}
 		}
-
+		
 
 		foreach ($data['customer_part_rate'] as $poo ) {
 			$data['customer_part_rate_data'][$poo->customer_master_id] = $this->Crud->get_data_by_id("customer_part_rate", $poo->customer_master_id, "customer_master_id");
 			$data['po'][$poo->customer_master_id] = $this->Crud->get_data_by_id("customer_part", $poo->customer_master_id, "id");
 			$data['customer_data'][$data['po'][$poo->customer_master_id][0]->customer_id] = $this->Crud->get_data_by_id("customer", $data['po'][$poo->customer_master_id][0]->customer_id, "id");
 			$data['customer_part_data'][$data['po'][$poo->customer_master_id][0]->customer_part_id] = $this->Crud->get_data_by_id("customer_part_type", $data['po'][$poo->customer_master_id][0]->customer_part_id, "id");
+			$data['customer_part_rate'][$key]->encoded_data = base64_encode(json_encode($data['po'][$poo->customer_master_id][0]));
 		}
+		
 		// pr($data['customer_data'],1);
 		// $this->load->view('header');
 		// $this->load->view('customer_part_price_by_id', $data);
@@ -5445,9 +5489,9 @@ class Welcome extends CommonController
 				"po_id" => $id
 			);
 			$result2 = $this->Crud->delete_data("po_parts", $data2);
-			echo "<script>alert(' Deleted Sucessfully');document.location='" . base_url('new_po_list_supplier') . "'</script>";
+			// echo "<script>alert(' Deleted Sucessfully');document.location='" . base_url('new_po_list_supplier') . "'</script>";
 		} else {
-			echo "<script>alert(' Not Deleted');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			// echo "<script>alert(' Not Deleted');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
 	}
 
@@ -7775,9 +7819,9 @@ class Welcome extends CommonController
 		$pos = $this->input->post('pos');
 		$address1 = $this->input->post('address1');
 		$location = $this->input->post('location');
-		$pin = $this->input->post('pin');
-
-		$data = array(
+		$pin = $this->input->post('upin');
+		// pr($_POST,1);	
+		$data = array(	
 			"customer_name" => $customerName,
 			"customer_code" => $customerCode,
 			"billing_address" => $billingaddress,
@@ -7795,6 +7839,7 @@ class Welcome extends CommonController
 			"pin" => $pin,
 
 		);
+		
 		$result = $this->Crud->update_data("customer", $data, $id);
 		if ($result) {
 			$this->addSuccessMessage('Customer updated sucessfully.');
@@ -9046,10 +9091,10 @@ class Welcome extends CommonController
 				$data['value_qty'][$c->id] = $c->qty * $child_part_master_data[$c->id][0]->part_rate;
 				$data['value_qty_remaning'][$c->id] = $c->remaning_qty * $child_part_master_data[$c->id][0]->part_rate;
 			}
-
+			
 			$main_total = $main_total + $data['value_qty'][$c->id];
 			$main_total_2 = $main_total_2 + $data['value_qty_remaning'][$c->id];
-
+			
 			$show="no";
 			if(!empty($data['selected_customer_part_number']))
 			{
@@ -9060,7 +9105,7 @@ class Welcome extends CommonController
 			}
 			else if(!empty($data['selected_supplier_id']))
 			{
-
+				
 				if($supplier_data[$c->id][0]->id == $data['selected_supplier_id'])
 				{
 					$show="yes";
@@ -9079,10 +9124,66 @@ class Welcome extends CommonController
 		$data['supplier_data'] = $supplier_data;
 		$data['main_total_2'] = $main_total_2;
 		$data['main_total'] = $main_total;
+
+		$data["data"] = $column;
+        $data["is_searching_enable"] = false;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Employee data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
 		// $this->load->view('header');
 		// $this->load->view('subcon_supplier_challan_part_report', $data);
 		// $this->load->view('footer');
 		$this->getPage('subcom_challan/subcon_supplier_challan_part_report',$data);
+	}
+
+	public function getSubcomReportDataAjax(){
+		
+		$post_data = $this->input->post();
+        $column_index = array_column($post_data["columns"], "data");
+		// pr($post_data,1);
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+            if ($key == 0) {
+                $order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+                $order_by .=
+                    "," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+		
+		$data = $this->welcome_model->getSubConReportView($condition_arr,$post_data["search"]);
+		
+		foreach ($data as $key => $val) {
+			$data[$key]['value_qty'] = $val['qty'] * $val['part_rate'];
+			$data[$key]['value_qty_remaning'] = $val['remaning_qty'] * $val['part_rate'];
+			$date1 = date_create(date('Y-m-d'));
+			$date2 = date_create($val['created_date']);
+			$diff = date_diff($date1, $date2);
+			$data[$key]['aging'] = $diff->format("%R%a");
+		
+		}
+		
+		$data["data"] = $data;
+		
+        $total_record = $this->welcome_model->getSubConReportViewCount([], $post_data["search"]);
+        $data["recordsTotal"] = $total_record['tot_count'];
+        $data["recordsFiltered"] = $total_record['tot_count'];
+		
+        echo json_encode($data);
 	}
 
 	public function sharing_bom()
@@ -9577,7 +9678,7 @@ class Welcome extends CommonController
 		$id = $this->input->post('uid');
 		$table = $this->input->post('table_name');
 		$col_name = $this->input->post('column_name');
-
+		// pr($_POST,1);
 		if (!empty($_FILES['cad_file']['name'])) {
 			$image_path = "./documents/";
 			$config['allowed_types'] = '*';
@@ -9815,7 +9916,7 @@ class Welcome extends CommonController
 
 		$part_description = $this->input->post('part_description');
 		$fg_rate = $this->input->post('fg_rate');
-
+		
 		$data = array(
 			"part_description" => $part_description
 		);

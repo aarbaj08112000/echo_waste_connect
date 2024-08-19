@@ -270,6 +270,137 @@ class Welcome_model extends CI_Model
 		}
 	}
 
+    public function getSubConReportView($condition_arr = [],$search_params = ""){
+       
+       
+        $this->db->select('
+        cp.id AS challan_part_id,cp.part_id,cp.challan_id, cp.qty,cp.remaning_qty,cp.process,chn.challan_number,
+        cp.remaning_qty,chn.created_date,
+        chp.part_number, 
+        chp.part_description,
+        chn.supplier_id, 
+        sup.supplier_name,
+        cpm.part_rate
+        ');
+        $this->db->from('challan_parts cp');
+        $this->db->join('child_part chp', 'cp.part_id = chp.id', 'left');
+        $this->db->join('challan chn', 'cp.challan_id = chn.id', 'left');
+        $this->db->join('supplier sup', 'chn.supplier_id = sup.id', 'left');
+        $this->db->join('child_part_master cpm', 'chp.part_number = cpm.part_number', 'left');
+        if (count($condition_arr) > 0) {
+            $this->db->limit($condition_arr["length"], $condition_arr["start"]);
+            if ($condition_arr["order_by"] != "") {
+                $this->db->order_by($condition_arr["order_by"]);
+            }
+        }
+        if(is_valid_array($search_params) && $search_params['part_number'] != ''){
+            $this->db->where('chp.part_number',$search_params['part_number'] );
+        }
+        if(is_valid_array($search_params) && $search_params['suppler'] != ''){
+            $this->db->where('chn.supplier_id', $search_params['suppler']);
+        }
+        // $this->db->group_by('cpm.part_rate');
+        // if(is_valid_array($search_params) && $search_params['customer'] > 0){
+        //     $this->db->where('c.id', $search_params['customer']);
+        // }
+        
+        //  $this->db->group_by(array('p.id', 'cp.id', 'c.id', 'cp_rate.rate', 'pd.schedule_qty', 'pd.schedule_qty_2'));
+   
+    
+        // if($condition_arr["order_by"] == ''){    
+        //     $this->db->order_by('p.id', 'DESC');
+        // }
+        // if (count($condition_arr) > 0) {
+        //     $this->db->limit($condition_arr["length"], $condition_arr["start"]);
+        //     if ($condition_arr["order_by"] != "") {
+        //         $this->db->order_by($condition_arr["order_by"]);
+        //     }
+        // }
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+        // pr($this->db->last_query(),1);   
+        return $ret_data;
+    }
+
+    public function getSubConReportViewCount( $condition_arr = [],$search_params = ""){
+       
+        
+        $this->db->select('
+        Count(cp.id)  as tot_count
+        ');
+        $this->db->from('challan_parts cp');
+        $this->db->join('child_part chp', 'cp.part_id = chp.id', 'left');
+        $this->db->join('challan chn', 'cp.challan_id = chn.id', 'left');
+        $this->db->join('supplier sup', 'chn.supplier_id = sup.id', 'left');
+        $this->db->join('child_part_master cpm', 'cp.part_id = cpm.child_part_id', 'left');
+        //$this->db->where('cpm.condition', $condition); // Replace $condition with the actual condition
+        // $this->db->order_by('cp.id', 'desc');
+        
+        
+        // if(is_valid_array($search_params) && $search_params['year'] != ''){
+        //     $this->db->where('p.financial_year',$search_params['year'] );
+        // }
+        if(is_valid_array($search_params) && $search_params['part_number'] != ''){
+            $this->db->where('chp.part_number',$search_params['part_number'] );
+        }
+        if(is_valid_array($search_params) && $search_params['suppler'] != ''){
+            $this->db->where('chn.supplier_id', $search_params['suppler']);
+        }
+        
+        // $this->db->group_by(array('p.id', 'cp.id', 'c.id', 'cp_rate.rate', 'pd.schedule_qty', 'pd.schedule_qty_2'));
+        // if($condition_arr["order_by"] == ''){    
+        //     $this->db->order_by('p.id', 'DESC');
+        // }
+       
+        // $this->db->group_by('cpm.part_rate');
+        // $this->db->order_by('s.id', 'DESC');
+        $result_obj = $this->db->get();
+        // pr($this->db->last_query(),1);   
+        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];        
+        return $ret_data;
+    }
+
+    public function getCustomerPartNumber(){
+        $this->db->select('id,part_number as part');
+        $this->db->from('customer_parts_master');
+        $object = $this->db->get();
+        $result_data = is_object($object) ? $object->result_array() : [] ;
+        return $result_data;
+    }
+
+    public function getDataForCustomerParts($condition_arr = [],$search_params = []){
+        $this->db->select('c.id ,c.part_number as part_number,c.part_description as part_description,c.old_fg_stockx as fg_stock,c.fg_rate as fg_rate ,stock.fg_rate as stock_rate');
+        $this->db->from('customer_parts_master as c');
+        $this->db->join('customer_parts_master_stock stock', 'c.id = stock.customer_parts_master_id AND stock.clientId = ' . $this->db->escape($this->Unit->getSessionClientId()), 'left');
+        if(is_valid_array($search_params) && $search_params['part'] > 0){
+            $this->db->where('c.id', $search_params['part']);
+        }
+         if($condition_arr["order_by"] == ''){    
+                $this->db->order_by('c.id', 'DESC');
+            }
+        
+        if (count($condition_arr) > 0) {
+            $this->db->limit($condition_arr["length"], $condition_arr["start"]);
+            if ($condition_arr["order_by"] != "") {
+                $this->db->order_by($condition_arr["order_by"]);
+            }
+        }
+        $object = $this->db->get();
+        $result_data = is_object($object) ? $object->result_array() : [] ;
+        return $result_data;
+    }
+
+    public function getDataForCustomerPartsCount($condition_arr = [],$search_params = []){
+        $this->db->select('count(id) as total_count');
+        $this->db->from('customer_parts_master');
+        if(is_valid_array($search_params) && $search_params['part'] > 0){
+            $this->db->where('id', $search_params['part']);
+        }
+        $object = $this->db->get();
+        $result_data = is_object($object) ? $object->row_array() : [] ;
+        return $result_data;
+    }
+
     
 }
 

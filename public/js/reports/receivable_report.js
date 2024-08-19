@@ -10,11 +10,29 @@ const page = {
         $(document).on("click",".edit-part",function(){
             var data = $(this).attr("data-value");
             data = JSON.parse(atob(data)); 
+            $('#sales_number').val(data.sales_number);
             $("#payment_date_modal").val(data.payment_receipt_date);
             $("#receivable_amount_modal").val(data.amount_received);
             $("#transection_detail_modal").val(data.transaction_details);
             myModal.show();
         })
+        $('#updateReceivableForm').on('submit', function(e){
+            e.preventDefault(); // Prevent the default form submission
+
+            $.ajax({
+                url: base_url+'update_receivable_report',
+                type: 'POST',
+                data: $(this).serialize(), // Serialize form data
+                success: function(response){
+                    alert('Updated Successfully');
+                    location.reload(); // Reload the page to reflect changes
+                },
+                error: function(xhr, status, error){
+                    console.log('Error:', error);
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
 
     },
     dataTable: function(){
@@ -143,5 +161,7 @@ const page = {
 
 $( document ).ready(function() {
     page.init();
-    // alert();
+
+
+
 });

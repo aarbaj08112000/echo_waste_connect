@@ -1,32 +1,37 @@
-<div style="width:1700px" class="wrapper">
+<div  class="wrapper container-xxl flex-grow-1 container-p-y">
     <!-- Navbar -->
     <!-- /.navbar -->
     <!-- Main Sidebar Container -->
+    <nav aria-label="breadcrumb">
+    <div class="sub-header-left pull-left breadcrumb">
+      <h1>
+        Planning & Sales
+        <a hijacked="yes" href="#stock/issue_request/index" class="backlisting-link" title="Back to Issue Request Listing" >
+          <i class="ti ti-chevrons-right" ></i>
+          <em >Sales Invoice</em></a>
+      </h1>
+      <br>
+      <span >View Sales Invoice</span>
+    </div>
+  </nav>
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>View Sales Invoice</h1>
-                    </div>
-                    <div class="col-sm-6">
-                    </div>
-                </div>
-            </div><!-- /.container-fluid -->
-        </section>
+       
+
+   
 
         <!-- Main content -->
         <section class="content">
-            <div class="container-fluid">
+            <div class="">
                 <div class="row">
                     <div class="col-12">
                         <!-- /.card -->
-                        <div class="card">
-                            <div class="card-header">
+                        
                           
-                            <%if empty($e_invoice_status) && ($new_sales[0]->status == "lock" || $new_sales[0]->status == "pending")%>
+                            <%if empty($e_invoice_status) &&  $new_sales[0]->status == "pending"%>
+                            <div class="card">
+                            <div class="card-header">
                                 <form action="<%$base_url%>generate_new_sales_update" method="POST">
                                 <div class="row">
                                 </div>
@@ -34,7 +39,7 @@
                                         <div id="loading-spinner"></div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-1">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="">Transport Mode<span class="text-danger">*</span></label>
                                             <select name="mode" class="form-control" required>
@@ -46,7 +51,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="">Transporter<span class="text-danger">*</span></label>
                                             <select name="transporter" required id="transporter" class="form-control select2">
@@ -57,48 +62,48 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-1">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="">Vehicle No.<span class="text-danger">*</span></label>
                                             <input type="text" placeholder="Enter Vehicle No" name="vehicle_number" value="<%$new_sales[0]->vehicle_number%>" class="form-control"/>
                                             
                                         </div>
                                     </div>
-                                    <div class="col-md-1">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="">Distance<span class="text-danger">*</span></label>
                                             <input type="text" placeholder="Enter Distance of Transportation" value="<%$new_sales[0]->distance%>" required name="distance" class="form-control">
                                         </div>
                                     </div>
-                                    <div class="col-md-1">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="">L.R No</label>
                                             <input type="text" placeholder="Enter L.R No" name="lr_number" value="<%$new_sales[0]->lr_number%>" class="form-control">
                                         </div>
                                     </div>
-                                     <div class="col-md-2">
+                                     <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="">PO Remark </label>
                                             <input type="text" placeholder="Enter Remark" value="<%$new_sales[0]->remark%>" name="remark" class="form-control">
                                             <input type="hidden" value="<%$uri_segment_2%>" name="id" class="form-control">
                                         </div>
                                     </div>
-                                    <div class="col-md-1">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <button type="submit" class="btn btn-danger mt-4">Update</button>
                                         </div>
                                     </div>
                                 </div>
                                 </form>
-                            <%/if%>
-                            <div class="row">
-                                <div class="col-lg-3">
+
+                                <div class="row">
+                                <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="">Customer Name - Part Number</label>
                                         <input type="text" readonly value="<%$customer[0]->customer_name%> - <%$customer_part_details[0]->part_number%>" class="form-control">
                                     </div>
                                 </div>
-                                <div class="col-lg-2">
+                                <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="">Sales Invoice Number</label>
                                         <input type="text" readonly value="<%$new_sales[0]->sales_number%>" id="sales_number" class="form-control">
@@ -107,27 +112,134 @@
                                         <input type="hidden" value="<%$new_sales[0]->sales_number%>" id="invoice_no" class="form-control">
                                     </div>
                                 </div>
-                                 <div class="col-lg-1">
+                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="">Current Status</label>
                                         <input type="text" readonly value="<%if $new_sales[0]->status == "accpet"%>Released<%else%><%$new_sales[0]->status%><%/if%>" class="form-control">
                                     </div>
                                 </div>
-                                <div class="col-lg-1">
+                                <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="">E Invoice Status</label>
                                        
                                         <input type="text" readonly value="<%$e_invoice_status[0]->Status%>" class="form-control">
                                     </div>
                                 </div>
-                                <div class="col-lg-2">
+                                <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="">PO Remark</label>
                                         <input type="text" readonly value="<%$new_sales[0]->remark%>" class="form-control">
                                     </div>
                                 </div>
                             </div>
-                             
+                            </div>
+                            </div>
+                            <%/if%>
+                           <%if $new_sales[0]->status == "Cancelled"%>
+                            <div class="row">
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label for="">Customer Name - Part Number</label>
+                                    <input type="text" readonly value="<%$customer[0]->customer_name%> - <%$customer_part_details[0]->part_number%>" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label for="">Sales Invoice Number</label>
+                                    <input type="text" readonly value="<%$new_sales[0]->sales_number%>" id="sales_number" class="form-control">
+                                    <input type="hidden" value="<%$new_sales[0]->id%>" id="sales_primary_id" class="form-control">
+                                    <input type="hidden" value="<%$new_sales[0]->created_date%>" id="invoice_date" class="form-control">
+                                    <input type="hidden" value="<%$new_sales[0]->sales_number%>" id="invoice_no" class="form-control">
+                                </div>
+                            </div>
+                             <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label for="">Current Status</label>
+                                    <input type="text" readonly value="<%if $new_sales[0]->status == "accpet"%>Released<%else%><%$new_sales[0]->status%><%/if%>" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label for="">E Invoice Status</label>
+                                   
+                                    <input type="text" readonly value="<%$e_invoice_status[0]->Status%>" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label for="">PO Remark</label>
+                                    <input type="text" readonly value="<%$new_sales[0]->remark%>" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                            <%/if%>
+                            <%if $new_sales[0]->status =="lock"%>
+                            <div class="card">
+                            <div class="card-header">
+                            <div class="row">
+                            <div class="tgdp-rgt-tp-sect">
+                               <p class="tgdp-rgt-tp-ttl">Transport Mode</p>
+                               <p class="tgdp-rgt-tp-txt">
+
+                                <%if $new_sales[0]->mode == '1'%>Road<%/if%>
+                                 <%if $new_sales[0]->mode == '2'%>Rail<%/if%>
+                                 <%if $new_sales[0]->mode == '3'%>Air<%/if%>
+                                 <%if $new_sales[0]->mode == '4'%>Ship<%/if%>
+
+                               </p>
+                            </div>
+                            <div class="tgdp-rgt-tp-sect">
+                               <p class="tgdp-rgt-tp-ttl">Transporter</p>
+                               <p class="tgdp-rgt-tp-txt">
+                               <%foreach from=$transporter item=tr%>
+                                     <%if $new_sales[0]->transporter_id == $tr->id%><%$tr->name%> - <%$tr->transporter_id%><%/if%>
+                                <%/foreach%>
+                               
+                               </p>
+                            </div>
+                            <div class="tgdp-rgt-tp-sect">
+                               <p class="tgdp-rgt-tp-ttl">Vehicle No.</p>
+                               <p class="tgdp-rgt-tp-txt"><%$new_sales[0]->vehicle_number%></p>
+                            </div>
+                            <div class="tgdp-rgt-tp-sect">
+                               <p class="tgdp-rgt-tp-ttl">Distance</p>
+                               <p class="tgdp-rgt-tp-txt"><%$new_sales[0]->distance%> </p>
+                            </div>
+                           <div class="tgdp-rgt-tp-sect">
+                               <p class="tgdp-rgt-tp-ttl">L.R No</p>
+                               <p class="tgdp-rgt-tp-txt"><%$new_sales[0]->lr_number%></p>
+                            </div>
+                            <div class="tgdp-rgt-tp-sect">
+                               <p class="tgdp-rgt-tp-ttl">PO Remark</p>
+                               <p class="tgdp-rgt-tp-txt"><%$new_sales[0]->remark%></p>
+                            </div>
+                            <div class="tgdp-rgt-tp-sect">
+                               <p class="tgdp-rgt-tp-ttl">Customer Name - Part Number</p>
+                               <p class="tgdp-rgt-tp-txt"><%$customer[0]->customer_name%> - <%$customer_part_details[0]->part_number%></p>
+                            </div>
+                            <div class="tgdp-rgt-tp-sect">
+                               <p class="tgdp-rgt-tp-ttl">Sales Invoice Number</p>
+                               <p class="tgdp-rgt-tp-txt"><%$new_sales[0]->sales_number%></p>
+                            </div>
+                            <div class="tgdp-rgt-tp-sect">
+                               <p class="tgdp-rgt-tp-ttl">Current Status</p>
+                               <p class="tgdp-rgt-tp-txt"><%if $new_sales[0]->status == "accpet"%>Released<%else%><%$new_sales[0]->status%><%/if%></p>
+                            </div>
+                            <div class="tgdp-rgt-tp-sect">
+                               <p class="tgdp-rgt-tp-ttl">E Invoice Status</p>
+                               <p class="tgdp-rgt-tp-txt"><%$e_invoice_status[0]->Status%></p>
+                            </div>
+                            <div class="tgdp-rgt-tp-sect">
+                               <p class="tgdp-rgt-tp-ttl">PO Remark</p>
+                               <p class="tgdp-rgt-tp-txt"><%$new_sales[0]->remark%></p>
+                            </div>
+                            
+                         </div>
+                         </div>
+                         </div>
+                            <%/if%>
+                            <div class="card mt-3">
+                            <div class="card-header">
                             <div class="row">
                                 <div class="col-lg-1">
                                     <div class="form-group">
@@ -160,8 +272,8 @@
                                     </div>
                                 </div>
 
-                                <div class="col-lg-1">
-                                    <div class="form-group">
+                                <div class="col-lg-1" style="margin-right: 30px;">
+                                    <div class="form-group" >
                                         <a class="btn btn-success" href="<%$base_url%>generate_sales_invoice/<%$uri_segment_2%>/ACKNOWLEDGEMENT_COPY">Acknowledge</a>
                                     </div>
                                 </div>
@@ -172,7 +284,7 @@
                                 </div>
                                 <div class="col-lg-1">
                                     <div class="form-group">
-                                        <button type="button" class="btn btn-info" data-toggle="modal"
+                                        <button type="button" class="btn btn-info" data-bs-toggle="modal"
                                                     data-target="#printForTally" id="printSticker">
                                                     Packaging Sticker
                                         </button>
@@ -183,7 +295,7 @@
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h5 class="modal-title" id="exampleModalLabel">Packaging Stickers</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                         <span aria-hidden="true">&times;</span>
                                                     </button>
                                                 </div>
@@ -218,7 +330,7 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-1">
-                                        <div class="form-group">   
+                                        <div class="form-group" >   
                                             <input type="checkbox" id="acknowledge" name="interests[]" value="ACKNOWLEDGEMENT_COPY">
                                             <label for="acknowledge">Acknowledge</label><br>
                                         </div>
@@ -236,17 +348,18 @@
                                     </div>
                                 </div>
                             </form>
+                           
                             <%/if%>
-                        </div>
+                       
 
                         <%if $new_sales[0]->status == "pending"%>
                         <div class="card-header">
+                        <form action="<%$base_url%>add_sales_parts" method="post" id="salesForm">
                             <div class="row">
                                 <div class="col-lg-3">
                                     <div class="form-group">
-                                        <form action="<%$base_url%>add_sales_parts" method="post">
                                             <label for="">Select PO no/ PO start date/ PO end date/ PO amendment no<span class="text-danger">*</span> </label>
-                                            <select name="po_id" id="customer_tracking" required class="form-control select2">
+                                            <select name="po_id" id="customer_tracking"  class="form-control select2">
                                                 <%if $po_parts%>
                                                     <%foreach from=$customer_tracking item=c%>
                                                         <%if $po_parts[0]->po_number == $c->po_number%>
@@ -265,7 +378,7 @@
                                     <div class="form-group">
                                         <label for="">Select Part NO // Description // FG Stock // Rate // Packing QTY <span class="text-danger">*</span> </label>
                                         <input type="hidden" readonly id="customer_tracking_id" name="customer_tracking_id" class="form-control">
-                                        <select name="part_id" id="part_id" required class="form-control select2">
+                                        <select name="part_id" id="part_id"  class="form-control select2">
                                             <option value=''>Please select</option>
                                         </select>
                                     </div>
@@ -273,7 +386,7 @@
                                 <div class="col-lg-1">
                                     <div class="form-group">
                                         <label for=""><br>Enter Qty<span class="text-danger">*</span> </label>
-                                        <input type="number" step="any" name="qty" placeholder="Enter QTY" required class="form-control">
+                                        <input type="number" step="any" name="qty" placeholder="Enter QTY"  class="form-control">
                                         <input type="hidden" name="sales_number" value="<%$new_sales[0]->sales_number%>" placeholder="Enter QTY " required class="form-control">
                                         <input type="hidden" name="sales_id" value="<%$new_sales[0]->id%>" placeholder="Enter QTY " required class="form-control">
                                         <input type="hidden" name="customer_id" value="<%$customer[0]->id%>" placeholder="Enter QTY " required class="form-control">
@@ -304,11 +417,11 @@
                                         <%/if%>
                                     <%/foreach%>
                                     <%if $flag == 0%>
-                                        <button type="button" class="btn btn-danger ml-1" data-toggle="modal" data-target="#lock">
+                                        <button type="button" class="btn btn-danger ml-1" data-bs-toggle="modal" data-bs-target="#lock">
                                             Lock Invoice
                                         </button>
                                         <%if $new_sales[0]->status == "pending"%>
-                                            <button type="button" class="btn btn-danger ml-1" data-toggle="modal" data-target="#deleteInvoice">
+                                            <button type="button" class="btn btn-danger ml-1" data-bs-toggle="modal" data-bs-target="#deleteInvoice">
                                                 Delete Invoice
                                             </button>
                                         <%/if%>
@@ -318,7 +431,7 @@
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="exampleModalLabel">Delete Invoice</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>
@@ -335,7 +448,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                                         <button type="submit" class="btn btn-primary">Delete</button>
                                                     </div>
                                                 </div>
@@ -350,17 +463,17 @@
 
                             <%if $new_sales[0]->status == "lock"%>
                                 <%if $session_type == 'admin' || $session_type == 'Admin'%>
-                                    <button type="button" disabled class="btn btn-success ml-1" data-toggle="modal">
+                                    <button type="button" disabled class="btn btn-success ml-1" data-bs-toggle="modal">
                                         Invoice already released
                                     </button>
                                 <%/if%>
                             <%else%>
                                 <%if $new_sales[0]->status != "pending" && $new_sales[0]->status != "Cancelled"%>
-                                    <button type="button" disabled class="btn btn-success ml-1" data-toggle="modal">
+                                    <button type="button" disabled class="btn btn-success ml-1" data-bs-toggle="modal">
                                         Invoice already released
                                     </button>
                                 <%elseif $new_sales[0]->status == "Cancelled"%>
-                                    <button type="button" disabled class="btn btn-success ml-1" data-toggle="modal">
+                                    <button type="button" disabled class="btn btn-success ml-1" data-bs-toggle="modal">
                                         Invoice already Cancelled
                                     </button>
                                 <%/if%>
@@ -372,7 +485,7 @@
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="exampleModalLabel">Update</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
@@ -389,7 +502,7 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                             <button type="submit" class="btn btn-primary">Update</button>
                                         </div>
                                     </div>
@@ -403,7 +516,7 @@
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="exampleModalLabel">Update</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
@@ -421,7 +534,7 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                             <button type="submit" class="btn btn-primary">Update</button>
                                         </div>
                                     </div>
@@ -434,7 +547,7 @@
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
@@ -452,7 +565,7 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                             <button type="submit" class="btn btn-primary">Update</button>
                                         </div>
                                     </div>
@@ -462,7 +575,7 @@
                         </div>
 
                         <div class="card-body">
-                            <table class="table table-bordered table-striped" id="example1">
+                            <table class="table table-bordered table-striped" id="part_data">
                                 <thead>
                                     <tr>
                                         <th>Sr No</th>
@@ -484,27 +597,7 @@
                                         <th>Total Price</th>
                                     </tr>
                                 </thead>
-                                <tfoot>
-                                    <tr>
-                                        <th>Sr No</th>
-                                        <th>Part Number</th>
-                                        <th>Part Description</th>
-                                        <th>Tax Structure</th>
-                                        <th>UOM</th>
-                                        <th>QTY</th>
-                                        <th>Price</th>
-                                        <%if $new_sales[0]->status == "pending"%>
-                                        <th>Actions</th>
-                                        <%/if%>
-                                        <th>CGST</th>
-                                        <th>SGST</th>
-                                        <th>IGST</th>
-                                        <th>TCS</th>
-                                        <th>Sub Total</th>
-                                        <th>GST</th>
-                                        <th>Total Price</th>
-                                    </tr>
-                                </tfoot>
+                               
                                 <tbody>
                                <%if $po_parts%>
                                     <%foreach from=$po_parts item=p key=srNo%>
@@ -526,7 +619,7 @@
                                             <td><%number_format($rate, 2)%></td>
                                             <%if $new_sales[0]->status == "pending"%>
                                             <td>
-                                                <button type="button" class="btn btn-danger ml-1" data-toggle="modal" data-target="#exampleModaldelete<%$srNo%>">
+                                                <button type="button" class="btn btn-danger ml-1" data-bs-toggle="modal" data-bs-target="#exampleModaldelete<%$srNo%>">
                                                     Delete
                                                 </button>
                                                 <!-- Modal -->
@@ -535,13 +628,13 @@
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <h5 class="modal-title" id="exampleModalLabel">Update</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
                                                             </div>
                                                             <div class="modal-body">
+                                                            <form action="<%$base_url%>delete" method="POST" class="delete_form">
                                                                 <div class="row">
-                                                                    <form action="<%$base_url%>delete" method="POST">
                                                                        <div class="col-lg-12">
                                                                             <div class="form-group">
                                                                                 <label for=""><b>Are You Sure Want To Delete This?</b> </label>
@@ -552,12 +645,12 @@
                                                                 </div>
                                                             </div>
                                                             <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                                 <button type="submit" class="btn btn-primary">Update</button>
                                                             </div>
                                                         </div>
+                                                        </div>
                                                         </form>
-                                                    </div>
                                                 </div>
                                             </td>
                                             <%/if%>
@@ -599,7 +692,6 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script>
     $(document).ready(function() {
@@ -607,7 +699,7 @@
         $('#new_po_id').val(id);
         var salesno = $('#sales_number').val();
         $.ajax({
-            url: '{$site_url}Newcontroller/get_po_sales_parts',
+            url: '<%$base_url%>Newcontroller/get_po_sales_parts',
             type: "POST",
             data: {
                 id: id,
@@ -635,7 +727,7 @@
             var id = $("#customer_tracking").val();
             var salesno = $('#sales_number').val();
             $.ajax({
-                url: '{$site_url}Newcontroller/get_po_sales_parts',
+                url: '<%$base_url%>Newcontroller/get_po_sales_parts',
                 type: "POST",
                 data: {
                     id: id,
@@ -665,7 +757,7 @@
             var invoice_no = $('#invoice_no').val();
             var invoice_date = $('#invoice_date').val();
             $.ajax({
-                url: '{$site_url}SalesController/getSalesPartPackaging_details',
+                url: '<%$base_url%>SalesController/getSalesPartPackaging_details',
                 type: "POST",
                 data: {
                     salesId: salesId,
@@ -683,6 +775,103 @@
                 }
             });
         });
+
+        $("#salesForm").validate({
+            ignore: [],
+            rules: {
+                po_id: {
+                    required: true
+                },
+                part_id: {
+                    required: true
+                },
+                qty: {
+                    required: true,
+                    number: true
+                }
+            },
+            messages: {
+                po_id: {
+                    required: "Please select a PO."
+                },
+                part_id: {
+                    required: "Please select a part."
+                },
+                qty: {
+                    required: "Please enter quantity.",
+                    number: "Please enter a valid quantity."
+                }
+            },
+            errorPlacement: function(error, element) {
+                error.addClass('error');
+                element.closest('.form-group').append(error);
+            },
+            onkeyup: function(element) {
+                $(element).valid();
+            },
+            onchange: function(element) {
+                $(element).valid();
+            },
+            submitHandler: function(form) {
+                event.preventDefault(); // Prevent default form submission
+
+                $.ajax({
+                    url: form.action,
+                    type: form.method,
+                    data: $(form).serialize(),
+                    success: function(response) {
+                        // Handle the successful response here
+                       if(response != '' && response != null && typeof response != 'undefined'){
+                            let res = JSON.parse(response);
+                            console.log(res);
+                            if(res['sucess'] == 1){
+                                toastr.success(res['msg']);
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 1000);
+                            }else{
+                                toastr.error(res['msg']);
+                            }
+                       }
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle the error response here
+                        alert("An error occurred: " + xhr.responseText);
+                    }
+                });
+            }
+        });
+
+        // Manually trigger validation on select2 elements change
+        $('.select2').on('change', function() {
+            $(this).valid();
+        });
+
+        $('.delete_form').on('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting via the browser
+
+        var form = $(this);
+        var formData = form.serialize();
+
+        $.ajax({
+            type: 'POST',
+            url: form.attr('action'),
+            data: formData,
+            success: function(response) {
+                // Handle success
+                toastr.success('part deleted sucessfully.')
+                // Optionally, you can close the modal or refresh the page or element
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                toastr.success('unable to delete part.')
+            }
+        });
+    });
+
     });
 </script>
 

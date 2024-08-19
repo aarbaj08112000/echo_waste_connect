@@ -31,9 +31,9 @@ class PlanningController extends CommonController
 
 		$data['financial_year'] = $this->uri->segment('2');
 		$financial_year = $this->uri->segment('2');
-		$this->load->view('header');
-		$this->load->view('planing_data_month', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		$this->loadView('customer/planing_data_month', $data);
+		// $this->load->view('footer');
 	}
 
 	public function planing_data()
@@ -184,11 +184,13 @@ class PlanningController extends CommonController
 		$fg_stock = $this->input->post('fg_stock');
 		// $production_date = $this->input->post('production_date');
 		// $month = $this->input->post('month');
-
+		
 		$customer_data = $this->CustomerPart->getCustomerPartById($customer_part_id);
+		
 		$data = array(
 			"fg_stock" => $fg_stock + $customer_data[0]->fg_stock,
 		);
+		
 		$result = $this->CustomerPart->updateStockById($data, $customer_part_id);
 		if ($result) {
 			$this->addSuccessMessage('Updated Sucessfully');
@@ -290,7 +292,7 @@ class PlanningController extends CommonController
 				"clientId" =>  $this->Unit->getSessionClientId()
 			);
 			
-		$data['planing_data'] = $this->Crud->get_data_by_id_multiple("planing", $arr);
+		// $data['planing_data'] = $this->Crud->get_data_by_id_multiple("planing", $arr);
 		//$data['planing_data'] = $this->Crud->get_data_by_id("planing", $financial_year, "financial_year");
 		$data['customer_part'] = $this->Crud->read_data("customer_part");
 		$data['customer'] = $this->Crud->read_data("customer");
@@ -311,10 +313,13 @@ class PlanningController extends CommonController
 					"financial_year" => $financial_year,
 					"month" => $month,
 				);
-				$data['planing_data'] [$data['child_part_master'][0]->child_part_id]= $this->Crud->get_data_by_id_multiple_condition("planing_data", $array);
+
+				$data['planing_data'] [$data['child_part_master'][$t->part_number][0]->child_part_id]= $this->Crud->get_data_by_id_multiple_condition("planing_data", $array);
+				
 			}
+
 		}
-		
+		// pr($data['planing_data'],1);
 		// $this->load->view('header');
 		// $this->load->view('view_all_child_parts_schedule', $data);
 		// $this->load->view('footer');

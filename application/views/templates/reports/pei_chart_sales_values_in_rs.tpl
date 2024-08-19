@@ -1,22 +1,22 @@
-<div class="wrapper">
+<div class="wrapper container-xxl flex-grow-1 container-p-y">
+
+
+<nav aria-label="breadcrumb">
+<div class="sub-header-left pull-left breadcrumb">
+  <h1>
+    Reports
+    <a hijacked="yes" href="#stock/issue_request/index" class="backlisting-link" title="Back to Issue Request Listing" >
+      <i class="ti ti-chevrons-right" ></i>
+      <em >SALES VALUE IN RS</em></a>
+  </h1>
+  <br>
+  <span> SALES VALUE IN RS</span>
+</div>
+</nav>
+
     <div class="content-wrapper">
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>Reports : SALES VALUE IN RS</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="<%$smarty.const.BASE_URL%>dashboard">Home</a></li>
-                            <li class="breadcrumb-item active">SALES VALUE IN RS</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-        </section>
         <section class="content">
-            <div class="container-fluid">
+            <div class="">
                 <div class="row">
                     <div class="col-12">
                         <div class="card">

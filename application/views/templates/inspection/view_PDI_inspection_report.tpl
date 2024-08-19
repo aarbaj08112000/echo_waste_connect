@@ -1,18 +1,28 @@
-<div style="width:100%" class="wrapper">
+<div  class="wrapper container-xxl flex-grow-1 container-p-y">
     <!-- Navbar -->
     <!-- /.navbar -->
     <!-- Main Sidebar Container -->
     <!-- Content Wrapper. Contains page content -->
+
+    <div class="sub-header-left pull-left breadcrumb">
+      <h1>
+        Planning & Sales
+        <a hijacked="yes" href="#stock/issue_request/index" class="backlisting-link" title="Back to Issue Request Listing" >
+          <i class="ti ti-chevrons-right" ></i>
+          <em >Sales Invoice</em></a>
+      </h1>
+      <br>
+      <span >PDI Details</span>
+    </div>
+
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-            <div class="container-fluid">
+            <div class="">
+               
                 <div class="row mb-2">
-                    <h1>PDI Details<br></h1><br>
-                </div>
-                <div class="row mb-2">
-                    <div class="col-sm-1">
-                        <a style="margin-right:" class="btn btn-dark" href="<%$base_url%>sales_invoice_released">
+                    <div class="col-lg-12" style="float-right;">
+                        <a  class="btn btn-dark" href="<%$base_url%>sales_invoice_released">
                             < Back</a>
                     </div>
                 </div>
@@ -55,19 +65,22 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-sm-1 m-3">
+                                <div class="col-sm-1 mt-3">
                                     <div class="form-group">
-                                        <input type="button" id="submitByPartId" class="btn btn-primary mt-2" value="Submit">
+                                    <button type="submit" id="submitByPartId" class="btn btn-primary" >Submit</button>
+                                      <%*  <input type="button" id="submitByPartId" class="btn btn-primary mt-2" value="Submit"> *%>
                                     </div>
                                 </div>
-                                <div class="col-sm-1 m-3">
+                                <div class="col-sm-1 mt-3">
                                     <div class="form-group">
-                                        <input type="button" id="addNewPartParms" title="This will add any new parameters defined in drawing master." class="btn btn-primary mt-2" value="Add New Parm">
+                                    <button type="submit" id="addNewPartParms" class="btn btn-primary" style="width: max-content;" title="This will add any new parameters defined in drawing master." >Add New Parm</button>
+                                      <%*  <input type="button" id="addNewPartParms" title="This will add any new parameters defined in drawing master." class="btn btn-primary mt-2" value="Add New Parm"> *%>
                                     </div>
                                 </div>
-                                <div class="col-sm-1 m-4">
+                                <div class="col-sm-1 mt-3">
                                     <div class="form-group">
-                                        <a class="btn btn-success" id="getPDILink" target="_blank">View PDI</a>
+                                    
+                                        <a class="btn btn-success" id="getPDILink" target="_blank" style="width: max-content;margin-left: 52px;">View PDI</a>
                                     </div>
                                 </div>
                             </div>

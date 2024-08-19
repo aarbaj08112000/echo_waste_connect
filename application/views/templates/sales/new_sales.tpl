@@ -1,24 +1,29 @@
-<div class="wrapper">
+<div class="wrapper container-xxl flex-grow-1 container-p-y">
     <!-- Navbar -->
     <!-- /.navbar -->
     <!-- Main Sidebar Container -->
     <!-- Content Wrapper. Contains page content -->
+
+    <nav aria-label="breadcrumb">
+      <div class="sub-header-left pull-left breadcrumb">
+        <h1>
+          Planning & Sales
+          <a hijacked="yes"  class="backlisting-link" title="Back to Issue Request Listing" >
+            <i class="ti ti-chevrons-right" ></i>
+            <em >Sales Invoice</em></a>
+        </h1>
+        <br>
+        <span >Generate Sales Invoics</span>
+      </div>
+    </nav>
+
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>Generate Sales Invoice</h1>
-                    </div>
-                    <div class="col-sm-6">
-                    </div>
-                </div>
-            </div><!-- /.container-fluid -->
-        </section>
+       
         <!-- Main content -->
         <section class="content">
-            <div class="container-fluid">
+            <div class="">
+            <form action="<%$base_url%>generate_new_sales" method="POST">
                 <div class="row">
                     <div class="col-12">
                         <!-- /.card -->
@@ -29,10 +34,10 @@
                                         <div id="loading-spinner"></div>
                                     </div>
                                     <div class="col-lg-4">
-                                        <form action="<%$base_url%>generate_new_sales" method="POST">
+                                       
                                             <div class="form-group">
                                                 <label for="">Customer <span class="text-danger">*</span></label>
-                                                <select name="customer_id" id="customer_tracking" required class="form-control select2">
+                                                <select name="customer_id" id="customer_tracking"  class="form-control select2">
                                                     <option value=''>Select</option>
                                                     <%if !empty($customer)%>
                                                         <%foreach from=$customer item=s%>
@@ -42,20 +47,20 @@
                                                 </select>
                                             </div>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
-                                            <label for="">Select Part Number // Description // FG Stock // Rate // Tax Structure
+                                            <label for="">Part Number // Description // FG Stock // Rate // Tax Structure
                                             <span class="text-danger">*</span> </label>
-                                            <select name="part_id" id="part_id" required class="form-control select2">
+                                            <select name="part_id" id="part_id"  class="form-control select2">
                                                 <option value=''>Please select</option>
                                             </select>
                                         </div>                            
                                     </div>
-                                    <div>&nbsp;</div>
-                                    <div class="col-lg-2">
+                                    
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="">Mode Of Transport<span class="text-danger">*</span></label>
-                                            <select name="mode" class="form-control" required>
+                                            <select name="mode" class="form-control" >
                                                 <option value="">Select</option>
                                                 <option value="1">Road</option>
                                                 <option value="2">Rail</option>
@@ -64,10 +69,10 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-2">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="">Transporter<span class="text-danger">*</span></label>
-                                            <select name="transporter" required class="form-control select2">
+                                            <select name="transporter"  class="form-control select2">
                                                 <option value="">Select Transporter</option>
                                                 <%if !empty($transporter)%>
                                                     <%foreach from=$transporter item=tr%>
@@ -77,26 +82,26 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-2">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="">Vehicle No.<span class="text-danger">*</span></label>
                                             <input type="text" 
                                                    placeholder="Enter Vehicle No" 
                                                    value="" 
                                                    name="vehicle_number" 
-                                                   required class="form-control"/>
+                                                    class="form-control"/>
                                         </div>
                                     </div>
-                                    <div class="col-lg-2">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="">L.R No </label>
                                             <input type="text" placeholder="Enter L.R No" value="" name="lr_number" class="form-control">
                                         </div>
                                     </div>
-                                    <div class="col-lg-3">
+                                    <div class="col-lg-4">
                                         <div class="form-group">
                                             <label for="">Distance of Transportation<span class="text-danger">*</span></label>
-                                            <input type="text" placeholder="Enter Distance of Transportation" value="" name="distance" required class="form-control">
+                                            <input type="text" placeholder="Enter Distance of Transportation" value="" name="distance"  class="form-control">
                                         </div>
                                     </div>
                                     <div>&nbsp;</div>
@@ -115,7 +120,7 @@
                                                     <br><label>Select Consignee Address</label><br>
                                                 </div>
                                                 <div class="form-group">
-                                                    <select name="consignee" id="consigneeSelect" required disabled class="form-control">
+                                                    <select name="consignee" id="consigneeSelect"  disabled class="form-control">
                                                         <option value="">Select</option>
                                                         <%foreach from=$consignee_list item=c%>
                                                             <option value="<%$c->id%>">
@@ -138,7 +143,7 @@
                                             <button type="submit" class="btn btn-danger mt-4">Generate</button>
                                         </div>
                                     </div>
-                                    </form>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -148,6 +153,7 @@
                 </div>
                 <!-- /.col -->
             </div>
+            </form>
         <!-- /.row -->
     </div>
     <!-- /.container-fluid -->
@@ -157,8 +163,8 @@
 <!-- /.content-wrapper -->
 <!-- /.content-wrapper -->
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
 <script>
     function toggleConsigneeSelection() {
         var consigneeSelect = document.getElementById("consigneeSelect");
@@ -230,5 +236,113 @@
                 }        
             });
         })
+    // jqeuery form validation.
+        $("form").validate({
+                rules: {
+                    customer_id: {
+                        required: true
+                    },
+                    part_id: {
+                        required: true
+                    },
+                    mode: {
+                        required: true
+                    },
+                    transporter: {
+                        required: true
+                    },
+                    vehicle_number: {
+                        required: true
+                    },
+                    distance: {
+                        required: true
+                    },
+                    consignee: {
+                        required: function() {
+                            return $("input[name='ship_addressType']:checked").val() === "consignee";
+                        }
+                    }
+                },
+                messages: {
+                    customer_id: {
+                        required: "Please select a customer."
+                    },
+                    part_id: {
+                        required: "Please select a part."
+                    },
+                    mode: {
+                        required: "Please select a mode of transport."
+                    },
+                    transporter: {
+                        required: "Please select a transporter."
+                    },
+                    vehicle_number: {
+                        required: "Please enter a vehicle number."
+                    },
+                    distance: {
+                        required: "Please enter the distance of transportation."
+                    },
+                    consignee: {
+                        required: "Please select a consignee address."
+                    }
+                },
+                errorPlacement: function(error, element) {
+                // error.addClass('error');
+                element.closest('.form-group').append(error);
+            },
+            onkeyup: function(element) {
+                $(element).valid();
+            },
+            onchange: function(element) {
+                $(element).valid();
+            },
+                submitHandler: function(form) {
+                    // Prevent the default form submission
+                    event.preventDefault();
+
+                    // Perform your AJAX form submission here
+                    $.ajax({
+                        url: form.action,
+                        type: form.method,
+                        data: $(form).serialize(),
+                        success: function(response) {
+                            // Handle the successful form submission here
+                            if(response != '' && response != null && typeof response != 'undefined'){
+                                let res = JSON.parse(response);
+                                if(res['sucess'] == 1){
+                                    toastr.success('Sales Invoice generated successfully.')
+                                    
+                                    setTimeout(function() {
+                                        window.location.href = "<%$base_url%>" + res['url'];
+                                    }, 1000);
+                                    
+                                }else{
+                                    toastr.error('Unable to generate invooice.')
+                                }
+                                
+                            }
+                            
+                            
+                        },
+                        error: function() {
+                            // Handle the error response here
+                            toastr.error("An error occurred while creating the sales invoice.");
+                        }
+                    });
+                }
+            });
+            $('.select2').on('change', function() {
+            $(this).valid();
+        });
+
+
+            $("input[name='ship_addressType']").change(function() {
+                if ($(this).val() === "consignee") {
+                    $("#consigneeSelect").prop("disabled", false);
+                } else {
+                    $("#consigneeSelect").prop("disabled", true);
+                }
+            });
+
     });
 </script>

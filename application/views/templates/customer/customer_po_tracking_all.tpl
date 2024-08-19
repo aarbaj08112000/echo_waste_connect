@@ -1,35 +1,79 @@
-<div style="width: 2000px" class="wrapper">
+<div  class="wrapper container-xxl flex-grow-1 container-p-y">
     <!-- Navbar -->
 
     <!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
+    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme filter-popup-block" style="width: 0px;">
+    <div class="app-brand demo justify-content-between">
+        <a href="javascript:void(0)" class="app-brand-link">
+            <span class="app-brand-text demo menu-text fw-bolder ms-2">Filter</span>
+        </a>
+        <div class="close-filter-btn d-block filter-popup cursor-pointer">
+                <i class="ti ti-x fs-8"></i>
+            </div>
+    </div>
+    <nav class="sidebar-nav scroll-sidebar filter-block" data-simplebar="init">
+      <div class="simplebar-content" >
+        <ul class="menu-inner py-1">
+            <!-- Dashboard -->
+            <div class="filter-row">
+              <li class="nav-small-cap">
+                <span class="hide-menu">Select Customer</span>
+                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+              </li>
+              <li class="sidebar-item">
+                <div class="input-group">
+                  <select name="customer_name" class="form-control select2" id="customer_name">
+                  <%foreach $customer_data as $key => $val%>
+                  <option 
+                      value="<%$key%>"><%$val%></option>
+                   <%/foreach%>
+                  </select>
+                </div>
+              </li>
+            </div>
+          
+            
 
+        </ul>
+      </div>
+    </nav>
+    <div class="filter-popup-btn">
+            <button class="btn btn-outline-danger reset-filter">Reset</button>
+            <button class="btn btn-primary search-filter">Search</button>
+        </div>
+</aside>
+
+    <nav aria-label="breadcrumb">
+      <div class="sub-header-left pull-left breadcrumb">
+        <h1>
+          Planning & Sales
+          <a hijacked="yes" href="#stock/issue_request/index" class="backlisting-link" title="Back to Issue Request Listing" >
+            <i class="ti ti-chevrons-right" ></i>
+            <em >Customer PO QTY Tracking</em></a>
+        </h1>
+        <br>
+        <span >View Pending</span>
+      </div>
+    </nav>
+    <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
+      <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
+      <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
+      <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
+      <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+    </div>
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>Customer PO QTY Tracking</h1>
-                    </div>
-                    <!-- <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Customer</li>
-                        </ol>
-                    </div> -->
-                </div>
-            </div><!-- /.container-fluid -->
-        </section>
+        
 
         <!-- Main content -->
         <section class="content">
-            <div class="container-fluid">
+            <div class="">
                 <div class="row">
-                    <div class="col-9">
+              
 
                         <!-- /.card -->
 
@@ -59,7 +103,7 @@
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Sr. No.</th>
+                                         
                                             <th>Customer</th>
                                             <th>PO Number</th>
                                             <th>Start Date</th>
@@ -73,131 +117,7 @@
                                         </tr>
                                     </thead>
 
-                                    <tbody>
-                                        <%assign var="i" value=1%>
-                                        <%if $customer_po_tracking%>
-                                            <%foreach from=$customer_po_tracking item=s%>
-                                               
-                                                <%if $s->status != "closed"%>
-                                                    <tr>
-                                                        <td><%$i%></td>
-                                                        <td><%$customer_data[$s->customer_id][0]->customer_name%></td>
-                                                        <td><%$s->po_number%></td>
-                                                        <td><%$s->po_start_date%></td>
-                                                        <td><%$s->po_end_date%></td>
-                                                        <td><%$s->po_amedment_number%></td>
-                                                        <td><%$s->status%></td>
-                                                        <td><a href="<%$base_url%>view_customer_tracking_id/<%$s->id%>" class="btn btn-primary">PO Details</a></td>
-                                                        <td>
-                                                            <%if $s->uploadedDoc != ""%>
-                                                                <a download href="<%$base_url%>documents/<%$s->uploadedDoc%>" id="" class="btn btn-sm btn-primary remove_hoverr"><i class="fas fa-download"></i></a>
-                                                            <%/if%>
-                                                            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#uploadDocument<%$i%>"><i class="fas fa-upload"></i></button>
-
-                                                            <!-- Upload Modal -->
-                                                            <div class="modal fade" id="uploadDocument<%$i%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                                <div class="modal-dialog" role="document">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header">
-                                                                            <h5 class="modal-title" id="exampleModalLabel">Upload file</h5>
-                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                <span aria-hidden="true">&times;</span>
-                                                                            </button>
-                                                                        </div>
-                                                                        <div class="modal-body">
-                                                                            <form action="<%$base_url%>add_part" method="post" enctype='multipart/form-data'>
-                                                                                <div class="text-center">
-                                                                                    <div class="form-group">
-                                                                                        <label for="exampleInputEmail1">Upload File<span class="text-danger">*</span>
-                                                                                        <input required type="file" name="cad_file" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Asset Number">
-                                                                                    </div>
-                                                                                    <input value="<%$s->id%>" type="hidden" name="uid" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Customer Name">
-                                                                                    <input type="hidden" name="table_name" value="customer_po_tracking">
-                                                                                    <input type="hidden" name="column_name" value="uploadedDoc">
-                                                                                </div>
-                                                                                <div class="modal-footer">
-                                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                                                                    <button type="submit" class="btn btn-primary">Save</button>
-                                                                                </div>
-                                                                            </form>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editenew<%$i%>">
-                                                                <i class="fa fa-edit"></i> Edit
-                                                            </button>
-                                                            <div class="modal fade" id="editenew<%$i%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                                <div class="modal-dialog" role="document">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header">
-                                                                            <h5 class="modal-title" id="exampleModalLabel">Update</h5>
-                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                <span aria-hidden="true">&times;</span>
-                                                                            </button>
-                                                                        </div>
-                                                                        <div class="modal-body">
-                                                                            <form action="<%$base_url%>update_customer_po_tracking_all" method="POST" enctype="multipart/form-data">
-                                                                                <div class="form-group">
-                                                                                    <label for="">End Date<span class="text-danger">*</span></label>
-                                                                                    <input required value="<%$s->po_end_date%>" type="date" class="form-control" name="end_date">
-                                                                                    <input required value="<%$s->id%>" type="hidden" class="form-control" name="id">
-                                                                                </div>
-                                                                        </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                            <button type="submit" class="btn btn-primary">Save changes</button>
-                                                                            </form>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#close<%$i%>">
-                                                                Close PO
-                                                            </button>
-                                                            <div class="modal fade" id="close<%$i%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                                <div class="modal-dialog" role="document">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header">
-                                                                            <h5 class="modal-title" id="exampleModalLabel">Close PO</h5>
-                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                <span aria-hidden="true">&times;</span>
-                                                                            </button>
-                                                                        </div>
-                                                                        <div class="modal-body">
-                                                                            <form action="<%$base_url%>close_po_customer_po_tracking" method="POST" enctype="multipart/form-data">
-                                                                                <div class="form-group">
-                                                                                    <label for="">Are you sure to close <u>PO Number : <%$s->po_number%></u> ?</label>
-                                                                                    <br><br>
-                                                                                    <input required value="<%$s->id%>" type="hidden" class="form-control" name="id">
-                                                                                    <label for="">Remark<span class="text-danger"></span></label>
-                                                                                    <input type="text" name="remark" placeholder="Enter Remark " class="form-control"/>
-                                                                                    <label for="">Reason<span class="text-danger">*</span> </label>
-                                                                                    <select name="reason" required id="" class="form-control select2">
-                                                                                        <option value="">Select</option>
-                                                                                        <option value="Withdraw">Withdraw</option>
-                                                                                        <option value="Completed">Completed</option>
-                                                                                    </select>
-                                                                                </div>
-                                                                        </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                                                            <button type="submit" class="btn btn-primary">Save changes</button>
-                                                                            </form>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <%assign var="i" value=$i+1%>
-                                                <%/if%>
-                                            <%/foreach%>
-                                        <%/if%>
-                                    </tbody>
+                                   
                                 </table>
                             </div>
                             <!-- /.card-header -->
@@ -205,7 +125,7 @@
                             <!-- /.card-body -->
                         </div>
                         <!-- /.card -->
-                    </div>
+              
                     <!-- /.col -->
                 </div>
                 <!-- /.row -->
@@ -214,4 +134,110 @@
         </section>
         <!-- /.content -->
     </div>
+
+    <div class="modal fade" id="upload_modal" tabindex="-1" role="dialog" aria-labelledby="upload_modal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Upload file</h5>
+                <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <form action="<%$base_url%>add_part" method="post"id="uploadForm" enctype='multipart/form-data'>
+            <div class="modal-body">
+                    <div class="text-center">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Upload File<span class="text-danger">*</span>
+                            <input required type="file" name="cad_file" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Asset Number">
+                        </div>
+                        <input value="<%$s->id%>" type="hidden" name="uid" required class="form-control" id="uid" aria-describedby="emailHelp" placeholder="Customer Name">
+                        <input type="hidden" name="table_name" value="customer_po_tracking">
+                        <input type="hidden" name="column_name" value="uploadedDoc">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                    </div>
+                    </form>
+        </div>
+    </div>
+</div>
+
+    <div class="modal fade" id="edit_modal" tabindex="-1" role="dialog" aria-labelledby="edit_modal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Update</h5>
+                <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <form action="<%$base_url%>update_customer_po_tracking_all" method="POST" id="updateForm" enctype="multipart/form-data">
+            <div class="modal-body">
+                    <div class="form-group">
+                        <label for="">End Date<span class="text-danger">*</span></label>
+                        <input required value="<%$s->po_end_date%>" type="date" class="form-control" name="end_date" id="end_date">
+                        <input required value="<%$s->id%>" type="hidden" class="form-control" name="id" id="part_id">
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <div class="modal fade" id="close_modal" tabindex="-1" role="dialog" aria-labelledby="close_modal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Close PO</h5>
+                        <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            
+                        </button>
+                    </div>
+                    <form action="<%$base_url%>close_po_customer_po_tracking" method="POST" id="closePoForm" enctype="multipart/form-data">
+                    <div class="modal-body">
+                            <div class="form-group">
+                                <label for="">Are you sure to close <u>PO Number : <%$s->po_number%></u> ?</label>
+                                <br><br>
+                                <input required value="<%$s->id%>" type="hidden" class="form-control" name="id" id='close_id'>
+                                <label for="">Remark<span class="text-danger"></span></label>
+                                <input type="text" name="remark" placeholder="Enter Remark " class="form-control" id="remarks"/>
+                                <label for="">Reason<span class="text-danger">*</span> </label>
+                                <select name="reason"  id="reason" class="form-control select2">
+                                    <option value="">Select</option>
+                                    <option value="Withdraw">Withdraw</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     <!-- /.content-wrapper -->
+
+    <script>
+    var column_details =  <%$data|json_encode%>;
+    var page_length_arr = <%$page_length_arr|json_encode%>;
+    var is_searching_enable = <%$is_searching_enable|json_encode%>;
+    var is_top_searching_enable =  <%$is_top_searching_enable|json_encode%>;
+    var is_paging_enable =  <%$is_paging_enable|json_encode%>;
+    var is_serverSide =  <%$is_serverSide|json_encode%>;
+    var no_data_message =  <%$no_data_message|json_encode%>;
+    var is_ordering =  <%$is_ordering|json_encode%>;
+    var sorting_column = <%$sorting_column%>;
+    var api_name =  <%$api_name|json_encode%>;
+    var base_url = <%$base_url|json_encode%>;
+</script>
+
+    <script src="<%$base_url%>/public/js/potracking.js"></script>

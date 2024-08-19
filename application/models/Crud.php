@@ -118,6 +118,7 @@ class Crud extends CI_Model
 				$_SESSION['alert_code']='1062';
 			}
 		}
+		// pr($this->db->last_query(),1);
 		$this->logSQLExecuted($dateTime);
 		return $result;
     }
@@ -359,6 +360,9 @@ class Crud extends CI_Model
             $query = $this->db->get_where($table_name, array($column_name => $id))->result();
 	    }
 		$this->logSQLExecuted($dateTime);
+		if($try == 1){
+			pr($this->db->last_query(),1);
+		}
 		
         if ($query) {
             return $query;
@@ -489,6 +493,7 @@ class Crud extends CI_Model
 				return false;
 			}
 		}
+		
 		$this->logSQLExecuted($dateTime);
 		return false;
    }

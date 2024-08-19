@@ -24,7 +24,7 @@ function display_no_character($value = ''){
 
 
 function is_valid_array($data = []){
-	if(count($data) > 0 && is_array($data)){
+	if( is_array($data) && count($data) > 0){
 		return true;
 	}
 	return false;
