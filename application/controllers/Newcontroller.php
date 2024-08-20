@@ -483,7 +483,7 @@ public function get_po_sales_parts()
 			$query = "SELECT * FROM customer_part WHERE id = " . $val->part_id . "";
 
 				$result = $this->db->query($query);
-				if (count($result) > 0) {
+				if (count($result->result_array()) > 0) {
 					//$data=$result->result_array();		
 
 				// $html.='<option value="">Select State</option>';
