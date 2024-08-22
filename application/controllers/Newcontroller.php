@@ -858,12 +858,22 @@ public function rejected_po()
 		$data = array(
 			"qty" => $qty,
 		);
+		$messages = "";
+		$success = 0;
 		$result = $this->Crud->update_data("parts_rejection_sales_invoice", $data, $id);
 		if ($result) {
-			echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$messages = "Updated Sucessfully";
+			$success = 1;
+			// echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-			echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$messages = "Error 410 :  Not Updated";
+			// echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
+		$result = [];
+		$result['messages'] = $messages;
+		$result['success'] = $success;
+		echo json_encode($result);
+		exit();
 		//}
 	}
 	public function update_challan_parts()
@@ -1012,6 +1022,31 @@ public function rejected_po()
 			"message" =>$message,
 			"success" => $success
 		];
+		echo json_encode($return_arr);
+		exit();
+	}
+	public function accept_customer_po_tracking()
+	{
+		$id = $this->input->post('id');
+		$status = $this->input->post('status');
+		$data = array(
+			"status" => $status
+		);
+		$result = $this->Crud->update_data("customer_po_tracking", $data, $id);
+		$message = "Something went wrong!";
+		$success = 1;
+		if ($result) {
+			$message = "Updated Sucessfully";
+			$success = 1;
+		} else {
+			$message ="Error 410 :  Not Updated";
+		}
+		$return_arr = [
+			"message" =>$message,
+			"success" => $success
+		];
+
+
 		echo json_encode($return_arr);
 		exit();
 	}
@@ -1722,11 +1757,13 @@ public function rejected_po()
 			"part_id" => $part_id,
 			"rejection_sales_id" => $sales_id,
 		);
-
+		$messages = "";
+        $success = 0;
 		$parts_rejection_sales_invoice_data = $this->Crud->get_data_by_id_multiple("parts_rejection_sales_invoice", $data_check);
 		if($parts_rejection_sales_invoice_data)
 		{
-			echo "<script>alert('Error : data Already Present, please try again ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$messages ="data Already Present, please try again";
+			// echo "<script>alert('Error : data Already Present, please try again ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 
 		}
 		else
@@ -1749,11 +1786,19 @@ public function rejected_po()
 
 			$result = $this->Crud->insert_data("parts_rejection_sales_invoice", $data);
 			if ($result) {
-				echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$success = 1;
+				$messages ="Successfully Added";
+				// echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				echo "<script>alert('Unab le to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$messages ="Unab le to Add";
+				// echo "<script>alert('Unab le to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 
 	}
 

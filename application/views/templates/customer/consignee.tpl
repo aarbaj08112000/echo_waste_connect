@@ -62,6 +62,9 @@
       <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
       <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
       <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+     
+      <button type="button" class="btn btn-seconday float-left" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    <i class="ti ti-plus "></i></button>
     </div>
 
     <div class="content-wrapper">
@@ -74,16 +77,13 @@
                     <div class="col-12">
                        <!-- /.card -->
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title"></h3>
-                                <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-primary float-left" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                    Add Consignee</button>
+                            <div class="">
+                               
 
                                 <!-- Modal -->
                                 <div class="modal fade" id="exampleModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg" role="document">
-                                        <div class="modal-content modal-lg">
+                                    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                                        <div class="modal-content">
                                             <div class="modal-header ">
                                                 <h5 class="modal-title" id="exampleModalLabel">Add Consignee</h5>
                                                 <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close">
@@ -92,40 +92,56 @@
                                             <form action="<%$base_url%>add_consignee" method="POST" id="add_consnee">
                                             <div class="modal-body">
                                                     <div class="row">
-                                                        <div class="col-lg-12">
+                                                        <div class="col-lg-6">
 
                                                             <div class="form-group">
                                                                 <label for="customer_name">Consignee Name</label><span class="text-danger">*</span>
                                                                 <input type="text" name="cconsignee_name" required class="form-control" id="name" aria-describedby="emailHelp" placeholder="Consignee Name">
                                                             </div>
+                                                        </div>
+                                                        <div class="col-lg-6">
                                                             <div class="form-group">
                                                                 <label for="customer_name">Location</label><span class="text-danger">*</span>
                                                                 <input type="text" name="clocation" required class="form-control" id="location" aria-describedby="emailHelp" placeholder="Location">
                                                             </div>
+                                                        </div>
+                                                        <div class="col-lg-6">
                                                             <div class="form-group">
                                                                 <label for="customer_location">Address</label><span class="text-danger">*</span>
                                                                 <input type="text" name="caddress" required class="form-control" id="address" aria-describedby="emailHelp" placeholder="Address">
                                                             </div>
+                                                        </div>
+                                                        <div class="col-lg-6">
                                                             <div class="form-group">
                                                                 <label for="customer_location">State</label><span class="text-danger">*</span>
                                                                 <input type="text" name="cstate" required class="form-control" id="state" aria-describedby="emailHelp" placeholder="State">
                                                             </div>
+                                                        </div>
+                                                        <div class="col-lg-6">
                                                             <div class="form-group">
                                                                 <label for="customer_location">State No </label><span class="text-danger">*</span>
                                                                 <input type="text" name="cstate_no" required class="form-control" id="state_num" aria-describedby="emailHelp" placeholder="State No">
                                                             </div>
+                                                        </div>
+                                                        <div class="col-lg-6">
                                                              <div class="form-group">
                                                                 <label for="customer_location">PIN</label><span class="text-danger">*</span>
                                                                 <input type="text" name="cpin_code" required class="form-control" id="PIN" aria-describedby="emailHelp" placeholder="PIN ">
                                                             </div>
+                                                        </div>
+                                                        <div class="col-lg-6">
                                                             <div class="form-group">
                                                                 <label for="customer_location">GST Number</label><span class="text-danger">*</span>
                                                                 <input type="text" name="gst_number" required class="form-control" id="gst_no" aria-describedby="emailHelp" placeholder="GST Number">
                                                             </div>
+                                                        </div>
+                                                        <div class="col-lg-6">
                                                             <div class="form-group">
                                                                 <label for="customer_location">PAN No</label><span class="text-danger">*</span>
                                                                 <input type="text" name="cpan_no" required class="form-control" id="pan" aria-describedby="emailHelp" placeholder="PAN No">
                                                             </div>
+                                                        </div>
+                                                        <div class="col-lg-6">
                                                             <div class="form-group">
                                                                 <label for="customer_name">Phone No</label><span class="text-danger">*</span>
                                                                 <input type="text" name="cphone_no" required class="form-control" id="phone" aria-describedby="phone" placeholder="Phone No">
@@ -145,8 +161,8 @@
                                 </div>
                             </div>
                             <!-- /.card-header -->
-                            <div class="card-body">
-                                <table id="example1" class="table table-bordered table-striped">
+                            <div class="">
+                                <table id="example1" class="table  table-striped">
                                     <thead>
                                         <tr>
                                             <th>Sr. No.</th>
@@ -177,7 +193,7 @@
                                                     <td><%$t->gst_number%></td>
                                                     <td><%$t->pan_no%></td>
                                                     <td>
-                                                        <button type="submit" data-bs-toggle="modal" class="btn btn-sm btn-primary edit-part" data-bs-target="#edit_modal" data-value ='<%$t->encode_data%>'> <i class="fas fa-edit"></i></button>
+                                                        <a type="button" data-bs-toggle="modal" class=" edit-part" data-bs-target="#edit_modal" data-value ='<%$t->encode_data%>'> <i class="ti ti-edit"></i></a>
 
                                                      
                                                         <div class="modal fade" id="exampleModal3<%$i%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -226,7 +242,7 @@
     </div>
 
     <div class="modal fade" id="edit_modal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Update Consignee</h5>
@@ -236,7 +252,7 @@
             <form action="<%$base_url%>update_consignee" id="update_form" method="POST">
             <div class="modal-body">
                     <div class="row">
-                        <div class="col-lg-12">
+                        <div class="col-lg-6">
 
                             <div class="form-group">
                                 <label for="customer_name">Consignee Name</label><span class="text-danger">*</span>
@@ -244,34 +260,50 @@
                                 <input value="<%$t->c_id%>" type="hidden" name="consignee_id"  class="form-control" id="uconsignee_ref">
                                 <input value="<%$t->address_id%>" type="hidden" name="address_id"  class="form-control" id="uaddressRef">
                             </div>
+                        </div>
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="customer_name">Location</label><span class="text-danger">*</span>
                                 <input value="<%$t->location%>" type="text" name="ulocation"  class="form-control" id="ulocation" aria-describedby="location" placeholder="Location">
                             </div>
+                        </div>
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="customer_location">Address</label><span class="text-danger">*</span>
                                 <input type="text" name="uaddress" value="<%$t->address%>"  class="form-control" id="uaddress" aria-describedby="emailHelp" placeholder="Address">
                             </div>
+                        </div>
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="customer_location">State</label><span class="text-danger">*</span>
                                 <input type="text" name="ustate" value="<%$t->state%>"  class="form-control" id="ustate" aria-describedby="emailHelp" placeholder="State">
                             </div>
+                        </div>
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="customer_location">State No </label><span class="text-danger">*</span>
                                 <input type="text" name="ustate_no" value="<%$t->state_no%>"  class="form-control" id="ustate_num" aria-describedby="emailHelp" placeholder="State No">
                             </div>
+                        </div>
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="customer_location">PIN</label><span class="text-danger">*</span>
                                 <input type="text" name="upin_code" value="<%$t->pin_code%>"  class="form-control" id="uPIN" aria-describedby="emailHelp" placeholder="PIN ">
                             </div>
+                        </div>
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="customer_location">GST Number</label><span class="text-danger">*</span>
                                 <input type="text" name="ugst_number" value="<%$t->gst_number%>"  class="form-control" id="ugst_no" aria-describedby="emailHelp" placeholder="GST Number">
                             </div>
+                        </div>
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="customer_location">PAN No</label><span class="text-danger">*</span>
                                 <input type="text" name="upan_no" value="<%$t->pan_no%>"  class="form-control" id="upan" aria-describedby="emailHelp" placeholder="PAN No">
                             </div>
+                        </div>
+                        <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="customer_name">Phone No</label><span class="text-danger">*</span>
                                 <input type="text" name="uphone_no" value="<%$t->phone_no%>"  class="form-control" id="uphone" aria-describedby="phone" placeholder="Phone No">

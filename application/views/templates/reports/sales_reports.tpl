@@ -72,28 +72,18 @@
       </div>
     </nav>
     <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
+        <button type="button" class="btn btn-seconday" data-toggle="modal"
+                                            data-bs-target="#exportForTally" data-bs-toggle="modal">
+                                            Sales Export For Tally
+                                        </button>
+        
       <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
       <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
       <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
       <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
     </div>
     <div class="content-wrapper ">
-        <!-- Content Header (Page header) -->
-       <%* <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>Sales Reports</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="<%$base_url%>dashboard">Home</a></li>
-                            <li class="breadcrumb-item active">Po Balance Qty</li>
-                        </ol>
-                    </div>
-                </div>
-            </div><!-- /.container-fluid -->
-        </section> *%>
+     
         <!-- Main content -->
         <section class="content">
             <div class="">
@@ -101,22 +91,14 @@
                     <div class="col-12">
                         <!-- /.card -->
                         <div class="card">
-                            <div class="card-header">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <button type="button" class="btn btn-primary" data-toggle="modal"
-                                            data-bs-target="#exportForTally" data-bs-toggle="modal">
-                                            Sales Export For Tally
-                                        </button>
-                                        <hr>
-                                    </div>
-                                </div>
+                            <div class="card-header1">
+                              
                                 <div class="row">
                                     
                                         <!-- Modal -->
                                         <div class="modal fade" id="exportForTally" tabindex="-1" role="dialog"
                                             aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="exampleModalLabel">Sales Export
@@ -126,15 +108,13 @@
                                                             <%*<span aria-hidden="true">&times;</span>*%>
                                                         </button>
                                                     </div>
+                                                    <form action="<%$base_url%>sales_report" method="POST" id="sales_report_export">
                                                     <div class="modal-body">
-                                                        <div class="form-group">
-                                                            <form action="<%$base_url%>sales_report" method="POST">
-                                                        </div>
+                                                        <input type="hidden" name="export" value="export">
                                                         <div class="form-group">
                                                             <label for="">Year:</label>
                                                             <select required name="search_year" id=""
-                                                                class="form-control select2">
-                                                                
+                                                                class="form-control select2" style="width: 100%;">
                                                                 <%if $created_month < 4%>
                                                                     <%assign var="year_sel" value=$created_year-1%>
                                                                 <%/if%>
@@ -149,7 +129,7 @@
                                                                     Number field is provided.</span>
                                                             </label>
                                                             <select required name="search_month" id=""
-                                                                class="form-control select2">
+                                                                class="form-control select2" style="width: 100%;">
                                                                 <%foreach $month_data as $key => $val%>
                                                                 <option <%if $month_number[$key] eq $created_month%>selected<%/if%>
                                                                     value="<%$month_number[$key]%>"><%$val%></option>
@@ -187,7 +167,7 @@
                                 <!-- Modal -->
                                 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="exampleModalLabel">Add </h5>
@@ -240,9 +220,9 @@
                                 </div>
 
                                 <!-- /.card-header -->
-                                <div class="card-body">
+                                <div class="">
                                     <div class="table-responsive text-nowrap">
-                                        <table id="example1" class="table table-bordered table-striped">
+                                        <table id="example1" class="table  table-striped">
                                             <thead>
                                             <tr>
                                             <%foreach from=$data key=key item=val%>

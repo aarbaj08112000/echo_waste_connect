@@ -20,6 +20,8 @@ class ExportController extends CommonController
 
     public function grn_excel_export()
     {
+        $success = 0;
+        $message = 'Data already exists.';
         $grn_detail_list = $this->get_grn_details();
 
         if (empty($grn_detail_list)) {

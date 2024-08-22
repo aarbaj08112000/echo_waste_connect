@@ -116,7 +116,7 @@ const page = {
             orderMulti: false,
             pagingType: "full_numbers",
             scrollCollapse: true,
-            scrollX: true,
+            scrollX: false,
             scrollY: true,
             paging: is_paging_enable,
             fixedHeader: false,

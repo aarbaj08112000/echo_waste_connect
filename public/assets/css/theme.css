@@ -236,6 +236,8 @@ table.dataTable thead .sorting, table.dataTable thead .sorting_asc, table.dataTa
     font-weight: normal;
     height: auto;
     margin: 0 !important;
+
+    top: -2px;
 }
 .breadcrumb h1 a i{
 	color: #7E7E7E;
@@ -249,6 +251,8 @@ table.dataTable thead .sorting, table.dataTable thead .sorting_asc, table.dataTa
 	font-size: 15px;
     color: #5d87ff !important;
     font-style: normal !important;
+        position: relative;
+    top: 2px;
 }
 .breadcrumb span {
     font-style: normal !important;

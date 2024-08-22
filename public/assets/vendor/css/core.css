@@ -29405,3 +29405,10 @@ a.bg-vimeo:hover,a.bg-vimeo:focus {
 .scrollable.table thead tr th{
     padding: 19px 17px 9px 16px !important;
 }
+.scrollable tbody{
+        max-height: 200px !important;
+}
+
+.dataTables_scrollBody tbody{
+    max-height: unset;
+}

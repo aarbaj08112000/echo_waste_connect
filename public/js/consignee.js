@@ -35,9 +35,12 @@ const datatable = {
         })
     },
     dataTable:function(){
-      table =  new DataTable('#example1',{
-        dom: 'Bfrtip',
-        scrollX: false, 
+       table =  new DataTable('#example1',{
+        dom: "Bfrtilp",
+        // scrollX: true, 
+        columnDefs: [
+            { orderable: false, targets: [3,4,5,6,7,8] } // Disable ordering for the first and third columns
+        ],
         buttons: [
                 {     
                     extend: 'csv',
@@ -49,7 +52,11 @@ const datatable = {
                             var lines = csv.split('\n');
                             var modifiedLines = lines.map(function(line) {
                                 var values = line.split(',');
+                                values.splice(1, 1);
                                 values.splice(9, 1);
+                                values.splice(8, 1);
+                                values.splice(7, 1);
+                                values.splice(6, 1);
                                 return values.join(',');
                             });
                             return modifiedLines.join('\n');
@@ -66,35 +73,25 @@ const datatable = {
                     },
                     filename: file_name,
                     
-                    customize: function (doc) {
-                        doc.pageMargins = [15, 15, 15, 15];
-                        doc.content[0].text = pdf_title;
-                        doc.content[0].color = theme_color;
-                        // doc.content[1].table.widths = ['15%', '19%', '13%', '13%','15%', '15%', '10%'];
-                        doc.content[1].table.body[0].forEach(function(cell) {
-                            cell.fillColor = theme_color;
-                        });
-                        doc.content[1].table.body.forEach(function(row, rowIndex) {
-                            row.forEach(function(cell, cellIndex) {
-                                var alignmentClass = $('#example1 tbody tr:eq(' + rowIndex + ') td:eq(' + cellIndex + ')').attr('class');
-                                var alignment = '';
-                                if (alignmentClass && alignmentClass.includes('dt-left')) {
-                                    alignment = 'left';
-                                } else if (alignmentClass && alignmentClass.includes('dt-center')) {
-                                    alignment = 'center';
-                                } else if (alignmentClass && alignmentClass.includes('dt-right')) {
-                                    alignment = 'right';
-                                } else {
-                                    alignment = 'left';
-                                }
-                                cell.alignment = alignment;
-                            });
-                            row.splice(9, 1);
-                        });
-                    }
+                    
+
                 },
             ],
+        searching: true,
+      // scrollX: true,
+      scrollY: true,
+      bScrollCollapse: true,
+      columnDefs: [{ sortable: false, targets: 9 }],
+      pagingType: "full_numbers",
     });
+      $('.dataTables_length').find('label').contents().filter(function() {
+          return this.nodeType === 3; // Filter out text nodes
+      }).remove();
+      setTimeout(function(){
+        $(".dataTables_length select").select2({
+            minimumResultsForSearch: Infinity
+        });
+      },1000)
     },
     resetFilter:function(){
         table.column(1).search('').draw();

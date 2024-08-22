@@ -269,7 +269,7 @@ const page = {
     },
     formValidate: function(form_class = ''){
     	let flag = false;
-    	$(".custom-form."+form_class+" input.required-input").each(function( index ) {
+    	$(".custom-form."+form_class+" .required-input").each(function( index ) {
 		  var value = $(this).val();
 		  if(value == ''){
 		  	flag = true;

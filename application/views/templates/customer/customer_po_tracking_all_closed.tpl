@@ -74,12 +74,12 @@
         <!-- Main content -->
         <section class="content">
             <div class="">
+                <div class="card">
                 <div class="row">
                    
 
                         <!-- /.card -->
 
-                        <div class="card">
                         <!-- <div class="card-header">
                                 <h3 class="card-title">Serch PO Number</h3>
                                 <div class="row">
@@ -100,8 +100,8 @@
                                 </div>
                             </div>-->
 
-                            <div class="card-body">
-                                <table id="example1" class="table table-bordered table-striped">
+                            <div class="">
+                                <table id="example1" class="table  table-striped">
                                     <thead>
                                         <tr>
                                             <th>Sr. No.</th>

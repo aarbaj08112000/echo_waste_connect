@@ -91,18 +91,11 @@
                     <div class="col-12">
                         <!-- /.card -->
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">
-
-                                </h3>
-                                <!-- Button trigger modal -->
-                                <!-- <button type="button" class="btn btn-primary float-left" data-toggle="modal" data-bs-target="#exampleModal">
-                                    Add </button> -->
-                            </div>
+                            
 
                            
                             <!-- /.card-header -->
-                            <div class="card-body">
+                            <div class="">
                             <div class="table-responsive text-nowrap">
                                 <table id="example1" class="table  table-striped">
                                     <thead>

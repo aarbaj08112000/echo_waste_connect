@@ -17,7 +17,23 @@
         <span >Planning data</span>
       </div>
     </nav>
-
+    <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5 listing-btn">
+            <a type="button" class="btn btn-seconday" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal">
+                                    Add Planing</a>
+            <a type="button" class="btn btn-seconday" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal1212">
+                                    Add FG Stock</a>
+            <a href="<%$base_url%>view_all_child_parts_schedule/<%$financial_year%>/<%$month%>"
+                                    class="btn btn-seconday">
+                                    Monthly MRP Req</a>
+            <a type="button" class="btn  btn-seconday" data-bs-toggle="modal"
+                                    data-bs-target="#exportCustomerPartsOnly">
+                                    Export Format</a>
+            <a type="button" class="btn btn-seconday" data-bs-toggle="modal"
+                                    data-bs-target="#importCustomerPartsOnly">
+                                    Import Data</a>
+        </div>
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         
@@ -28,21 +44,17 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
+                            <div class="card-header1">
                                 <!-- <div class="col-6"> -->
-                                <h3 class="card-title"></h3>
+                                
                                 <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal">
-                                    Add Planing</button>
+                                
                                 <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal1212">
-                                    Add FG Stock</button>
+                                
                                 <!-- Modal -->
                                 <div class="modal fade" id="exampleModal1212" role="dialog"
                                     aria-labelledby="exampleModal1212Label" aria-hidden="true">
-                                    <div class="modal-dialog" role=" document">
+                                    <div class="modal-dialog modal-dialog-centered" role=" document">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="exampleModal1212Label">Add FG Stock</h5>
@@ -119,19 +131,15 @@
                                 </div>
                                 <!-- Modal End-->
 
-                                <a href="<%$base_url%>view_all_child_parts_schedule/<%$financial_year%>/<%$month%>"
-                                    class="btn btn-primary">
-                                    Monthly MRP Req</a>
+                                
                                 <!-- </div>
                                 <div class="col-6" style="align:right;"> -->
-                                <button type="button" class="btn btn-info" data-bs-toggle="modal"
-                                    data-bs-target="#exportCustomerPartsOnly">
-                                    Export Format</button>
+                                
 
                                 <!-- Export Modal -->
                                 <div class="modal fade" id="exportCustomerPartsOnly" tabindex="-1" role="dialog"
                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="exampleModalLabel">Export Customer Data for Planning Data</h5>
@@ -140,15 +148,16 @@
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
+                                             <form action="<%$base_url%>planning_export_customer_part"
+                                                    method="POST" id="planning_export_customer_part" class="custom-form">
                                             <div class="modal-body">
-                                                <form action="<%$base_url%>planning_export_customer_part"
-                                                    method="POST">
+                                               
                                                     <div class="row">
-                                                        <div class="col-lg-10">
+                                                        <div class="col-lg-10 form-group">
                                                             <label for="contractorName">Customer</label><span
                                                                 class="text-danger">*</span>
                                                             <select name="customer_id" id=""
-                                                                class="form-control select2" required>
+                                                                class="form-control select2 required-input" >
                                                                 <option value="">Select</option>
                                                                 <%if $customer%>
                                                                     <%foreach from=$customer item=c%>
@@ -174,14 +183,12 @@
                                     </div>
                                 </div>
 
-                                <button type="button" class="btn btn-info" data-bs-toggle="modal"
-                                    data-bs-target="#importCustomerPartsOnly">
-                                    Import Data</button>
+                                
                                 
                                  <!-- Import Modal -->
                                  <div class="modal fade" id="importCustomerPartsOnly" tabindex="-1" role="dialog"
                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="exampleModalLabel">Import Planning Data</h5>
@@ -192,13 +199,14 @@
                                             </div>
                                             <div class="modal-body">
                                                 <form action="<%$base_url%>import_customer_planning" 
-                                                method="POST" enctype='multipart/form-data'>
+                                                method="POST" enctype='multipart/form-data' id="import_customer_planning" class="custom-form">
                                                     <div class="row">
                                                         <div class="col-lg-10">
+                                                            <div class="form-group">
                                                             <label>Customer</label><span
                                                                 class="text-danger">*</span>
                                                             <select name="customer_id" id=""
-                                                                class="form-control select2" required>
+                                                                class="form-control select2 required-input" >
                                                                 <option value="">Select</option>
                                                                 <%if $customer%>
                                                                     <%foreach from=$customer item=c%>
@@ -207,10 +215,11 @@
                                                                 <%/foreach%>
                                                                 <%/if%>
                                                             </select>
+                                                        </div>
                                                             <div class="form-group">
-                                                                <br><label for="po_num">Upload Plan</label><span
+                                                                <label for="po_num">Upload Plan</label><span
                                                                 class="text-danger">*</span>
-                                                                <input type="file" name="uploadedDoc" required class="form-control" id="exampleuploadedDoc" placeholder="Upload Plan" aria-describedby="uploadDocHelp">
+                                                                <input type="file" name="uploadedDoc"  class="required-input form-control" id="exampleuploadedDoc" placeholder="Upload Plan" aria-describedby="uploadDocHelp">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -232,7 +241,7 @@
                                 <!-- Add Planning Modal -->
                                 <div class="modal fade" id="exampleModal" role="dialog"
                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role=" document">
+                                    <div class="modal-dialog modal-dialog-centered" role=" document">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="exampleModalLabel">Add Planing</h5>
@@ -311,7 +320,7 @@
 
 
                         <div class="card-header">
-                            <h3 class="card-title"></h3>
+                            
                             <!-- Button trigger modal -->
                             <div class="row">
                                 <div class="col-lg-2">
@@ -344,6 +353,8 @@
                             </div>
                         </div>
                     </div>
+                
+                <div class="card p-0 mt-4">
                     <!-- /.card-header -->
                     <div class="card-body">
                         <table id="example1" class="table table-bordered table-striped">
@@ -443,7 +454,7 @@
                                                                                <div class="modal fade" id="editenew<%$i%>" tabindex="-1"
                                             role="dialog" aria-labelledby="exampleModalLabel"
                                             aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="exampleModalLabel">Update</h5>
@@ -536,8 +547,7 @@
                 required: true
             },
             schedule_qty: {
-                required: true,
-                number: true
+                required: true
             }
         },
         // Define validation messages
@@ -554,6 +564,17 @@
             schedule_qty: {
                 required: "Please enter the schedule quantity.",
                 number: "Please enter a valid number."
+            }
+        },
+
+        errorPlacement: function (error, element) {
+            
+            if (element[0].localName == "select") {
+                element.parents(".form-group").append(error)
+                // error.insertAfter($(element).parents('div').prev($('.question')));
+            } else {
+                error.insertAfter(element);
+                // something else if it's not a checkbox
             }
         },
         // Handle form submission
@@ -611,6 +632,16 @@
             fg_stock: {
                 required: "Please enter the production quantity.",
                 number: "Please enter a valid number."
+            }
+        },
+        errorPlacement: function (error, element) {
+            
+            if (element[0].localName == "select") {
+                element.parents(".form-group").append(error)
+                // error.insertAfter($(element).parents('div').prev($('.question')));
+            } else {
+                error.insertAfter(element);
+                // something else if it's not a checkbox
             }
         },
         // Handle form submission
@@ -732,5 +763,82 @@
                 }
             });
         });
+        $('#planning_export_customer_part').on('submit', function(event) {
+            // Prevent the form from submitting via the browser
+           var form = $(this);
+           var formData = form.serialize();
+           let flag = formValidate("planning_export_customer_part");
+            if(flag){
+                event.preventDefault();
+                    return;
+            }else{
+               
+            }
+        });
+        $('#import_customer_planning').on('submit', function(event) {
+            // Prevent the form from submitting via the browser
+           var form = $(this);
+           var formData = form.serialize();
+           let flag = formValidate("import_customer_planning");
+            if(flag){
+                event.preventDefault();
+                    return;
+            }else{
+               event.preventDefault(); // Prevent the form from submitting via the browser
+               var form = $(this);
+               var formData = form.serialize();
+           
+               $.ajax({
+                   type: 'POST',
+                   url: form.attr('action'),
+                   data: formData,
+                   success: function(response) {
+                       var responseObject = JSON.parse(response);
+                        var msg = responseObject.message;
+                        var success = responseObject.success;
+                        if (success == 1) {
+                            toastr.success(msg);
+                            setTimeout(function(){
+                                window.location.reload();
+                            },1000);
+
+                        } else {
+                            toastr.error(msg);
+                        }
+                   },
+                   error: function(xhr, status, error) {
+                       // Handle error
+                       toastr.success('unable to delete part.')
+                   }
+               });
+            }
+        });
+
+     function formValidate(form_class = ''){
+        let flag = false;
+        $(".custom-form#"+form_class+" .required-input").each(function( index ) {
+          var value = $(this).val();
+
+          if(value == ''){
+            flag = true;
+            var label = $(this).parents(".form-group").find("label").contents().filter(function() {
+                return this.nodeType === 3; // Filter out non-text nodes (nodeType 3 is Text node)
+            }).text().trim();
+            var exit_ele = $(this).parents(".form-group").find("label.error");
+            if(exit_ele.length == 0){
+                var start ="Please enter ";
+                if($(this).prop("localName") == "select"){
+                    var start ="Please select ";
+                }
+                label = ((label.toLowerCase()).replace("enter", "")).replace("select", "");
+                var validation_message = start+(label.toLowerCase()).replace(/[^\w\s*]/gi, '');
+                var label_html = "<label class='error'>"+validation_message+"</label>";
+                $(this).parents(".form-group").append(label_html)
+            }
+            
+          }
+        });
+        return flag;
+    }
     });
 </script>

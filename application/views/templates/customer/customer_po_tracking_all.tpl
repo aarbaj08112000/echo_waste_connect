@@ -99,8 +99,8 @@
 
                             </div>-->
 
-                            <div class="card-body">
-                                <table id="example1" class="table table-bordered table-striped">
+                            <div class="">
+                                <table id="example1" class="table  table-striped">
                                     <thead>
                                         <tr>
                                          
@@ -136,7 +136,7 @@
     </div>
 
     <div class="modal fade" id="upload_modal" tabindex="-1" role="dialog" aria-labelledby="upload_modal" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Upload file</h5>
@@ -165,7 +165,7 @@
 </div>
 
     <div class="modal fade" id="edit_modal" tabindex="-1" role="dialog" aria-labelledby="edit_modal" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Update</h5>
@@ -191,7 +191,7 @@
 
 
     <div class="modal fade" id="close_modal" tabindex="-1" role="dialog" aria-labelledby="close_modal" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Close PO</h5>
@@ -202,13 +202,17 @@
                     <form action="<%$base_url%>close_po_customer_po_tracking" method="POST" id="closePoForm" enctype="multipart/form-data">
                     <div class="modal-body">
                             <div class="form-group">
-                                <label for="">Are you sure to close <u>PO Number : <%$s->po_number%></u> ?</label>
-                                <br><br>
+                                <label for="" class="fs-4">Are you sure to close <u>PO Number : <%$s->po_number%></u> ?</label>
+                                
                                 <input required value="<%$s->id%>" type="hidden" class="form-control" name="id" id='close_id'>
+                            </div>
+                            <div class="form-group">
                                 <label for="">Remark<span class="text-danger"></span></label>
                                 <input type="text" name="remark" placeholder="Enter Remark " class="form-control" id="remarks"/>
+                            </div>
+                            <div class="form-group">
                                 <label for="">Reason<span class="text-danger">*</span> </label>
-                                <select name="reason"  id="reason" class="form-control select2">
+                                <select name="reason"  id="reason" class="form-control select2" style="width: 100%;">
                                     <option value="">Select</option>
                                     <option value="Withdraw">Withdraw</option>
                                     <option value="Completed">Completed</option>

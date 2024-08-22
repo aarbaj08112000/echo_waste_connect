@@ -25,6 +25,10 @@
    <div class="">
       <div class="row">
          <div class="col-12">
+          <input type="hidden" value="<%$new_sales[0]->id %>" id="sales_primary_id" class="form-control">
+          <input type="hidden" value="<%$new_sales[0]->created_date %>" id="invoice_date" class="form-control">
+          <input type="hidden" value="<%$new_sales[0]->sales_number %>" id="invoice_no" class="form-control">
+          <input type="hidden" value="<%$new_sales[0]->sales_number %>" id="sales_number" class="form-control">
             <!-- /.card -->
             <%if empty($e_invoice_status) &&  $new_sales[0]->status == "pending"%>
             <div class="card p-0 mt-4">
@@ -117,6 +121,7 @@
                         <p class="tgdp-rgt-tp-txt" title="<%if $new_sales[0]->status == "accpet"%>Released<%else%><%$new_sales[0]->status%><%/if%>">
                         <%if $new_sales[0]->status == "accpet"%>Released<%else%><%$new_sales[0]->status%><%/if%>
                         </p>
+                       
                     </div>
                     <div class="tgdp-rgt-tp-sect">
                         <p class="tgdp-rgt-tp-ttl">E Invoice Status</p>
@@ -180,6 +185,7 @@
                      <div class="tgdp-rgt-tp-sect">
                         <p class="tgdp-rgt-tp-ttl">Sales Invoice Number</p>
                         <p class="tgdp-rgt-tp-txt"><%$new_sales[0]->sales_number%></p>
+
                      </div>
                      <div class="tgdp-rgt-tp-sect">
                         <p class="tgdp-rgt-tp-ttl">Current Status</p>
@@ -237,13 +243,14 @@
                     <div class="col-lg-1" style="    width: 12%;">
                         <div class="form-group">
                             <button type="button" class="btn btn-info" data-bs-toggle="modal"
-                                data-target="#printForTally" id="printSticker">
+                                data-bs-target="#printForTally" id="printSticker">
                             Packaging Sticker
                             </button>
+
                         </div>
                         <!-- Modal -->
                         <div class="modal fade" id="printForTally" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
+                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                 <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="exampleModalLabel">Packaging Stickers</h5>
@@ -379,7 +386,7 @@
                                     <%/if%>
                                 <!-- delete model -->
                                 <div class="modal fade" id="deleteInvoice" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
+                                    <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="exampleModalLabel">Delete Invoice</h5>
@@ -433,7 +440,7 @@
                   
                   <!-- Modal -->
                   <div class="modal fade" id="accpet" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                     <div class="modal-dialog">
+                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                            <div class="modal-header">
                               <h5 class="modal-title" id="exampleModalLabel">Update</h5>
@@ -463,7 +470,7 @@
                   </div>
                   <!-- Lock Model -->
                   <div class="modal fade" id="lock" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                     <div class="modal-dialog">
+                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                            <div class="modal-header">
                               <h5 class="modal-title" id="exampleModalLabel">Update</h5>
@@ -493,7 +500,7 @@
                      </div>
                   </div>
                   <div class="modal fade" id="delete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                     <div class="modal-dialog">
+                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                            <div class="modal-header">
                               <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
@@ -577,7 +584,7 @@
                                  </button>
                                  <!-- Modal -->
                                  <div class="modal fade" id="exampleModaldelete<%$srNo%>" tabindex="-1" aria-labelledby="" aria-hidden="true">
-                                    <div class="modal-dialog">
+                                    <div class="modal-dialog modal-dialog-centered">
                                        <div class="modal-content">
                                           <div class="modal-header">
                                              <h5 class="modal-title" id="exampleModalLabel">Update</h5>
@@ -720,10 +727,11 @@
                cache: false,
                beforeSend: function() {},
                success: function(response) {
-                   if (response) {
-                       $('#observationTableData').html(response);
+                let res = JSON.parse(response);
+                   if (res.html) {
+                       $('#observationTableData').html(res.html);
                    } else {
-                      $('#observationTableData').html(response);
+                      $('#observationTableData').html(res.html);
                    }
                }
            });
@@ -802,7 +810,6 @@
    
        $('.delete_form').on('submit', function(event) {
        event.preventDefault(); // Prevent the form from submitting via the browser
-   
        var form = $(this);
        var formData = form.serialize();
    

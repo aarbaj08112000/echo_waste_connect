@@ -52,7 +52,7 @@
                 </h2>
             </div>
             <div class="card-body p-0">
-                <table class="table table-striped " id="example1">
+                <table class="table table-striped scrollable" id="example1">
                     <thead>
                         <tr>
                             <th>Sr. No.</th>

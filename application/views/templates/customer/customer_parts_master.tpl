@@ -59,6 +59,7 @@
   <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
   <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
   <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+  <button  type="button" class="modal-title btn btn-seconday" data-bs-toggle="modal" data-bs-target="#addPromo"><i class="ti ti-plus "></i></button>
 </div>
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -114,7 +115,7 @@
 
                         <!-- Modal -->
                         <div class="modal fade" id="addPromo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="exampleModalLabel">Add Part</h5>
@@ -136,7 +137,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="on click url">Rate<span class="text-danger">*</span></label> <br>
-                                            <input required type="number" step="any" name="fg_rate" placeholder="Enter Rate" class="form-control" value="0" required>
+                                            <input required type="text" step="any" name="fg_rate" placeholder="Enter Rate" class="form-control onlyNumericInput" value="0" required>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
@@ -149,15 +150,11 @@
                         </div>
                         <div class="card">
 
-                            <div class="card-header">
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPromo">
-                                    Add
-                                </button>
-                            </div>
+                           
 
                             <!-- /.card-header -->
-                            <div class="card-body">
-                                <table id="customer_part_table" class="table table-bordered table-striped">
+                            <div class="">
+                                <table id="customer_part_table" class="table table-striped">
                                     <thead>
                                         <tr>
                                             <th>Part Number</th>
@@ -211,7 +208,7 @@
                                 </table>
                             </div>
                             <div class="modal fade" id="editpart" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="exampleModalLabel">Update</h5>
@@ -231,7 +228,7 @@
 
                                                     <div class="form-group">
                                                         <label>Rate<span class="text-danger">*</span></label> <br>
-                                                        <input  type="number" step="any" name="fg_rate" placeholder="Enter Rate" class="form-control" value="<%$u->fg_rate%>" id="part-rate"required>
+                                                        <input  type="text" step="any" name="fg_rate" placeholder="Enter Rate" class="form-control onlyNumericInput" value="<%$u->fg_rate%>" id="part-rate" required>
                                                     </div>
                                             </div>
                                         </div>

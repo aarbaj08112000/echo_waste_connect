@@ -75,18 +75,12 @@
                         <!-- /.card -->
 
                         <div class="card">
-                        <div class="card-header">
-                               
-                                <!-- Button trigger modal -->
-                                <!-- <button type="button" class="btn btn-primary float-left" data-toggle="modal" data-target="#exampleModal">
-                                    Add </button> -->
-                            </div>
-                            <!-- Modal -->
+                        
 
                             <!-- /.card-header -->
-                            <div class="card-body">
+                            <div class="">
                             <div class="table-responsive text-nowrap">
-                                <table id="receivable_report" class="table table-bordered table-striped">
+                                <table id="receivable_report" class="table table-striped">
                                     <thead>
                                         <%foreach from=$data key=key item=val%>
                                         <th><b>Search <%$val['title']%></b></th>
@@ -106,7 +100,7 @@
 
                         <div class="modal fade" id="update_report_data" role="dialog"
                         aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: none;">
-                        <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="exampleModalLabel">Update
@@ -118,15 +112,15 @@
                                 </div>
                                 <div class="modal-body">
 
-                                    <form id="updateReceivableForm" method="POST">
+                                    <form id="updateReceivableForm" method="POST" class="custom-form updateReceivableForm">
                                         <input type="hidden" name="sales_number" id="sales_number" value="<%$po->sales_number%>">
                                         <div class="row">
                                             <div class="col-lg-12">
                                                 <div class="form-group">
                                                     <label for="payment_receipt_date">Payment Receipt Date</label><span
                                                         class="text-danger">*</span>
-                                                    <input type="date" name="payment_receipt_date" required
-                                                        class="form-control"
+                                                    <input type="date" name="payment_receipt_date" 
+                                                        class="form-control required-input"
                                                         id="payment_date_modal"
                                                         aria-describedby="emailHelp"
                                                         placeholder="Payment Receipt Date" value="">
@@ -136,8 +130,8 @@
                                                     <label for="amount_received">Amount Received</label><span
                                                         class="text-danger">*</span>
                                                     <input type="text"
-                                                        name="amount_received" required
-                                                        class="form-control"
+                                                        name="amount_received" 
+                                                        class="form-control required-input"
                                                         id="receivable_amount_modal"
                                                         aria-describedby="emailHelp"
                                                         placeholder="Amount Received" value="" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
@@ -148,7 +142,7 @@
                                                         class="text-danger"></span>
                                                     <input type="text"
                                                         name="transaction_details"
-                                                        class="form-control"
+                                                        class="form-control required-input"
                                                         id="transection_detail_modal"
                                                         aria-describedby="emailHelp"
                                                         placeholder="Transaction Details" value="">

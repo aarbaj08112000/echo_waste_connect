@@ -16,6 +16,11 @@
         <span >E-Invoics</span>
       </div>
     </nav>
+     <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5 listing-btn">
+            <a title="View Invoice" class="btn btn-primary" href="<%$base_url%>view_new_sales_by_id/<%$sales_id%>" type="button">View Invoice</a>
+            <a title="Back To View Sales Invoice" class="btn btn-seconday" href="<%$base_url%>sales_invoice_released" type="button"><i class="ti ti-arrow-left"></i></a>
+
+        </div>
 
    <div class="content-wrapper">
       <!-- Content Header (Page header) -->
@@ -30,60 +35,42 @@
                   <div class="card">
                      <div class="card-header">
                         <div class="row">
-                           <div class="col-lg-1">
-                              <div class="form-group">
-                                 <a class="btn btn-dark" href="<%$base_url%>sales_invoice_released">< Back </a>
-                              </div>
-                           </div>
-                           <div class="col-lg-2">
-                              <div class="form-group">
-                                 <a class="btn btn-dark" href="<%$base_url%>view_new_sales_by_id/<%$sales_id%>">View Invoice </a>
-                              </div>
-                           </div>
-                        </div>
+                        
                         <div class="row">
-                           <div class="col-lg-2">
-                              <div class="form-group">
-                                 <label for="">Customer Name <span class="text-danger"></span></label>
-                                 <br><span class="text-info"><label><%$customer[0]->customer_name%></label></span>
+                              <div class="tgdp-rgt-tp-sect">
+                                 <p class="tgdp-rgt-tp-ttl">Customer Name </p>
+                                 <p class="tgdp-rgt-tp-txt"><%$customer[0]->customer_name%></p>
                               </div>
-                           </div>
-                           <div class="col-lg-2">
-                              <div class="form-group">
-                                 <label>Sales Invoice Number <span class="text-danger"></span></label>
-                                 <br><span class="text-info"><label><%$new_sales[0]->sales_number%></label></span>
+                              <div class="tgdp-rgt-tp-sect">
+                                 <p class="tgdp-rgt-tp-ttl">Sales Invoice Number </p>
+                                 <p class="tgdp-rgt-tp-txt"><%$new_sales[0]->sales_number%></p>
                               </div>
-                           </div>
-                           <div class="col-lg-2">
-                              <div class="form-group">
-                                 <label for="">Invoice Date <span class="text-danger"></span> </label>
-                                 <br><span class="text-info"><label><%$new_sales[0]->created_date%></label></span>
+                              <div class="tgdp-rgt-tp-sect">
+                                 <p class="tgdp-rgt-tp-ttl">Invoice Date </p>
+                                 <p class="tgdp-rgt-tp-txt"><%$new_sales[0]->created_date%></p>
                               </div>
-                           </div>
-                           <div class="col-lg-2">
-                              <div class="form-group">
-                                 <label for="">E Invoice Status <span class="text-danger"></span> </label>
-                                 <br><span class="text-info"><label><%$einvoice_res_data[0]->Status%></label></span>
+                              <div class="tgdp-rgt-tp-sect">
+                                 <p class="tgdp-rgt-tp-ttl">E Invoice Status</p>
+                                 <p class="tgdp-rgt-tp-txt"><%$einvoice_res_data[0]->Status%></p>
                               </div>
-                           </div>
-                           <div class="col-lg-2">
-                              <div class="form-group">
-                                 <label for="">EWay-Bill Status <span class="text-danger"></span> </label>
-                                 <br><span class="text-info"><label><%$einvoice_res_data[0]->EwbStatus%></label></span>
+                          
+                           <div class="tgdp-rgt-tp-sect">
+                                 <p class="tgdp-rgt-tp-ttl">EWay-Bill Status</p>
+                                 <p class="tgdp-rgt-tp-txt"><%display_no_character($einvoice_res_data[0]->EwbStatus)%></p>
                               </div>
-                           </div>
+                           
                         </div>
-                        <hr>
+                       
                         <div class="row">
                            <%if empty($einvoice_res_data[0]->Status)%>
                               <%if empty($einvoice_res_data[0]->Irn)%>
-                                 <div class="col-lg-2">
+                                 <div class="col-lg-2" style="    width: 11%;">
                                     <div class="form-group">
                                        <a class="btn btn-success mt-4" href="<%$base_url%>generate_E_invoice/<%$sales_id%>/EINVOICE" target="_blank">Create E-Invoice </a>
                                     </div>
                                  </div>
                               <%else%>
-                                 <div class="col-lg-2">
+                                 <div class="col-lg-2" style="    width: 11%;">
                                     <div class="form-group">
                                        <a class="btn btn-success mt-4" href="<%$base_url%>get_E_invoice/<%$sales_id%>">Get E-Invoice Details</a>
                                     </div>
@@ -91,12 +78,12 @@
                               <%/if%>
                            <%/if%>
                            <%if isset($einvoice_res_data[0]->Status) && $einvoice_res_data[0]->Status == "ACT"%>
-                              <div class="col-lg-2">
+                              <div class="col-lg-2" style="    width: 11%;">
                                  <div class="form-group">
                                     <a class="btn btn-success mt-4" href="<%$base_url%>view_E_invoice/<%$sales_id%>" target="_blank">View E-Invoice </a>
                                  </div>
                               </div>
-                              <div class="col-lg-2">
+                              <div class="col-lg-2" style="    width: 11%;">
                                  <div class="form-group">
                                     <button data-bs-toggle="modal" class="btn btn-success mt-4" data-bs-target="#cancelEInvoiceModel<%$sales_id%>">Cancel E-Invoice</i></button>
                                  </div>
@@ -144,32 +131,31 @@
                                  </div>
                               </div>
                            <%/if%>
-                        </div>
-                        <div class="row">
+                        
                            <%if empty($einvoice_res_data[0]->EwbStatus) || $einvoice_res_data[0]->EwbStatus == "CANCELLED"%>
-                              <div class="col-lg-2">
+                              <div class="col-lg-2" style="    width: 11%;">
                                  <div class="form-group">
                                     <button type="button" class="btn btn-success mt-4" data-bs-toggle="modal" data-bs-target="#createEBill<%$sales_id%>" target="_blank">Create Eway Bill</button>
                                  </div>
                               </div>
                            <%/if%>
                            <%if isset($einvoice_res_data[0]->EwbStatus) && $einvoice_res_data[0]->EwbStatus == "ACTIVE"%>
-                              <div class="col-lg-2">
+                              <div class="col-lg-2" style="    width: 11%;">
                                  <div class="form-group">
                                     <a class="btn btn-success mt-4" href="<%$base_url%>view_EwayBill/<%$sales_id%>" target="_blank">View EWay-Bill</a>
                                  </div>
                               </div>
-                              <div class="col-lg-2">
+                              <div class="col-lg-2 " style="    width: 11%;">
                                  <div class="form-group">
                                     <button type="button" class="btn btn-success mt-4" data-bs-toggle="modal" data-bs-target="#updateEBill<%$sales_id%>">Update Eway Bill</button>
                                  </div>
                               </div>
-                              <div class="col-lg-2">
+                              <div class="col-lg-2" style="    width: 11%;">
                                  <div class="form-group">
                                     <button type="button" class="btn btn-success mt-4" data-bs-toggle="modal" data-bs-target="#updateTrans<%$sales_id%>">Update Transporter</button>
                                  </div>
                               </div>
-                              <div class="col-lg-2">
+                              <div class="col-lg-2" style="    width: 11%;">
                                  <div class="form-group">
                                     <button type="button" class="btn btn-success mt-4" data-bs-toggle="modal" data-bs-target="#cancelEBill<%$sales_id%>">Cancel Eway-Bill</button>
                                  </div>
@@ -177,7 +163,7 @@
                            <%/if%>
                            <!-- edit Modal -->
                            <div class="modal fade" id="createEBill<%$sales_id%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                              <div class="modal-dialog" role="document">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
                                  <div class="modal-content">
                                     <div class="modal-header">
                                        <h5 class="modal-title" id="exampleModalLabel">Create Eway Bill</h5>
@@ -200,7 +186,7 @@
                                           </div>
                                           <div class="form-group">
                                              <label for="">Transporter<span class="text-danger">*</label>
-                                             <select name="transporterId" required id="transporter" class="form-control select2">
+                                             <select name="transporterId" required id="transporter" class="form-control select2" style="width:100%;">
                                                 <option value="">Select Transporter</option>
                                                 <%foreach from=$transporter item=tr%>
                                                    <option value="<%$tr->id%>" <%if $new_sales[0]->transporter_id == $tr->id%>selected<%/if%>><%$tr->name%> - <%$tr->transporter_id%></option>

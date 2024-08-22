@@ -35,11 +35,9 @@ table tr td{
                         <!-- /.card -->
 
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title"></h3>
-                            </div>
+                           
                             <!-- /.card-header -->
-                            <div class="card-body">
+                            <div class="">
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead style="text-align: center;">
                                         <tr>
@@ -150,3 +148,24 @@ table tr td{
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
+    <script type="text/javascript">
+        table =  new DataTable('#example1',{
+        dom: "Bfrtilp",
+        scrollX: false, 
+        
+            searching: true,
+      // scrollX: true,
+      scrollY: true,
+      bScrollCollapse: true,
+      // columnDefs: [{ sortable: false, targets: 9 }],
+      pagingType: "full_numbers",
+    });
+      $('.dataTables_length').find('label').contents().filter(function() {
+          return this.nodeType === 3; // Filter out text nodes
+      }).remove();
+      setTimeout(function(){
+        $(".dataTables_length select").select2({
+            minimumResultsForSearch: Infinity
+        });
+      },1000)
+    </script>

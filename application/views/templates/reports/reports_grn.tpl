@@ -69,6 +69,7 @@
       </div>
     </nav>
     <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
+        <button type="button" class="btn btn-seconday " data-bs-toggle="modal" data-bs-target="#exportForTally">Export For Tally</button>
       <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
       <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
       <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
@@ -100,11 +101,9 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
+                            <div class="card-header1">
                                 <div class="row">
-                                    <div class="col-lg-3">
-                                        <button type="button" class="btn btn-dark mt-4" data-bs-toggle="modal" data-bs-target="#exportForTally">Export For Tally</button>
-                                    </div>
+                                    
                                     <div class="col-lg-1"></div>
                                     <div class="col-sm-2">
                                         <%if $showDocRequestDetails == "true"%>
@@ -117,7 +116,7 @@
                             </div>
 
                             <div class="modal fade" id="exportForTally" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="exampleModalLabel">Export Criteria</h5>
@@ -125,7 +124,7 @@
                                             <%* <span aria-hidden="true">&times;</span> *%>
                                         </button>
                                     </div>
-                                    <form action="<%$base_url%>grn_excel_export" method="POST">
+                                    <form action="<%$base_url%>grn_excel_export" method="POST" id="grn_excel_export">
                                         <div class="modal-body">
                                             <div class="form-group">
                                                 <label for="">Only Accepted Status GRN will be exported.</label>
@@ -169,7 +168,7 @@
                         
 
                             <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="exampleModalLabel">Add </h5>
@@ -208,7 +207,7 @@
                                 </div>
                             </div>
 
-                            <div class="card-body">
+                            <div class="">
                             <div class="table-responsive text-nowrap">
                                 <table id="gn_report" class="table table-bordered table-striped">
                                     <thead>
