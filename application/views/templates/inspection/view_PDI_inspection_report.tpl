@@ -15,76 +15,81 @@
       <span >PDI Details</span>
     </div>
 
+    <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5 listing-btn">
+            <a title="Back To Supplier Po List" class="btn btn-seconday" href="<%$base_url%>sales_invoice_released" type="button"><i class="ti ti-arrow-left"></i></a>
+        </div>
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <div class="">
                
-                <div class="row mb-2">
-                    <div class="col-lg-12" style="float-right;">
-                        <a  class="btn btn-dark" href="<%$base_url%>sales_invoice_released">
-                            < Back</a>
-                    </div>
-                </div>
+                
                 <div class="row mb-2">
                     <div class="col-sm-12">
-                        <div class="row">
-                            <div class="col-sm-5">
-                                <div class="form-group">
-                                    <label for="po_num">Customer </label><span class="text-danger">*</span>
-                                    <input type="text" readonly value="<%$sales_parts_for_PDI[0]->customer_name%>" name="part_desc" required class="form-control" id="exampleInputEmail1" placeholder="Enter Part Description" aria-describedby="emailHelp">
+                        <div class="card p-0 mt-4">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="po_num" class="form-label">Customer </label><span class="text-danger">*</span>
+                                            <input type="text" readonly value="<%$sales_parts_for_PDI[0]->customer_name%>" name="part_desc" required class="form-control" id="exampleInputEmail1" placeholder="Enter Part Description" aria-describedby="emailHelp">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="po_num" class="form-label">Sales Invoice Number </label><span class="text-danger">*</span>
+                                            <input type="text" readonly value="<%$sales_parts_for_PDI[0]->sales_number%>" name="part_number" required class="form-control" id="exampleInputEmail1" placeholder="Enter Part Number" aria-describedby="emailHelp">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group mb-3" >
+                                            <label for="po_num" class="form-label">Sales Invoice Date</label><span class="text-danger">*</span>
+                                            <input type="text" readonly value="<%$sales_parts_for_PDI[0]->created_date%>" name="part_desc" required class="form-control" id="exampleInputEmail1" placeholder="Enter Part Description" aria-describedby="emailHelp">
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-3">
-                                <div class="form-group">
-                                    <label for="po_num">Sales Invoice Number </label><span class="text-danger">*</span>
-                                    <input type="text" readonly value="<%$sales_parts_for_PDI[0]->sales_number%>" name="part_number" required class="form-control" id="exampleInputEmail1" placeholder="Enter Part Number" aria-describedby="emailHelp">
-                                </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <div class="form-group">
-                                    <label for="po_num">Sales Invoice Date</label><span class="text-danger">*</span>
-                                    <input type="text" readonly value="<%$sales_parts_for_PDI[0]->created_date%>" name="part_desc" required class="form-control" id="exampleInputEmail1" placeholder="Enter Part Description" aria-describedby="emailHelp">
-                                </div>
+                                <form action="<%$base_url%>test" method="post">
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="form-group mb-3">
+                                                <label  class="form-label" for="">Select Part NO // Description<span class="text-danger">*</span> </label>
+                                                <select name="sales_part_id" id="sales_part_id" required class="form-control select2">
+                                                    <option value=''>Please select</option>
+                                                    <%if $sales_parts_for_PDI%>
+                                                        <%foreach from=$sales_parts_for_PDI item=s%>
+                                                            <%if $s->sales_part_id != null%>
+                                                                <option value="<%$s->sales_part_id%>,<%$s->customer_part_id%>"><%$s->part_number%>//<%$s->part_description%></option>
+                                                            <%/if%>
+                                                        <%/foreach%>
+                                                    <%/if%>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-8 mt-3">
+                                        </div>
+
+                                        <div class="col-sm-1 mt-3">
+                                            <div class="form-group">
+                                            <button type="submit" id="submitByPartId" class="btn btn-primary" >Submit</button>
+                                              <%*  <input type="button" id="submitByPartId" class="btn btn-primary mt-2" value="Submit"> *%>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-1 mt-3">
+                                            <div class="form-group">
+                                            <button type="submit" id="addNewPartParms" class="btn btn-primary" style="width: max-content;" title="This will add any new parameters defined in drawing master." >Add New Parm</button>
+                                              <%*  <input type="button" id="addNewPartParms" title="This will add any new parameters defined in drawing master." class="btn btn-primary mt-2" value="Add New Parm"> *%>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-1 mt-3">
+                                            <div class="form-group">
+                                            
+                                                <a class="btn btn-success" id="getPDILink" target="_blank" style="width: max-content;margin-left: 52px;">View PDI</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
-                        <form action="<%$base_url%>test" method="post">
-                            <div class="row">
-                                <div class="col-sm-5">
-                                    <div class="form-group">
-                                        <label for="">Select Part NO // Description<span class="text-danger">*</span> </label>
-                                        <select name="sales_part_id" id="sales_part_id" required class="form-control select2">
-                                            <option value=''>Please select</option>
-                                            <%if $sales_parts_for_PDI%>
-                                                <%foreach from=$sales_parts_for_PDI item=s%>
-                                                    <%if $s->sales_part_id != null%>
-                                                        <option value="<%$s->sales_part_id%>,<%$s->customer_part_id%>"><%$s->part_number%>//<%$s->part_description%></option>
-                                                    <%/if%>
-                                                <%/foreach%>
-                                            <%/if%>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-1 mt-3">
-                                    <div class="form-group">
-                                    <button type="submit" id="submitByPartId" class="btn btn-primary" >Submit</button>
-                                      <%*  <input type="button" id="submitByPartId" class="btn btn-primary mt-2" value="Submit"> *%>
-                                    </div>
-                                </div>
-                                <div class="col-sm-1 mt-3">
-                                    <div class="form-group">
-                                    <button type="submit" id="addNewPartParms" class="btn btn-primary" style="width: max-content;" title="This will add any new parameters defined in drawing master." >Add New Parm</button>
-                                      <%*  <input type="button" id="addNewPartParms" title="This will add any new parameters defined in drawing master." class="btn btn-primary mt-2" value="Add New Parm"> *%>
-                                    </div>
-                                </div>
-                                <div class="col-sm-1 mt-3">
-                                    <div class="form-group">
-                                    
-                                        <a class="btn btn-success" id="getPDILink" target="_blank" style="width: max-content;margin-left: 52px;">View PDI</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
                     </div>
                 </div>
             </div>

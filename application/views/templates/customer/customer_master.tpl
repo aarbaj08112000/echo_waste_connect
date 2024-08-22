@@ -72,8 +72,8 @@
                         <!-- /.card -->
 
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title"></h3>
+                            <div class="">
+                                
                                 <!-- Button trigger modal -->
                                 <!-- <button type="button" class="btn btn-primary float-left" data-toggle="modal" data-target="#exampleModal">
                                     Add Customer</button> -->
@@ -147,8 +147,8 @@
                                 </div>
                             </div>
                             <!-- /.card-header -->
-                            <div class="card-body">
-                                <table id="example1" class="table table-bordered table-striped">
+                            <div class="">
+                                <table id="example1" class="table  table-striped">
                                     <thead>
                                         <tr>
                                             <th>Sr. No.</th>

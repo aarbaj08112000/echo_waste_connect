@@ -79,10 +79,10 @@
                         <!-- /.card -->
 
                         <div class="card">
-                            <div class="card-body">
+                            <div class="">
                                 
                                 <div class="table-responsive text-nowrap">
-                                <table id="child_part_supplier" class="table table-bordered table-striped">
+                                <table id="child_part_supplier" class="table  table-striped">
                                     <thead>
                                         <tr>
                                           

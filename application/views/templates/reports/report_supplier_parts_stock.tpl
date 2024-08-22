@@ -71,9 +71,9 @@
                     <div class="col-12">
                         <!-- /.card -->
                         <div class="card">
-                            <div class="card-body">
+                            <div class="">
                             <div class="table-responsive text-nowrap">
-                                <table id="parts_stock_report" class="table table-bordered table-striped">
+                                <table id="parts_stock_report" class="table  table-striped">
                                     <thead>
                                         <tr>
                                            

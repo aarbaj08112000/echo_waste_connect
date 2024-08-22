@@ -380,10 +380,12 @@ class PlanningController extends CommonController
 	public function import_customer_planning(){
 		$customer_id = $this->input->post('customer_id');
 		$uploadedDoc = $this->input->post('uploadedDoc');
- 
+ 		$success = 0;
+	    $message = 'Something went wrong.';
 		//only valid types are allowed.
 		if($this->isValidUploadFileType()=="false"){
-			 $this->addErrorMessage("Only Excel sheets are allowed.");
+			$message = "Only Excel sheets are allowed.";
+			 // $this->addErrorMessage("Only Excel sheets are allowed.");
 		} else {
 		   if (!empty($_FILES["uploadedDoc"]["name"])) {
 				 $error;
@@ -472,24 +474,33 @@ class PlanningController extends CommonController
 											 }
 							 }
 							 if($error){
-								 $this->addErrorMessage($error);
+							 	$message = $error;
+								 // $this->addErrorMessage($error);
 							 }else{
-								 $this->addSuccessMessage("Data imported successfully.");
+							 	$message = "Data imported successfully.";
+								 // $this->addSuccessMessage("Data imported successfully.");
 							 }
  
 						 } else {
-							 $this->addErrorMessage($error);
+						 	$message = $error;
+							 // $this->addErrorMessage($error);
 						 }   
  
 					 } catch (Exception $e) {
-						 die('Error loading file "' . pathinfo($inputFileName, PATHINFO_BASENAME)
-					 . '": ' .$e->getMessage());
+						//  die('Error loading file "' . pathinfo($inputFileName, PATHINFO_BASENAME)
+					 // . '": ' .$e->getMessage());
+						 $message = $e->getMessage();
 					 }
 				 
 				 }
 			 }
-			// exit();
-			 $this->redirectMessage();	
+		$return_arr = array(
+	        'message' => $message,
+	        'success' => $success
+	    );
+
+	    echo json_encode($return_arr);
+	    exit();
 		 
 			
 	}

@@ -13,6 +13,7 @@ const page = {
             console.log(data)
             // myModal.show();
         })
+        this.initiateExport();
 
     },
     dataTable: function(){
@@ -136,6 +137,40 @@ const page = {
         
         table.destroy(); 
         this.dataTable();
+    },
+    initiateExport: function(){
+        $('#grn_excel_export').on('submit', function(event) {
+            // Prevent the form from submitting via the browser
+           
+               event.preventDefault(); // Prevent the form from submitting via the browser
+               var form = $(this);
+               var formData = form.serialize();
+           
+               $.ajax({
+                   type: 'POST',
+                   url: form.attr('action'),
+                   data: formData,
+                   success: function(response) {
+                       var responseObject = JSON.parse(response);
+                        var msg = responseObject.message;
+                        var success = responseObject.success;
+                        if (success == 1) {
+                            toastr.success(msg);
+                            setTimeout(function(){
+                                window.location.reload();
+                            },1000);
+
+                        } else {
+                            toastr.error(msg);
+                        }
+                   },
+                   error: function(xhr, status, error) {
+                       // Handle error
+                       toastr.success('unable to delete part.')
+                   }
+               });
+            
+        });
     }
 }
 

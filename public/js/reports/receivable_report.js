@@ -7,6 +7,7 @@ const page = {
         this.dataTable();
         this.filter();
         this.formValidation();
+        let that = this;
         $(document).on("click",".edit-part",function(){
             var data = $(this).attr("data-value");
             data = JSON.parse(atob(data)); 
@@ -18,14 +19,30 @@ const page = {
         })
         $('#updateReceivableForm').on('submit', function(e){
             e.preventDefault(); // Prevent the default form submission
-
+            var form = $(this);
+            var formData = form.serialize();
+            let flag = that.formValidate("updateReceivableForm");
+            if(flag){
+                event.preventDefault();
+                    return;
+            }
             $.ajax({
                 url: base_url+'update_receivable_report',
                 type: 'POST',
                 data: $(this).serialize(), // Serialize form data
                 success: function(response){
-                    alert('Updated Successfully');
-                    location.reload(); // Reload the page to reflect changes
+                    var responseObject = JSON.parse(response);
+                        var msg = responseObject.message;
+                        var success = responseObject.success;
+                        if (success == 1) {
+                            toastr.success(msg);
+                            setTimeout(function(){
+                                window.location.reload();
+                            },1000);
+
+                        } else {
+                            toastr.error(msg);
+                        }
                 },
                 error: function(xhr, status, error){
                     console.log('Error:', error);
@@ -34,6 +51,32 @@ const page = {
             });
         });
 
+    },
+    formValidate: function(form_class){
+        let flag = false;
+        $(".custom-form."+form_class+" .required-input").each(function( index ) {
+          var value = $(this).val();
+
+          if(value == ''){
+            flag = true;
+            var label = $(this).parents(".form-group").find("label").contents().filter(function() {
+                return this.nodeType === 3; // Filter out non-text nodes (nodeType 3 is Text node)
+            }).text().trim();
+            var exit_ele = $(this).parents(".form-group").find("label.error");
+            if(exit_ele.length == 0){
+                var start ="Please enter ";
+                if($(this).prop("localName") == "select"){
+                    var start ="Please select ";
+                }
+                label = ((label.toLowerCase()).replace("enter", "")).replace("select", "");
+                var validation_message = start+(label.toLowerCase()).replace(/[^\w\s*]/gi, '');
+                var label_html = "<label class='error'>"+validation_message+"</label>";
+                $(this).parents(".form-group").append(label_html)
+            }
+            
+          }
+        });
+        return flag;
     },
     dataTable: function(){
         var data = this.serachParams();

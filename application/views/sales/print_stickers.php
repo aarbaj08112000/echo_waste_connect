@@ -1,12 +1,14 @@
 <div class="container-fluid">
+    <form action="<?php echo base_url('print_packing_sticker') ?>" method="post">
+        <input type="hidden" value="<?php echo $sales_id; ?>" id="sales_id" name="sales_id" class="form-control">
         <div class="row">
-            <div class="col-14">
+            <div class="col-12 p-0">
                 <!-- /.card -->
-                <div class="card">
                     <!-- /.card-header -->
-                    <div class="card-body">
-                    <form action="<?php echo base_url('print_packing_sticker') ?>" method="post">
-                        <table id="example1" class="table table-bordered table-striped">
+                    <div class=" scrollable">
+                <div class="card m-2 mt-3">
+                    
+                        <table id="example1" class="table table-bordered table-striped scrollable">
                             <thead>
                                 <tr>
                                     <th style="text-wrap:nowrap">Part Number</th>
@@ -48,27 +50,34 @@
 								} ?>
                             </tbody>
                         </table>
+                 </div>
+                 <div class="card m-2 mt-3">
+                        <div class="row p-3">
                             <div class="col-lg-5">
                             <div class="form-group">
-                                            <label>Sticker From<span class="text-danger">*</label>
+                                            <label class="form-label">Sticker From<span class="text-danger">*</label>
                                             <input type="number" placeholder="" name="stickerFrom" required class="form-control">
                                             <input type="hidden" required class="form-control" name="invoice_no" value="<?php echo $invoice_no ?>">
                                             <input type="hidden" required class="form-control" name="invoice_date" value="<?php echo $invoice_date ?>">
                             </div>
                             </div>
                             <div class="col-lg-1">
-                                    <div class="form-group">   
+                                    <div class="form-group mt-4 pt-2">   
                                         <button type="submit" onclick="this.form.target='_blank';return true;" class="btn btn-info btn"> Print </button>
                                     </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
+
+                        
+                   
                     <!-- /.card-body -->
                 </div>
                 <!-- /.card -->
             </div>
             <!-- /.col -->
         </div>
+        </form>
         <!-- /.row -->
     </div>
     <!-- /.container-fluid -->

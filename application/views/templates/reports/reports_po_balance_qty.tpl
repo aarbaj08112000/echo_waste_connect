@@ -84,9 +84,9 @@
                         <!-- /.card -->
                         <div class="card">
                            
-                            <div class="card-body">
+                            <div class="">
                             <div class="table-responsive text-nowrap">
-                                <table id="reports_po_balance" class="table table-bordered table-striped">
+                                <table id="reports_po_balance" class="table table-striped">
                                     <thead>
                                         <tr>
                                             

@@ -31,8 +31,8 @@
 
                         <div class="card">
                             <!-- /.card-header -->
-                            <div class="card-body">
-                                <table id="example1" class="table table-bordered table-striped">
+                            <div class="">
+                                <table id="example1" class="table  table-striped">
                                     <thead>
                                         <tr>
                                             <th>Sr. No.</th>
@@ -92,4 +92,25 @@
         </section>
         <!-- /.content -->
     </div>
+    <script type="text/javascript">
+        table =  new DataTable('#example1',{
+        dom: "Bfrtilp",
+        scrollX: false, 
+        
+            searching: true,
+      // scrollX: true,
+      scrollY: true,
+      bScrollCollapse: true,
+      // columnDefs: [{ sortable: false, targets: 9 }],
+      pagingType: "full_numbers",
+    });
+      $('.dataTables_length').find('label').contents().filter(function() {
+          return this.nodeType === 3; // Filter out text nodes
+      }).remove();
+      setTimeout(function(){
+        $(".dataTables_length select").select2({
+            minimumResultsForSearch: Infinity
+        });
+      },1000)
+    </script>
     <!-- /.content-wrapper -->

@@ -3662,8 +3662,8 @@ class Welcome extends CommonController
 		$data = $this->SupplierParts->getChildSupplierReportData($condition_arr,$post_data["search"]);
 		foreach ($data as $key => $value) {
 			$edit_data = base64_encode(json_encode($value)); 
-			$data[$key]['rev_history'] = '<button type="submit" data-toggle="modal" class="btn btn-sm btn-primary" data-target="#exampleModaledit2<%$i%>"> <i class="fas fa-edit" data-edit ='. $edit_data.'></i></button>  ' . "<a href='" . base_url() . "price_revision/" . $value['part_number'] . "/" . $value['supplier_id'] . "' class='btn btn-primary btn-sm'> <i class='fas fa-history'></i></a>";
-			$data[$key]['quotation_doc'] = "<a href='" . base_url('documents') . "/" . $val['part_number'] . $val['quotation_document'] . "' download>Download</a>";
+			$data[$key]['rev_history'] = '<a type="submit" data-toggle="modal" class="" data-target="#exampleModaledit2<%$i%>"> <i class="ti ti-edit" data-edit ='. $edit_data.'></i></a>  ' . "<a href='" . base_url() . "price_revision/" . $value['part_number'] . "/" . $value['supplier_id'] . "' class=''> <i class='ti ti-history'></i></a>";
+			$data[$key]['quotation_doc'] = "<a href='" . base_url('documents') . "/" . $val['part_number'] . $val['quotation_document'] . "' download><i class='ti ti-download'></i></a>";
 		}
 
 		$data["data"] = $data;
@@ -4685,7 +4685,7 @@ class Welcome extends CommonController
 		foreach ($customer_data as $key => $value) {
 			$edit_data = base64_encode(json_encode($value)); 
 			
-			$customer_data[$key]['action'] = "<button type='button' class='btn btn-primary edit-part' data-bs-toggle='modal' data-bs-target='#editpart' data-value = " . $edit_data . "><i class='far fa-edit'></i></button>";
+			$customer_data[$key]['action'] = "<a type='button' class=' edit-part' data-bs-toggle='modal' data-bs-target='#editpart' data-value = " . $edit_data . "><i class='ti ti-edit'></i></a>";
 
 		}
 
@@ -5081,13 +5081,23 @@ class Welcome extends CommonController
 		$update_customer_part = array(
 			"fg_stock" => $new_stock,
 		);
+        $messages = "";
+        $success = 0;
 		$update = $this->Crud->update_data("parts_rejection_sales_invoice", $data23333, $id);
 		$update2 = $this->Crud->update_data("customer_part", $update_customer_part, $customer_part_id);
 		if ($update) {
-			echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+            $messages = "Updated Successfully ";
+            $success = 1;
+			// echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-			echo "error";
+            $messages = "error";
+			// echo "error";
 		}
+        $result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 
@@ -5750,15 +5760,27 @@ class Welcome extends CommonController
 			"id" => $id
 		);
 		$result = $this->Crud->delete_data($table_name, $data);
+        $messages = "";
+        $success = 0;
 		if ($result) {
 			$data2 = array(
 				"po_id" => $id
 			);
 			$result2 = $this->Crud->delete_data("po_parts", $data2);
+            $messages = "Deleted Sucessfully";
+            $success = 1;
 			// echo "<script>alert(' Deleted Sucessfully');document.location='" . base_url('new_po_list_supplier') . "'</script>";
 		} else {
+            $messages = "Not Deleted";
 			// echo "<script>alert(' Not Deleted');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
+        $return_arr = [];
+        $return_arr['messages'] = $messages;
+        $return_arr['success'] = $success;
+
+        echo json_encode($return_arr);
+
+        exit();
 	}
 
 

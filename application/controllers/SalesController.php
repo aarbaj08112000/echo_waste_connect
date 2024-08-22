@@ -626,13 +626,17 @@ class SalesController extends CommonController
 
 	public function sales_report()
 	{
+
 		
 		if (isset($_POST['export'])) {
-			
+			$success = 0;
+	        $message = '';
+
 			$searchYear = $this->input->post('search_year');
 			$searchMonth = $this->input->post('search_month');
 			$sales_ids = $this->input->post('sale_numbers');
 			$where_condition = "AND sales.clientId = ".$this->Unit->getSessionClientId()."  ";
+
 			if(!empty($searchYear)) {
 					$where_condition = $where_condition."
 					AND ((sales.created_year = ".$searchYear." AND sales.created_month >= 4)
@@ -643,6 +647,7 @@ class SalesController extends CommonController
 			if(empty($sales_ids) && !empty($searchMonth)) {
 				$where_condition = $where_condition." AND sales.created_month = ".$searchMonth." ";
 			}
+
 
 			if(!empty($sales_ids)) {
 				if(strpos($sales_ids, '-')!== false) { //range selection
@@ -658,13 +663,15 @@ class SalesController extends CommonController
 					}*/
 					//$where_condition = $where_condition.$list_in.")";
 				} else if (strpos($sales_ids, '-')!== false && strpos($sales_ids, ',')!== false ){
-					echo "<script>alert('Incorrect sales number criteria. Can't have both list and range.');</script>";
-					exit();
+					$message = "Incorrect sales number criteria. Can't have both list and range.";
+					// echo "<script>alert('Incorrect sales number criteria. Can't have both list and range.');</script>";
+					// exit();
 	
 				} else { //individual sales no
 					$saleNo_condition = " AND sales.actualSalesNo = ".$sales_ids;
 				}
 			}
+
 			
 			//combine all the conditions
 			$where_condition = $where_condition.$saleNo_condition;
@@ -703,14 +710,24 @@ class SalesController extends CommonController
 			);
 			// pr($this->db->last_query(),1);
 			if(empty($sales_details)){
-				$this->addWarningMessage('No records found for this export criteria.');
-				$this->redirectMessage();
-				exit();
+				$message = "No records found for this export criteria.";
+				
+				
 			}
 			if ($sales_details) {
 					foreach ($sales_details as $sale_details) {
 						$this->requestSalesXML($request, $sale_details);
 					}
+			}
+
+			if($message != ""){
+				$return_arr = array(
+			        'message' => $message,
+			        'success' => 0
+			    );
+
+			    echo json_encode($return_arr);
+			    exit();
 			}
 		
 			// Set the Content-Type header to specify XML
@@ -741,13 +758,12 @@ class SalesController extends CommonController
 			// Output the result
 			echo $xmlStringWithoutDeclaration;
 			
-
 			// Output the XML
 			//echo $xml->asXML();
 			// Define the file path where you want to save the XML
 			//echo "XML file has been saved as $filename";
 			exit(); 
-		}
+		}else{
 
 		$created_month  = $this->input->post("created_month");
 		$created_year  = $this->input->post("created_year");
@@ -898,6 +914,7 @@ class SalesController extends CommonController
         $data["admin_url"] = base_url();
         $data["base_url"] = base_url();
 		$this->loadView('reports/sales_reports', $data);
+		}
 	}
 
 	public function salesReportsAjax()
@@ -1079,16 +1096,24 @@ class SalesController extends CommonController
 			"remark" => $remark,
 			"created_by" => $this->user_id,
 		);
-
+		$messages = "";
+        $success = 0;
 		$result = $this->Crud->update_data("rejection_sales_invoice", $data, $id);
 		if ($result) {
-			$this->addSuccessMessage('Rejection invoice updated successfully.');
+			$messages = "Rejection invoice updated successfully.";
+			$success = 1;
+			// $this->addSuccessMessage('Rejection invoice updated successfully.');
 			//$this->redirectMessage('view_rejection_sales_invoice_by_id/'. $result);
 		} else {
-			$this->addErrorMessage('Failed to create rejection invoice ');
+			$messages = "Failed to create rejection invoice";
+			// $this->addErrorMessage('Failed to create rejection invoice ');
 			//$this->redirectMessage('rejection_invoices');
 		}
-		$this->redirectMessage();
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 	public function generate_new_sales_rejection_Test()
@@ -1328,10 +1353,13 @@ class SalesController extends CommonController
 		FROM sales_parts parts, customer_part cp
 		WHERE parts.sales_id = ".$sales_id."
 		AND parts.part_id = cp.id");
-
+		$data['sales_id'] = $sales_id;
 		$data['invoice_no'] = $invoice_no;
 		$data['invoice_date'] = $invoice_date;
-        $this->load->view('sales/print_stickers', $data);
+		$html = $this->load->view('sales/print_stickers', $data,TRUE);
+		$return_arr['html'] =$html;
+        echo json_encode($return_arr);
+        exit();
 	}
 
 
@@ -1340,7 +1368,7 @@ class SalesController extends CommonController
 		$totalItems = $this->input->post('totalItems');
 		$invoice_no = $this->input->post('invoice_no');
 		$invoice_date = $this->input->post('invoice_date');
-
+		// pr($this->input->post(),1);
 		if($totalItems < 1){
 			exit();
 		}
@@ -1386,7 +1414,7 @@ class SalesController extends CommonController
 
 		 //print_r($printData);
 		 
-		$sales_id = $this->uri->segment('2');
+		$sales_id = $this->input->post("sales_id");
 		$sales_data = $this->Crud->customQuery(
 			"SELECT c.customer_name, c.vendor_code, n.sales_number, n.created_date, p.part_number, 
 			p.part_description, s.qty as quantity, n.customer_part_id 
@@ -1863,6 +1891,8 @@ class SalesController extends CommonController
 
 	public function update_receivable_report()
 	{
+		$message = "something went wrong.";
+		$success = 0;
 		$sales_number = $this->input->post('sales_number');
 		$payment_receipt_date = $this->input->post('payment_receipt_date');
 		$amount_received = $this->input->post('amount_received');
@@ -1878,7 +1908,9 @@ class SalesController extends CommonController
 						"transaction_details" => $transaction_details,
 					);
 					$result = $this->Crud->insert_data("receivable_report", $data);
-			echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$message = "Updated Sucessfully";
+			$success = 1;
+			// echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} 
 		else 
 		{
@@ -1890,8 +1922,16 @@ class SalesController extends CommonController
 				
 			);
 			$result = $this->Crud->update_data_column("receivable_report", $data, $sales_number, "sales_number");
-		echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-			
+		// echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$message = "Updated Sucessfully";
+			$success = 1;
 		}
+		$return_arr = array(
+	        'message' => $message,
+	        'success' => $success
+	    );
+
+	    echo json_encode($return_arr);
+	    exit();
 	}
 }

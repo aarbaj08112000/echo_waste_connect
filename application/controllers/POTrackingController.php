@@ -213,15 +213,15 @@ class POTrackingController extends CommonController {
 		foreach ($data as $key => $val) {
 			$view_details = $po_doc = $action = '';
 			$encode_data = base64_encode(json_encode($val));
-			$view_details = '<a href="' . base_url('view_customer_tracking_id/' . $val['id']) . '" class="btn btn-primary">PO Details</a>';
+			$view_details = '<a href="' . base_url('view_customer_tracking_id/' . $val['id']) . '" class="" title="PO Details"><i class="ti ti-eye"></i></a>';
 			if ($val['uploadedDoc'] != '') {
-				$po_doc = '<a download href="' . base_url('documents/' . $val['uploadedDoc']) . '" id="" class="btn btn-sm btn-primary remove_hoverr"><i class="fas fa-download"></i></a>';
+				$po_doc = '<a download href="' . base_url('documents/' . $val['uploadedDoc']) . '" id="" class=" remove_hoverr"><i class="ti ti-download"></i></a>';
 			}
 		
-			$po_doc .= '<button type="button" data-value = '.$encode_data.' class="btn btn-sm btn-primary upload_doc" data-bs-toggle="modal"  data-bs-target="#upload_modal"><i class="fas fa-upload"></i></button>';
+			$po_doc .= '<a type="button" data-value = '.$encode_data.' class=" upload_doc" data-bs-toggle="modal"  data-bs-target="#upload_modal"><i class="ti ti-upload"></i></a>';
 			
-			$action = '<button type="button" data-value = '.$encode_data.' class="btn btn-primary edit-part" data-bs-toggle="modal" data-bs-target="#edit_modal"><i class="fa fa-edit"></i> Edit</button>
-					   <button type="button" data-value = '.$encode_data.' class="btn btn-danger close-po" data-bs-toggle="modal" data-bs-target="#close_modal">Close PO</button>';
+			$action = '<a type="button" data-value = '.$encode_data.' class=" edit-part" data-bs-toggle="modal" data-bs-target="#edit_modal"><i class="ti ti-edit"></i> </a>
+					   <a type="button" data-value = '.$encode_data.' class="close-po" data-bs-toggle="modal" data-bs-target="#close_modal" title="Close PO"><i class="ti ti-circle-x"></i></a>';
 		
 			$data[$key]['view_details'] = $view_details;
 			$data[$key]['po_doc'] = $po_doc;

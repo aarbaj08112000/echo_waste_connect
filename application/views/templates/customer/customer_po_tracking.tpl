@@ -34,8 +34,8 @@
                             <form action="<%$base_url%>generate_customer_po_tracking" method="POST" id="generate_tracking" enctype='multipart/form-data'>
                                 <div class="row">
                                     <div class="col-lg-4">
-                                        <div class="form-group">
-                                                <label for="">Select Customer <span class="text-danger">*</span> </label>
+                                        <div class="form-group mb-3">
+                                                <label for="" class="form-label">Select Customer <span class="text-danger">*</span> </label>
                                                 <select name="customer_id" required id="" class="form-control select2">
                                                     <%if $customer_data%>
                                                         <%foreach from=$customer_data item=p%>
@@ -48,38 +48,38 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="">Select Start PO Date <span class="text-danger">*</span> </label>
+                                        <div class="form-group mb-3">
+                                            <label for=""  class="form-label">Select Start PO Date <span class="text-danger">*</span> </label>
                                             <input type="date" value="<%$smarty.now|date_format:'%Y-%m-%d'%>" required name="po_start_date" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="">Select End Date </label>
+                                        <div class="form-group mb-3">
+                                            <label for=""  class="form-label">Select End Date </label>
                                             <input type="date" value="<%$smarty.now|date_format:'%Y-%m-%d'%>" required name="po_end_date" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="">Enter PO Number <span class="text-danger">*</span> </label>
+                                        <div class="form-group mb-3">
+                                            <label for=""  class="form-label">Enter PO Number <span class="text-danger">*</span> </label>
                                             <input type="text" placeholder="Enter PO Number" required value="" name="po_number" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="">Enter PO Amendment No </label>
-                                            <input type="number" step="any" placeholder="Enter Amendment PO number" value="" name="po_amedment_number" class="form-control">
+                                        <div class="form-group mb-3">
+                                            <label for=""  class="form-label">Enter PO Amendment No </label>
+                                            <input type="text" step="any" placeholder="Enter Amendment PO number" value="" name="po_amedment_number" class="form-control onlyNumericInput">
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="">Select PO Amendment Date </label>
+                                        <div class="form-group mb-3">
+                                            <label for=""  class="form-label">Select PO Amendment Date </label>
                                             <input type="date" value="" name="po_amendment_date" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="po_num">Upload PO</label>
+                                        <div class="form-group mb-3">
+                                            <label for="po_num"  class="form-label">Upload PO</label>
                                             <input type="file" name="uploadedDoc" class="form-control" id="exampleuploadedDoc" placeholder="Upload PO" aria-describedby="uploadDocHelp">
                                         </div>
                                     </div>
