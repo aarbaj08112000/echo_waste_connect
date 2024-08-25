@@ -12,81 +12,18 @@ const page = {
     this.initiateForm();
   },
   dataTable: function() {
-    table = $("#raw_material_inspection_inwarding").DataTable({
-        dom: "Bfrtilp",
-        buttons: [
-            {
-                extend: "csv",
-                text: '<i class="ti ti-file-type-csv"></i>',
-                init: function (api, node, config) {
-                    $(node).attr("title", "Download CSV");
-                },
-                customize: function (csv) {
-                        var lines = csv.split('\n');
-                        var modifiedLines = lines.map(function(line) {
-                            var values = line.split(',');
-                            values.splice(7, 1);
-                            return values.join(',');
-                        });
-                        return modifiedLines.join('\n');
-                    },
-                    filename : file_name
-                },
-          
-            {
-                extend: "pdf",
-                text: '<i class="ti ti-file-type-pdf"></i>',
-                init: function (api, node, config) {
-                    $(node).attr("title", "Download Pdf");
-                },
-                filename: file_name,
-                customize: function (doc) {
-                    doc.pageMargins = [15, 15, 15, 15];
-                    doc.content[0].text = pdf_title;
-                    doc.content[0].color = theme_color;
-                    // doc.content[1].table.widths = ["19%", "19%", "13%", "13%", "15%", "15%"];
-                    doc.content[1].table.body[0].forEach(function (cell) {
-                        cell.fillColor = theme_color;
-                    });
-                    doc.content[1].table.body.forEach(function (row, index) {
-                        row.splice(7, 1);
-                        row.forEach(function (cell) {
-                            // Set alignment for each cell
-                            cell.alignment = "center"; // Change to 'left' or 'right' as needed
-                        });
-                    });
-                },
-            },
-        ],
-        searching: false,
-        scrollX: true,
-        scrollY: "300px",
-        bScrollCollapse: true,
-        columnDefs: [{ sortable: false, targets: 7 }],
-        pagingType: "full_numbers",
-       
-        
-        });
-    $('.dataTables_length').find('label').contents().filter(function() {
-                return this.nodeType === 3; // Filter out text nodes
-        }).remove();
-        setTimeout(function(){
-            $(".dataTables_length select").select2({
-                minimumResultsForSearch: Infinity
-            });
-        },1000)
+    table = $('#raw_material_inspection_inwarding').DataTable();
   },
   initiateForm: function(){
     let that = this;
 
     $(".update_raw_material_inspection_master_new").submit(function(e){
       e.preventDefault();
-      let id = $(this).attr("id")
-      let flag = that.formValidate(id);
+      let flag = that.formValidate("update_raw_material_inspection_master_new");
       if(flag){
         return;
       }
-      var formData = new FormData($('.'+id)[0]);
+      var formData = new FormData($('.update_raw_material_inspection_master_new')[0]);
 
       $.ajax({
         type: "POST",
@@ -116,20 +53,15 @@ const page = {
     });
     $(".add_raw_material_inspection_report").submit(function(e){
       e.preventDefault();
-      let parent_class = $(this).parents("tr").attr("id");
-      console.log(parent_class)
-      let id =  $(this).attr("id");
-      let href =  $(this).attr("action");
-      let flag = that.formValidate(parent_class);
-      console.log(flag)
+      let flag = that.formValidate("add_raw_material_inspection_report");
       if(flag){
         return;
       }
-      var formData = new FormData($('#'+id)[0]);
+      var formData = new FormData($('.add_raw_material_inspection_report')[0]);
 
       $.ajax({
         type: "POST",
-        url: href,
+        url: base_url+"add_raw_material_inspection_report",
         data: formData,
         processData: false,
         contentType: false,
@@ -153,15 +85,12 @@ const page = {
         },
       });
     });
-    
 
   },
   formValidate: function(form_class = ''){
     let flag = false;
-
-    $(".custom-form."+form_class+" .required-input").each(function( index ) {
+    $(".custom-form."+form_class+" input.required-input").each(function( index ) {
       var value = $(this).val();
-      
       if(value == ''){
         flag = true;
         var label = $(this).parents(".form-group").find("label").contents().filter(function() {

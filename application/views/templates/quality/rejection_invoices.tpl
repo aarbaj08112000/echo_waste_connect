@@ -42,13 +42,13 @@
                                     </select>
                               </div>
                            </div>
-                           <div class="col-lg-4">
+                           <div class="col-lg-2">
                            <div class="form-group mb-3">
                            <label for="" class="form-label">Customer Debit Note No</label><span class="text-danger">*</span></label>
                            <input type="text" placeholder="Customer Debit Note No" name="customer_debit_note_no" class="form-control">
                            </div>
                            </div>
-                           <div class="col-lg-4">
+                           <div class="col-lg-2">
                            <div class="form-group mb-3">
                            <label for="on click url" class="form-label">Customer Debit Note Date
                            <span class="text-danger">*</span></label>
@@ -57,13 +57,13 @@
                               class="form-control">
                            </div>
                            </div>
-                           <div class="col-lg-4">
+                           <div class="col-lg-2">
                            <div class="form-group mb-3" >
                            <label for="" class="form-label">Client Sales Invoice No</label></label>
                            <input type="text" placeholder="Client Sales Invoice No" name="client_sales_invoice_no" class="form-control">
                            </div>
                            </div>
-                           <div class="col-lg-4">
+                           <div class="col-lg-2">
                            <div class="form-group" mb-3>
                            <label for="on click url" class="form-label">Client Invoice Date
                            </label>
@@ -72,7 +72,7 @@
                               class="form-control">
                            </div>
                            </div>
-                           <div class="col-lg-4">
+                           <div class="col-lg-2">
                            <div class="form-group mb-3">
                            <label for="on click url" class="form-label">Debit Basic Amount<span
                               class="text-danger">*</span></label>
@@ -80,20 +80,20 @@
                               class="form-control">
                            </div>
                            </div>
-                           <div class="col-lg-4">
+                           <div class="col-lg-2 ">
                            <div class="form-group mb-3">
                            <label for="on click url" class="form-label">GST Amount</label>
                            <input type="number" step="any" min="0.00" name="debit_gst_amt"
                               class="form-control">
                            </div>
                            </div>
-                           <div class="col-lg-4">
+                           <div class="col-lg-2">
                            <div class="form-group mb-3">
                            <label for="" class="form-label">Enter Remark </label>
                            <input type="text" placeholder="Enter Remark" value="" name="remark" class="form-control">
                            </div>
                            </div>
-                           <div class="col-lg-4">
+                           <div class="col-lg-2">
                            <div class="form-group mb-3">
                            <label for="" class="form-label">Rejection Reason</label>
                            <select name="rejection_reason" id=""
@@ -123,7 +123,7 @@
                         <table id="example1" class="table  table-striped">
                            <thead>
                               <tr>
-                                 <!-- <th>Sr No</th> -->
+                                 <th>Sr No</th>
                                  <th>Rejection Invoice No</th>
                                  <th>Customer</th>
                                  <th>Customer Debit Note No</th>
@@ -132,7 +132,7 @@
                                  <th>Client Invoice Date</th>
                                  <th>Basic Amount</th>
                                  <th>GST Amount</th>
-                                 <th class="text-center">View Details</th>
+                                 <th>View Details</th>
                               </tr>
                            </thead>
                            <tbody>
@@ -140,7 +140,7 @@
                               <%assign var='i' value=1%>
                               <%foreach from=$rejection_sales_invoice item=u %>
                               <tr>
-                                <!--  <td><%$i %></td> -->
+                                 <td><%$i %></td>
                                  <td><%$u->rejection_invoice_no %></td>
                                  <td><%$u->customer_name %></td>
                                  <td><%$u->document_number %></td>
@@ -149,9 +149,9 @@
                                  <td><%$u->client_invoice_date %></td>
                                  <td><%$u->debit_basic_amt %></td>
                                  <td><%$u->debit_gst_amt %></td>
-                                 <td class="text-center">
-                                    <a class="" href="<%base_url('view_rejection_sales_invoice_by_id/') %><%$u->id %>">
-                                    <i class="ti ti-history">
+                                 <td>
+                                    <a class="btn btn-info" href="<%base_url('view_rejection_sales_invoice_by_id/') %><%$u->id %>">
+                                    <i class="fa fa-history">
                                     </i>
                                     </a>
                                  </td>

@@ -62,31 +62,42 @@ class ProdMasterController extends CommonController {
 
 	public function add_operator()
 	{
-
+		$ret_arr = [];
+		$msg = '';
+		$success = 1;
 		$clientId = $this->Unit->getSessionClientId();
-
 		$data = array(
-			'name' => $this->input->post('name'),
+			'name' => $this->input->post('namess'),
 		);
 
 		$check = $this->Crud->read_data_where("operator", $data, true);
 		if ($check != 0) {
-			echo "<script>alert('Record already exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-			exit();
+			$msg = 'Record already exists';
+			$success = 0;
+			// echo "<script>alert('Record already exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			// exit();
 		}
 
 		$inser_query = $this->Crud->insert_data("operator", $data, true);
 
 		if ($inser_query) {
 			if ($inser_query) {
-				echo "<script>alert('Added Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				// echo "<script>alert('Added Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$msg = 'Operator Added Successfully';
 			} else {
-				echo "<script>alert('Error while Adding ,try again');document.location='erp_users'</script>";
+				// echo "<script>alert('Error while Adding ,try again');document.location='erp_users'</script>";
+				$msg = 'Error while Adding ,try again';
+				$success = 0;
 			}
 		} else {
-			echo "Error";
+			$msg = 'Unable to add operator ,try again';
+			$success = 0;
 		}
+		$ret_arr['msg'] = $msg;
+		$ret_arr['success'] = $success;
+		echo json_encode($ret_arr);
 	}
+
 
 	public function machine()
 	{
@@ -97,27 +108,37 @@ class ProdMasterController extends CommonController {
 	public function add_machine()
 	{
 		$clientId = $this->Unit->getSessionClientId();
-
-		
 		$data = array(
-			'name' => $this->input->post('name'),
+			'name' => $this->input->post('namess'),
 		);
-
+		$ret_arr = [];
+		$msg = '';
+		$success = 1;
 		$check = $this->Crud->read_data_where("machine", $data, true);
 		if ($check != 0) {
-			echo "<script>alert('Record already exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-			exit();
+			// echo "<script>alert('Record already exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			// exit();
+			$msg = 'Record already exists';
+			$success = 0;
 		}
 
 		$inser_query = $this->Crud->insert_data("machine", $data, true);
 
 		if ($inser_query) {
 			if ($inser_query) {
-				echo "<script>alert('Added Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				// echo "<script>alert('Added Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$msg = 'Machine added successfully';
 			} else {
-				echo "<script>alert('Error while Adding ,try again');document.location='erp_users'</script>";
+				// echo "<script>alert('Error while Adding ,try again');document.location='erp_users'</script>";
+				$msg = 'Machine added successfully';
+				$success = 0;
 			}
 		}
+		$ret_arr['msg'] = $msg;
+		$ret_arr['success'] = $success;
+		echo json_encode($ret_arr);
 	}
+	
+
 	
 }

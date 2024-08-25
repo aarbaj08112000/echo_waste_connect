@@ -793,8 +793,8 @@
                         </li>
                         <!-- <li><a class="dropdown-item" href="#">Approval</a></li>
                            <li><a class="dropdown-item" href="#">Master</a></li> -->
-                        <li><a class="dropdown-item" href="<%$base_url%>">User</a></li>
-                        <li><a class="dropdown-item" href="<%$base_url%>">Configurations</a></li>
+                        <li><a class="dropdown-item" href="<%base_url('erp_users')%>">User</a></li>
+                        <li><a class="dropdown-item" href="<%base_url('configs')%>">Configurations</a></li>
                      </ul>
                   </li>
                   <%/if%>

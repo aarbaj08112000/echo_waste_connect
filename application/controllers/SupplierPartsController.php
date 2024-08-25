@@ -288,14 +288,7 @@ class SupplierPartsController extends CommonController
             "data" => "action",
             "title" => "Action",
             "width" => "7%",
-            "className" => "dt-center"
-        ];
-        $column[] = [
-            "data" => "part_id",
-            "title" => "Id",
-            "width" => "7%",
             "className" => "dt-center",
-            "visible"=> false,
         ];
         $data["data"] = $column;
         $data["is_searching_enable"] = true;
@@ -308,7 +301,7 @@ class SupplierPartsController extends CommonController
             base_url() .
             'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Employee data found..!</div>';
         $data["is_top_searching_enable"] = true;
-        $data["sorting_column"] = json_encode([[14, 'desc']]);
+        $data["sorting_column"] = json_encode([]);
         $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
         $data["admin_url"] = base_url();
         $data["base_url"] = base_url();
@@ -322,7 +315,6 @@ class SupplierPartsController extends CommonController
 		$post_data = $this->input->post();
         $column_index = array_column($post_data["columns"], "data");
         $order_by = "";
-        // pr($post_data,1);
         foreach ($post_data["order"] as $key => $val) {
             if ($key == 0) {
                 $order_by .= $column_index[$val["column"]] . " " . $val["dir"];
@@ -339,7 +331,7 @@ class SupplierPartsController extends CommonController
             $condition_arr,
             $post_data["search"]
         );
-		
+
 		foreach ($data as $key => $value) {
 			$edit_data = base64_encode(json_encode($value)); 
 			$data[$key]['action'] = "<i class='ti ti-edit edit-part' title='Edit' data-value='$edit_data'></i>";
@@ -432,17 +424,21 @@ class SupplierPartsController extends CommonController
 	 */
 	public function child_parts($part_id_selected = null)
 	{
+		// pr($_POST,1);
 		$data['part_select_list'] = $this->SupplierParts->readSupplierPartsOnly();
 		if(empty($part_id_selected)){
 			$part_id_selected = $this->input->post("part_id_selected");
 		}
+
 		
-		if (!empty($part_id_selected)) {
-			$data['child_part'] = $this->SupplierParts->getSupplierPartById($part_id_selected);
-		} else {
-			$data['child_part'] = "";
-		}
+		
+		// if (!empty($part_id_selected)) {
+		// 	$data['child_part'] = $this->SupplierParts->getSupplierPartById($part_id_selected);
+		// } else {
+			$data['child_part'] = $this->SupplierParts->getchildPart();
+		// }
 		$data['enableStockUpdate'] = $this->isEnableStockUpdate();
+		
 		$this->loadView('admin/child_parts', $data);
 	}
 
@@ -517,14 +513,12 @@ class SupplierPartsController extends CommonController
 		$stock_changes_id  = $this->uri->segment('2');
 		$stock_changes_data = $this->Crud->get_data_by_id("stock_changes", $stock_changes_id, "id");
 		$child_part_data = $this->SupplierParts->getSupplierPartById($stock_changes_data[0]->part_id);
-		$success = 0;
-		$messages = "Something went wrong.";
 		if ($child_part_data) {
 			$qty = $stock_changes_data[0]->qty;
 			$current_stock = $child_part_data[0]->stock;
 
 			if (false && $qty > $current_stock) {
-				$messages =  "Entered Qty is greater than actual stock please try again";
+				echo "Entered Qty is greater than actual stock please try again";
 			} else {
 				if ($stock_changes_data[0]->type == "addition") {
 					$new_stock = $current_stock + $qty;
@@ -542,20 +536,13 @@ class SupplierPartsController extends CommonController
 					);
 					$result3 = $this->Crud->update_data("stock_changes", $data_update_rejection_flow, $stock_changes_id);
 					if ($result3) {
-						// echo "<script>alert('Stock Transfered successfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-						$messages = "Stock Transfered successfully";
-						$success = 1;
+						echo "<script>alert('Stock Transfered successfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 					}
 				}
 			}
 		} else {
-			$messages  = "Item Part Id : " . $stock_changes_data[0]->part_id . " not found. Please try again ";
+			echo "Item Part Id : " . $stock_changes_data[0]->part_id . " not found. Please try again ";
 		}
-		$result = [];
-		$result['messages'] = $messages;
-		$result['success'] = $success;
-		echo json_encode($result);
-		exit();
 	}
 
 }

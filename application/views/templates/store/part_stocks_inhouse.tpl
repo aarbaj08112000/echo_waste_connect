@@ -22,18 +22,59 @@
               </li>
               <li class="sidebar-item">
                 <div class="input-group">
-                  <select name="part_id" class="form-control select2" id="search_part_name">
-                          <option value="">Select Part</option>
-                          <%foreach from=$customer_part_list item=c %>
-                            <option <%if ($filter_part_id == $c->id) %>selected <%/if%>
-                               value="<%$c->part_number %>"><%$c->part_number %>
-                            </option>
-                          <%/foreach%>
-                       </select>
+                  <select name="child_part_id" class="form-control select2" id="part_number_search">
+                    <option value="">Select Part Number</option>
+                    <%foreach from=$supplier_part_list item=parts%>
+                    <option value="<%$parts->id%>"><%$parts->part_number %></option>
+                    <%/foreach%>
+                  </select>
                 </div>
               </li>
             </div>
-            
+            <div class="filter-row">
+              <li class="nav-small-cap">
+                <span class="hide-menu">Part Description</span>
+                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+              </li>
+              <li class="sidebar-item">
+                <div class="input-group">
+                  <input type="text" id="part_description_search" class="form-control" placeholder="Name">
+                </div>
+              </li>
+            </div>
+            <div class="filter-row">
+              <li class="nav-small-cap">
+                <span class="hide-menu">Name</span>
+                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+              </li>
+              <li class="sidebar-item">
+                <div class="input-group">
+                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
+                </div>
+              </li>
+            </div>
+            <div class="filter-row">
+              <li class="nav-small-cap">
+                <span class="hide-menu">Name</span>
+                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+              </li>
+              <li class="sidebar-item">
+                <div class="input-group">
+                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
+                </div>
+              </li>
+            </div>
+            <div class="filter-row">
+              <li class="nav-small-cap">
+                <span class="hide-menu">Name</span>
+                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+              </li>
+              <li class="sidebar-item">
+                <div class="input-group">
+                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
+                </div>
+              </li>
+            </div>
 
           </ul>
         </div>
@@ -59,23 +100,46 @@
       <!-- <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Tables /</span> Basic Tables</h4> -->
 
       <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
-        <a href="<%base_url('download_stock_variance') %>"
-           class="btn btn-seconday" title="Download Stock Variance"> <i class="ti ti-download"></i> </a>
         <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
         <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
         <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
         <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
-        
+        <a href="<%base_url('download_stock_variance') %>"
+           class="btn btn-seconday" title="Download Stock Variance"> <i class="ti ti-download"></i> </a>
       </div>
 
       <!-- Main content -->
-      <div class="card p-0 mt-4">
-        
+      <div class="card p-2 mt-4">
+        <form action="<%base_url('view_part_stocks_inhouse') %>" method="POST"
+           enctype="multipart/form-data">
+           <div class="row">
+              <div class="col-lg-4">
+                 <div style="width: 400px;">
+                    <div class="form-group">
+                       <label for="on click url">Select Part Number<span
+                          class="text-danger">*</span></label> <br>
+                       <select name="part_id" class="form-control select2" id="">
+                          <option value="">Select Part</option>
+                          <%foreach from=$customer_part_list item=c %>
+                            <option <%if ($filter_part_id == $c->id) %>selected <%/if%>
+                               value="<%$c->id %>"><%$c->part_number %>
+                            </option>
+                          <%/foreach%>
+                       </select>
+                    </div>
+                 </div>
+              </div>
+              <div class="col-lg-4">
+                 <label for="">&nbsp;</label> <br>
+                 <button class="btn btn-secondary">Search </button>
+              </div>
+           </div>
+        </form>
         <div class="table-responsive text-nowrap">
-          <table  border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="inwarding">
+          <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="inwarding">
             <thead>
                <tr>
-                  <!-- <th>Sr. No.</th> -->
+                  <th>Sr. No.</th>
                   <th>Part Number</th>
                   <th>Part Description</th>
                   <th>UOM</th>
@@ -107,8 +171,7 @@
 
             <tbody>
                <%assign var='i' value=1 %>
-
-                  <%if ($filtered_cust_part) %>
+                  <%if ($filter_part_id) %>
                       <%if ($filtered_cust_part) %>
                           <%foreach from=$filtered_cust_part item=po %>
                               <%assign var='stock' value=$po->stock %>
@@ -118,7 +181,7 @@
                               <%assign var='scrap_stock' value=$po->scrap_stock %>
                               <%assign var='child_part_present' value=$po->child_part_present %>
                       <tr>
-                          <!--<td><%$po->id %></td>-->
+                          <td><%$po->id %></td>
                           <td><%$po->part_number %></td>
                           <td><%$po->part_description %></td>
                           <td><%$uom_data[0]->uom_name %></td>
@@ -155,26 +218,24 @@
                                                     aria-label="Close">
                                                  </button>
                                               </div>
-                                              <form
-                                                          action="<%base_url('update_production_qty') %>"
-                                                          method="POST" enctype="multipart/form-data" id="update_production_qty<%$po->id %>" class="update_production_qty update_production_qty<%$po->id %> custom-form">
                                               <div class="modal-body">
                                                  <div class="row">
                                                     <div class="col-lg-12">
-                                                        <div class="form-group">
+                                                       <form
+                                                          action="<%base_url('update_production_qty') %>"
+                                                          method="POST" enctype="multipart/form-data">
                                                           <label for="">Production Qty <span
                                                              class="text-danger">*</span>
                                                           </label>
-                                                          <input type="text" step="any" class="form-control onlyNumericInput required-input"
+                                                          <input type="number" step="any" class="form-control"
                                                              value=""
-                                                             data-max="	<%$po->$prodQtyColName %>"
-                                                             name="production_qty" data-min="1" 
+                                                             max="	<%$po->$prodQtyColName %>"
+                                                             name="production_qty" min="1" required
                                                              placeholder="Enter Transfer Qty">
                                                           <input type="hidden" class="form-control"
                                                              value="<%$po->part_number %>"
                                                              name="part_number" required
                                                              placeholder="Enter Transfer Qty">
-                                                        </div>
                                                     </div>
                                                  </div>
                                                  <div class="modal-footer">
@@ -219,20 +280,19 @@
 
                                     </button>
                                     </div>
-                                     <form
-                                       action="<%base_url('transfer_child_part_to_fg_stock_inhouse') %>" id="transfer_child_part_to_fg_stock_inhouse<%$po->id %>"
-                                       method="POST" enctype="multipart/form-data" class="transfer_child_part_to_fg_stock_inhouse transfer_child_part_to_fg_stock_inhouse<%$po->id %> custom-form">
                                     <div class="modal-body">
                                     <div class="row">
                                     <div class="col-lg-12">
-                                      <div class="form-group">
+                                    <form
+                                       action="<%base_url('transfer_child_part_to_fg_stock_inhouse') %>"
+                                       method="POST" enctype="multipart/form-data">
                                     <label for="">Enter Stock Qty <span
                                        class="text-danger">*</span>
                                     </label>
-                                    <input type="text" step="any"
-                                       class="form-control onlyNumericInput required-input" value=""
+                                    <input type="number" step="any"
+                                       class="form-control" value=""
                                        max="<%$po->$prodQtyColName %>"
-                                       name="stock" 
+                                       name="stock" required
                                        placeholder="Enter Transfer Qty">
                                     <input type="hidden" class="form-control"
                                        value="<%$po->part_number %>"
@@ -243,13 +303,11 @@
                                        name="child_part_id" required
                                        placeholder="Enter Transfer Qty">
                                     </div>
-                                    </div>
                                     <div class="col-lg-12">
-                                      <div class="form-group">
                                     <label for=""><br>Select Customer Part Number /
                                     Customer Name </label>
-                                    <select name="customer_part_number" 
-                                       id="" class="form-control select2 onlyNumericInput required-input" style="width: 100%;">
+                                    <select name="customer_part_number" required
+                                       id="" class="form-control select2">
                                     <option value="">Select Part</option>
                                     <%if ($transfer_part_list) %>
                                            <%foreach from=$transfer_part_list item=t %>
@@ -259,7 +317,6 @@
                                         <%/foreach%>
                                     <%/if%>
                                     </select>
-                                  </div>
                                     </div>
                                     </div>
                                     <div class="modal-footer">
@@ -298,6 +355,4 @@
          $("#total_value_id").val(<%$total_value %>);
      });
   </script>
-   <script src="<%$base_url%>public/js/store/view_part_stocks_inhouse.js"></script>
-
-  
+  <script src="<%$base_url%>public/js/store/inwarding.js"></script>

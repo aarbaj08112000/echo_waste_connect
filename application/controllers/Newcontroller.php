@@ -968,7 +968,6 @@ public function rejected_po()
 
 	public function accept_inwarding_data()
 	{
-
 		$inwarding_id = $this->input->post('inwarding_id');
 		$invoice_number = $this->input->post('invoice_number');
 
@@ -981,8 +980,7 @@ public function rejected_po()
 			'inwarding_id' => $inwarding_id,
 			'invoice_number' => $invoice_number,
 		);
-		$success = 0;
-        $messages = "Something went wrong.";
+
 		$grn_details_data = $this->Crud->get_data_by_id_multiple("grn_details", $arr2);
 		if ($grn_details_data) {
 			if (true) {
@@ -992,26 +990,16 @@ public function rejected_po()
 
 				$result2 = $this->Crud->update_data("inwarding", $data_update_inwarding, $inwarding_id);
 				if ($result2) {
-					$messages = "Updated Sucessfully";
-					$success = 1;
-					// echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+					echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 				} else {
-					$messages = "Error 410 :  Not Updated";
-					// echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+					echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 				}
 			} else {
-				$messages = "Error 410 :  Not Updated";
-				// echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		} else {
-			$messages = "Error 410 :  Not Updated, No inwarding found.";
-			// echo "<script>alert('Error 410 :  Not Updated, No inwarding found.');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			echo "<script>alert('Error 410 :  Not Updated, No inwarding found.');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
-		$result = [];
-        $result['messages'] = $messages;
-        $result['success'] = $success;
-        echo json_encode($result);
-        exit();
 	}
 
 	public function accept_po()
@@ -2163,9 +2151,6 @@ public function update_grn_qty()
 
 public function update_grn_qty_accept_reject()
 {
-	
-	$success = 0;
-    $messages = "Something went wrong.";
 	$accept_qty = $this->input->post('accept_qty');
 	$grn_details_id = $this->input->post('grn_details_id');
 	$verified_qty = $this->input->post('verified_qty');
@@ -2195,21 +2180,12 @@ public function update_grn_qty_accept_reject()
 
 		$result22 = $this->SupplierParts->updateStockById($data22, $part_id);
 		if ($result22) {
-			$success = 1;
-			$messages = "Successfully Added";
-			// echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-			$messages = "Unable to Add2";
-			// echo "<script>alert('Unable to Add2');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			echo "<script>alert('Unable to Add2');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
 	} else {
-		$messages = "Unable to Add";
-		// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 	}
-	$result = [];
-	$result['messages'] = $messages;
-    $result['success'] = $success;
-    echo json_encode($result);
-    exit();
 }
 }

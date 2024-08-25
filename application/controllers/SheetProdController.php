@@ -200,8 +200,7 @@ class SheetProdController extends ProductionController
 		$rejected_qty_old = (float)$this->input->post('rejected_qty_old');
 
 		$operations_bom = $this->Crud->get_data_by_id("operations_bom", $output_part_id, "output_part_id");
-		$success = 0;
-        $messages = "Something went wrong.";
+
 		$operations_bom_inputs = $this->Crud->get_data_by_id("operations_bom_inputs", $operations_bom[0]->id, "operations_bom_id");
 		if ($operations_bom_inputs) {
 			$rejected_qty = $qty - $accepted_qty;
@@ -239,20 +238,13 @@ class SheetProdController extends ProductionController
 					);
 					$update = $this->Crud->update_data("customer_part", $update_data_2, $output_part_data[0]->id);
 				}
-				$messages = "Updated Successfully ";
-				$success = 1;
-				// echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				$messages =  "error while updating";
+				echo "error while updating";
 			}
 		} else {
-			$messages =  "Operations BOM Not Found";
+			echo "Operations BOM Not Found";
 		}
-		$result = [];
-        $result['messages'] = $messages;
-        $result['success'] = $success;
-        echo json_encode($result);
-        exit();
 	}
 
 	/**
@@ -329,7 +321,7 @@ class SheetProdController extends ProductionController
 				LEFT JOIN 
 					customer_part cp
 					ON pq.output_part_table_name = 'customer_part' 
-					AND pq.op_q_view_queryutput_part_id = cp.id 
+					AND pq.output_part_id = cp.id 
 				ORDER BY 
 					pq.id DESC ";
 
@@ -372,13 +364,9 @@ class SheetProdController extends ProductionController
 
 		$routing_data = $this->Common_admin_model->get_data_by_id_multiple_condition_count_new("p_q", $data_to_check);
 		// print_r($routing_data);
-		$success = 0;
-        $messages = "Something went wrong.";
 		if ($routing_data > 0) {
-			$messages = "already present"; 
-			// echo "<script>alert('already present');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			echo "<script>alert('already present');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-
 			if (true) {
 				$p_q_molding_production =  $operations_bom_data[0]->output_part_id;
 				$operations_bom_inputs_data = $this->Crud->get_data_by_id("operations_bom_inputs", $this->input->post('output_part_id'), "operations_bom_id");
@@ -399,12 +387,13 @@ class SheetProdController extends ProductionController
 
 							if ($req_qty > $actual_stock) {
 								$flag = $flag + 1;
-								$messages = "Part Production Qty Not Found : " . $output_part_data[0]->part_number . " on " . $oib->input_part_table_name . ", actual production stock is " . $actual_stock . ",and required stock is " . $req_qty . "<br>";
+								echo "Part Production Qty Not Found : " . $output_part_data[0]->part_number . " on " . $oib->input_part_table_name . ", actual production stock is " . $actual_stock . ",and required stock is " . $req_qty . "<br>";
 							}
 						} else {
-							$messages = "part Not Found <br>";
+							echo "part Not Found <br>";
 						}
 					}
+
 					if ($flag == 0) {
 						foreach ($operations_bom_inputs_data as $oib) {
 							if ($oib->input_part_table_name == "inhouse_parts") {
@@ -424,18 +413,18 @@ class SheetProdController extends ProductionController
 									$prodQtyCol => $new_production_qty,
 								);
 								if ($oib->input_part_table_name == "inhouse_parts") {
-									// echo "updated 1";
+									echo "updated 1";
 									$update = $this->InhouseParts->updateStockById($update_data, $output_part_data[0]->id);
 								} else {
-									// echo "updated 2";
+									echo "updated 2";
 									$update = $this->SupplierParts->updateStockById($update_data, $output_part_data[0]->id);
 								}
-								// echo "<br>id :" . $output_part_data[0]->id;
-								// echo "<br>";
-								// echo "<br>output_part_data " . $output_part_data[0]->part_number;;
-								// echo "<br>$oib->input_part_table_name  " . $output_part_data[0]->part_number;;
+								echo "<br>id :" . $output_part_data[0]->id;
+								echo "<br>";
+								echo "<br>output_part_data " . $output_part_data[0]->part_number;;
+								echo "<br>$oib->input_part_table_name  " . $output_part_data[0]->part_number;;
 							} else {
-								$messages = "part Not Found <br>";
+								echo "part Not Found <br>";
 							}
 						}
 
@@ -459,29 +448,21 @@ class SheetProdController extends ProductionController
 						$inser_query = $this->Crud->insert_data("p_q", $data_insert);
 
 						if ($inser_query) {
-							$$messages = "successfully added";
-							$success = 1;
-							// echo "<script>alert('successfully added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+							echo "<script>alert('successfully added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 						} else {
-							$messages = "Error While  Adding ,try again";
-							// echo "<script>alert('Error While  Adding ,try again');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+							echo "<script>alert('Error While  Adding ,try again');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 						}
 					} else {
-						$messages .= "<br> Please add all above production qty";
-						// echo "<br><br><br><br><br><a href=" . $_SERVER['HTTP_REFERER'] . "> < Go Back</a>";
+						echo "<br> Please add all above production qty";
+						echo "<br><br><br><br><br><a href=" . $_SERVER['HTTP_REFERER'] . "> < Go Back</a>";
 					}
 				} else {
-					$messages = "Input parts not found";
+					echo "Input parts not found";
 				}
 			} else {
-				$messages = "Error";
+				echo "Error";
 			}
 		}
-		$result = [];
-        $result['messages'] = $messages;
-        $result['success'] = $success;
-        echo json_encode($result);
-        exit();
 	}
 
 	/**
@@ -520,8 +501,6 @@ class SheetProdController extends ProductionController
 
 	public function add_production_qty_sharing()
 	{
-		$success = 0;
-        $messages = "Something went wrong.";
 		$shift_id = $this->input->post('shift_id');
 		$machine_id = $this->input->post('machine_id');
 		$operator_id = $this->input->post('operator_id');
@@ -536,8 +515,7 @@ class SheetProdController extends ProductionController
 		$routing_data = $this->Crud->read_data_where("sharing_p_q", $data);
 
 		if ($routing_data) {
-			$messages = "already present";
-			// echo "<script>alert('already present');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			echo "<script>alert('already present');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 
 			$data_insert = array(
@@ -555,90 +533,15 @@ class SheetProdController extends ProductionController
 
 			$inser_query = $this->Crud->insert_data("sharing_p_q", $data_insert);
 			if ($inser_query) {
-				$success = 1;
-				$messages = "successfully added";
-				// echo "<script>alert('successfully added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				echo "<script>alert('successfully added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				$messages = "Error IN User  Adding ,try again";
-				// echo "<script>alert('Error IN User  Adding ,try again');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				echo "<script>alert('Error IN User  Adding ,try again');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
-
-		$result = [];
-        $result['messages'] = $messages;
-        $result['success'] = $success;
-        echo json_encode($result);
-        exit();
 	}
 	
 	public function sharing_issue_request()
 	{
-
-
-		/* datatable */
-        $column[] = [
-            "data" => "part_number",
-            "title" => "Part Number",
-            "width" => "24%",
-            "className" => "dt-left",
-        ];
-        $column[] = [
-            "data" => "part_description",
-            "title" => "Part Description",
-            "width" => "24%",
-            "className" => "dt-left",
-        ];
-        $column[] = [
-            "data" => "part_thickness",
-            "title" => "Thickness",
-            "width" => "9%",
-            "className" => "dt-center",
-        ];
-        $column[] = [
-            "data" => "weight",
-            "title" => "Weight",
-            "width" => "9%",
-            "className" => "dt-center",
-        ];
-        $column[] = [
-            "data" => "qty",
-            "title" => "Qty(Kg)",
-            "width" => "12%",
-            "className" => "dt-center",
-        ];
-        $column[] = [
-            "data" => "status",
-            "title" => "Status",
-            "width" => "12%",
-            "className" => "dt-center",
-        ];
-        $column[] = [
-            "data" => "date_time",
-            "title" => "Date & Time",
-            "width" => "14%",
-            "className" => "dt-center",
-        ];
-
-
-        $data["data"] = $column;
-        $data["is_searching_enable"] = true;
-        $data["is_paging_enable"] = true;
-        $data["is_serverSide"] = true;
-        $data["is_ordering"] = true;
-        $data["is_heading_color"] = "#a18f72";
-        $data["no_data_message"] =
-            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
-            base_url() .
-            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Part GRN data found..!</div>';
-        $data["is_top_searching_enable"] = true;
-        $data["sorting_column"] = json_encode([]);
-        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
-        $data["admin_url"] = base_url();
-        $data["base_url"] = base_url();
-        // $ajax_json['teacher_data'] = $this->session->userdata();
-        // pr($ajax_json['designation'],1);
-		$this->loadView('store/sharing_issue_request', $data,"Yes","Yes");
-
 		$created_month  = $this->input->post("created_month");
 		$created_year  = $this->input->post("created_year");
 		
@@ -649,7 +552,22 @@ class SheetProdController extends ProductionController
 			$created_month = $this->month;
 		}
 		
-				
+		$data['created_year'] = $created_year;
+		$data['created_month'] =$created_month;
+		
+		$data['operations_bom'] = $this->Crud->read_data("operations_bom");
+		$query = "SELECT s.*, c.part_number, c.part_description, c.thickness, c.weight
+			FROM sharing_issue_request s
+			JOIN child_part c ON c.id = s.child_part_id
+			WHERE clientId = ".$this->Unit->getSessionClientId()."
+			AND year = ".$created_year;
+		
+		if($created_month !='ALL'){ //SHOW ALL
+			$query.= " AND month = ".$created_month;
+		}
+		$query.= " ORDER by s.id DESC ";
+
+		$data['sharing_issue_request'] = $this->Crud->customQuery($query);			
 
 		$data['child_part'] = $this->SupplierParts->readSupplierPartsOnly();
 		$month_arr = [];
@@ -660,52 +578,12 @@ class SheetProdController extends ProductionController
             $month_arr[$i]['month_number'] = $month_number;
         }
         $data['month_arr'] = $month_arr;
+        
 		$this->loadView('store/sharing_issue_request', $data);
-	}
-
-	public function get_sharing_issue_request_data()
-	{
-		$post_data = $this->input->post();
-        $column_index = array_column($post_data["columns"], "data");
-        $order_by = "";
-        foreach ($post_data["order"] as $key => $val) {
-            if ($key == 0) {
-                $order_by .= $column_index[$val["column"]] . " " . $val["dir"];
-            } else {
-                $order_by .=
-                    "," . $column_index[$val["column"]] . " " . $val["dir"];
-            }
-        }
-        $condition_arr["order_by"] = $order_by;
-        $condition_arr["start"] = $post_data["start"];
-        $condition_arr["length"] = $post_data["length"];
-        $base_url = $this->config->item("base_url");
-		
-		$data = $this->SupplierParts->get_sharing_issue_request_data(
-            $condition_arr,
-            $post_data["search"]
-        );
-		
-
-		foreach ($data as $key => $value) {
-			// $edit_data = base64_encode(json_encode($value)); 
-			$data[$key]['po_number'] = '<a href="'.base_url().'inwarding_invoice/'.$value['id'].'"  class="po-number">'.$value['po_number'].'</a>';
-			$data[$key]['download_po'] = '<a href="'.base_url().'download_my_pdf/'.$value['id'].'" class="btn btn-primary">Download</a>';
-			$data[$key]['action'] = '<a data-id="'.$value['id'].'" href="javascript:void(0)" class="btn btn-danger close-po">Close</a>';
-		}
-		$data["data"] = $data;
-        $total_record = $this->SupplierParts->get_sharing_issue_request_data_Count([], $post_data["search"]);
-        $data["recordsTotal"] = $total_record['total_record'];
-        $data["recordsFiltered"] = $total_record['total_record'];
-        echo json_encode($data);
-        exit();
-		
 	}
 
 	public function add_sharing_issue_request()
 	{
-		$success = 0;
-        $messages = "Something went wrong.";
 		$child_part_id = $this->input->post('child_part_id');
 		$data = array(
 			'child_part_id' => $this->input->post('child_part_id'),
@@ -722,28 +600,18 @@ class SheetProdController extends ProductionController
 		$inser_query = $this->Crud->insert_data("sharing_issue_request", $data);
 		if ($inser_query) {
 			if ($inser_query) {
-				$messages = "Added Successfully";
-				$success = 1;
-				// echo "<script>alert('Added Successfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				echo "<script>alert('Added Successfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				$messages = "Error IN User  Adding ,try again";
-				// echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
+				echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
 			}
 		} else {
 			echo "Error";
 		}
-
-		$result = [];
-        $result['messages'] = $messages;
-        $result['success'] = $success;
-        echo json_encode($result);
-        exit();
 	}
 
 	public function accept_sharing_request()
 	{
-		$success = 0;
-		$messages = "Something went wrong.";
+
 		$id = $this->input->post('id');
 		$accepted_qty = (float)$this->input->post('accepted_qty');
 		$child_part_id = $this->input->post('child_part_id');
@@ -766,18 +634,10 @@ class SheetProdController extends ProductionController
 				$sharingQtyColName => $new_sharing_qty,
 			);
 			$result2 = $this->SupplierParts->updateStockById($data2, $child_part_id);
-			// echo "<script>alert('Updated Successfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-			$messages = "Updated Successfully";
-			$success  =1;
+			echo "<script>alert('Updated Successfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-			$messages = "Error While Updating";
-			// echo "<script>alert('Error While Updating ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			echo "<script>alert('Error While Updating ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
-		$result = [];
-		$result['messages'] = $messages;
-		$result['success'] = $success;
-		echo json_encode($result);
-		exit();
 	}
 
 
@@ -804,13 +664,11 @@ class SheetProdController extends ProductionController
 		$input_sharing_qty = (float)$child_part_data_new[0]->$sharingQtyColName;
 		$input_part_id_details = $this->SupplierParts->getSupplierPartById($output_part_id);
 		$weight = (float)$input_part_id_details[0]->weight;
-		$success = 0;
-        $messages = "Something went wrong.";
+		
 		if (($qty) <= $input_sharing_qty) {
 			$check = $this->Crud->read_data_where("sharing_bom", $data);
 			if (false && $check != 0) {
-				$messages = "Already Exists";
-				// echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
 
 				$data = array(
@@ -839,22 +697,14 @@ class SheetProdController extends ProductionController
 				$result2 = $this->SupplierParts->updateStockById($updateStockData, $input_part_id);
 
 				if ($result2) {
-					$messages = "Added Sucessfully";
-					$success = 1;
-					// echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+					echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 				} else {
-					$messages  = "Unable to Add";
-					// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+					echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 				}
 			}
 		} else {
-			$messages  =  "Sharing Stock Of " . $child_part_data_new[0]->part_number . " is " . $input_sharing_qty . ", and required qty is " . ($qty * $weight) . "";
+			echo "Sharing Stock Of " . $child_part_data_new[0]->part_number . " is " . $input_sharing_qty . ", and required qty is " . ($qty * $weight) . "";
 		}
-		$result = [];
-        $result['messages'] = $messages;
-        $result['success'] = $success;
-        echo json_encode($result);
-        exit();
 	}
 
 	public function details_production_qty_sharing()
@@ -911,8 +761,6 @@ class SheetProdController extends ProductionController
 		$input_part_id_details = $this->SupplierParts->getSupplierPartOnlyById($input_part_id);
 		$weight = (float)$input_part_id_details[0]->weight;
 		$sum = (float)$accepted_qty + $onhold_qty;
-		$success = 0;
-        $messages = "Something went wrong.";
 		if ($sum <= $qty) {
 			if ($accepted_qty == 0 && $onhold_qty == 0) {
 				$rejected_qty = $qty;
@@ -943,20 +791,13 @@ class SheetProdController extends ProductionController
 					$stockColName => $new_stock
 				);
 				$update = $this->SupplierParts->updateStockById($update_data_output_part_id, $output_part_id);
-				$messages = "Updated Successfully";
-				$success = 1;
-				// echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				$messages =  "error while updating";
+				echo "error while updating";
 			}
 		} else {
-			$messages =  "Qty Mismtach, Please try again";
+			echo "Qty Mismtach, Please try again";
 		}
-		$result = [];
-        $result['messages'] = $messages;
-        $result['success'] = $success;
-        echo json_encode($result);
-        exit();
 	}
 
 
@@ -978,8 +819,7 @@ class SheetProdController extends ProductionController
 
 		$weight = (float)$input_part_id_details[0]->weight;
 		$sum = (float)$accepted_qty + $onhold_qty;
-		$success = 0;
-        $messages = "Something went wrong.";
+		
 		if ($sum <= $qty) {
 			if ($accepted_qty == 0 && $onhold_qty == 0) {
 				$rejected_qty = $qty;
@@ -1012,20 +852,14 @@ class SheetProdController extends ProductionController
 				);
 
 				$update = $this->SupplierParts->updateStockById($update_data_output_part_id, $output_part_id);
-				$messages = "Updated Successfully";
-				$success = 1;
-				// echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+
+				echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				$messages =  "error while updating";
+				echo "error while updating";
 			}
 		} else {
-			$messages =  "mismtach qty, please try again";
+			echo "mismtach qty, please try again";
 			// echo "<script>alert('Qty Mis Matched please add again ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
-		$result = [];
-        $result['messages'] = $messages;
-        $result['success'] = $success;
-        echo json_encode($result);
-        exit();
 	}
 }

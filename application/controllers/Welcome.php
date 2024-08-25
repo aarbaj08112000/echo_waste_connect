@@ -89,7 +89,7 @@ class Welcome extends CommonController
         ];
         $column[] = [
             "data" => "expiry_po_date",
-            "title" => "Expiry Date",
+            "title" => "Expiry Date<",
             "width" => "17%",
             "className" => "dt-center",
 			'orderable' => false
@@ -1687,18 +1687,7 @@ class Welcome extends CommonController
         $data['status'] = $status;
         $data['actual_price'] = $actual_price;
         $data['isMultiClient'] = $this->session->userdata['isMultipleClientUnits'];
-        $is_accept_inwarding = "Yes";
-        foreach ($data['po_parts'] as $key => $p) {
-            if($p->grn_details_id > 0){
-                if(!($p->accept_qty > 0)){
-                    $is_accept_inwarding = "No";
-                }
-            }
-        }
-        // pr($is_accept_inwarding,1);
-        $data['is_accept_inwarding'] = $is_accept_inwarding;
 		// $this->load->view('header');
-        
 		$this->loadView('quality/inwarding_details_accept_reject', $data);
 		// $this->load->view('footer');
 	}
@@ -1727,18 +1716,19 @@ class Welcome extends CommonController
 				$uploadData = $this->upload->data();
 				$fila_name = $uploadData['file_name'];
 			} else {
-				$fila_name = $this->upload->display_errors();
-				
+				$fila_name = '';
+				echo "no 1";
 			}
 		} else {
 			$fila_name = '';
-			
+			echo "no 2";
 		}
 
 		$data = array(
 			"rm_batch_no" => $rm_batch_no,
 			"mtc_report" => $fila_name
 		);
+
 		$update_result = $this->Crud->update_data("grn_details", $data, $grn_details_id);
 
 		// if ($update_result) {
@@ -1803,6 +1793,7 @@ class Welcome extends CommonController
 		$this->load->view('header');
 		$this->load->view('customer_part_type', $data);
 		$this->load->view('footer');
+		
 	}
 
 	public function gst()
@@ -1972,15 +1963,17 @@ class Welcome extends CommonController
 	public function add_operations()
 	{
 		$customer_count = $this->Common_admin_model->get_data_by_id_count("operations", $this->input->post('name'), "name");
-
-
-
+		$ret_arr = [];
+		$msg = '';
+		$success = 1;
 		if ($customer_count > 0) {
-			echo "<script>alert('Operations  already Present!!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			// echo "<script>alert('Operations  already Present!!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$msg = 'Operations  already Present!!!!';
+			$success = 0;
 		} else {
-
+			
 			$data = array(
-				'name' => $this->input->post('name'),
+				'name' => $this->input->post('namess'),
 				'created_by' => $this->user_id,
 				'created_date' => $this->current_date,
 				'created_time' => $this->current_time,
@@ -1989,33 +1982,49 @@ class Welcome extends CommonController
 			$insert = $this->Common_admin_model->insert('operations', $data);
 
 			if ($insert) {
-				echo "<script>alert('operations Added  ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$msg = 'operations added successfully.';
+				// echo "<script>alert('operations Added  ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				echo "<script>alert('Error While operations  !!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$msg = 'Error While operations  !!!!';
+				$success = 0;
+				// echo "<script>alert('Error While operations  !!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
+
+		$ret_arr['msg'] = $msg;
+		$ret_arr['success'] = $success;
+		echo json_encode($ret_arr);
+
 	}
 
 	public function add_transporter()
 	{
 		$data = array(
-			'name' => $this->input->post('name'),
+			'name' => $this->input->post('namess'),
 			'transporter_id' => $this->input->post('transporter_id'),
 			'created_by' => $this->user_id,
 			'created_date' => $this->current_date,
 			'created_time' => $this->current_time
 		);
-
+		$ret_arr = [];
+		$msg = '';
+		$success = 1;
 		$insert = $this->Crud->insert_data('transporter', $data);
 
 		if ($insert) {
-			$this->addSuccessMessage('Transporter added successfully.');
+			// $this->addSuccessMessage('Transporter added successfully.');
+			$msg = 'Transporter added successfully.';
 		} else {
 			if ($this->checkNoDuplicateEntryError()) {
-				$this->addErrorMessage('Unable to add transporter details. Please try again.');
+				// $this->addErrorMessage('Unable to add transporter details. Please try again.');
+				$msg = 'Unable to add transporter details. Please try again.';
+				$success = 0;
 			}
 		}
-		$this->redirectMessage();
+		// $this->redirectMessage();
+		$ret_arr['msg'] = $msg;
+		$ret_arr['success'] = $success;
+		echo json_encode($ret_arr);
 	}
 
 
@@ -2128,11 +2137,13 @@ class Welcome extends CommonController
 	{
 		// $customer_count = $this->Common_admin_model->get_data_by_id_count("operations", $this->input->post('name'), "name");
 		$customer_count = 0;
-
-
-
+		$ret_arr = [];
+		$msg = '';
+		$success = 1;
 		if ($customer_count > 0) {
-			echo "<script>alert('Operations  already Present!!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			// echo "<script>alert('Operations  already Present!!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$msg = 'Operations  already Present!!!!';
+			$success = 0;
 		} else {
 
 			$data = array(
@@ -2151,11 +2162,17 @@ class Welcome extends CommonController
 			$insert = $this->Common_admin_model->insert('operation_data', $data);
 
 			if ($insert) {
-				echo "<script>alert('operations Added  ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				// echo "<script>alert('operations Added  ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$msg = 'operations added successfully.';
 			} else {
-				echo "<script>alert('Error While operations  !!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$msg = 'Error While operations  !!!!';
+				$success = 0;
+				// echo "<script>alert('Error While operations  !!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
+		$ret_arr['success'] = $success;
+		$ret_arr['msg'] = $msg;
+		echo json_encode($ret_arr);
 	}
 	public function operations()
 	{
@@ -2728,6 +2745,9 @@ class Welcome extends CommonController
 
 	public function update_gst()
 	{
+		$ret_arr = [];
+		$msg = '';
+		$success = 1;
 
 		$id = $this->input->post('id');
 
@@ -2754,11 +2774,16 @@ class Welcome extends CommonController
 		$query = $this->Common_admin_model->update("gst_structure", $data, "id", $id);
 
 		if ($query) {
-
-			echo "<script>alert(' Update Success !!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$msg = 'GST updated successully.';
+			//echo "<script>alert(' Update Success !!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-			echo "<script>alert('Error While  Updating , Please try Again');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$msg = 'Error While  Updating , Please try Again.';
+			$success = 0;
+			//echo "<script>alert('Error While  Updating , Please try Again');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
+		$ret_arr['msg'] = $msg;
+		$ret_arr['success'] = $success;
+		echo json_encode($ret_arr);	
 	}
 
 	public function update_gst_report()
@@ -4348,13 +4373,10 @@ class Welcome extends CommonController
 	public function update_rejection_flow_status()
 	{
 
-        
 		$rejection_flow_id  = $this->input->post('id');
 		$status  = $this->input->post('status');
 		$rejection_flow_data = $this->Crud->get_data_by_id("rejection_flow", $rejection_flow_id, "id");
 		$child_part_data = $this->SupplierParts->getSupplierPartById($rejection_flow_data[0]->part_id);
-        $success = 0;
-        $messages = "Something went wrong.";
 		if ($child_part_data) {
 			$qty = $rejection_flow_data[0]->qty;
 			$current_stock = $child_part_data[0]->stock;
@@ -4372,9 +4394,7 @@ class Welcome extends CommonController
 					);
 					$result3 = $this->Crud->update_data("rejection_flow", $data_update_rejection_flow, $rejection_flow_id);
 					if ($result3) {
-                        $messages = 'Stock changes Approved successfully.';
-                        $success = 1;
-						// $this->addSuccessMessage('Stock changes Approved successfully.');
+						$this->addSuccessMessage('Stock changes Approved successfully.');
 					}
 				}
 			} else {
@@ -4391,26 +4411,18 @@ class Welcome extends CommonController
 					);
 					$result3 = $this->Crud->update_data("rejection_flow", $data_update_rejection_flow, $rejection_flow_id);
 					if ($result3) {
-                        $messages = 'Stock Changed Rejected.';
-                        $success = 1;
-						// $this->addSuccessMessage('Stock Changed Rejected.');
+						$this->addSuccessMessage('Stock Changed Rejected.');
 					}
 				}
 			}
 		} else {
-            $messages = 'Item part  id : ' . $rejection_flow_data[0]->part_id . 'Not Found in child_part table Please try again';
-			 // $this->addErrorMessage('Item part  id : ' . $rejection_flow_data[0]->part_id . 'Not Found in child_part table Please try again');
+			 $this->addErrorMessage('Item part  id : ' . $rejection_flow_data[0]->part_id . 'Not Found in child_part table Please try again');
 		}
-		$result = [];
-        $result['messages'] = $messages;
-        $result['success'] = $success;
-        echo json_encode($result);
-        exit();
+		$this->redirectMessage();
 	}
 
 	public function update_production_qty()
 	{
-
 		$part_number  = $this->input->post('part_number');
 		$production_qty  = (int)$this->input->post('production_qty');
 		$child_part = $this->SupplierParts->getSupplierPartByPartNumber($part_number);
@@ -4420,8 +4432,7 @@ class Welcome extends CommonController
 		$data_update_child_part = array(
 			"stock" => $new_stock,
 		);
-        $success = 0;
-        $messages = "Something went wrong.";
+
 		$query = $this->SupplierParts->updateStockById($data_update_child_part, $child_part[0]->id);
 		$inhouse_parts_data = $this->InhouseParts->getInhousePartByPartNumber($part_number);
 		$old_stock_inhouse = (int)$inhouse_parts_data[0]->production_qty;
@@ -4431,19 +4442,10 @@ class Welcome extends CommonController
 		);
 		$query = $this->InhouseParts->updateStockById($data_update_child_part_inhouse, $inhouse_parts_data[0]->id);
 		if ($query) {
-            $success = 1;
-            $messages = "Updated Successfully";
-			// echo "<script>alert('Updated Successfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			echo "<script>alert('Updated Successfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-            $messages = "Error IN User  Adding ,try again";
-			// echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
+			echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
 		}
-
-        $result = [];
-        $result['messages'] = $messages;
-        $result['success'] = $success;
-        echo json_encode($result);
-        exit();
 	}
 
 
@@ -4758,7 +4760,10 @@ class Welcome extends CommonController
 	}
 	public function add_users_data()
 	{
-
+		
+		$ret_arr = [];
+		$msg ='';
+		$success = 1;
 		$data = array(
 			'user_name' => $this->input->post('user_name'),
 			'user_email' => $this->input->post('user_email'),
@@ -4767,19 +4772,23 @@ class Welcome extends CommonController
 		);
 
 		$inser_query = $this->Crud->insert_data("userinfo", $data);
-
 		if ($inser_query) {
-
-
-
 			if ($inser_query) {
-				echo "<script>alert('User  Added Successfully');document.location='erp_users'</script>";
+				// echo "<script>alert('User  Added Successfully');document.location='erp_users'</script>";
+				$msg = 'User  Added Successfully.';
 			} else {
-				echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
+				// echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
+				$msg = 'Error IN User  Adding ,try again.';
+				$success = 0;
 			}
 		} else {
-			echo "Error";
+			
+			$msg = 'Error occer while inserting data.';
+			$success = 0;
 		}
+		$ret_arr['msg'] = $msg;
+		$ret_arr['success'] = $success;
+		echo json_encode($ret_arr);
 	}
 
 
@@ -4787,7 +4796,6 @@ class Welcome extends CommonController
 
 	public function addRoutingParts()
 	{
-
 
 		$data = array(
 			'part_id' => $this->input->post('part_id'),
@@ -4806,32 +4814,21 @@ class Welcome extends CommonController
 		// print_r($data);
 		// echo "<br>";
 		// print_r($routing_data);
-        $success = 0;
-        $messages = "Something went wrong.";
 		if ($routing_data) {
-            $messages  ="already present";
-			// echo "<script>alert('already present');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			echo "<script>alert('already present');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 			$inser_query = $this->Crud->insert_data("routing", $data2);
 
 			if ($inser_query) {
 				if ($inser_query) {
-                    $success = 1;
-                    $messages = "successfully added";
-					// echo "<script>alert('successfully added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+					echo "<script>alert('successfully added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 				} else {
-                    $messages = "Error IN User  Adding ,try again";
-					// echo "<script>alert('Error IN User  Adding ,try again');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+					echo "<script>alert('Error IN User  Adding ,try again');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 				}
 			} else {
-				$messages =  "Error";
+				echo "Error";
 			}
 		}
-        $result = [];
-        $result['messages'] = $messages;
-        $result['success'] = $success;
-        echo json_encode($result);
-        exit();
 	}
 	public function addRoutingParts_subcon()
 	{
@@ -4977,8 +4974,7 @@ class Welcome extends CommonController
 		$onhold_qty = (int)$this->input->post('onhold_qty');
 		$scrap_factor = (int)$this->input->post('scrap_factor');
 
-        $success = 0;
-        $messages = "Something went wrong.";
+
 		if ($sum <= $qty) {
 
 			$operations_bom = $this->Crud->get_data_by_id("operations_bom", $p_q_main_data[0]->created_by, "id");
@@ -5070,9 +5066,7 @@ class Welcome extends CommonController
 						);
 						$new_production_rejection = $old_production_rejection + ((float)$output_part_data[0]->weight * (float)$rejected_qty);
 						$update = $this->InhouseParts->updateStockById($update_data, $output_part_data[0]->id);
-                        $messages = "Updated Successfully";
-                        $success = 1;
-						// echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+						echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 					} else {
 
 						$output_part_data = $this->Crud->get_data_by_id("customer_part", $output_part_id, "id");
@@ -5085,25 +5079,17 @@ class Welcome extends CommonController
 						);
 						$new_production_rejection = $old_production_rejection + ((float)$output_part_data[0]->weight * (float)$rejected_qty);
 						$update = $this->CustomerPart->updateStockById($update_data_2, $customer_parts_master_data[0]->part_id);
-                        $messages = "Updated Successfully";
-                        $success = 1;
-						// echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+						echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 					}
 				} else {
-					$messages = "error while updating";
+					echo "error while updating";
 				}
 			} else {
-				$messages =  "Operations BOM Not Found";
+				echo "Operations BOM Not Found";
 			}
 		} else {
-			$messages =  "mismatvhe";
+			echo "mismatvhe";
 		}
-
-        $result = [];
-        $result['messages'] = $messages;
-        $result['success'] = $success;
-        echo json_encode($result);
-        exit();
 	}
 	public function update_parts_rejection_sales_invoice()
 	{
@@ -5185,9 +5171,12 @@ class Welcome extends CommonController
 	{
 
 		$data = array(
-			'name' => $this->input->post('name'),
+			'name' => $this->input->post('namess'),
 		);
-
+		
+		$ret_arr = [];
+		$success = 1;
+		$msg = '';
 		$inser_query = $this->Crud->insert_data("process", $data);
 
 		if ($inser_query) {
@@ -5195,13 +5184,20 @@ class Welcome extends CommonController
 
 
 			if ($inser_query) {
-				echo "<script>alert('Process added');document.location='process'</script>";
+				// echo "<script>alert('Process added');document.location='process'</script>";
+				$msg = 'Process added successfully.';
 			} else {
-				echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
+				// echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
+				$msg = 'Error IN User  Adding ,try again.';
+				$success = 0;
 			}
 		} else {
-			echo "Error";
+			// echo "Error";
+			$msg = 'Error.';
 		}
+		$ret_arr['success'] = $success;
+		$ret_arr['msg'] = $msg;
+		echo json_encode($ret_arr);
 	}
 	public function add_customer_parts_master()
 	{
@@ -5248,23 +5244,28 @@ class Welcome extends CommonController
 	{
 
 		$data = array(
-			'name' => $this->input->post('name'),
+			'name' => $this->input->post('namess'),
 		);
-
+		$ret_arr = [];
+		$msg = '';
+		$success = 1;
 		$inser_query = $this->Crud->insert_data("downtime_master", $data);
-
 		if ($inser_query) {
-
-
-
 			if ($inser_query) {
-				echo "<script>alert('Added Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				// echo "<script>alert('Added Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$msg = 'Downtime added Successfully';
 			} else {
-				echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
+				// echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
+				$msg = 'Error IN User  Adding ,try again';
+				$success = 0;
 			}
 		} else {
-			echo "Error";
+			echo "Unable to add downtime";
+			$success = 0;
 		}
+		$ret_arr['msg'] = $msg;
+		$ret_arr['success'] = $success;
+		echo json_encode($ret_arr);
 	}
 
 
@@ -5287,6 +5288,10 @@ class Welcome extends CommonController
 	public function add_part_family()
 	{
 
+		$ret_arr = [];
+		$success = 1;
+		$msg = '';
+
 		$data = array(
 			'name' => $this->input->post('name'),
 		);
@@ -5295,16 +5300,21 @@ class Welcome extends CommonController
 
 		if ($inser_query) {
 
-
-
 			if ($inser_query) {
-				echo "<script>alert('Part Family added');document.location='part_family'</script>";
+				// echo "<script>alert('Part Family added');document.location='part_family'</script>";
+				$msg = 'Part Family added successfully.';
 			} else {
-				echo "<script>alert('Error While  Adding ,try again');document.location='erp_users'</script>";
+				// echo "<script>alert('Error While  Adding ,try again');document.location='erp_users'</script>";
+				$msg = 'Error While  Adding ,try again.';
+				$success = 0;
 			}
 		} else {
-			echo "Error";
+			$msg = 'Unable to add part family.';
+			$success = 0;
 		}
+		$ret_arr['msg'] = $msg;
+		$ret_arr['success'] = $success;
+		echo json_encode($ret_arr);
 	}
 	public function add_asset()
 	{
@@ -8020,14 +8030,21 @@ class Welcome extends CommonController
 			"part_rate" => $part_rate,
 
 		);
-
+		$sucess = 1;
+		$msg = '';
 		$result = $this->Crud->update_data("child_part_master", $data, $id);
 
 		if ($result) {
-			echo "<script>alert('Update Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$msg = 'Price Update successfully.';
 		} else {
-			echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$sucess = 0;
+			$msg = 'unable to upload';
 		}
+		$ret_arr = [];
+		$ret_arr['success'] = $sucess;
+		$ret_arr['msg'] = $msg;
+
+		echo json_encode($ret_arr);
 	}
 
 

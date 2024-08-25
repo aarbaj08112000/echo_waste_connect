@@ -120,12 +120,11 @@ class GRNController extends CommonController
 						// $this->addErrorMessage('Unable to add Invoice Number.');
 					}
 					// $this->redirectMessage();
-					
-				}
-				$return_arr['success']=$success;
+					$return_arr['success']=$success;
 					$return_arr['messages']=$messages;
 					echo json_encode($return_arr);
 					exit;
+				}
 
 
 			}
@@ -202,7 +201,6 @@ class GRNController extends CommonController
 			public function add_raw_material_inspection_report()
 			{
 
-
 				$data = array(
 					'raw_material_inspection_master_id' => $this->input->post('raw_material_inspection_master_id'),
 					'child_part_id' => $this->input->post('child_part_id'),
@@ -246,7 +244,6 @@ class GRNController extends CommonController
 			public function update_raw_material_inspection_master_new()
 			{
 
-				// pr("ok",1);
 				$id = $this->input->post("id");
 				$data = array(
 					'observation' => $this->input->post('observation'),
@@ -545,8 +542,6 @@ class GRNController extends CommonController
 
 			public function update_status_grn_inwarding()
 			{
-				$success = 0;
-        		$messages = "Something went wrong.";
 				$inwarding_id = $this->input->post('inwarding_id');
 				$status = $this->input->post('status');
 
@@ -557,12 +552,9 @@ class GRNController extends CommonController
 				$result = $this->Crud->update_data("inwarding", $data, $inwarding_id);
 
 				if ($result) {
-					$success = 1;
-					$messages = "Successfully updated.";
-					// echo "<script>alert('Successfully updated.');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+					echo "<script>alert('Successfully updated.');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 				} else {
-					$messages = "Unable to Add";
-					// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+					echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 				}
 				// if ($result) {
 				// 	$success = 1;
@@ -574,10 +566,10 @@ class GRNController extends CommonController
 				// 	// $this->addErrorMessage('Unable to add Invoice Number.');
 				// }
 				// // $this->redirectMessage();
-				$return_arr['success']=$success;
-				$return_arr['messages']=$messages;
-				echo json_encode($return_arr);
-				exit;
+				// $return_arr['success']=$success;
+				// $return_arr['messages']=$messages;
+				// echo json_encode($return_arr);
+				// exit;
 			}
 
 		}

@@ -1,23 +1,21 @@
-<div class="container-xxl flex-grow-1 container-p-y">
+<div class="wrapper">
 <div class="content-wrapper">
-   
-   <nav aria-label="breadcrumb">
-      <div class="sub-header-left pull-left breadcrumb">
-        <h1>
-          Quality
-          <a hijacked="yes" href="javascript:void(0)" class="backlisting-link" title="Back to Issue Request Listing">
-            <i class="ti ti-chevrons-right"></i>
-            <em>Production Details</em></a>
-          </h1>
-          <br>
-          <span>Production Details</span>
-        </div>
-      </nav>
-      <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
-         <a class="btn  btn-seconday"
-            href="<%base_url('final_inspection_qa') %>" title="Back To Final Inspection Production Qty ">
-         <i class="ti ti-arrow-left" ></i></a>
+   <section class="content-header">
+      <div class="container-fluid">
+         <div class="row mb-2">
+            <div class="col-sm-6">
+               <h1>Production Details</h1>
+            </div>
+            <div class="col-sm-6">
+               <ol class="breadcrumb float-sm-right">
+                  <li class="breadcrumb-item"><a href="<%base_url('dashboard') %>">Home</a></li>
+                  <li class="breadcrumb-item active">Production</li>
+               </ol>
+            </div>
+         </div>
       </div>
+      <!-- /.container-fluid -->
+   </section>
    <section class="content">
       <div>
          <div class="row">
@@ -26,40 +24,41 @@
                <div class="card">
                   <div class="card-header">
                      <div class="row">
-                        <div class="tgdp-rgt-tp-sect">
-                           <p class="tgdp-rgt-tp-ttl">Status</p>
-                           <p class="tgdp-rgt-tp-txt"><%$p_q_data[0]->status %></p>
+                        <div class="col-lg-2">
+                           <label for="">status</label>
+                           <input type="text" readonly value="<%$p_q_data[0]->status %>"
+                              class="form-control">
                         </div>
-                        <div class="tgdp-rgt-tp-sect">
-                           <p class="tgdp-rgt-tp-ttl">Accepted Qty</p>
-                           <p class="tgdp-rgt-tp-txt"><%$p_q_data[0]->accepted_qty %></p>
+                        <div class="col-lg-2">
+                           <label for="">Accepted Qty</label>
+                           <input type="text" readonly value="<%$p_q_data[0]->accepted_qty %>"
+                              class="form-control">
                         </div>
-                        <div class="tgdp-rgt-tp-sect">
-                           <p class="tgdp-rgt-tp-ttl">Rejection Qty</p>
-                           <p class="tgdp-rgt-tp-txt"><%$p_q_data[0]->rejected_qty %></p>
+                        <div class="col-lg-2">
+                           <label for="">Rejection Qty</label>
+                           <input type="text" readonly value="<%$p_q_data[0]->rejected_qty %>"
+                              class="form-control">
                         </div>
-
                         <%if (!empty($p_q_data[0]->rejected_qty)) %>
-                           <div class="tgdp-rgt-tp-sect">
-                              <p class="tgdp-rgt-tp-ttl">Rejection Remark</p>
-                              <p class="tgdp-rgt-tp-txt"><%$p_q_data[0]->rejection_remark %></p>
-                           </div>
-                           <div class="tgdp-rgt-tp-sect">
-                              <p class="tgdp-rgt-tp-ttl">Rejection Reason</p>
-                              <p class="tgdp-rgt-tp-txt"><%$p_q_data[0]->rejection_reason %></p>
-                           </div>
+	                        <div class="col-lg-3">
+	                           <label for="">Rejection Remark</label>
+	                           <input type="text" readonly
+	                              value="<%$p_q_data[0]->rejection_remark %>" class="form-control">
+	                        </div>
+	                        <div class="col-lg-3">
+	                           <label for="">Rejection Reason</label>
+	                           <input type="text" readonly
+	                              value="<%$p_q_data[0]->rejection_reason %>" class="form-control">
+	                        </div>
 	                    <%/if%>
                      </div>
                   </div>
-               </div>
-               <div class="card p-0 mt-4">
-                 
                   <!-- /.card-header -->
-                  <div class="table-container">
-                     <table id="example1" class="table scrollable table-striped">
+                  <div class="card-body">
+                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
                            <tr>
-                              <!-- <th>Sr No</th> -->
+                              <th>Sr No</th>
                               <th>Input Part Number / Description</th>
                               <th>Total Req Qty</th>
                               <th>Date & Time</th>
@@ -70,7 +69,7 @@
                                 <%assign var='i' value=1 %>
                                 <%foreach from=$p_q_history item=u %>
 		                           <tr>
-		                              <!-- <td><%$u->input_part_number %></td> -->
+		                              <td><%$u->input_part_number %></td>
 		                              <td><%$u->output_part_data[0]->part_number %> /
 		                                 <%$u->output_part_data[0]->part_description %>
 		                              </td>
