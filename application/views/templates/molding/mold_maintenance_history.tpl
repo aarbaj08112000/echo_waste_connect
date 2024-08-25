@@ -1,77 +1,73 @@
-<div style="" class="wrapper container-xxl flex-grow-1 container-p-y">
+<div style="" class="wrapper">
     <div class="content-wrapper">
-        
-        <nav aria-label="breadcrumb">
-      <div class="sub-header-left pull-left breadcrumb">
-        <h1>
-          Reports
-          <a hijacked="yes" href="#stock/issue_request/index" class="backlisting-link" title="Back to Issue Request Listing">
-            <i class="ti ti-chevrons-right"></i>
-            <em>Mold Life Report</em></a>
-        </h1>
-        <br>
-        <span>Mold History</span>
-      </div>
-    </nav>
-    <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5 listing-btn">
-            <a title="Back To Mold Life Report" class="btn btn-seconday" href="<%base_url('mold_maintenance_report')%>" type="button"><i class="ti ti-arrow-left"></i></a>
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <a style="marign-right:" class="btn btn-danger" href="<%base_url('mold_maintenance_report')%>">< Back</a>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home </a></li>
+                            <li class="breadcrumb-item active"></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        </div>
         <section class="content">
-        <div class="">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
                             
                             <div class="row">
-                                <div class="tgdp-rgt-tp-sect">
-                                    <p class="tgdp-rgt-tp-ttl">Customer Part</p>
-                                    <p class="tgdp-rgt-tp-txt" title="<%$customer_part_data[0]->part_number%><%$customer_part_data[0]->part_description%>">
-                                    <%$customer_part_data[0]->part_number%><%$customer_part_data[0]->part_description%>
-                                    </p>
+                                <div class="col-lg-2">
+                                    <div class="form-group">
+                                        <label for="">Customer Part<span class="text-danger">*</span> </label>
+                                        <input type="text" readonly value="<%$customer_part_data[0]->part_number%><%$customer_part_data[0]->part_description%>" class="form-control">
+                                    </div>
                                 </div>
-                                <div class="tgdp-rgt-tp-sect">
-                                    <p class="tgdp-rgt-tp-ttl">Customer Name</p>
-                                    <p class="tgdp-rgt-tp-txt" title="<%$customer_data[0]->customer_name%>">
-                                    <%$customer_data[0]->customer_name%>
-                                    </p>
+                                <div class="col-lg-2">
+                                    <div class="form-group">
+                                        <label for="">Customer Name<span class="text-danger">*</span> </label>
+                                        <input type="text" readonly value="<%$customer_data[0]->customer_name%>" class="form-control">
+                                    </div>
                                 </div>
-                                <div class="tgdp-rgt-tp-sect">
-                                    <p class="tgdp-rgt-tp-ttl">Mold Name</p>
-                                    <p class="tgdp-rgt-tp-txt" title="<%$mld_data[0]->mold_name%>">
-                                    <%$mld_data[0]->mold_name%>
-                                    </p>
+                                <div class="col-lg-2">
+                                    <div class="form-group">
+                                        <label for="">Mold Name <span class="text-danger">*</span> </label>
+                                        <input type="text" readonly value="<%$mld_data[0]->mold_name%>" class="form-control">
+                                    </div>
                                 </div>
-                                <div class="tgdp-rgt-tp-sect">
-                                    <p class="tgdp-rgt-tp-ttl">Cavities</p>
-                                    <p class="tgdp-rgt-tp-txt" title="<%$mld_data[0]->no_of_cavity%>">
-                                    <%$mld_data[0]->no_of_cavity%>
-                                    </p>
+
+                                <div class="col-lg-2">
+                                    <div class="form-group">
+                                        <label for="">Cavities <span class="text-danger">*</span> </label>
+                                        <input type="text" readonly value="<%$mld_data[0]->no_of_cavity%>" class="form-control">
+                                    </div>
                                 </div>
-                                <div class="tgdp-rgt-tp-sect">
-                                    <p class="tgdp-rgt-tp-ttl">Life Over Frequency</p>
-                                    <p class="tgdp-rgt-tp-txt" title="<%$mld_data[0]->target_life%>">
-                                    <%$mld_data[0]->target_life%>
-                                    </p>
+                                <div class="col-lg-2">
+                                    <div class="form-group">
+                                        <label for="">Life Over Frequency<span class="text-danger">*</span> </label>
+                                        <input type="text" readonly value="<%$mld_data[0]->target_life%>" class="form-control">
+                                    </div>
                                 </div>
-                                <div class="tgdp-rgt-tp-sect">
-                                    <p class="tgdp-rgt-tp-ttl">Total Molding Prod QTY</p>
-                                    <p class="tgdp-rgt-tp-txt" title="<%$mld_data[0]->target_over_life%>">
-                                    <%$mld_data[0]->target_over_life%>
-                                    </p>
+                                <div class="col-lg-2">
+                                    <div class="form-group">
+                                        <label for="">Total Molding Prod QTY <span class="text-danger">*</span> </label>
+                                        <input type="text" readonly value="<%$mld_data[0]->target_over_life%>" class="form-control">
+                                    </div>
                                 </div>
-                               
-                               
-                                
                             </div>
 
                         </div>
 
-                    </div>
-                    <div class="card p-0 mt-4">
-                        <div class="">
-                            <table class="table scrollable table-striped" id="example1">
+
+                        <div class="card-body">
+                            <table class="table table-bordered table-striped" id="example1">
                                 <thead>
                                     <tr>
                                         <th>Sr No</th>
@@ -101,7 +97,7 @@
                                                     <td><%$p->pm_date%></td>
                                                     <td>
                                                         <%if !empty($p->doc)%>
-                                                            <a title="Download" class="" download href="<%base_url('documents/')%><%$p->doc%>"><i class="ti ti-download" aria-hidden="true"></i> </a>
+                                                            <a title="Download" class="btn btn-xs btn-success" download href="<%base_url('documents/')%><%$p->doc%>"><i class="fas fa-download" aria-hidden="true"></i> </a>
                                                         <%/if%>
                                                     </td>
                                                 </tr>

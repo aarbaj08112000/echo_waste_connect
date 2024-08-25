@@ -14,6 +14,7 @@ class MasterController extends CommonController {
 		$this->load->view('header');
 		$this->load->view('users', $data);
 		$this->load->view('footer');
+		
 	}
 	
 	public function client()
@@ -91,6 +92,9 @@ class MasterController extends CommonController {
 	
 	public function updateClient()
 	{
+		$ret_arr = [];
+		$msg = '';
+		$success = 1;
 		$clientUnit = $this->input->post('uclientUnit');
 		$clientName = $this->input->post('uclientName');
 		$contactPerson = $this->input->post('ucontactPerson');
@@ -127,14 +131,20 @@ class MasterController extends CommonController {
 				"date" => $this->current_date,
 				"time" => $this->current_time,
 			);
-
+			// pr($_POST,1);
 			$result = $this->Crud->update_data("client", $data, $id);
 			if ($result) {
-				$this->addSuccessMessage('Client updated');
+				// $this->addSuccessMessage('Client updated');
+				$msg = 'Client updated successfully.';
 			} else {
-				$this->addErrorMessage('Failed to update or similar data exists.');
+				// $this->addErrorMessage('Failed to update or similar data exists.');
+				$msg = 'Failed to update or similar data exists.';
+				$success = 0;
 			}
-			$this->redirectToParent();
+			// $this->redirectToParent();
+			$ret_arr['msg'] = $msg;
+			$ret_arr['success'] = $success;
+			echo json_encode($ret_arr);
 	}
 
 	public function update_session_unit() {
@@ -161,7 +171,9 @@ class MasterController extends CommonController {
 	{
 		$name = $this->input->post('uomName');
 		$description = $this->input->post('uomDescription');
-
+		$ret_arr = [];
+		$msg = '';
+		$success = 1;
 		$data = array(
 			"uom_name" => $name
 		);
@@ -180,12 +192,19 @@ class MasterController extends CommonController {
 
 			$result = $this->UomModel->createUOM($data);
 			if ($result>0) {
-				$this->addSuccessMessage('UOM created');
+				// $this->addSuccessMessage('UOM created');
+				$msg = 'UOM added successfully.';
 			} else {
-				$this->addErrorMessage('Failed to create UOM');
+				// $this->addErrorMessage('Failed to create UOM');
+				$msg = 'Failed to create UOM.';
+				$success = 0;
 			}
-			$this->redirectToParent();
+			// $this->redirectToParent();
 		}
+		$ret_arr['msg'] = $msg;
+		$ret_arr['success'] = $success;
+		echo json_encode($ret_arr);
+		
 	}
 	
 	public function updateuom()
@@ -193,6 +212,9 @@ class MasterController extends CommonController {
 		$id = $this->input->post('id');
 		$name = $this->input->post('uuomName');
 		$description = $this->input->post('uomDescription');
+		$ret_arr = [];
+		$msg = '';
+		$success = 1;
 
 		$data = array(
 			"uom_name" => $name,
@@ -200,16 +222,25 @@ class MasterController extends CommonController {
 		);
 		
 		if ($this->UomModel->isRecordExists($data)) {
-			$this->addErrorMessage('UOM already exists');
-			$this->redirectToParent();
+			// $this->addErrorMessage('UOM already exists');
+			// $this->redirectToParent();
+			$msg = 'UOM already exists';
+			$success = 0;
 		} else {
 			if ($this->UomModel->updateUOM($data, $id)) {
-				$this->addSuccessMessage('UOM Updated');
+				// $this->addSuccessMessage('UOM Updated');
+				$msg = 'UOM Updated';
+				
 			} else {
 				$this->addErrorMessage('Failed to update UOM');
+				$msg = 'Failed to update UOM';
+				$success = 0;
 			}
-			$this->redirectToParent();
+			// $this->redirectToParent();
 		}
+		$ret_arr['msg'] = $msg;
+		$ret_arr['success'] = $success;
+		echo json_encode($ret_arr);
 	}
 	
 	

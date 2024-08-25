@@ -23,115 +23,22 @@ class FGStockController extends CommonController
 	public function fg_stock()
 	{
 		$part_id = $this->input->post("part_id");
+		$data['customer_parts'] = $this->CustomerPart->readCustomerParts();
+		if($part_id == '' && count($data['customer_parts']) > 0){
+			$part_id = $data['customer_parts'][0]->id;
+
+		}
+		$data['part_id'] = $part_id;
+		if ($part_id) {
+			$data['customer_parts_master'] = $this->CustomerPart->getCustomerPartById($part_id);
+		} else {
+			$data['customer_parts_master'] = "";
+		}
 		$data['inhouse_parts'] = $this->InhouseParts->getUniquePartNumber();
 		$data['customer_parts'] = $this->CustomerPart->readCustomerParts();
-		/* datatable */
-        $column[] = [
-            "data" => "part_number",
-            "title" => "Part Number",
-            "width" => "15%",
-            "className" => "dt-left",
-        ];
-        $column[] = [
-            "data" => "part_description",
-            "title" => "Part Description",
-            "width" => "15%",
-            "className" => "dt-left",
-        ];
-        $column[] = [
-            "data" => "fg_stock",
-            "title" => "Stock",
-            "width" => "10%",
-            "className" => "dt-center",
-        ];
-        $column[] = [
-            "data" => "molding_production_qty",
-            "title" => "Molding Production Qty",
-            "width" => "10%",
-            "className" => "dt-center",
-        ];
-        $column[] = [
-            "data" => "production_rejection",
-            "title" => "Production Rejection",
-            "width" => "10%",
-            "className" => "dt-center",
-        ];
-        $column[] = [
-            "data" => "production_scrap",
-            "title" => "Production Scrap",
-            "width" => "10%",
-            "className" => "dt-center",
-        ];
-        $column[] = [
-            "data" => "final_inspection_location",
-            "title" => "Final Inspection Location",
-            "width" => "10%",
-            "className" => "dt-center",
-        ];
-        $column[] = [
-            "data" => "transfer_to_inhouse_part",
-            "title" => "Transfer To Inhouse Part",
-            "width" => "7%",
-            "className" => "dt-center status-row",
-        ];
-        
-        $data["data"] = $column;
-        $data["is_searching_enable"] = true;
-        $data["is_paging_enable"] = true;
-        $data["is_serverSide"] = true;
-        $data["is_ordering"] = true;
-        $data["is_heading_color"] = "#a18f72";
-        $data["no_data_message"] =
-            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
-            base_url() .
-            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Employee data found..!</div>';
-        $data["is_top_searching_enable"] = true;
-        $data["sorting_column"] = json_encode([]);
-        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
-        $data["admin_url"] = base_url();
-        $data["base_url"] = base_url();
-        // $ajax_json['teacher_data'] = $this->session->userdata();
-        // pr($ajax_json['designation'],1);
-		$this->getPage('store/fw_stock', $data,"Yes","Yes");
 
 		$this->loadView('store/fw_stock', $data);
 
-	}
-	public function get_fg_stock_view()
-	{
-		$post_data = $this->input->post();
-        $column_index = array_column($post_data["columns"], "data");
-        $order_by = "";
-        // pr($post_data,1);
-        foreach ($post_data["order"] as $key => $val) {
-            if ($key == 0) {
-                $order_by .= $column_index[$val["column"]] . " " . $val["dir"];
-            } else {
-                $order_by .=
-                    "," . $column_index[$val["column"]] . " " . $val["dir"];
-            }
-        }
-        $condition_arr["order_by"] = $order_by;
-        $condition_arr["start"] = $post_data["start"];
-        $condition_arr["length"] = $post_data["length"];
-        $base_url = $this->config->item("base_url");
-		$data = $this->CustomerPart->get_fg_stock_view(
-            $condition_arr,
-            $post_data["search"]
-        );
-		// pr($data,1);
-		foreach ($data as $key => $value) {
-			$data[$key]['transfer_to_inhouse_part'] = "<button type='button' class='btn btn-primary fg-transfer'  data-stock='".$value['fg_stock']."' data-customer-part-id='".$value['customer_parts_master_id']."' data-part-number='".$value['part_number']."'>
-                    Transfer To Inhouse
-                  </button>";
-		}
-		$data["data"] = $data;
-        $total_record = $this->CustomerPart->get_fg_stock_view_count([], $post_data["search"]);
-        $data["recordsTotal"] = $total_record['total_record'];
-        $data["recordsFiltered"] = $total_record['total_record'];
-        echo json_encode($data);
-        exit();
-		
 	}
 
 	public function transfer_fg_stock_to_inhouse_stock()
@@ -190,28 +97,38 @@ class FGStockController extends CommonController
 		if (!empty($part_id_selected)) {
 			$data['child_part'] = $this->CustomerPart->getCustomerPartById($part_id_selected);
 		} else {
-			$data['child_part'] = "";
+			$data['child_part'] = $this->CustomerPart->getCustomerPartdata();
 		}
 
 		$data['enableStockUpdate'] = $this->isEnableStockUpdate();
+		
 		$this->loadView('admin/customer_parts_admin', $data);
 	}
 
 	public function update_customer_parts_master_fg_stock() {
 		$id = $this->input->post('id');
 		$stock = $this->input->post('stock');
-
-		$data = array(
+		
+		$data = array(	
 			"fg_stock" => $stock
 		);
 
+		$ret_arr = [];
+		$msg = '';
+		$success = 1;
 		$result = $this->CustomerPart->updateStockById($data, $id);
 		if ($result) {
-			$this->addSuccessMessage('Stock updated successfully.');
+			// $this->addSuccessMessage('Stock updated successfully.');
+			$msg = 'Stock updated successfully.';
 		} else {
-			$this->addErrorMessage('Unable to update stock. Please try again.');
+			// $this->addErrorMessage('Unable to update stock. Please try again.');
+			$msg = 'Unable to update stock. Please try again.';
+			$success = 0;
 		}
-		$this->customer_parts_admin($id);
+		// $this->customer_parts_admin($id);
+		$ret_arr['success'] = $success;
+		$ret_arr['msg'] = $msg;
+		echo json_encode($ret_arr);
 	}
 
 }

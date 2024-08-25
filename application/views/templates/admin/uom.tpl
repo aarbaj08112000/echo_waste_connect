@@ -102,8 +102,8 @@
       <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
         <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
         <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
-        <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
-        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+      <%*  <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
+        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button> *%>
         <button type="button" class="btn btn-seconday float-left" data-bs-toggle="modal" data-bs-target="#exampleModal" title="Add UOM">
          <i class="ti ti-plus"></i></button>
       </div>
@@ -117,8 +117,8 @@
 
                   </button>
                </div>
+               <form action="<%base_url('adduom') %>" method="POST" id="add_uom">
                <div class="modal-body">
-                  <form action="<%base_url('adduom') %>" method="POST">
                      <div class="row">
                         <div class="col-lg-12">
                            <div class="form-group">
@@ -167,42 +167,8 @@
                         <td><%$t->uom_name %></td>
                         <td><%$t->uom_description %></td>
                         <td>
-                           <button type="submit" data-bs-toggle="modal" class="btn no-btn btn-primary" data-bs-target="#exampleModal2<%$i %>"> <i class="ti ti-edit"></i></button>
-                           <div class="modal fade" id="exampleModal2<%$i %>" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                              <div class="modal-dialog  modal-dialog-centered" role="document">
-                                 <div class="modal-content">
-                                    <div class="modal-header">
-                                       <h5 class="modal-title" id="exampleModalLabel">Update UOM</h5>
-                                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                           <button type="submit" data-bs-toggle="modal" class="btn no-btn btn-primary edit-part" data-value="<%base64_encode(json_encode($t))%>" data-bs-target="#exampleModal2"> <i class="ti ti-edit"></i></button>
 
-                                       </button>
-                                    </div>
-                                    <div class="modal-body">
-                                       <form action="<%base_url('updateuom') %>" method="POST">
-                                          <div class="row">
-                                             <div class="col-lg-12">
-                                                <div class="form-group">
-                                                   <label for="customer_name">UOM Name</label><span class="text-danger">*</span>
-                                                   <input value="<%$t->uom_name %>" type="text" name="uuomName" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Customer Name">
-                                                   <input value="<%$t->id %>" type="hidden" name="id" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Customer Name">
-                                                </div>
-                                             </div>
-                                             <div class="col-lg-12">
-                                                <div class="form-group">
-                                                   <label for="contractorName">UOM Description</label><span class="text-danger">*</span>
-                                                   <textarea name="uomDescription" value="<%$t->uom_description %>" required class="form-control" placeholder="UOM Description"><%$t->uom_description %></textarea>
-                                                </div>
-                                             </div>
-                                          </div>
-                                          <div class="modal-footer">
-                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                             <button type="submit" class="btn btn-primary">Save changes</button>
-                                          </div>
-                                       </form>
-                                    </div>
-                                 </div>
-                              </div>
-                           </div>
                            <div class="modal fade" id="exampleModal3<%$i %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                               <div class="modal-dialog modal-dialog-centered" role="document">
                                  <div class="modal-content">
@@ -239,6 +205,42 @@
       </div>
       <!-- /.col -->
 
+
+      <div class="modal fade" id="exampleModal2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog  modal-dialog-centered" role="document">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h5 class="modal-title" id="exampleModalLabel">Update UOM</h5>
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+
+               </button>
+            </div>
+            <div class="modal-body">
+               <form action="<%base_url('updateuom')%>" method="POST" id="update_uom">
+                  <div class="row">
+                     <div class="col-lg-12">
+                        <div class="form-group">
+                           <label for="customer_name">UOM Name</label><span class="text-danger">*</span>
+                           <input value="<%$t->uom_name %>" type="text" name="uuomName" required class="form-control" id="uom_name" aria-describedby="emailHelp" placeholder="UOM Name">
+                           <input value="<%$t->id %>" type="hidden" name="id" required class="form-control" id="id" aria-describedby="emailHelp" placeholder="Customer Name">
+                        </div>
+                     </div>
+                     <div class="col-lg-12">
+                        <div class="form-group">
+                           <label for="contractorName">UOM Description</label><span class="text-danger">*</span>
+                           <textarea name="uomDescription" value="<%$t->uom_description %>" id="uom_description" required class="form-control" placeholder="UOM Description"><%$t->uom_description %></textarea>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                     <button type="submit" class="btn btn-primary">Save changes</button>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+   </div>
 
       <div class="content-backdrop fade"></div>
     </div>

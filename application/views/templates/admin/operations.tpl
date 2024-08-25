@@ -102,8 +102,8 @@
       <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
         <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
         <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
-        <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
-        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+       <%* <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
+        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button> *%>
         <button type="button" class="btn btn-seconday" data-bs-toggle="modal" data-bs-target="#addPromo" title="Add Operations">
           <i class="ti ti-plus"></i>
         </button>
@@ -119,11 +119,11 @@
 
                   </button>
                </div>
+               <form action="<%base_url('add_operations') %>" method="POST" enctype="multipart/form-data" id="add_opration">
                <div class="modal-body">
-                  <form action="<%base_url('add_operations') %>" method="POST" enctype="multipart/form-data">
                      <div class="form-group">
                         <label for="on click url">Operation Number <span class="text-danger">*</span></label> <br>
-                        <input required type="text" name="name" placeholder="Enter Operation Number" class="form-control" value="" id="">
+                        <input required type="text" name="namess" placeholder="Enter Operation Number" class="form-control" value="" id="">
                      </div>
                </div>
                <div class="modal-footer">
@@ -157,35 +157,11 @@
                     <td><%$u->name %></td>
                     <td>
                        <!-- Button trigger modal -->
-                       <button type="button" class="btn no-btn btn-primary" data-bs-toggle="modal" data-bs-target="#edit<%$i %>">
+                       <button type="button" class="btn no-btn btn-primary" data-bs-toggle="modal" data-bs-target="#edit" data-value='<%base64_encode(json_encode($u))%>'>
                        <i class="ti ti-edit"></i>
                        </button>
                        <!-- edit Modal -->
-                       <div class="modal fade" id="edit<%$i %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                          <div class="modal-dialog modal-dialog-centered" role="document">
-                             <div class="modal-content">
-                                <div class="modal-header">
-                                   <h5 class="modal-title" id="exampleModalLabel">Update</h5>
-                                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-
-                                   </button>
-                                </div>
-                                <div class="modal-body">
-                                   <form action="<%base_url('update_operations') %>" method="POST" enctype="multipart/form-data">
-                                      <div class="form-group">
-                                         <label for="">Operation Number <span class="text-danger">*</span></label>
-                                         <input required value="<%$u->name %>" type="text" class="form-control" name="name">
-                                         <input required value="<%$u->id %>" type="hidden" class="form-control" name="id">
-                                      </div>
-                                </div>
-                                <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Save changes</button>
-                                </form>
-                                </div>
-                             </div>
-                          </div>
-                       </div>
+                      
                        <!-- edit Modal -->
                        <!-- delete Modal -->
                        <div class="modal fade" id="delete<%$i %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -222,6 +198,32 @@
         <!--/ Responsive Table -->
       </div>
       <!-- /.col -->
+
+      <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h5 class="modal-title" id="exampleModalLabel">Update</h5>
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+
+               </button>
+            </div>
+            <div class="modal-body">
+               <form action="<%base_url('update_operations') %>" method="POST" enctype="multipart/form-data" id="update_operation">
+                  <div class="form-group">
+                     <label for="">Operation Number <span class="text-danger">*</span></label>
+                     <input required value="<%$u->name %>" type="text" class="form-control" name="namess">
+                     <input required value="<%$u->id %>" type="hidden" class="form-control" name="id">
+                  </div>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+            </form>
+            </div>
+         </div>
+      </div>
+   </div>
 
 
       <div class="content-backdrop fade"></div>

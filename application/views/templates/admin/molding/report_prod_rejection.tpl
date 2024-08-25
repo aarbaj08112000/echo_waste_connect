@@ -36,7 +36,7 @@
          <div class="row">
             <div class="col-12">
                <!-- /.card -->
-               <div class="card p-0 ">
+               <div class="card">
                   <div class="card-header">
                      <div class="row">
                         <div class="col-lg-6">
@@ -53,13 +53,13 @@
                         </div>
                      </div>
                      <span class="text-info"> Display more details</span>
-                     <i id="showIcon" class="ti ti-eye fs-4" style="cursor: pointer; display: none;"></i>
-                     <i id="hideIcon" class="ti ti-eye-off fs-4" style="cursor: pointer; display: inline;"></i>
+                     <i id="showIcon" class="fas fa-eye" style="cursor: pointer; display: none;"></i>
+                     <i id="hideIcon" class="fas fa-eye-slash" style="cursor: pointer; display: inline;"></i>
                      <div id="dataAnalysis" style="display: none;">
                         <div class="row">
-                           <div class="col-lg-4 mt-3">
-                              <div class="table-bordered-box" style="text-wrap:nowrap;">
-                                 <table id="exa" class="table  border-primary table-striped me-4" >
+                           <div class="col-lg-3">
+                              <div class="card-body" style="text-wrap:nowrap;">
+                                 <table id="exa" class="table table-bordered table-striped">
                                     <thead>
                                        <tr>
                                           <th>Top Rejection Reason</th>
@@ -81,9 +81,9 @@
                                  </table>
                               </div>
                            </div>
-                           <div class="col-lg-7 mt-3">
-                              <div class=" table-bordered-box mt-3" style="text-wrap:nowrap;">
-                                 <table id="exa" class="table  table-striped">
+                           <div class="col-lg-3">
+                              <div class="card-body" style="text-wrap:nowrap;">
+                                 <table id="exa" class="table table-bordered table-striped">
                                     <thead>
                                        <tr>
                                           <th>Machine Name</th>
@@ -110,17 +110,12 @@
                         </div>
                      </div>
                   </div>
-                </div>
-                <div class="card p-0 mt-4">
-                  <div class="">
-                
-
-                  <div class="">
+                  <div class="card-body">
                   <div class="table-responsive text-nowrap">
-                     <table id="example1" class="table  table-striped">
+                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
                            <tr>
-                              <!-- <th>Sr. No.</th> -->
+                              <th>Sr. No.</th>
                               <th>Rejection Reason</th>
                               <th>Rejection QTY</th>
                               <th>Customer</th>
@@ -135,7 +130,7 @@
                             <%if ($report_prod_rejection) %>
                                 <%foreach from=$report_prod_rejection item=r %>
 		                           <tr>
-		                              <!-- <td><%$i %></td> -->
+		                              <td><%$i %></td>
 		                              <td><%$r->rejection_reason %></td>
 		                              <td><%$r->rejection_qty %></td>
 		                              <td><%$r->customer_name %></td>
@@ -164,12 +159,6 @@
    <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
-<style >
-  .table-bordered-box {
-    margin: .25rem !important;
-    border: 1px solid var(--bs-theme-color);
-  }
-</style>
 <script>
 var file_name = "report_prod_rejection";
 var pdf_title = "Rejection Report";
@@ -185,23 +174,20 @@ var pdf_title = "Rejection Report";
        document.getElementById("hideIcon").style.display = "none";
    });
    // datatable initilization.
-  
- 
-      table =  new DataTable('#example1',{
-        dom: 'Bfrtilp',
-        scrollX: false, 
-        buttons: [
-                {     
+   new DataTable('#example1',{
+      dom: 'Bfrtip',
+      buttons: [
+              {     
                     extend: 'csv',
-                        text: '<i class="ti ti-file-type-csv"></i>',
-                        init: function(api, node, config) {
-                        $(node).attr('title', 'Download CSV');
-                        },
-                        customize: function (csv) {
+                      text: '<i class="ti ti-file-type-csv"></i>',
+                      init: function(api, node, config) {
+                      $(node).attr('title', 'Download CSV');
+                      },
+                      customize: function (csv) {
                             var lines = csv.split('\n');
                             var modifiedLines = lines.map(function(line) {
                                 var values = line.split(',');
-                                values.splice(8, 1);
+                                values.splice(13, 1);
                                 return values.join(',');
                             });
                             return modifiedLines.join('\n');
@@ -209,7 +195,7 @@ var pdf_title = "Rejection Report";
                         filename : file_name
                     },
                 
-                    {
+                  {
                     extend: 'pdf',
                     text: '<i class="ti ti-file-type-pdf"></i>',
                     init: function(api, node, config) {
@@ -217,25 +203,36 @@ var pdf_title = "Rejection Report";
                         
                     },
                     filename: file_name,
-                    
-                    
+                   
+                    customize: function (doc) {
+                      doc.pageMargins = [15, 15, 15, 15];
+                      doc.content[0].text = pdf_title;
+                      doc.content[0].color = theme_color;
+                        // doc.content[1].table.widths = ['15%', '19%', '13%', '13%','15%', '15%', '10%'];
+                        doc.content[1].table.body[0].forEach(function(cell) {
+                            cell.fillColor = theme_color;
+                        });
+                        doc.content[1].table.body.forEach(function(row, rowIndex) {
+                            row.forEach(function(cell, cellIndex) {
+                                var alignmentClass = $('#example1 tbody tr:eq(' + rowIndex + ') td:eq(' + cellIndex + ')').attr('class');
+                                var alignment = '';
+                                if (alignmentClass && alignmentClass.includes('dt-left')) {
+                                    alignment = 'left';
+                                } else if (alignmentClass && alignmentClass.includes('dt-center')) {
+                                    alignment = 'center';
+                                } else if (alignmentClass && alignmentClass.includes('dt-right')) {
+                                    alignment = 'right';
+                                } else {
+                                    alignment = 'left';
+                                }
+                                cell.alignment = alignment;
+                            });
+                            row.splice(14, 1);
+                        });
+                    }
                 },
             ],
-            searching: true,
-    // scrollX: true,
-    scrollY: true,
-    bScrollCollapse: true,
-    pagingType: "full_numbers",
-    });
-      $('.dataTables_length').find('label').contents().filter(function() {
-            return this.nodeType === 3; // Filter out text nodes
-        }).remove();
-        setTimeout(function(){
-          $(".dataTables_length select").select2({
-              minimumResultsForSearch: Infinity
-          });
-        },1000)
-    
+   });
 </script>
 </body>
 </html>

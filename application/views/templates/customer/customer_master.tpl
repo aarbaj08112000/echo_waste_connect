@@ -151,7 +151,7 @@
                                 <table id="example1" class="table  table-striped">
                                     <thead>
                                         <tr>
-                                            <!-- <th>Sr. No.</th> -->   
+                                            <th>Sr. No.</th>
                                             <th>Name</th>
                                             <th>Code</th>
                                             <th>Part</th>
@@ -171,7 +171,7 @@
                                         <%if $customers%>
                                             <%foreach $customers as $t%>
                                                 <tr>
-                                                    <!-- <td><%$i%></td> -->
+                                                    <td><%$i%></td>
                                                     <td><%$t->customer_name%></td>
                                                     <td><%$t->customer_code%></td>
                                                     <td>

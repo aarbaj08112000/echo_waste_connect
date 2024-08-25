@@ -102,8 +102,8 @@
       <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
         <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
         <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
-        <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
-        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+       <%* <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
+        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button> *%>
         <button type="button" class="btn btn-seconday float-left" data-bs-toggle="modal" data-bs-target="#exampleModal" title="Add Code">
          <i class="ti ti-plus"></i></button>
       </div>
@@ -117,8 +117,8 @@
 
                   </button>
                </div>
+               <form action="<%base_url('add_gst') %>" method="POST" id="add_gst">
                <div class="modal-body">
-                  <form action="<%base_url('add_gst') %>" method="POST">
                      <div class="row">
                         <div class="col-lg-6">
                            <div class="form-group">
@@ -215,74 +215,11 @@
                         <td><%$t->with_in_state %></td>
                         <td>
                            <!-- Button trigger modal -->
-                           <button type="button" class="btn no-btn btn-primary" data-bs-toggle="modal" data-bs-target="#edit<%$i %>">
+                           <button type="button" class="btn no-btn btn-primary edit-part" data-bs-toggle="modal" data-bs-target="#edit" data-value="<%base64_encode(json_encode($t))%>">
                            <i class="ti ti-edit"></i>
                            </button>
                            <!-- edit Modal -->
-                           <div class="modal fade" id="edit<%$i %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                              <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                                 <div class="modal-content">
-                                    <div class="modal-header">
-                                       <h5 class="modal-title" id="exampleModalLabel">Update</h5>
-                                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
 
-                                       </button>
-                                    </div>
-                                    <div class="modal-body">
-                                       <div class="row">
-                                          <div class="col-lg-6">
-                                             <form action="<%base_url('update_gst') %>" method="POST" enctype="multipart/form-data">
-                                                <div class="form-group">
-                                                   <label for="contractorName">Enter SGST </label><span class="text-danger">*</span>
-                                                   <input type="number" step="any" value="<%$t->sgst %>" min="0" max="100" name="sgst" required class="form-control" placeholder="Enter S-GST Value">
-                                                </div>
-                                          </div>
-                                          <div class="col-lg-6">
-                                          <div class="form-group">
-                                          <label for="contractorName">Enter CGST </label><span class="text-danger">*</span>
-                                          <input type="number" step="any" value="<%$t->cgst %>" min="0" max="100" name="cgst" required class="form-control" placeholder="Enter C-GST Value">
-                                          </div>
-                                          </div>
-                                          <div class="col-lg-6">
-                                          <div class="form-group">
-                                          <label for="contractorName">Enter IGST </label><span class="text-danger">*</span>
-                                          <input type="number" step="any" min="0" value="<%$t->igst %>" max="100" name="igst" required class="form-control" placeholder="Enter I-GST Value">
-                                          </div>
-                                          </div>
-                                          <div class="col-lg-6">
-                                          <div class="form-group">
-                                          <label for="contractorName">Enter TCS </label><span class="text-danger">*</span>
-                                          <input type="number" step="any" min="0" value="<%$t->tcs %>" max="100" name="tcs" required class="form-control" placeholder="Enter TCS Value">
-                                          <input type="hidden" value="<%$t->id %>" max="100" name="id" required class="form-control" placeholder="Enter TCS Value">
-                                          </div>
-                                          </div>
-                                          <div class="col-lg-6">
-                                          <div class="form-group">
-                                          <label for="contractorName">TCS On GST</label><span class="text-danger">*</span>
-                                          <select name="tcs_on_tax" id="" class="form-control">
-                                          <option value="yes" <%if ($t->tcs == "yes") %>selected<%/if%>>yes</option>
-                                          <option value="no" <%if ($t->tcs == "no") %>selected<%/if%>>no</option>
-                                          <option value="no" <%if ($t->tcs == "NA") %>selected<%/if%>>NA</option>
-                                          </select>
-                                          </div>
-                                          </div>
-                                          <div class="form-group">
-                                          <label>With in State </label><span class="text-danger">*</span>
-                                          <select class="form-control select2" name="with_in_state" style="width: 100%;">
-                                          <option <%if ( $t->with_in_state == "yes") %>selected<%/if%> value="yes">Yes</option>
-                                          <option <%if ( $t->with_in_state == "no") %>selected<%/if%> value="no">No</option>
-                                          </select>
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Save changes</button>
-                                    </form>
-                                    </div>
-                                 </div>
-                              </div>
-                           </div>
                            <!-- edit Modal -->
                            <!-- delete Modal -->
                            <div class="modal fade" id="delete<%$i %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -320,6 +257,71 @@
         <!--/ Responsive Table -->
       </div>
       <!-- /.col -->
+
+      <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h5 class="modal-title" id="exampleModalLabel">Update</h5>
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+
+               </button>
+            </div>
+            <form action="<%base_url('update_gst') %>" method="POST" enctype="multipart/form-data" id="updateGstForm">
+            <div class="modal-body">
+               <div class="row">
+                  <div class="col-lg-6">
+                        <div class="form-group">
+                           <label for="contractorName">Enter SGST </label><span class="text-danger">*</span>
+                           <input type="number" step="any" value="<%$t->sgst %>" min="0" max="100" name="sgst" required class="form-control" placeholder="Enter S-GST Value">
+                        </div>
+                  </div>
+                  <div class="col-lg-6">
+                  <div class="form-group">
+                  <label for="contractorName">Enter CGST </label><span class="text-danger">*</span>
+                  <input type="number" step="any" value="<%$t->cgst %>" min="0" max="100" name="cgst" required class="form-control" placeholder="Enter C-GST Value">
+                  </div>
+                  </div>
+                  <div class="col-lg-6">
+                  <div class="form-group">
+                  <label for="contractorName">Enter IGST </label><span class="text-danger">*</span>
+                  <input type="number" step="any" min="0" value="<%$t->igst %>" max="100" name="igst" required class="form-control" placeholder="Enter I-GST Value">
+                  </div>
+                  </div>
+                  <div class="col-lg-6">
+                  <div class="form-group">
+                  <label for="contractorName">Enter TCS </label><span class="text-danger">*</span>
+                  <input type="number" step="any" min="0" value="<%$t->tcs %>" max="100" name="tcs" required class="form-control" placeholder="Enter TCS Value">
+                  <input type="hidden" value="<%$t->id %>" max="100" name="id" required class="form-control" placeholder="Enter TCS Value">
+                  </div>
+                  </div>
+                  <div class="col-lg-6">
+                  <div class="form-group">
+                  <label for="contractorName">TCS On GST</label><span class="text-danger">*</span>
+                  <select name="tcs_on_tax" id="" class="form-control">
+                  <option value="yes" <%if ($t->tcs == "yes") %>selected<%/if%>>yes</option>
+                  <option value="no" <%if ($t->tcs == "no") %>selected<%/if%>>no</option>
+                  <option value="no" <%if ($t->tcs == "NA") %>selected<%/if%>>NA</option>
+                  </select>
+                  </div>
+                  </div>
+                  <div class="form-group">
+                  <label>With in State </label><span class="text-danger">*</span>
+                  <select class="form-control select2" name="with_in_state" style="width: 100%;">
+                  <option <%if ( $t->with_in_state == "yes") %>selected<%/if%> value="yes">Yes</option>
+                  <option <%if ( $t->with_in_state == "no") %>selected<%/if%> value="no">No</option>
+                  </select>
+                  </div>
+               </div>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+            </form>
+            </div>
+         </div>
+      </div>
+   </div>
 
 
       <div class="content-backdrop fade"></div>

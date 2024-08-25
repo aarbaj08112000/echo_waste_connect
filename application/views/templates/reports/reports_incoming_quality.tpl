@@ -97,9 +97,9 @@
                            
 
                             <!-- /.card-header -->
-                            <div class="">
+                            <div class="card-body">
                             <div class="table-responsive text-nowrap">
-                                <table id="income_report" class="table  table-striped">
+                                <table id="income_report" class="table table-bordered table-striped">
                                     <thead>
 
                                         <tr>

@@ -84,6 +84,9 @@ class GlobalConfigController extends CommonController
 	{
 		$upload_error = 0;
         $upload_data = [];
+		$ret_arr = [];
+		$msg = '';
+		$success = 1;
         $id = $this->input->post('configID');
 		$label =$this->input->post('display_label');
 		$value = $this->input->post('config_value');
@@ -136,12 +139,18 @@ class GlobalConfigController extends CommonController
 
 		$result = $this->Crud->update_data_column("global_configuration", $data, $id, "id");
 		if ($result) {
-			$this->addSuccessMessage('Configuration updated successfully.');
+			// $this->addSuccessMessage('Configuration updated successfully.');
+			$msg = 'Configuration updated successfully.';
 		} else {
-			$this->addErrorMessage('Unable to update configuration. Please try again.');
+			// $this->addErrorMessage('Unable to update configuration. Please try again.');
+			$msg = 'Unable to update configuration. Please try again.';
+			$success = 0;
 		}
 		$data['isAromAdmin'] = $this->isAromAdmin;
-		$this->redirectMessage();
+		$ret_arr['msg'] = $msg;
+		$ret_arr['success'] = $success;
+		// $this->redirectMessage();
+		echo json_encode($ret_arr);
 	}
 	
 

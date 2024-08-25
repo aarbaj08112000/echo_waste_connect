@@ -42,7 +42,7 @@ const datatable = {
                             var lines = csv.split('\n');
                             var modifiedLines = lines.map(function(line) {
                                 var values = line.split(',');
-                                values.splice(2, 1);
+                                values.splice(1, 1);
                                 values.splice(9, 1);
                                 values.splice(8, 1);
                                 values.splice(7, 1);
@@ -71,7 +71,7 @@ const datatable = {
       // scrollX: true,
       scrollY: true,
       bScrollCollapse: true,
-      columnDefs: [{ sortable: false, targets: 3 },{ sortable: false, targets: 4 },{ sortable: false, targets: 5 },{ sortable: false, targets: 6},{ sortable: false, targets: 7 },{ sortable: false, targets: 2}],
+      columnDefs: [{ sortable: false, targets: 3 },{ sortable: false, targets: 4 },{ sortable: false, targets: 5 },{ sortable: false, targets: 6},{ sortable: false, targets: 7 },{ sortable: false, targets: 8 }],
       pagingType: "full_numbers",
     });
       $('.dataTables_length').find('label').contents().filter(function() {

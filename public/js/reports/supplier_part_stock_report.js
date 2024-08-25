@@ -122,77 +122,15 @@ const page = {
                 type: "POST",
             },
         });
-        
-         $('.dataTables_length').find('label').contents().filter(function() {
+        $('.dataTables_length').find('label').contents().filter(function() {
             return this.nodeType === 3; // Filter out text nodes
         }).remove();
-        table.on('init.dt', function() {
-            $(".dataTables_length select").select2({
-                minimumResultsForSearch: Infinity
-            });
+        $(".dataTables_length select").select2({
+            minimumResultsForSearch: Infinity
         });
     },
     formValidation: function(){
-        $('#transfer_child_store_to_store_stock').on('submit', function(event) {
-               event.preventDefault(); // Prevent the form from submitting via the browser
-               var form = $(this);
-               var formData = form.serialize();
-                let flag = that.formValidate("transfer_child_store_to_store_stock");
-                if(flag){
-                    return;
-                }
-
-                console.log(flag);
-               $.ajax({
-                   type: 'POST',
-                   url: form.attr('action'),
-                   data: formData,
-                   success: function(response) {
-                       var responseObject = JSON.parse(response);
-                        var msg = responseObject.message;
-                        var success = responseObject.success;
-                        if (success == 1) {
-                            toastr.success(msg);
-                            setTimeout(function(){
-                                window.location.reload();
-                            },1000);
-
-                        } else {
-                            toastr.error(msg);
-                        }
-                   },
-                   error: function(xhr, status, error) {
-                       // Handle error
-                       toastr.success('unable to delete part.')
-                   }
-               });
-            
-        });
-    },
-    formValidate: function(form_class = ''){
-        let flag = false;
-        $(".custom-form#"+form_class+" .required-input").each(function( index ) {
-          var value = $(this).val();
-          if(value == ''){
-            flag = true;
-            var label = $(this).parents(".form-group").find("label").contents().filter(function() {
-                return this.nodeType === 3; // Filter out non-text nodes (nodeType 3 is Text node)
-            }).text().trim();
-            var exit_ele = $(this).parents(".form-group").find("label.error");
-            if(exit_ele.length == 0){
-                var start ="Please enter ";
-                if($(this).prop("localName") == "select"){
-                    var start ="Please select ";
-                }
-                label = ((label.toLowerCase()).replace("enter", "")).replace("select", "");
-                var validation_message = start+(label.toLowerCase()).replace(/[^\w\s*]/gi, '');
-                var label_html = "<label class='error'>"+validation_message+"</label>";
-                $(this).parents(".form-group").append(label_html)
-            }
-            
-          }
-        });
-        return flag;
+        let that = this;
     },
     filter: function(){
         let that = this;

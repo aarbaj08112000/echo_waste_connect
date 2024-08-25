@@ -23,59 +23,18 @@
               </li>
               <li class="sidebar-item">
                 <div class="input-group">
-                  <select name="child_part_id" class="form-control select2" id="part_number_search">
-                    <option value="">Select Part Number</option>
-                    <%foreach from=$supplier_part_list item=parts%>
-                    <option value="<%$parts->id%>"><%$parts->part_number %></option>
-                    <%/foreach%>
-                  </select>
+                <select name="part_id_selected" class="form-control select2" id="part_id_selected">
+                <%foreach from=$child_parts_list_distinct item=c %>
+                <option <%if ($part_id_selected === $c->id) %>selected <%/if%>
+                  value="<%$c->part_number %>">
+                  <%$c->part_number %>/<%$c->part_description %>
+                </option>
+                <%/foreach%>
+              </select>
                 </div>
               </li>
             </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Part Description</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="part_description_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
+
 
           </ul>
         </div>
@@ -112,31 +71,7 @@
       <!-- Main content -->
       <div class="card p-0 mt-4">
         <div class="p-3">
-          <form action="<%base_url('customer_parts_admin') %>" method="POST"
-            enctype="multipart/form-data">
-            <div class="row">
-              <div class="col-lg-4">
-                <div style="width: 400px;">
-                  <div class="form-group">
-                    <label for="on click url">Select Part Number <span
-                      class="text-danger">*</span></label> <br>
-                      <select name="part_id_selected" class="form-control select2" id="">
-                        <%foreach from=$child_parts_list_distinct item=c %>
-                        <option <%if ($part_id_selected === $c->id) %>selected <%/if%>
-                          value="<%$c->id %>">
-                          <%$c->part_number %>/<%$c->part_description %>
-                        </option>
-                        <%/foreach%>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-4">
-                  <label for="">&nbsp;</label> <br>
-                  <button class="btn btn-secondary">Search </button>
-                </div>
-              </div>
-            </form>
+        
           </div>
           <div class="table-responsive text-nowrap">
             <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="customer_parts_admin">
@@ -162,79 +97,9 @@
                   <td><%$po->fg_stock %></td>
                   <%if ($enableStockUpdate =="true") %>
                   <td>
-                    <button type="submit" data-bs-toggle="modal" class="btn no-btn btn-primary"
-                    data-bs-target="#exampleModal2<%$i %>"> <i class="ti ti-edit"></i></button>
-                    <div class="modal fade" id="exampleModal2<%$i %>" role="dialog"
-                      aria-labelledby="exampleModalLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Update
-                            </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Close">
-
-                          </button>
-                        </div>
-                        <div class="modal-body">
-                          <form
-                          action="<%base_url('update_customer_parts_master_fg_stock') %>"
-                          method="POST">
-                          <div class="row">
-                            <div class="col-lg-12">
-                              <div class="form-group">
-                                <label for="part_number">Part
-                                  Number</label><span
-                                  class="text-danger">*</span>
-                                  <input readonly type="text"
-                                  value="<%$po->part_number %>"
-                                  name="part_number" required
-                                  class="form-control"
-                                  id="exampleInputEmail1"
-                                  aria-describedby="emailHelp"
-                                  placeholder="Part Number">
-                                  <input type="hidden" name="id"
-                                  value="<%$po->id %>">
-                                </div>
-                                <div class="form-group">
-                                  <label for="Client_name">Part
-                                    Description</label><span
-                                    class="text-danger">*</span>
-                                    <input type="text"
-                                    value="<%$po->part_description  %>"
-                                    name="part_description" required
-                                    class="form-control"
-                                    id="exampleInputEmail1"
-                                    aria-describedby="emailHelp"
-                                    placeholder="Part Description">
-                                  </div>
-                                  <div class="form-group">
-                                    <label
-                                    for="safty_buffer_stk">Stock</label><span
-                                    class="text-danger">*</span>
-                                    <input type="number"
-                                    step="any"
-                                    value="<%$po->fg_stock  %>"
-                                    name="stock" required
-                                    class="form-control"
-                                    id="exampleInputEmail1"
-                                    aria-describedby="emailHelp"
-                                    placeholder="Part Specification">
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary"
-                                data-bs-dismiss="modal">Close</button>
-                                <button type="submit"
-                                class="btn btn-primary">Save
-                                changes</button>
-                              </div>
-                            </form>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <button type="submit" data-bs-toggle="modal" class="btn no-btn btn-primary update_edit"
+                    data-bs-target="#exampleModal2" data-value = "<%base64_encode(json_encode($po))%>"> <i class="ti ti-edit"></i></button>
+                    
                   </td>
                   <%/if%>
                 </tr>
@@ -252,6 +117,60 @@
 
       <div class="content-backdrop fade"></div>
     </div>
+
+    <div class="modal fade" id="exampleModal2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Update</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="<%base_url('update_customer_parts_master_fg_stock')%>" method="POST" class="customer_part_update">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label for="part_number">Part Number</label>
+                                <span class="text-danger">*</span>
+                                <input type="text" value="<%$po->part_number %>" name="part_number" id="part_number" class="form-control" placeholder="Part Number">
+                                <input type="hidden" name="id" value="<%$po->id %>" id='part_id'>
+                            </div>
+                            <div class="form-group">
+                                <label for="part_description">Part Description</label>
+                                <span class="text-danger">*</span>
+                                <input type="text" value="<%$po->part_description %>" name="part_description" class="form-control" placeholder="Part Description" id='part_desc'>
+                            </div>
+                            <div class="form-group">
+                                <label for="stock">Stock</label>
+                                <span class="text-danger">*</span>
+                                <input type="text" step="any" value="<%$po->fg_stock %>" name="stock" class="form-control onlyNumericInput" placeholder="Part Specification" id="fg_stock">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+          <button type="button" class="btn-close" data-bs-dismiss="modal"
+          aria-label="Close">
+
+        </button>
+      </div>
+     
+    </div>
+  </div>
+  </div>
+
+
+
+
+  </div>
 
 
     <script type="text/javascript">

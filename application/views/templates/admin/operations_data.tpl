@@ -102,8 +102,8 @@
       <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
         <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
         <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
-        <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
-        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+      <%*  <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
+        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button> *%>
         <button type="button" class="btn btn-seconday" data-bs-toggle="modal" data-bs-target="#addPromo" title="Add Operation Data">
          <i class="ti ti-plus"></i>
         </button>
@@ -111,7 +111,7 @@
       </div>
 
       <div class="modal fade" id="addPromo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-         <div class="modal-dialog modal-dialog-centered" role="document">
+         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                <div class="modal-header">
                   <h5 class="modal-title" id="exampleModalLabel">Add</h5>
@@ -120,30 +120,32 @@
                   </button>
                </div>
                <div class="modal-body">
-                  <form action="<%base_url('add_operations_data') %>" method="POST" enctype="multipart/form-data">
-                     <div class="form-group">
+                  <form action="<%base_url('add_operations_data') %>" method="POST" enctype="multipart/form-data" id="add_operations_data">
+                  <div class="row">
+                     <div class="form-group col-6">
                         <label for="on click url">Product <span class="text-danger">*</span></label> <br>
-                        <input required type="text" name="product" placeholder="Enter Oproduct" class="form-control" value="" id="">
+                        <input  type="text" name="product" placeholder="Enter Oproduct" class="form-control" value="" id="">
                      </div>
-                     <div class="form-group">
+                     <div class="form-group col-6">
                         <label for="on click url">Process <span class="text-danger">*</span></label> <br>
-                        <input required type="text" name="process" placeholder="Enter Process" class="form-control" value="" id="">
+                        <input  type="text" name="process" placeholder="Enter Process" class="form-control" value="" id="">
                      </div>
-                     <div class="form-group">
+                     <div class="form-group col-6">
                         <label for="on click url">Specification Tolerance <span class="text-danger">*</span></label> <br>
-                        <input required type="text" name="specification_tolerance" placeholder="Enter" class="form-control" value="" id="">
+                        <input  type="text" name="specification_tolerance" placeholder="Enter" class="form-control" value="" id="">
                      </div>
-                     <div class="form-group">
+                     <div class="form-group col-6">
                         <label for="on click url">Evalution <span class="text-danger">*</span></label> <br>
-                        <input required type="text" name="evalution" placeholder="Enter" class="form-control" value="" id="">
+                        <input  type="text" name="evalution" placeholder="Enter" class="form-control" value="" id="">
                      </div>
-                     <div class="form-group">
+                     <div class="form-group col-6">
                         <label for="on click url">Size <span class="text-danger">*</span></label> <br>
-                        <input required type="text" name="size" placeholder="Enter" class="form-control" value="" id="">
+                        <input  type="text" name="size" placeholder="Enter" class="form-control" value="" id="">
                      </div>
-                     <div class="form-group">
+                     <div class="form-group col-6">
                         <label for="on click url">Frequency <span class="text-danger">*</span></label> <br>
-                        <input required type="text" name="frequency" placeholder="Enter" class="form-control" value="" id="">
+                        <input  type="text" name="frequency" placeholder="Enter" class="form-control" value="" id="">
+                     </div>
                      </div>
                </div>
                <div class="modal-footer">

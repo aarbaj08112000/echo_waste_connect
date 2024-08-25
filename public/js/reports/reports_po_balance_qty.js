@@ -123,6 +123,10 @@ const page = {
             info: true,
             autoWidth: true,
             lengthChange: true,
+            fixedColumns: {
+                leftColumns: 2,
+                // end: 1
+            },
             ajax: {
                 data: {'search':data},    
                 url: "Welcome/reportPoBalanceData",
@@ -132,10 +136,8 @@ const page = {
         $('.dataTables_length').find('label').contents().filter(function() {
             return this.nodeType === 3; // Filter out text nodes
         }).remove();
-        table.on('init.dt', function() {
-            $(".dataTables_length select").select2({
-                minimumResultsForSearch: Infinity
-            });
+        $(".dataTables_length select").select2({
+            minimumResultsForSearch: Infinity
         });
     },
     formValidation: function(){

@@ -107,19 +107,6 @@
                               <%$status %>
                               </p>
                           </div>
-                          <div class="col-lg-12">
-                          <%if ($inwarding_data[0]->status == "validate_grn") %>
-                      <button type="button" disabled class="btn btn-success mt-4"
-                      data-bs-toggle="modal">
-                      GRN Already Validated</button>
-                      <%else %>
-                      <%if ($j === $i) %>
-                      <button type="button" class="btn btn-primary mt-4" data-bs-toggle="modal"
-                      data-bs-target="#exampleModalgenerate">
-                      Validate GRN </button>
-                      <%/if%>
-                      <%/if%>
-                       </div>
                       
                      
 
@@ -231,7 +218,7 @@
                         <div class="modal-body">
                           <form
                           action="<%base_url('update_status_grn_inwarding') %>"
-                          method="POST" id="update_status_grn_inwarding">
+                          method="POST">
                           <div class="row">
                             <div class="col-lg-12">
                               <div class="form-group">
@@ -438,11 +425,14 @@
               </td>
               <td>
                 <%if ($rejection_flow_data) %>
-                <a class=""
-                href="<%base_url('create_debit_note/') %><%$rejection_flow_data[0]->id %>" title="Download Debit Note"><i class="ti ti-book-download"></i></a>
-                <a class=""
-                href="<%base_url('documents/') %><%$rejection_flow_data[0]->debit_note %>" title="Download Uploaded Ack"
-                download> <i class="ti ti-file-download"></i></a>
+                <a class="btn btn-success"
+                href="<%base_url('create_debit_note/') %><%$rejection_flow_data[0]->id %>">Download
+                Debit Note</a>
+                <br>
+                <br>
+                <a class="btn btn-danger"
+                href="<%base_url('documents/') %><%$rejection_flow_data[0]->debit_note %>"
+                download>Download Uploaded Ack </a>
                 <%else %>
                 <%if ($grn_details_data) %>
                 <%if ($grn_details_data[0]->qty != $grn_details_data[0]->verified_qty) %>
@@ -562,7 +552,25 @@
                   <%/if%>
                   <%/foreach%>
                   <%/if%>
-                
+                </tbody>
+                <!-- <tfoot>
+                  <tr>
+                    <td colspan="10"></td>
+                    <td>
+                      <%if ($inwarding_data[0]->status == "validate_grn") %>
+                      <button type="button" disabled class="btn btn-primary mt-4"
+                      data-bs-toggle="modal">
+                      GRN Already Validated</button>
+                      <%else %>
+                      <%if ($j === $i) %>
+                      <button type="button" class="btn btn-primary mt-4" data-bs-toggle="modal"
+                      data-bs-target="#exampleModalgenerate">
+                      Validate GRN </button>
+                      <%/if%>
+                      <%/if%>
+                    </td>
+                  </tr>
+                </tfoot> --->
               </table>
         </div>
 

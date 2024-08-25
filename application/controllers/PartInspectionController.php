@@ -30,7 +30,7 @@ class PartInspectionController extends CommonController
         $data['customer_part_id'] = $customer_part_id;
         $data['customer_part']  = $this->Crud->get_data_by_id("customer_part", $customer_part_id, "id");
         $data['cust_part_inspection_master'] = $this->Crud->customQuery("SELECT * from cust_part_inspection_master where customer_partKy = " . $customer_part_id);
-        $this->loadView('sales/view_inspection_parm_details', $data);
+        $this->getPage('view_inspection_parm_details', $data);
     }
 
     public function add_inspection_parm_details()
@@ -63,24 +63,15 @@ class PartInspectionController extends CommonController
             "is_inprocess_inspection" => $is_inprocess_inspection === "on" ? true : false
 
         );
-        $success = 0;
-        $messages = "Something went wrong.";
         $insert = $this->Crud->insert_data("cust_part_inspection_master", $data);
         if ($insert) {
-            $messages = "Inspection Parameters added successfully.";
-            $success = 1;
-            // $this->addSuccessMessage('Inspection Parameters added successfully.');
+            $this->addSuccessMessage('Inspection Parameters added successfully.');
         } else {
             if ($this->checkNoDuplicateEntryError()) {
-                $messages = "Unable to add Inspection Parameters. Please try again.";
-                // $this->addErrorMessage('Unable to add Inspection Parameters. Please try again.');
+                $this->addErrorMessage('Unable to add Inspection Parameters. Please try again.');
             }
         }
-        $result = [];
-        $result['messages'] = $messages;
-        $result['success'] = $success;
-        echo json_encode($result);
-        exit();
+        $this->redirectMessage();
     }
 
 
@@ -115,24 +106,16 @@ class PartInspectionController extends CommonController
             "is_inprocess_inspection" => $is_inprocess_inspection === "on" ? true : false
 
         );
-        $success = 0;
-        $messages = "Something went wrong.";
+
         $update = $this->Crud->update_data("cust_part_inspection_master", $data, $id);
         if ($update) {
-            $messages = "Inspection Parameters updated successfully.";
-            $success = 1;
-            // $this->addSuccessMessage('Inspection Parameters updated successfully.');
+            $this->addSuccessMessage('Inspection Parameters updated successfully.');
         } else {
             if ($this->checkNoDuplicateEntryError()) {
-                $messages = "Unable to update Inspection Parameters. Please try again.";
-                // $this->addErrorMessage('Unable to update Inspection Parameters. Please try again.');
+                $this->addErrorMessage('Unable to update Inspection Parameters. Please try again.');
             }
         }
-        $result = [];
-        $result['messages'] = $messages;
-        $result['success'] = $success;
-        echo json_encode($result);
-        exit();
+        $this->redirectMessage();
     }
 
     public function view_PDI_inspection_report()

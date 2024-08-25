@@ -1,6 +1,6 @@
 var table = '';
-var file_name = "part_under_inspection_report";
-var pdf_title = "Parts Under Inspection Reports";
+var file_name = "reports_inspection";
+var pdf_title = "Report Inspection";
 // var myModal = new bootstrap.Modal(document.getElementById('child_part_update'))
 const page = {
     init: function(){
