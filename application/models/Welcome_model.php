@@ -603,50 +603,7 @@ class Welcome_model extends CI_Model
                     $search_params["part_description"]
                 );
             }
-            // if ($search_params["employee_name"] != "") {
-            //     $this->db->or_like(
-            //         "em.first_name",
-            //         $search_params["employee_name"]
-            //     );
-            //     $this->db->or_like(
-            //         "em.last_name",
-            //         $search_params["employee_name"]
-            //     );
-            // }
-            // if ($search_params["employee_code"] != "") {
-            //     $this->db->like(
-            //         "em.employee_code",
-            //         $search_params["employee_code"]
-            //     );
-            // }
-            // if ($search_params["join_date"] != "") {
-            //     $this->db->where(
-            //         "em.employment_date >=",
-            //         mysqlFormat($search_params["join_date_from"])
-            //     );
-            //     $this->db->where(
-            //         "em.employment_date <=",
-            //         mysqlFormat($search_params["join_date_to"])
-            //     );
-            // }
-            // if ($search_params["email"] != "") {
-            //     $this->db->like(
-            //         "em.email",
-            //         $search_params["email"]
-            //     );
-            // }
-            // if ($search_params["department"] != "") {
-            //     $this->db->where(
-            //         "d.department_id",
-            //         $search_params["department"]
-            //     );
-            // }
-            // if ($search_params["designation"] != "") {
-            //     $this->db->where(
-            //         "de.id",
-            //         $search_params["designation"]
-            //     );
-            // }
+            
         }
 
         $result_obj = $this->db->get();
@@ -678,50 +635,7 @@ class Welcome_model extends CI_Model
                     $search_params["part_description"]
                 );
             }
-            // if ($search_params["employee_name"] != "") {
-            //     $this->db->or_like(
-            //         "em.first_name",
-            //         $search_params["employee_name"]
-            //     );
-            //     $this->db->or_like(
-            //         "em.last_name",
-            //         $search_params["employee_name"]
-            //     );
-            // }
-            // if ($search_params["employee_code"] != "") {
-            //     $this->db->like(
-            //         "em.employee_code",
-            //         $search_params["employee_code"]
-            //     );
-            // }
-            // if ($search_params["join_date"] != "") {
-            //     $this->db->where(
-            //         "em.employment_date >=",
-            //         mysqlFormat($search_params["join_date_from"])
-            //     );
-            //     $this->db->where(
-            //         "em.employment_date <=",
-            //         mysqlFormat($search_params["join_date_to"])
-            //     );
-            // }
-            // if ($search_params["email"] != "") {
-            //     $this->db->like(
-            //         "em.email",
-            //         $search_params["email"]
-            //     );
-            // }
-            // if ($search_params["department"] != "") {
-            //     $this->db->where(
-            //         "d.department_id",
-            //         $search_params["department"]
-            //     );
-            // }
-            // if ($search_params["designation"] != "") {
-            //     $this->db->where(
-            //         "de.id",
-            //         $search_params["designation"]
-            //     );
-            // }
+            
         }
         $result_obj = $this->db->get();
         $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
@@ -729,6 +643,9 @@ class Welcome_model extends CI_Model
         // pr($this->db->last_query(),1);
         return $ret_data;
     }
+
+
+
 
     
 }

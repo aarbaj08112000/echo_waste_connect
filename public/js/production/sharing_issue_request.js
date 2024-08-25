@@ -1,19 +1,21 @@
-$( document ).ready(function() {
-  page.init();
+$(document).ready(function() {
+    page.init();
 });
+
 var table = '';
-var file_name = "fg_stock";
-var pdf_title = "FG Stocks";
-var myModal = new bootstrap.Modal(document.getElementById('fgtransfer'))
+var file_name = "sharing_issue_request";
+var pdf_title = "Sharing Issue Request";
+
 const page = {
-  init: function(){
-    this.initiateForm();
-    this.dataTable();
-    this.filter();
-  },
-  dataTable: function() {
-      var data =this.serachParams();;
-        table = new DataTable("#fw_stock_view", {
+    init: function() {
+        this.filter();
+        this.dataTable();
+        this.inititateForm();
+
+    },
+    dataTable: function(){
+        var data =this.serachParams();
+        table = new DataTable("#inwarding_grn", {
             dom: "Bfrtilp",
             buttons: [
               {     
@@ -26,7 +28,7 @@ const page = {
                             var lines = csv.split('\n');
                             var modifiedLines = lines.map(function(line) {
                                 var values = line.split(',');
-                                values.splice(7, 1);
+                                // values.splice(5, 2);
                                 return values.join(',');
                             });
                             return modifiedLines.join('\n');
@@ -44,14 +46,14 @@ const page = {
                       doc.pageMargins = [15, 15, 15, 15];
                       doc.content[0].text = pdf_title;
                       doc.content[0].color = theme_color;
-                        doc.content[1].table.widths = ['20%', '20%', '12%', '12%','12%','12%','12%'];
+                        doc.content[1].table.widths = ['24%', '24%', '10%', '10%','12%','12%','12%'];
                         doc.content[1].table.body[0].forEach(function(cell) {
                             cell.fillColor = theme_color;
                         });
 
                          // Remove the 4th and 5th columns from each row
                         doc.content[1].table.body.forEach(function(row) {
-                            row.splice(7, 1); // Remove the 4th and 5th columns from each row
+                            // row.splice(5, 2); // Remove the 4th and 5th columns from each row
                         });
                         doc.content[1].table.body.forEach(function(row, rowIndex) {
                             row.forEach(function(cell, cellIndex) {
@@ -68,7 +70,7 @@ const page = {
                                 }
                                 cell.alignment = alignment;
                             });
-                            row.splice(7, 1);
+                            // row.splice(5, 2);
                         });
                     }
                 },
@@ -94,16 +96,12 @@ const page = {
             info: true,
             autoWidth: true,
             lengthChange: true,
-            // fixedColumns: {
-            //     leftColumns: 2,
-            //     // end: 1
-            // },
             ajax: {
                 data: {'search':data},    
-                url: "FGStockController/get_fg_stock_view",
+                url: "sheetProdController/get_sharing_issue_request_data",
                 type: "POST",
             },
-             columnDefs: [{ sortable: false, targets: 7 }],
+             // columnDefs: [{ sortable: false, targets: 6 },{ sortable: false, targets: 5 }],
         });
         $('.dataTables_length').find('label').contents().filter(function() {
             return this.nodeType === 3; // Filter out text nodes
@@ -113,9 +111,8 @@ const page = {
                 minimumResultsForSearch: Infinity
             });
         });
-
-  },
-  filter: function(){
+    },
+    filter: function(){
         let that = this;
         $(".search-filter").on("click",function(){
             table.destroy(); 
@@ -127,74 +124,63 @@ const page = {
         })
     },
     serachParams: function(){
-        var part_id_search = $("#part_id_search").val();
-        var params = {part_id:part_id_search};
-        console.log(params)
+        var created_year_search = $("#created_year_search").val();
+        var created_month_search = $("#created_month_search").val();
+        var params = {created_year:created_year_search,created_month:created_month_search};
         return params;
     },
     resetFilter: function(){
-        $("#part_id_search").val('').trigger('change');
+        $("#created_year_search").val('').trigger('change');
+        $("#created_month_search").val('').trigger('change');
         table.destroy(); 
         this.dataTable();
     },
-  initiateForm: function(){
-    let that = this;
+    inititateForm: function(){
+    	let that = this;
+        $("#add_sharing_issue_request").submit(function(e){
+	      e.preventDefault();
+	      let flag = that.formValidate("add_sharing_issue_request");
+	      let href = $(this).attr("action");
+	      if(flag){
+	        return;
+	      }
+	    
+	      var formData = new FormData($('#add_sharing_issue_request')[0]);
 
-    $(".fg_stock_form").submit(function(e){
-      e.preventDefault();
-      let flag = that.formValidate("fg_stock_form");
-    
-      if(flag){
-        return;
-      }
-      
-    
-      var formData = new FormData($('.fg_stock_form')[0]);
+	      $.ajax({
+	        type: "POST",
+	        url: href,
+	        // url: "add_invoice_number",
+	        data: formData,
+	        processData: false,
+	        contentType: false,
+	        success: function (response) {
+	          var responseObject = JSON.parse(response);
+	          var msg = responseObject.messages;
+	          var success = responseObject.success;
+	          if (success == 1) {
+	            toastr.success(msg);
+	            $(this).parents(".modal").modal("hide")
+	            setTimeout(function(){
+	              window.location.reload();
+	            },1000);
 
-      $.ajax({
-        type: "POST",
-        url: base_url+"transfer_fg_stock_to_inhouse_stock",
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function (response) {
-          var responseObject = JSON.parse(response);
-          var msg = responseObject.messages;
-          var success = responseObject.success;
-          if (success == 1) {
-            toastr.success(msg);
-            $(this).parents(".modal").modal("hide")
-            setTimeout(function(){
-              window.location.reload();
-            },1000);
-
-          } else {
-            toastr.error(msg);
-          }
-        },
-        error: function (error) {
-          console.error("Error:", error);
-        },
-      });
-    });
-
-    $(document).on("click",".fg-transfer",function(){
-      var stock = $(this).attr("data-stock");
-      var part_number = $(this).attr("data-part-number");
-      var customer_part_id = $(this).attr("data-customer-part-id");
-      $("#customer_parts_master_id_fomr").val(customer_part_id);
-      $("#part_number_form").val(part_number);
-      $("#stock_form").attr("data-max",stock);
-      myModal.show()
-    })
-
-  },
-  formValidate: function(form_class = ''){
+	          } else {
+	            toastr.error(msg);
+	          }
+	        },
+	        error: function (error) {
+	          console.error("Error:", error);
+	        },
+	      });
+	    });
+    },
+    formValidate: function(form_class = ''){
         let flag = false;
-        $(".custom-form."+form_class+" .required-input").each(function( index ) {
+        $(".custom-form#"+form_class+" .required-input").each(function( index ) {
           var value = $(this).val();
-          var dataMax = parseFloat($(this).attr('data-max'));
-          var dataMin = parseFloat($(this).attr('data-min'));
+          var dataMax = $(this).attr('data-max');
+          var dataMin = $(this).attr('data-min');
           if(value == ''){
             flag = true;
             var label = $(this).parents(".form-group").find("label").contents().filter(function() {
@@ -247,4 +233,4 @@ const page = {
        
         return flag;
     }
-}
+};

@@ -3,16 +3,18 @@ $(document).ready(function() {
 });
 
 var table = '';
-var file_name = "final_inspection_qa";
-var pdf_title = "Final Inspection Production Qty";
+var file_name = "sharing_production_qty";
+var pdf_title = "Sharing Production Qty";
 
 const page = {
     init: function() {
         this.dataTable();
-        this.initiateForm();
+        this.inititateForm();
+
     },
     dataTable: function() {
-        table = $("#final_inspection_qa").DataTable({
+        var data = {};
+        table = $("#sharing_p_q").DataTable({
         dom: "Bfrtilp",
         buttons: [
             {
@@ -25,7 +27,7 @@ const page = {
                         var lines = csv.split('\n');
                         var modifiedLines = lines.map(function(line) {
                             var values = line.split(',');
-                            values.splice(11, 2);
+                            values.splice(4, 1);
                             return values.join(',');
                         });
                         return modifiedLines.join('\n');
@@ -44,12 +46,12 @@ const page = {
                     doc.pageMargins = [15, 15, 15, 15];
                     doc.content[0].text = pdf_title;
                     doc.content[0].color = theme_color;
-                    // doc.content[1].table.widths = ["19%", "19%", "13%", "13%", "15%", "15%"];
+                    doc.content[1].table.widths = ["28%", "28%", "28%", "16%"];
                     doc.content[1].table.body[0].forEach(function (cell) {
                         cell.fillColor = theme_color;
                     });
                     doc.content[1].table.body.forEach(function (row, index) {
-                        row.splice(11, 2);
+                        row.splice(4, 1);
                         row.forEach(function (cell) {
                             // Set alignment for each cell
                             cell.alignment = "center"; // Change to 'left' or 'right' as needed
@@ -62,7 +64,7 @@ const page = {
         // scrollX: true,
         scrollY: true,
         bScrollCollapse: true,
-        columnDefs: [{ sortable: false, targets:11 },{ sortable: false, targets: 12 }],
+        columnDefs: [{ sortable: false, targets: 4 }],
         pagingType: "full_numbers",
        
         
@@ -80,92 +82,54 @@ const page = {
         $('#serarch-filter-input').on('keyup', function() {
             table.search(this.value).draw();
         });
-    },
-    initiateForm: function(){
+            // table = $('#example1').DataTable();
+      },
+    inititateForm: function(){
     	let that = this;
-    	$(document).submit(".add_production_qty",function(e){
-        e.preventDefault();
-       
-        var href = $(".add_production_qty").attr("action");
-        let flag = that.formValidate("add_production_qty");
-        
-        if(flag){
-          return;
-        }
-     
-        var formData = new FormData($('.add_production_qty')[0]);
+        $("#add_production_qty_sharing").submit(function(e){
+	      e.preventDefault();
+	      let flag = that.formValidate("add_production_qty_sharing");
+	      let href = $(this).attr("action");
+	      if(flag){
+	        return;
+	      }
+	    
+	      var formData = new FormData($('#add_production_qty_sharing')[0]);
 
-        $.ajax({
-          type: "POST",
-          url: href,
-          data: formData,
-          processData: false,
-          contentType: false,
-          success: function (response) {
-            var responseObject = JSON.parse(response);
-            var msg = responseObject.messages;
-            var success = responseObject.success;
-            if (success == 1) {
-              toastr.success(msg);
-              setTimeout(function(){
-                window.location.reload();
-              },1000);
+	      $.ajax({
+	        type: "POST",
+	        url: href,
+	        // url: "add_invoice_number",
+	        data: formData,
+	        processData: false,
+	        contentType: false,
+	        success: function (response) {
+	          var responseObject = JSON.parse(response);
+	          var msg = responseObject.messages;
+	          var success = responseObject.success;
+	          if (success == 1) {
+	            toastr.success(msg);
+	            $(this).parents(".modal").modal("hide")
+	            setTimeout(function(){
+	              window.location.reload();
+	            },1000);
 
-            } else {
-              toastr.error(msg);
-            }
-          },
-          error: function (error) {
-            console.error("Error:", error);
-          },
-        });
-      });
-    	$(".update_p_q_onhold,.update_p_q").submit(function(e){
-        e.preventDefault();
-       
-        var href = $(this).attr("action");
-        var id = $(this).attr("id");
-        let flag = that.formValidate(id);
-       
-        if(flag){
-          return;
-        }
-
-        var formData = new FormData($('.'+id)[0]);
-
-        $.ajax({
-          type: "POST",
-          url: href,
-          data: formData,
-          processData: false,
-          contentType: false,
-          success: function (response) {
-            var responseObject = JSON.parse(response);
-            var msg = responseObject.messages;
-            var success = responseObject.success;
-            if (success == 1) {
-              toastr.success(msg);
-              $(this).parents(".modal").modal("hide")
-              setTimeout(function(){
-                window.location.reload();
-              },1000);
-
-            } else {
-              toastr.error(msg);
-            }
-          },
-          error: function (error) {
-            console.error("Error:", error);
-          },
-        });
-      });
+	          } else {
+	            toastr.error(msg);
+	          }
+	        },
+	        error: function (error) {
+	          console.error("Error:", error);
+	        },
+	      });
+	    });
     },
     formValidate: function(form_class = ''){
         let flag = false;
-        $(".custom-form."+form_class+" .required-input").each(function( index ) {
+        $(".custom-form#"+form_class+" .required-input").each(function( index ) {
           var value = $(this).val();
-          var dataMax = parseFloat($(this).attr('data-max'));
-          var dataMin = parseFloat($(this).attr('data-min'));
+          var dataMax = $(this).attr('data-max');
+          var dataMin = $(this).attr('data-min');
           if(value == ''){
             flag = true;
             var label = $(this).parents(".form-group").find("label").contents().filter(function() {

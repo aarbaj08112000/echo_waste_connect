@@ -1974,7 +1974,8 @@ progress {
 }
 
 .table>:not(caption)>*>* {
-    padding: .625rem 1.25rem;
+    /*padding: .625rem 1.25rem;*/
+    padding: 1rem 0.5rem;
     color: var(--bs-table-color-state, var(--bs-table-color-type, var(--bs-table-color)));
     background-color: var(--bs-table-bg);
     border-bottom-width: var(--bs-border-width);
@@ -10413,6 +10414,9 @@ html:not([dir=rtl]) .nav-align-top .nav-tabs:not(.nav-fill)~.tab-content {
 
 .form-control::placeholder,.form-control:focus::placeholder {
     transition: all .25s ease
+}
+.select2-container--default .select2-selection--single:focus {
+    border: var(--bs-border-width) solid red !important;
 }
 
 .form-control:hover:not([disabled]):not([focus]) {
@@ -29358,6 +29362,7 @@ a.bg-vimeo:hover,a.bg-vimeo:focus {
 .scrollable tbody
 {
 	overflow-y: scroll;
+        overflow-x: clip;
 }
 
 .scrollable thead,
@@ -29403,7 +29408,8 @@ a.bg-vimeo:hover,a.bg-vimeo:focus {
     flex: 1;
 }
 .scrollable.table thead tr th{
-    padding: 19px 17px 9px 16px !important;
+    /*padding: 19px 17px 9px 16px !important;*/
+    padding: 1rem 0.5rem !important;
 }
 .scrollable tbody{
         max-height: 200px !important;
@@ -29411,4 +29417,11 @@ a.bg-vimeo:hover,a.bg-vimeo:focus {
 
 .dataTables_scrollBody tbody{
     max-height: unset;
+}
+.table-container {
+    width: 100%; /* Adjust as needed */
+    max-height: 400px; /* Adjust height to fit your design */
+    overflow-y: clip; /* Enables vertical scrolling */
+    overflow-x: auto; /* Enables horizontal scrolling */
+    border: 1px solid #ddd; /* Optional: for visual separation */
 }

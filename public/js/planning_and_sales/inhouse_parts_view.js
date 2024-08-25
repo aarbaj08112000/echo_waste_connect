@@ -1,19 +1,49 @@
-$( document ).ready(function() {
-  page.init();
-});
 var table = '';
-var file_name = "fg_stock";
-var pdf_title = "FG Stocks";
-var myModal = new bootstrap.Modal(document.getElementById('fgtransfer'))
+var file_name = "part_under_inspection_report";
+var pdf_title = "Parts Under Inspection Reports";
+var myModal = new bootstrap.Modal(document.getElementById('edit_inhouse_part'))
+var addModal = new bootstrap.Modal(document.getElementById('add_inhouse_part'))
 const page = {
-  init: function(){
-    this.initiateForm();
-    this.dataTable();
-    this.filter();
-  },
-  dataTable: function() {
-      var data =this.serachParams();;
-        table = new DataTable("#fw_stock_view", {
+    init: function(){
+        this.dataTable();
+        // this.filter();
+        this.formValidation();
+        $(document).on("click",".edit-parts-data",function(){
+            var data = $(this).attr("data-parts");
+            data = JSON.parse(atob(data)); 
+            $("label.error").remove();
+            $("input.error").removeClass('error');
+            $("#part_number_val").val(data.part_number);
+            $("#part_description_val").val(data.part_description);
+            $("#saft_stk_val").val(data.safty_buffer_stk);
+            $("#hsn_code_val").val(data.hsn_code);
+            $("#sub_type_val").val(data.sub_type);
+            $("#uom_id_val").val(data.uom_id).trigger("change");
+            $("#store_rack_location_val").val(data.store_rack_location);
+            $("#max_uom_val").val(data.max_uom);
+            $("#store_stock_rate_val").val(data.store_stock_rate);
+            $("#weight_val").val(data.weight);
+            $("#size_val").val(data.size);
+            $("#thickness_val").val(data.thickness);
+            $("#part_id_val").val(data.id);
+            myModal.show();
+        })
+        $(document).on("click",".add-part-data",function(){
+        	$("label.error").remove();
+            $("input.error").removeClass('error');
+            $("#add_inhouse_part input").val("")
+        	addModal.show();
+        });
+        setTimeout(function(){
+        	$("#uom_id_val").select2();
+        },1000)
+
+
+    },
+    dataTable: function(){
+        // var data = this.serachParams();
+        var data = {};
+        table = new DataTable("#inhouse_parts_view", {
             dom: "Bfrtilp",
             buttons: [
               {     
@@ -26,13 +56,14 @@ const page = {
                             var lines = csv.split('\n');
                             var modifiedLines = lines.map(function(line) {
                                 var values = line.split(',');
-                                values.splice(7, 1);
+                                values.splice(13, 1);
                                 return values.join(',');
                             });
                             return modifiedLines.join('\n');
                         },
                         filename : file_name
-                    },  
+                    },
+                
                   {
                     extend: 'pdf',
                     text: '<i class="ti ti-file-type-pdf"></i>',
@@ -44,18 +75,13 @@ const page = {
                       doc.pageMargins = [15, 15, 15, 15];
                       doc.content[0].text = pdf_title;
                       doc.content[0].color = theme_color;
-                        doc.content[1].table.widths = ['20%', '20%', '12%', '12%','12%','12%','12%'];
+                        // doc.content[1].table.widths = ['15%', '19%', '13%', '13%','15%', '15%', '10%'];
                         doc.content[1].table.body[0].forEach(function(cell) {
                             cell.fillColor = theme_color;
                         });
-
-                         // Remove the 4th and 5th columns from each row
-                        doc.content[1].table.body.forEach(function(row) {
-                            row.splice(7, 1); // Remove the 4th and 5th columns from each row
-                        });
                         doc.content[1].table.body.forEach(function(row, rowIndex) {
                             row.forEach(function(cell, cellIndex) {
-                                var alignmentClass = $('#child_part_view tbody tr:eq(' + rowIndex + ') td:eq(' + cellIndex + ')').attr('class');
+                                var alignmentClass = $('#example1 tbody tr:eq(' + rowIndex + ') td:eq(' + cellIndex + ')').attr('class');
                                 var alignment = '';
                                 if (alignmentClass && alignmentClass.includes('dt-left')) {
                                     alignment = 'left';
@@ -68,7 +94,7 @@ const page = {
                                 }
                                 cell.alignment = alignment;
                             });
-                            row.splice(7, 1);
+                            row.splice(14, 1);
                         });
                     }
                 },
@@ -92,18 +118,18 @@ const page = {
             paging: is_paging_enable,
             fixedHeader: false,
             info: true,
+            order: sorting_column,
             autoWidth: true,
             lengthChange: true,
-            // fixedColumns: {
-            //     leftColumns: 2,
-            //     // end: 1
-            // },
+            fixedColumns: {
+                leftColumns: 2,
+                // end: 1
+            },
             ajax: {
                 data: {'search':data},    
-                url: "FGStockController/get_fg_stock_view",
+                url: "InhousePartsController/get_inhouse_parts_view_data",
                 type: "POST",
             },
-             columnDefs: [{ sortable: false, targets: 7 }],
         });
         $('.dataTables_length').find('label').contents().filter(function() {
             return this.nodeType === 3; // Filter out text nodes
@@ -113,83 +139,55 @@ const page = {
                 minimumResultsForSearch: Infinity
             });
         });
-
-  },
-  filter: function(){
+    },
+    formValidation: function(){
         let that = this;
-        $(".search-filter").on("click",function(){
-            table.destroy(); 
-            that.dataTable();
-            $(".close-filter-btn").trigger( "click" )
-        })
-        $(".reset-filter").on("click",function(){
-            that.resetFilter();
-        })
+        $(".update_child_part_view_inhouse,.add_inhouse_parts").submit(function(e){
+        e.preventDefault();
+       
+        var href = $(this).attr("action");
+        var id = $(this).attr("id");
+        let flag = that.formValidate(id);
+        if(flag){
+          return;
+        }
+        var formData = new FormData($('.'+id)[0]);
+
+        $.ajax({
+          type: "POST",
+          url: href,
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function (response) {
+            var responseObject = JSON.parse(response);
+            var msg = responseObject.messages;
+            var success = responseObject.success;
+            if (success == 1) {
+              toastr.success(msg);
+              $(this).parents(".modal").modal("hide")
+              setTimeout(function(){
+                table.destroy(); 
+                    that.dataTable(); 
+                    if(id == "update_child_part_view_inhouse"){
+                    	myModal.hide(); 
+                    }else{
+                    	addModal.hide(); 
+                    }
+                    
+              },1000);
+
+            } else {
+              toastr.error(msg);
+            }
+          },
+          error: function (error) {
+            console.error("Error:", error);
+          },
+        });
+       });
     },
-    serachParams: function(){
-        var part_id_search = $("#part_id_search").val();
-        var params = {part_id:part_id_search};
-        console.log(params)
-        return params;
-    },
-    resetFilter: function(){
-        $("#part_id_search").val('').trigger('change');
-        table.destroy(); 
-        this.dataTable();
-    },
-  initiateForm: function(){
-    let that = this;
-
-    $(".fg_stock_form").submit(function(e){
-      e.preventDefault();
-      let flag = that.formValidate("fg_stock_form");
-    
-      if(flag){
-        return;
-      }
-      
-    
-      var formData = new FormData($('.fg_stock_form')[0]);
-
-      $.ajax({
-        type: "POST",
-        url: base_url+"transfer_fg_stock_to_inhouse_stock",
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function (response) {
-          var responseObject = JSON.parse(response);
-          var msg = responseObject.messages;
-          var success = responseObject.success;
-          if (success == 1) {
-            toastr.success(msg);
-            $(this).parents(".modal").modal("hide")
-            setTimeout(function(){
-              window.location.reload();
-            },1000);
-
-          } else {
-            toastr.error(msg);
-          }
-        },
-        error: function (error) {
-          console.error("Error:", error);
-        },
-      });
-    });
-
-    $(document).on("click",".fg-transfer",function(){
-      var stock = $(this).attr("data-stock");
-      var part_number = $(this).attr("data-part-number");
-      var customer_part_id = $(this).attr("data-customer-part-id");
-      $("#customer_parts_master_id_fomr").val(customer_part_id);
-      $("#part_number_form").val(part_number);
-      $("#stock_form").attr("data-max",stock);
-      myModal.show()
-    })
-
-  },
-  formValidate: function(form_class = ''){
+    formValidate: function(form_class = ''){
         let flag = false;
         $(".custom-form."+form_class+" .required-input").each(function( index ) {
           var value = $(this).val();
@@ -246,5 +244,34 @@ const page = {
         });
        
         return flag;
+    },
+    filter: function(){
+        let that = this;
+        $('#year').select2();
+        $('#month_number').select2();
+        $(".search-filter").on("click",function(){
+            table.destroy(); 
+            that.dataTable();
+            $(".close-filter-btn").trigger( "click" )
+        })
+        $(".reset-filter").on("click",function(){
+            that.resetFilter();
+        })
+    },
+    serachParams: function(){
+        var month_number = $("#month_number").val();
+        var year = $("#year").val();
+        var params = {month_number:month_number,year:year};
+        return params;
+    },
+    resetFilter: function(){
+        $("#month_number").val('').trigger('change');
+        $("#year").val('');
+        table.destroy(); 
+        this.dataTable();
     }
 }
+
+$( document ).ready(function() {
+    page.init();
+});

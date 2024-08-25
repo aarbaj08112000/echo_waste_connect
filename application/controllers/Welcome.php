@@ -89,7 +89,7 @@ class Welcome extends CommonController
         ];
         $column[] = [
             "data" => "expiry_po_date",
-            "title" => "Expiry Date<",
+            "title" => "Expiry Date",
             "width" => "17%",
             "className" => "dt-center",
 			'orderable' => false
@@ -1687,7 +1687,18 @@ class Welcome extends CommonController
         $data['status'] = $status;
         $data['actual_price'] = $actual_price;
         $data['isMultiClient'] = $this->session->userdata['isMultipleClientUnits'];
+        $is_accept_inwarding = "Yes";
+        foreach ($data['po_parts'] as $key => $p) {
+            if($p->grn_details_id > 0){
+                if(!($p->accept_qty > 0)){
+                    $is_accept_inwarding = "No";
+                }
+            }
+        }
+        // pr($is_accept_inwarding,1);
+        $data['is_accept_inwarding'] = $is_accept_inwarding;
 		// $this->load->view('header');
+        
 		$this->loadView('quality/inwarding_details_accept_reject', $data);
 		// $this->load->view('footer');
 	}
@@ -1716,19 +1727,18 @@ class Welcome extends CommonController
 				$uploadData = $this->upload->data();
 				$fila_name = $uploadData['file_name'];
 			} else {
-				$fila_name = '';
-				echo "no 1";
+				$fila_name = $this->upload->display_errors();
+				
 			}
 		} else {
 			$fila_name = '';
-			echo "no 2";
+			
 		}
 
 		$data = array(
 			"rm_batch_no" => $rm_batch_no,
 			"mtc_report" => $fila_name
 		);
-
 		$update_result = $this->Crud->update_data("grn_details", $data, $grn_details_id);
 
 		// if ($update_result) {
@@ -4338,10 +4348,13 @@ class Welcome extends CommonController
 	public function update_rejection_flow_status()
 	{
 
+        
 		$rejection_flow_id  = $this->input->post('id');
 		$status  = $this->input->post('status');
 		$rejection_flow_data = $this->Crud->get_data_by_id("rejection_flow", $rejection_flow_id, "id");
 		$child_part_data = $this->SupplierParts->getSupplierPartById($rejection_flow_data[0]->part_id);
+        $success = 0;
+        $messages = "Something went wrong.";
 		if ($child_part_data) {
 			$qty = $rejection_flow_data[0]->qty;
 			$current_stock = $child_part_data[0]->stock;
@@ -4359,7 +4372,9 @@ class Welcome extends CommonController
 					);
 					$result3 = $this->Crud->update_data("rejection_flow", $data_update_rejection_flow, $rejection_flow_id);
 					if ($result3) {
-						$this->addSuccessMessage('Stock changes Approved successfully.');
+                        $messages = 'Stock changes Approved successfully.';
+                        $success = 1;
+						// $this->addSuccessMessage('Stock changes Approved successfully.');
 					}
 				}
 			} else {
@@ -4376,18 +4391,26 @@ class Welcome extends CommonController
 					);
 					$result3 = $this->Crud->update_data("rejection_flow", $data_update_rejection_flow, $rejection_flow_id);
 					if ($result3) {
-						$this->addSuccessMessage('Stock Changed Rejected.');
+                        $messages = 'Stock Changed Rejected.';
+                        $success = 1;
+						// $this->addSuccessMessage('Stock Changed Rejected.');
 					}
 				}
 			}
 		} else {
-			 $this->addErrorMessage('Item part  id : ' . $rejection_flow_data[0]->part_id . 'Not Found in child_part table Please try again');
+            $messages = 'Item part  id : ' . $rejection_flow_data[0]->part_id . 'Not Found in child_part table Please try again';
+			 // $this->addErrorMessage('Item part  id : ' . $rejection_flow_data[0]->part_id . 'Not Found in child_part table Please try again');
 		}
-		$this->redirectMessage();
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 	public function update_production_qty()
 	{
+
 		$part_number  = $this->input->post('part_number');
 		$production_qty  = (int)$this->input->post('production_qty');
 		$child_part = $this->SupplierParts->getSupplierPartByPartNumber($part_number);
@@ -4397,7 +4420,8 @@ class Welcome extends CommonController
 		$data_update_child_part = array(
 			"stock" => $new_stock,
 		);
-
+        $success = 0;
+        $messages = "Something went wrong.";
 		$query = $this->SupplierParts->updateStockById($data_update_child_part, $child_part[0]->id);
 		$inhouse_parts_data = $this->InhouseParts->getInhousePartByPartNumber($part_number);
 		$old_stock_inhouse = (int)$inhouse_parts_data[0]->production_qty;
@@ -4407,10 +4431,19 @@ class Welcome extends CommonController
 		);
 		$query = $this->InhouseParts->updateStockById($data_update_child_part_inhouse, $inhouse_parts_data[0]->id);
 		if ($query) {
-			echo "<script>alert('Updated Successfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+            $success = 1;
+            $messages = "Updated Successfully";
+			// echo "<script>alert('Updated Successfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-			echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
+            $messages = "Error IN User  Adding ,try again";
+			// echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
 		}
+
+        $result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 
@@ -4755,6 +4788,7 @@ class Welcome extends CommonController
 	public function addRoutingParts()
 	{
 
+
 		$data = array(
 			'part_id' => $this->input->post('part_id'),
 			'routing_part_id' => $this->input->post('routing_part_id'),
@@ -4772,21 +4806,32 @@ class Welcome extends CommonController
 		// print_r($data);
 		// echo "<br>";
 		// print_r($routing_data);
+        $success = 0;
+        $messages = "Something went wrong.";
 		if ($routing_data) {
-			echo "<script>alert('already present');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+            $messages  ="already present";
+			// echo "<script>alert('already present');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 			$inser_query = $this->Crud->insert_data("routing", $data2);
 
 			if ($inser_query) {
 				if ($inser_query) {
-					echo "<script>alert('successfully added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                    $success = 1;
+                    $messages = "successfully added";
+					// echo "<script>alert('successfully added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 				} else {
-					echo "<script>alert('Error IN User  Adding ,try again');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                    $messages = "Error IN User  Adding ,try again";
+					// echo "<script>alert('Error IN User  Adding ,try again');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 				}
 			} else {
-				echo "Error";
+				$messages =  "Error";
 			}
 		}
+        $result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 	public function addRoutingParts_subcon()
 	{
@@ -4932,7 +4977,8 @@ class Welcome extends CommonController
 		$onhold_qty = (int)$this->input->post('onhold_qty');
 		$scrap_factor = (int)$this->input->post('scrap_factor');
 
-
+        $success = 0;
+        $messages = "Something went wrong.";
 		if ($sum <= $qty) {
 
 			$operations_bom = $this->Crud->get_data_by_id("operations_bom", $p_q_main_data[0]->created_by, "id");
@@ -5024,7 +5070,9 @@ class Welcome extends CommonController
 						);
 						$new_production_rejection = $old_production_rejection + ((float)$output_part_data[0]->weight * (float)$rejected_qty);
 						$update = $this->InhouseParts->updateStockById($update_data, $output_part_data[0]->id);
-						echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                        $messages = "Updated Successfully";
+                        $success = 1;
+						// echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 					} else {
 
 						$output_part_data = $this->Crud->get_data_by_id("customer_part", $output_part_id, "id");
@@ -5037,17 +5085,25 @@ class Welcome extends CommonController
 						);
 						$new_production_rejection = $old_production_rejection + ((float)$output_part_data[0]->weight * (float)$rejected_qty);
 						$update = $this->CustomerPart->updateStockById($update_data_2, $customer_parts_master_data[0]->part_id);
-						echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                        $messages = "Updated Successfully";
+                        $success = 1;
+						// echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 					}
 				} else {
-					echo "error while updating";
+					$messages = "error while updating";
 				}
 			} else {
-				echo "Operations BOM Not Found";
+				$messages =  "Operations BOM Not Found";
 			}
 		} else {
-			echo "mismatvhe";
+			$messages =  "mismatvhe";
 		}
+
+        $result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 	public function update_parts_rejection_sales_invoice()
 	{

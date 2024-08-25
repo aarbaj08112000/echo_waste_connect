@@ -110,9 +110,9 @@
                     <div class="col-12">
                         <div class="card">
                             
-                            <div class="card-body">
+                            <div class="c">
                             <div class="table-responsive text-nowrap">
-                                <table id="planning_data" class="table table-bordered table-striped">
+                                <table id="planning_data" class="table  table-striped">
                                     <thead>
                                         <tr>
                                           <%*  <th>Sr. No.</th> *%>

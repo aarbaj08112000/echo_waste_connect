@@ -138,11 +138,11 @@
         <!-- Main content -->
       <div class="card p-0 mt-4">
         <div class="table-responsive text-nowrap">
-          <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="remarks">
+          <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="remarks_view">
             <thead>
                <tr>
                   <th>Sr No</th>
-                  <th> Name</th>
+                  <th class="text-center"> Name</th>
                </tr>
             </thead>
             <tbody>
@@ -151,7 +151,7 @@
                   <%foreach from=$operations item=u %>
                  <tr>
                     <td><%$i %></td>
-                    <td><%$u->name %></td>
+                    <td class="text-center"><%$u->name %></td>
                  </tr>
                   <%assign var='i' value=$i+1 %>
                   <%/foreach%>

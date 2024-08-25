@@ -22,59 +22,18 @@
               </li>
               <li class="sidebar-item">
                 <div class="input-group">
-                  <select name="child_part_id" class="form-control select2" id="part_number_search">
+                  <select class="form-control select2" name="part_id_search" id="part_id_search">
                     <option value="">Select Part Number</option>
-                    <%foreach from=$supplier_part_list item=parts%>
-                    <option value="<%$parts->id%>"><%$parts->part_number %></option>
+                    <%if ($customer_parts) %>
+                    <%foreach from=$customer_parts item=c %>
+                    <option <%if $part_id ==$c->id %>selected<%/if%> value="<%$c->id %>"><%$c->part_number %></option>
                     <%/foreach%>
+                    <%/if%>
                   </select>
                 </div>
               </li>
             </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Part Description</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="part_description_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
+            
 
           </ul>
         </div>
@@ -88,10 +47,10 @@
     <nav aria-label="breadcrumb">
       <div class="sub-header-left pull-left breadcrumb">
         <h1>
-          Store
+          Production
           <a hijacked="yes" href="javascript:void(0)" class="backlisting-link"  >
             <i class="ti ti-chevrons-right" ></i>
-            <em >Stocks</em></a>
+            <em >Stock</em></a>
           </h1>
           <br>
           <span >FG Stocks</span>
@@ -108,71 +67,24 @@
 
       <!-- Main content -->
       <div class="card p-0 mt-4">
+        <div class="table-responsive text-nowrap">
+          <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="fw_stock_view">
+              <thead>
+                  <tr>
+                      <%foreach from=$data key=key item=val%>
+                      <th><b>Search <%$val['title']%></b></th>
+                      <%/foreach%>
+                  </tr>
+              </thead>
+              <tbody></tbody>
+          </table>
 
-        <div class="card-header">
-          <div class="row">
-            <div class="col-lg-3">
-              <form action="<%base_url('fw_stock') %>" method="post">
-                <div class="form-group">
-                  <label for="">Select Part <span class="text-danger">*</span></label>
-                  <select class="form-control select2" name="part_id">
-                    <%if ($customer_parts) %>
-                    <%foreach from=$customer_parts item=c %>
-                    <option <%if $part_id ==$c->id %>selected<%/if%> value="<%$c->id %>"><%$c->part_number %></option>
-                    <%/foreach%>
-                    <%/if%>
-                  </select>
-                </div>
-              </div>
-              <div class="col-lg-3">
-                <div class="form-group mt-4">
-                  <button type="submit" class="btn btn-danger mt-1">
-                    Search
-                  </button>
-                </form>
-              </div>
             </div>
           </div>
+          <!--/ Responsive Table -->
         </div>
-        <div class="table-responsive text-nowrap">
-          <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="fg_stock_tbl">
-            <thead>
-              <tr>
-                <th>Sr. No.</th>
-                <th>Part Number</th>
-                <th>Part Description</th>
-                <th>Stock</th>
-                <th>Molding Production Qty</th>
-                <th>Production Rejection</th>
-                <th>Production Scrap</th>
-                <!--<th>Semi Finished Location</th>
-                <th>Deflashing Assembly</th> -->
-                <th>Final Inspection Location</th>
-                <th>Transfer To Inhouse Part</th>
-              </tr>
-            </thead>
-            <tbody>
-              <%assign var='i' value=1 %>
-              <%if ($customer_parts_master) %>
-              <%foreach from=$customer_parts_master item=po %>
-              <tr>
-                <td><%$i %></td>
-                <td><%$po->part_number %></td>
-                <td><%$po->part_description %></td>
-                <td><%$po->fg_stock %></td>
-                <td><%$po->molding_production_qty %></td>
-                <td><%$po->production_rejection %></td>
-                <td><%$po->production_scrap %></td>
-                <td><%$po->final_inspection_location %></td>
-                <td>
-                  <%if ($po->fg_stock > 0) %>
-                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#fgtransfer222<%$i %>">
-                    Transfer To Inhouse
-                  </button>
-                  <%else %>
-                  <%$po->fg_stock %>
-                  <%/if%>
-                  <div class="modal fade" id="fgtransfer222<%$i %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <!-- /.col -->
+        <div class="modal fade" id="fgtransfer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                       <div class="modal-content">
                         <div class="modal-header">
@@ -183,20 +95,23 @@
 
                           </button>
                         </div>
+                        <form action="javascript:void(0)" class="custom-form fg_stock_form" method="POST" enctype="multipart/form-data">
                         <div class="modal-body">
                           <div class="row">
                             <div class="col-lg-12">
-                              <form action="javascript:void(0)" class="custom-form fg_stock_form" method="POST" enctype="multipart/form-data">
-                                <label for="">Enter Stock Qty <span class="text-danger">*</span>
+                                <div class="form-group">
+                                <label for="">Stock Qty <span class="text-danger">*</span>
                                 </label>
-                                <input type="number" step="any" class="form-control required-input" value="" max="<%$po->stock %>" name="stock" placeholder="Enter Transfer Qty">
-                                <input type="hidden" class="form-control" value="<%$po->part_number %>" name="part_number" required placeholder="Enter Transfer Qty">
-                                <input type="hidden" class="form-control" value="<%$po->id %>" name="customer_parts_master_id" required placeholder="Enter Transfer Qty">
+                                <input type="text" step="any" class="form-control required-input onlyNumericInput" value="" data-max="" name="stock" placeholder="Enter Transfer Qty"  id="stock_form">
+                                <input type="hidden" class="form-control" value="" name="part_number" required placeholder="Enter Transfer Qty" id="part_number_form">
+                                <input type="hidden" class="form-control" value="" name="customer_parts_master_id" required placeholder="Enter Transfer Qty" id="customer_parts_master_id_fomr">
+                                </div>
                               </div>
                               <div class="col-lg-12 mb-3">
-                                <label for="">Select Inhouse Part Number <span class="text-danger">*</span>
+                                <div class="form-group">
+                                <label for="">Inhouse Part Number <span class="text-danger">*</span>
                                 </label>
-                                <select name="inhouse_part_number"  class="form-control required-input">
+                                <select name="inhouse_part_number"  class="form-control required-input select2" style="width: 100%;">
                                   <option value="">Select Inhouse Part Number</option>
                                   <%if ($inhouse_parts) %>
                                   <%foreach from=$inhouse_parts item=tt %>
@@ -207,6 +122,7 @@
                                   </select>
                                 </div>
                               </div>
+                              </div>
                               <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss=" modal">Close</button>
                                 <button type="submit" class="btn btn-primary">Save changes</button>
@@ -216,25 +132,23 @@
                           </div>
                         </div>
                       </div>
-                    </td>
-                  </tr>
-
-                  <%assign var='i' value=$i+1 %>
-                  <%/foreach%>
-                  <%/if%>
-                </tbody>
-              </table>
-
-            </div>
-          </div>
-          <!--/ Responsive Table -->
-        </div>
-        <!-- /.col -->
-
 
         <div class="content-backdrop fade"></div>
       </div>
       <script type="text/javascript">
       var base_url = <%$base_url|@json_encode%>
       </script>
+      <script>
+    var column_details =  <%$data|json_encode%>;
+    var page_length_arr = <%$page_length_arr|json_encode%>;
+    var is_searching_enable = <%$is_searching_enable|json_encode%>;
+    var is_top_searching_enable =  <%$is_top_searching_enable|json_encode%>;
+    var is_paging_enable =  <%$is_paging_enable|json_encode%>;
+    var is_serverSide =  <%$is_serverSide|json_encode%>;
+    var no_data_message =  <%$no_data_message|json_encode%>;
+    var is_ordering =  <%$is_ordering|json_encode%>;
+    var sorting_column = <%$sorting_column%>;
+    var api_name =  <%$api_name|json_encode%>;
+    var base_url = <%$base_url|json_encode%>;
+</script>
       <script src="<%$base_url%>public/js/store/fw_stock.js"></script>
