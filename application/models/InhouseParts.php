@@ -212,5 +212,104 @@ class InhouseParts extends CI_Model {
         return $result;
     }
 
+
+
+    public function getInhousePartDetails($id) {
+        $where  = '';
+        if($id > 0){
+            $where ="WHERE parts.id = ".$id;
+        }
+        $part_details = $this->Crud->customQuery("SELECT parts.*, stock.* 
+            FROM  inhouse_parts parts
+            LEFT JOIN inhouse_parts_stock stock
+            ON parts.id = stock.inhouse_parts_id
+            AND stock.clientId = '" . $this->Unit->getSessionClientId() . "'
+            $where
+            ORDER BY parts.id desc");
+        return $part_details;
+    }
+
+    /* datable */
+    public function get_inhouse_parts_view_data(
+        $condition_arr = [],
+        $search_params = ""
+    ) {
+     
+            // SELECT parts.*, stock.*, u.uom_name 
+            // FROM `inhouse_parts` parts
+            // LEFT JOIN inhouse_parts_stock stock
+            //     ON stock.inhouse_parts_id = parts.id 
+            //     AND stock.clientId = ".$this->Unit->getSessionClientId()." 
+            // INNER JOIN uom u
+            //     ON u.id = parts.uom_id
+            //     ORDER BY parts.id desc LIMIT 20
+        $clientId = $this->Unit->getSessionClientId();
+        $this->db->select(
+            'parts.part_number as part_number,parts.hsn_code as hsn_code,parts.part_description as part_description,parts.store_rack_location as store_rack_location,parts.max_uom as max_uom,parts.store_stock_rate as store_stock_rate,parts.weight as weight,parts.size as size,parts.thickness as thickness,stock.safty_buffer_stk as safty_buffer_stk, u.id as uom_id,u.uom_name,parts.id as id,parts.sub_type as sub_type'
+        );
+        $this->db->from("inhouse_parts as parts");
+        $this->db->join("inhouse_parts_stock as stock", "stock.inhouse_parts_id = parts.id 
+                AND stock.clientId = $clientId",'left');
+        $this->db->join("uom as u", "u.id = parts.uom_id",'left');
+     
+
+        if (count($condition_arr) > 0) {
+            $this->db->limit($condition_arr["length"], $condition_arr["start"]);
+            if ($condition_arr["order_by"] != "") {
+                $this->db->order_by($condition_arr["order_by"]);
+            }
+        }
+
+        if (is_array($search_params) && count($search_params) > 0) {
+            if ($search_params["created_year"] != "") {
+                $this->db->where("s.year", $search_params["created_year"]);
+            }
+            if ($search_params["created_month"] != "") {
+                $this->db->like(
+                    "s.month",
+                    $search_params["created_month"]
+                );
+            }
+            
+        }
+
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+
+        // pr($this->db->last_query(),1);
+        return $ret_data;
+    }
+    public function get_inhouse_parts_view_data_Count(
+        $condition_arr = [],
+        $search_params = ""
+    ) {
+       $clientId = $this->Unit->getSessionClientId();
+        $this->db->select(
+            'count(parts.id) as total_record'
+        );
+        $this->db->from("inhouse_parts as parts");
+        $this->db->join("inhouse_parts_stock as stock", "stock.inhouse_parts_id = parts.id 
+                AND stock.clientId = $clientId",'left');
+        $this->db->join("uom as u", "u.id = parts.uom_id",'left');
+
+        if (is_array($search_params) && count($search_params) > 0) {
+            if ($search_params["created_year"] != "") {
+                $this->db->where("s.year", $search_params["created_year"]);
+            }
+            if ($search_params["created_month"] != "") {
+                $this->db->like(
+                    "s.month",
+                    $search_params["created_month"]
+                );
+            }
+            
+        }
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
+
+        // pr($this->db->last_query(),1);
+        return $ret_data;
+    }
+
 }
 ?>

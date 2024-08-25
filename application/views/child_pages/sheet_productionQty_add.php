@@ -5,22 +5,22 @@
 <body>
     <div class="modal-header">
      <h5 class="modal-title" id="exampleModalLabel">Add</h5>
-     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-         <span aria-hidden="true">&times;</span>
+     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        
      </button>
  </div>
- <form action="<?php echo base_url('SheetProdController/add_production_qty') ?>" method="POST" enctype="multipart/form-data">
+ <form action="<?php echo base_url('SheetProdController/add_production_qty') ?>" method="POST" enctype="multipart/form-data" class="add_production_qty custom-form">
         <div class="modal-body">
             <div class="form-group">
                 <label for="on click url">Enter Date <span class="text-danger">*</span></label>
                 <input max="<?php echo date("Y-m-d"); ?>" type="date"
-                    value="<?php echo date('Y-m-d'); ?>" name="date" required
-                    class="form-control">
+                    value="<?php echo date('Y-m-d'); ?>" name="date" 
+                    class="form-control required-input">
             </div>
             <div class="form-group">
                 <label required for="on click url">Select Shift Type / Name / Start Time /
                     End Time<span class="text-danger">*</span></label>
-                <select name="shift_id" name="" id="" class="form-control select2" required>
+                <select name="shift_id" name="" id="" class="form-control select2 required-input" style="width: 100%;"  >
                 <option value="">Select</option>
                     <?php
                     if ($shifts) {
@@ -38,7 +38,7 @@
             <div class="form-group">
                 <label for="on click url">Select Operator<span
                         class="text-danger">*</span></label>
-                <select required name="operator_id" id="" class="form-control select2">
+                <select  name="operator_id" id="" class="form-control select2 required-input" style="width: 100%;">
                 <option value="">Select</option>
 
                     <?php
@@ -55,7 +55,7 @@
             <div class="form-group">
                 <label for="on click url">Select Machine<span
                         class="text-danger">*</span></label>
-                <select required name="machine_id" id="" class="form-control select2">
+                <select  name="machine_id" id="" class="form-control select2 required-input" style="width: 100%;">
                 <option value="">Select</option>
                     <?php
                     if ($machine) {
@@ -71,7 +71,7 @@
             <div class="form-group">
                 <label for="on click url">Select Inhouse Part / Customer Part<span
                         class="text-danger">*</span></label>
-                <select required name="output_part_id" id="" class="form-control select2">
+                <select  name="output_part_id" id="" class="form-control select2 required-input" style="width: 100%;">
                         <option value="">Select</option>
                     <?php
                     if ($operations_bom) {
@@ -89,13 +89,13 @@
             <div class="form-group">
                 <label for="on click url">Enter QTY<span
                         class="text-danger">*</span></label>
-                <input type="number" min="1" value="1" name="qty" required
-                    class="form-control">
+                <input type="text" min="1" value="1" name="qty" 
+                    class="form-control required-input onlyNumericInput">
             </div>
         </div>
         <div class="modal-footer">
             <button type="button"  class="btn btn-secondary"
-                data-dismiss="modal">Close</button>
+                data-bs-dismiss="modal">Close</button>
             <button type="submit" class="btn btn-primary" id="submitChange">Save changes</button>
         </div>
   </form>

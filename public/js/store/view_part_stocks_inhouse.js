@@ -3,16 +3,18 @@ $(document).ready(function() {
 });
 
 var table = '';
-var file_name = "final_inspection_qa";
-var pdf_title = "Final Inspection Production Qty";
+var file_name = "sharing_issue_request_store";
+var pdf_title = "Sharing Issue Request - Pending";
 
 const page = {
     init: function() {
         this.dataTable();
-        this.initiateForm();
+        this.initiateValidate();
+        this.filter();
     },
     dataTable: function() {
-        table = $("#final_inspection_qa").DataTable({
+        var data = {};
+        table = $("#inwarding").DataTable({
         dom: "Bfrtilp",
         buttons: [
             {
@@ -25,7 +27,7 @@ const page = {
                         var lines = csv.split('\n');
                         var modifiedLines = lines.map(function(line) {
                             var values = line.split(',');
-                            values.splice(11, 2);
+                            values.splice(7, 1);
                             return values.join(',');
                         });
                         return modifiedLines.join('\n');
@@ -49,7 +51,7 @@ const page = {
                         cell.fillColor = theme_color;
                     });
                     doc.content[1].table.body.forEach(function (row, index) {
-                        row.splice(11, 2);
+                        row.splice(7, 1);
                         row.forEach(function (cell) {
                             // Set alignment for each cell
                             cell.alignment = "center"; // Change to 'left' or 'right' as needed
@@ -58,12 +60,17 @@ const page = {
                 },
             },
         ],
+         fixedHeader: false,
         searching: true,
-        // scrollX: true,
+        scrollX: true,
         scrollY: true,
         bScrollCollapse: true,
-        columnDefs: [{ sortable: false, targets:11 },{ sortable: false, targets: 12 }],
+        // columnDefs: [{ sortable: false, targets: 7 }],
         pagingType: "full_numbers",
+        fixedColumns: {
+                leftColumns: 2,
+                // end: 1
+            },
        
         
         });
@@ -80,92 +87,93 @@ const page = {
         $('#serarch-filter-input').on('keyup', function() {
             table.search(this.value).draw();
         });
-    },
-    initiateForm: function(){
-    	let that = this;
-    	$(document).submit(".add_production_qty",function(e){
-        e.preventDefault();
-       
-        var href = $(".add_production_qty").attr("action");
-        let flag = that.formValidate("add_production_qty");
-        
-        if(flag){
-          return;
-        }
-     
-        var formData = new FormData($('.add_production_qty')[0]);
+            // table = $('#example1').DataTable();
+      },
+      initiateValidate: function(){
+      	let that = this;
+      	$(".update_production_qty").submit(function(e){
+	      e.preventDefault();
+	      let id = $(this).attr("id");
+	      let flag = that.formValidate(id);
+	      let href = $(this).attr("action");
+	     
+	      if(flag){
+	        return;
+	      }
+	      var formData = new FormData($('#'+id)[0]);
+	      $.ajax({
+	        type: "POST",
+	        url: href,
+	        // url: "add_invoice_number",
+	        data: formData,
+	        processData: false,
+	        contentType: false,
+	        success: function (response) {
+	          var responseObject = JSON.parse(response);
+	          var msg = responseObject.messages;
+	          var success = responseObject.success;
+	          if (success == 1) {
+	            toastr.success(msg);
+	            $(this).parents(".modal").modal("hide")
+	            setTimeout(function(){
+	              window.location.reload();
+	            },1000);
 
-        $.ajax({
-          type: "POST",
-          url: href,
-          data: formData,
-          processData: false,
-          contentType: false,
-          success: function (response) {
-            var responseObject = JSON.parse(response);
-            var msg = responseObject.messages;
-            var success = responseObject.success;
-            if (success == 1) {
-              toastr.success(msg);
-              setTimeout(function(){
-                window.location.reload();
-              },1000);
+	          } else {
+	            toastr.error(msg);
+	          }
+	        },
+	        error: function (error) {
+	          console.error("Error:", error);
+	        },
+	      });
+	    });
+	    $(".transfer_child_part_to_fg_stock_inhouse").submit(function(e){
+	      e.preventDefault();
+	      let id = $(this).attr("id");
+	      let flag = that.formValidate(id);
+	      let href = $(this).attr("action");
+	      console.log(flag)
+	      if(flag){
+	        return;
+	      }
+	      var formData = new FormData($('#'+id)[0]);
+	      $.ajax({
+	        type: "POST",
+	        url: href,
+	        // url: "add_invoice_number",
+	        data: formData,
+	        processData: false,
+	        contentType: false,
+	        success: function (response) {
+	          var responseObject = JSON.parse(response);
+	          var msg = responseObject.messages;
+	          var success = responseObject.success;
+	          if (success == 1) {
+	            toastr.success(msg);
+	            $(this).parents(".modal").modal("hide")
+	            setTimeout(function(){
+	              window.location.reload();
+	            },1000);
 
-            } else {
-              toastr.error(msg);
-            }
-          },
-          error: function (error) {
-            console.error("Error:", error);
-          },
-        });
-      });
-    	$(".update_p_q_onhold,.update_p_q").submit(function(e){
-        e.preventDefault();
-       
-        var href = $(this).attr("action");
-        var id = $(this).attr("id");
-        let flag = that.formValidate(id);
-       
-        if(flag){
-          return;
-        }
-
-        var formData = new FormData($('.'+id)[0]);
-
-        $.ajax({
-          type: "POST",
-          url: href,
-          data: formData,
-          processData: false,
-          contentType: false,
-          success: function (response) {
-            var responseObject = JSON.parse(response);
-            var msg = responseObject.messages;
-            var success = responseObject.success;
-            if (success == 1) {
-              toastr.success(msg);
-              $(this).parents(".modal").modal("hide")
-              setTimeout(function(){
-                window.location.reload();
-              },1000);
-
-            } else {
-              toastr.error(msg);
-            }
-          },
-          error: function (error) {
-            console.error("Error:", error);
-          },
-        });
-      });
-    },
-    formValidate: function(form_class = ''){
+	          } else {
+	            toastr.error(msg);
+	          }
+	        },
+	        error: function (error) {
+	          console.error("Error:", error);
+	        },
+	      });
+	    });
+	    
+      },
+      formValidate: function(form_class = ''){
         let flag = false;
         $(".custom-form."+form_class+" .required-input").each(function( index ) {
           var value = $(this).val();
-          var dataMax = parseFloat($(this).attr('data-max'));
-          var dataMin = parseFloat($(this).attr('data-min'));
+          var dataMax = parseInt($(this).attr('data-max'));
+          var dataMin = parseInt($(this).attr('data-min'));
+          
           if(value == ''){
             flag = true;
             var label = $(this).parents(".form-group").find("label").contents().filter(function() {
@@ -198,7 +206,7 @@ const page = {
               var label_html = "<label class='error'>"+validation_message+"</label>";
               $(this).parents(".form-group").append(label_html)
             }
-            }else if(dataMax !== undefined && dataMax < value){
+        	}else if(dataMax !== undefined && dataMax < value){
               flag = true;
               var label = $(this).parents(".form-group").find("label").contents().filter(function() {
                 return this.nodeType === 3; // Filter out non-text nodes (nodeType 3 is Text node)
@@ -217,5 +225,26 @@ const page = {
         });
        
         return flag;
-    }
+    },
+	  filter: function(){
+	        let that = this;
+	        $(".search-filter").on("click",function(){
+	            that.serachParams();
+	            $(".close-filter-btn").trigger( "click" )
+	        })
+	        $(".reset-filter").on("click",function(){
+	            that.resetFilter();
+	        })
+	    },
+	    serachParams: function(){
+	        var search_part_name = $("#search_part_name").val();
+	        table.column(0).search(search_part_name).draw();
+	        // var admin_approve_search = $("#admin_approve_search").val();
+	        // table.column(0).search(supplier_search).draw(); 
+	    },
+	    resetFilter: function(){
+	        $("#search_part_name").val('').trigger('change');
+	        // $("#admin_approve_search").val('').trigger('change');
+	        this.serachParams();
+	    }
 };

@@ -70,23 +70,24 @@ class CustomerPartController extends CommonController
 		if (self::TUSHAR_ENGG_SMF == $this->getAROMCustomerName()) {
 			$data['TusharEngg'] = true; //show additional fields for Tushar
 		}
+		// pr($data['customer_part_list']);
+		// pr($data['operations_bom']);
 		if($data['customer_part_list']){
 			foreach ($data['customer_part_list'] as $poo) {
-				
 				$data['po'][$poo->id] = $this->Crud->get_data_by_id("customer_part", $poo->id, "id");
 				$data['gst_structure2'][$data['po'][$poo->id][0]->gst_id] = $this->Crud->get_data_by_id("gst_structure", $data['po'][$poo->id][0]->gst_id, "id");
 				if ($data['operations_bom']) {
 					foreach ($data['operations_bom'] as $s) {
-						
 						if ($s->customer_part_number == $data['po'][$poo->id][0]->part_number) {
 							if ($s->output_part_table_name == "inhouse_parts") {
 								$data['output_part_data'][$s->output_part_id] = $this->InhouseParts->getInhousePartOnlyById($s->output_part_id);
 							} else {
-		
 								$data['output_part_data'][$s->output_part_id] = $this->Crud->get_data_by_id("customer_part", $s->output_part_id, "id");
 							}
 		
 							$data['operations_bom_inputs_data'][$s->id] = $this->Crud->get_data_by_id("operations_bom_inputs", $s->id, "operations_bom_id");
+
+							// pr($data['operations_bom_inputs_data'],1);
 		
 						}
 					}
@@ -141,14 +142,16 @@ class CustomerPartController extends CommonController
 			"part_number" => $part_number,
 			"customer_id" => $customer_id,
 		);
-
+		$success = 0;
+        $messages = "Something went wrong.";
 		$check = $this->Crud->read_data_where("customer_part", $data);
 		if ($check != 0) {
-			$data = array(
-				'errors' => $part_number . ' : This Part Number Already Present With This Customer, Please Enter Different Part Number',
-			);
-			$this->session->set_flashdata($data);
-			redirect($_SERVER['HTTP_REFERER']);
+			// $data = array(
+			// 	'errors' => $part_number . ' : This Part Number Already Present With This Customer, Please Enter Different Part Number',
+			// );
+			$messages = "This Part Number Already Present With This Customer, Please Enter Different Part Number";
+			// $this->session->set_flashdata($data);
+			// redirect($_SERVER['HTTP_REFERER']);
 		} else {
 			if (!empty($_FILES['part_drawing']['name'])) {
 				$image_path = "./documents/";
@@ -165,11 +168,11 @@ class CustomerPartController extends CommonController
 					$picture4 = $uploadData['file_name'];
 				} else {
 					$picture4 = '';
-					echo "no 1";
+					// echo "no 1";
 				}
 			} else {
 				$picture4 = '';
-				echo "no 2";
+				// echo "no 2";
 			}
 			$data = array(
 				"customer_parts_master_id" => $customer_parts_master_id,
@@ -203,19 +206,29 @@ class CustomerPartController extends CommonController
 			);
 			$result = $this->Crud->insert_data("customer_part", $data);
 			if ($result) {
-				$data = array(
-					'success' => $part_number . ' : This Part Number Added successfully',
-				);
-				$this->session->set_flashdata($data);
-				redirect($_SERVER['HTTP_REFERER']);
+				// $data = array(
+				// 	'success' => $part_number . ' : This Part Number Added successfully',
+				// );
+				$success = 1;
+				$messages = "This Part Number Added successfully";
+				// $this->session->set_flashdata($data);
+				// redirect($_SERVER['HTTP_REFERER']);
 			} else {
-				echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$messages = "Unable to Add";
+				// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 	public function updatecustomerpart_new()
 	{
+
+
 		$id = $this->input->post('id');
 
 		$type = $this->input->post('type');
@@ -241,9 +254,11 @@ class CustomerPartController extends CommonController
 		$customer_id = $this->input->post('ucustomer_id');
 		$customer_part_id = $this->input->post('ucustomer_part_id');
 		$isservice = $this->input->post('isservice');
-
+		$success = 0;
+        $messages = "Something went wrong.";
 		if (false) {
-			echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$messages = "Already Exists";
+			// echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 			$data = array(
 				"part_description" => $part_description,
@@ -267,11 +282,20 @@ class CustomerPartController extends CommonController
 			);
 			$result = $this->Crud->update_data("customer_part", $data, $id);
 			if ($result) {
-				echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$messages = "Updated Sucessfully";
+				$success = 1;
+				// echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				echo "<script>alert(' Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$messages = "Not Updated";
+				// echo "<script>alert(' Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
+		$result = [];
+	    $result['messages'] = $messages;
+	    $result['success'] = $success;
+	    echo json_encode($result);
+	    exit();	
 	}
+	
 
 }

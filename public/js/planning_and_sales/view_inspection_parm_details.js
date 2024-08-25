@@ -85,7 +85,7 @@ const datatable = {
     },
     inititeForm: function(){
         let that = this;
-        $(".addcustomerpart,.add_production_qty,.updatecustomerpart_new").submit(function(e){
+        $(".add_inspection_parm_details,.update_inspection_parm_details").submit(function(e){
             e.preventDefault();
             var href = $(this).attr("action");
             var id = $(this).attr("id");
@@ -105,6 +105,39 @@ const datatable = {
               success: function (response) {
                 var responseObject = JSON.parse(response);
                 var msg = responseObject.messages;
+                var success = responseObject.success;
+                if (success == 1) {
+                  toastr.success(msg);
+                  $(this).parents(".modal").modal("hide")
+                  setTimeout(function(){
+                    window.location.reload();
+                  },1000);
+
+                } else {
+                  toastr.error(msg);
+                }
+              },
+              error: function (error) {
+                console.error("Error:", error);
+              },
+            });
+          });
+        $(".delete_row").submit(function(e){
+            e.preventDefault();
+            var href = $(this).attr("action");
+            var id = $(this).attr("id");
+            
+            var formData = new FormData($('.'+id)[0]);
+
+            $.ajax({
+              type: "POST",
+              url: href,
+              data: formData,
+              processData: false,
+              contentType: false,
+              success: function (response) {
+                var responseObject = JSON.parse(response);
+                var msg = responseObject.message;
                 var success = responseObject.success;
                 if (success == 1) {
                   toastr.success(msg);

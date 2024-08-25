@@ -97,7 +97,8 @@ class P_Molding extends CommonController
 		$toUnit = $this->input->post('clientUnitTo');
 
 		$clientId = $this->Unit->getSessionClientId();
-		
+		$success = 0;
+		$messages = "Something went wrong.";
 		if (strpos($toUnit, "/") == true) {
 			$clientTo_values = explode("/", $toUnit);
 			$toStockType = $clientTo_values[0];
@@ -154,16 +155,26 @@ class P_Molding extends CommonController
 		$result = $this->Crud->insert_data("stock_changes", $data_history);
 		
 		if ($result) {
-			$this->addSuccessMessage('Request created successfully.');
+			$messages = "Request created successfully.";
+			$success = 1;
+			// $this->addSuccessMessage('Request created successfully.');
 		} else {
-			$this->addErrorMessage('Failed to create new material request. Please try again.');
+			$messages = "Failed to create new material request. Please try again.";
+			// $this->addErrorMessage('Failed to create new material request. Please try again.');
 		}
-		$this->redirectMessage();	
+		$result = [];
+		$result['messages'] = $messages;
+		$result['success'] = $success;
+		echo json_encode($result);
+		exit();
+		// $this->redirectMessage();	
 	}
 
 	public function remove_stock()
 	{
+
 		$stock_changes_id  = $this->uri->segment('2');
+
 		$stock_changes_data = $this->Crud->get_data_by_id("stock_changes", $stock_changes_id, "id");
 		$stockFromCol = $stock_changes_data[0]->fromStockType;
 		$stockFromUnit = $stock_changes_data[0]->fromUnit;
@@ -171,7 +182,8 @@ class P_Molding extends CommonController
 		$stockToCol = $stock_changes_data[0]->toStockType;
 		$stockToUnit = $stock_changes_data[0]->toUnit;
 
-
+		$success = 0;
+		$messages = "Something went wrong.";
 		//if transfer is within same unit
 		if($stockFromUnit == $stockToUnit) {
 			$child_part_from_unit = $this->SupplierParts->getSupplierPartById($stock_changes_data[0]->part_id, $stockFromUnit);
@@ -191,9 +203,9 @@ class P_Molding extends CommonController
 					$current_stock_to_unit = $child_part_to_unit[0]->$stockToCol;
 
 					if ($qty > $current_stock_from_unit) {
-						$this->addWarningMessage("Stock transfer request qty : ".$qty." is greater than actual stock : ".$current_stock_from_unit);
-						$this->redirectMessage();
-						exit();
+						// $this->addWarningMessage("Stock transfer request qty : ".$qty." is greater than actual stock : ".$current_stock_from_unit);
+						$messages = "Stock transfer request qty : ".$qty." is greater than actual stock : ".$current_stock_from_unit;
+						
 					} else {
 						if ($stock_changes_data[0]->type == "addition") {
 							$new_stock_from = $current_stock_from_unit + $qty;
@@ -223,16 +235,22 @@ class P_Molding extends CommonController
 						);
 						$result3 = $this->Crud->update_data("stock_changes", $data_update_rejection_flow, $stock_changes_id);
 						if ($result3) {
-							$this->addSuccessMessage("Stock Transfered successfully.");
-							$this->redirectMessage();
-							exit();
+							// $this->addSuccessMessage("Stock Transfered successfully.");
+							$messages = "Stock Transfered successfully.";
+							$success = 1; 
+							
 						}
 				}
 		} else {
-			$this->addErrorMessage("Item part id : " . $stock_changes_data[0]->part_id . "Not Found in child_part table Please try again.");
-			$this->redirectMessage();
-			exit();
+			$messages = "Item part id : " . $stock_changes_data[0]->part_id . "Not Found in child_part table Please try again.";
+			// $this->addErrorMessage("Item part id : " . $stock_changes_data[0]->part_id . "Not Found in child_part table Please try again.");
 		}
+
+		$result = [];
+		$result['messages'] = $messages;
+		$result['success'] = $success;
+		echo json_encode($result);
+		exit();
 	}
 	
 	public function p_q_molding_production()

@@ -174,6 +174,7 @@ table.dataTable thead .sorting, table.dataTable thead .sorting_asc, table.dataTa
     width: 17%;
     float: right;
     padding: 9px;
+        margin-top: 0px !important;
 }
 .select2-container.select2-container--default.select2-container--open .select2-dropdown--below {
     width: 824.5px;
@@ -252,7 +253,7 @@ table.dataTable thead .sorting, table.dataTable thead .sorting_asc, table.dataTa
     color: #5d87ff !important;
     font-style: normal !important;
         position: relative;
-    top: 2px;
+    top: 1px;
 }
 .breadcrumb span {
     font-style: normal !important;

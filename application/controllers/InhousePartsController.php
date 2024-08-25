@@ -27,16 +27,162 @@ class InhousePartsController extends CommonController
 
 	public function inhouse_parts_view() {
 		$data['uom'] = $this->Crud->read_data("uom");
-		$data['child_part_master'] = $this->Crud->customQuery("SELECT parts.*, stock.*, u.uom_name 
-			FROM `inhouse_parts` parts
-			LEFT JOIN inhouse_parts_stock stock
-				ON stock.inhouse_parts_id = parts.id 
-    			AND stock.clientId = ".$this->Unit->getSessionClientId()." 
-			INNER JOIN uom u
-				ON u.id = parts.uom_id
-				ORDER BY parts.id desc");
-		
-		$this->loadView('inhouse_parts_view', $data);
+		// $data['child_part_master'] = $this->Crud->customQuery("SELECT parts.*, stock.*, u.uom_name 
+		// 	FROM `inhouse_parts` parts
+		// 	LEFT JOIN inhouse_parts_stock stock
+		// 		ON stock.inhouse_parts_id = parts.id 
+  //   			AND stock.clientId = ".$this->Unit->getSessionClientId()." 
+		// 	INNER JOIN uom u
+		// 		ON u.id = parts.uom_id
+		// 		ORDER BY parts.id desc LIMIT 20");
+
+		 $column[] = [
+            "data" => "id",
+            "title" => "Id",
+            "width" => "7%",
+            "className" => "dt-center",
+            "visible"=> false,
+        ];
+        $column[] = [
+            "data" => "part_number",
+            "title" => "Part Number",
+            "width" => "16%",
+            "className" => "dt-left",
+        ];
+        $column[] = [
+            "data" => "part_description",
+            "title" => "Part Description",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "safty_buffer_stk",
+            "title" => "Safety/buffer Stock",
+            "width" => "10%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "hsn_code",
+            "title" => "HSN Code",
+            "width" => "17%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "store_rack_location",
+            "title" => "Store Rack Location",
+            "width" => "17%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "uom_name",
+            "title" => "UOM",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "max_uom",
+            "title" => "Max PO QTY ",
+            "width" => "7%",
+            "className" => "dt-center status-row",
+        ];
+        $column[] = [
+            "data" => "store_stock_rate",
+            "title" => "Stock Rate",
+            "width" => "17%",
+            "className" => "dt-center",
+
+        ];
+        $column[] = [
+            "data" => "weight",
+            "title" => "Weight",
+            "width" => "17%",
+            "className" => "dt-center",
+
+        ];
+        $column[] = [
+            "data" => "size",
+            "title" => "Size",
+            "width" => "17%",
+            "className" => "dt-center",
+
+        ];
+        $column[] = [
+            "data" => "thickness",
+            "title" => "Thickness",
+            "width" => "17%",
+            "className" => "dt-center",
+
+        ];
+
+        $column[] = [
+            "data" => "action",
+            "title" => "Action",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+       
+
+		$data['created_year'] = $created_year;
+		$data['created_month'] = $created_month;
+
+		$data['title'] = "PO Summary Report";
+
+		for ($i = 1; $i <= 12; $i++) {
+			$data['month_data'][$i] = $this->Common_admin_model->get_month($i);
+			$data['month_number'][$i] = $this->Common_admin_model->get_month_number($data['month_data'][$i]);
+		}
+		$data["data"] = $column;
+        $data["is_searching_enable"] = false;
+        $data["is_paging_enable"] = true;
+        $data["is_serverSide"] = true;
+        $data["is_ordering"] = true;
+        $data["is_heading_color"] = "#a18f72";
+        $data["no_data_message"] =
+            '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
+            base_url() .
+            'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Employee data found..!</div>';
+        $data["is_top_searching_enable"] = true;
+        $data["sorting_column"] = json_encode([[0, 'desc']]);
+        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["admin_url"] = base_url();
+        $data["base_url"] = base_url();
+		$this->loadView('sales/inhouse_parts_view', $data);
+	}
+	public function get_inhouse_parts_view_data(){
+		$post_data = $this->input->post();
+
+        $column_index = array_column($post_data["columns"], "data");
+        $order_by = "";
+        foreach ($post_data["order"] as $key => $val) {
+			if ($key == 0) {
+				$order_by .= $column_index[$val["column"]] . " " . $val["dir"];
+            } else {
+				$order_by .=
+				"," . $column_index[$val["column"]] . " " . $val["dir"];
+            }
+        }
+
+        $condition_arr["order_by"] = $order_by;
+        $condition_arr["start"] = $post_data["start"];
+        $condition_arr["length"] = $post_data["length"];
+        $base_url = $this->config->item("base_url");
+
+		$data = $this->InhouseParts->get_inhouse_parts_view_data($condition_arr,$post_data["search"]);
+		// pr($data,1);
+
+
+		foreach ($data as $key => $value) {
+			$part_edit_data =  base64_encode(json_encode($value));
+			$data[$key]['action'] = "<i class='ti ti-edit edit-parts-data' data-parts='".$part_edit_data."'></i>";
+		}
+		$data["data"] = $data;
+        $total_record = $this->InhouseParts->get_inhouse_parts_view_data_Count([], $post_data["search"]);
+
+        $data["recordsTotal"] = count($total_record);
+        $data["recordsFiltered"] = count($total_record);
+        echo json_encode($data);
 	}
 
 	public function add_inhouse_parts()
@@ -69,124 +215,57 @@ class InhousePartsController extends CommonController
 		);
 		
 		$check = $this->InhouseParts->isRecordExists($data);
-
+		$success = 0;
+        $messages = "Something went wrong.";
 		if ($check != 0) {
-			echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$success = "Already Exists";
+			// echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-			
-			/* if (!empty($_FILES['part_drawing']['name'])) {
-				$image_path = "./documents/";
-				$config['allowed_types'] = '*';
-				$config['upload_path'] = $image_path;
-				$config['file_name'] = $_FILES['part_drawing']['name'];
-
-				//Load upload library and initialize configuration
-				$this->load->library('upload', $config);
-				$this->upload->initialize($config);
-
-				if ($this->upload->do_upload('part_drawing')) {
-					$uploadData = $this->upload->data();
-					$picture4 = $uploadData['file_name'];
-				} else {
-					$picture4 = '';
-					//echo "no 1";
-				}
-			} else {
-				$picture4 = '';
-				//echo "no 2";
-			}
-
-			if (!empty($_FILES['modal']['name'])) {
-				$image_path = "./documents/";
-				$config['allowed_types'] = '*';
-				$config['upload_path'] = $image_path;
-				$config['file_name'] = $_FILES['modal']['name'];
-
-				//Load upload library and initialize configuration
-				$this->load->library('upload', $config);
-				$this->upload->initialize($config);
-
-				if ($this->upload->do_upload('modal')) {
-					$uploadData = $this->upload->data();
-					$picture5 = $uploadData['file_name'];
-				} else {
-					$picture5 = '';
-					//echo "no 1";
-				}
-			} else {
-				$picture5 = '';
-				//echo "no 2";
-			}
-
-			if (!empty($_FILES['cad_file']['name'])) {
-				$image_path = "./documents/";
-				$config['allowed_types'] = '*';
-				$config['upload_path'] = $image_path;
-				$config['file_name'] = $_FILES['cad_file']['name'];
-
-				//Load upload library and initialize configuration
-				$this->load->library('upload', $config);
-				$this->upload->initialize($config);
-
-				if ($this->upload->do_upload('cad_file')) {
-					$uploadData = $this->upload->data();
-					$picture6 = $uploadData['file_name'];
-				} else {
-					$picture6 = '';
-					//echo "no 1";
-				}
-			} else {
-				$picture6 = '';
-				//echo "no 2";
-			}*/
-
 
 			$data = array(
 				"part_number" => $part_number,
 				"part_description" => $part_desc,
-				//"supplier_id" => $supplier_id,
-				//"part_rate" => $part_rate,
 				"uom_id" => $uom_id,
 				"safty_buffer_stk" => $safty_buffer_stk,
-				//"revision_no" => $revision_no,
-				//"child_part_id" => $child_part_id,
 				"hsn_code" => $hsn_code,
 				"store_rack_location" => $store_rack_location,
 				"store_stock_rate" => $store_stock_rate,
-				//"revision_remark" => $revision_remark,
-				//"part_drawing" => $picture4,
 				"modal_document" => '',
-				//"cad_file" => $picture6,
-				//"gst_id" => $gst_id,
 				"weight" => $weight,
 				"size" => $size,
 				"thickness" => $thickness,
-				//"revision_date" => $revision_date,
 				"created_id" => $this->user_id,
 				"date" => $this->Crud->getSQLDateFormatToStore(),
 				"time" => $this->current_time,
-				//"sub_type" => $sub_type,
 				"max_uom" => $max_uom,
 				"min_uom" => $min_uom,
 
 			);
-						
+					
 			$result = $this->InhouseParts->createInhousePart($data);
 			
 			if ($result) {
-				$this->addSuccessMessage('Record added successfully.');
+				$success = 1;
+				$messages = "Record added successfully.";
+				// $this->addSuccessMessage('Record added successfully.');
 			} else {
-				$this->addErrorMessage('Unable to add record.');
+				$messages = "Unable to add record.";
+				// $this->addErrorMessage('Unable to add record.');
 			}
-			$this->redirectMessage();
+			// $this->redirectMessage();
 		}
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 
 	public function update_child_part_view_inhouse()
 	{
 
-		$id = $this->input->post('id');
+		$id = $this->input->post('part_id');
 		$part_number = $this->input->post('part_number');
 		$part_description = $this->input->post('part_description');
 		$hsn_code = $this->input->post('hsn_code');
@@ -198,8 +277,9 @@ class InhousePartsController extends CommonController
 		$size = $this->input->post('size');
 		$thickness = $this->input->post('thickness');
 
-		$safty_buffer_stk = $this->input->post('saft__stk');
-	
+		$safty_buffer_stk = $this->input->post('saft_stk');
+		$success = 0;
+        $messages = "Something went wrong.";
 		$data = array(
 				"part_description" => $part_description,
 				"hsn_code" => $hsn_code,
@@ -215,6 +295,7 @@ class InhousePartsController extends CommonController
 				"min_uom" => $child_part_data[0]->min_uom,
 			);
 
+		
 			$result = $this->InhouseParts->updatePartById($data, $id);
 			if($result) {
 				$stockData = array(
@@ -222,14 +303,24 @@ class InhousePartsController extends CommonController
 				);
 				$resultStock = $this->InhouseParts->updateStockById($stockData, $id);
 				if ($resultStock) {
-					$this->addSuccessMessage('Record updated successfully');
+					$messages = "Record updated successfully";
+					$success = 1;
+					// $this->addSuccessMessage('Record updated successfully');
 				}else{ 
-					$this->addErrorMessage('Unable to update safty buffer stock record. Please try again.');
+					$messages = "Unable to update safty buffer stock record. Please try again.";
+					// $this->addErrorMessage('Unable to update safty buffer stock record. Please try again.');
 				}
 			} else {
-				$this->addErrorMessage('Unable to update record. Please try again.');
+				$messages = "Unable to update record. Please try again.";
+				// $this->addErrorMessage('Unable to update record. Please try again.');
 			}		
-			$this->redirectMessage();
+			
+
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 
@@ -322,11 +413,12 @@ class InhousePartsController extends CommonController
 
 	public function _part_stocks_inhouse($filter_part_id)
 	{
-		$filter_part_id =1;
+		
 		$data['filter_part_id'] = $filter_part_id;
 		$data['customer_part_list'] = $this->InhouseParts->getUniquePartNumber();
-		if(!empty($filter_part_id)){
-			$data['filtered_cust_part'] = $this->InhouseParts->getInhousePartById($filter_part_id);
+		// if(!empty($filter_part_id)){
+		// 
+			$data['filtered_cust_part'] = $this->InhouseParts->getInhousePartDetails($filter_part_id);
 			foreach ($data['filtered_cust_part'] as $key => $po) {
 				$stock = 0;
                 $stockColName = $this->Unit->getStockColNmForClientUnit();
@@ -362,7 +454,7 @@ class InhousePartsController extends CommonController
 			}
 
 			// pr($data['filtered_cust_part'],1);
-		}
+		// }
 		$data['transfer_part_list'] = $this->Crud->customQuery('
 			SELECT DISTINCT customer_part.part_number, customer.customer_name 
 			FROM customer_part

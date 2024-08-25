@@ -83,5 +83,5 @@ const page = {
             table.search(this.value).draw();
         });
             // table = $('#example1').DataTable();
-      }
+    }
 };

@@ -110,6 +110,7 @@ const datatable = {
                 },
             ],
     });
+      
     },
     resetFilter:function(){
         table.column(1).search('').draw();
