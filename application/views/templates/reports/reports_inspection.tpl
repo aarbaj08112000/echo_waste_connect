@@ -1,3 +1,4 @@
+
 <div class="wrapper container-xxl flex-grow-1 container-p-y">
     <!-- Navbar -->
 
@@ -139,9 +140,9 @@
         </div>
     </div>
                             <!-- /.card-header -->
-                            <div class="card-body">
+                            <div class="">
                             <div class="table-responsive text-nowrap">
-                                <table id="example1" class="table table-bordered table-striped">
+                                <table id="example1" class="table  table-striped">
                                     <thead>
     
                                         <tr>
