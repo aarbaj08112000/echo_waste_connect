@@ -130,6 +130,7 @@ const page = {
                 leftColumns: 2,
                 // end: 1
             },
+            order: sorting_column,
             ajax: {
                 data: {'search':data},    
                 url: "supplierPartsController/get_child_part_view",
@@ -238,14 +239,15 @@ const page = {
                 success: function(result){
                   var data = JSON.parse(result);
                   if (data.success == 1) {
-                    //   toastr.success(data.messages);
+                      toastr.success(data.message);
                     //   setTimeout(function () {
                     //     window.location.href = "dashboard";
                     // }, 2000);
                     table.destroy(); 
                     that.dataTable(); 
                     myModal.hide();  
-                  }else{
+                  }else{ 
+                    toastr.error(data.message);
                     // toastr.error("Invalid data");
                   }
 
@@ -279,4 +281,3 @@ const page = {
         this.dataTable();
     }
 }
-
