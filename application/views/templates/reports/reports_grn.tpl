@@ -124,14 +124,14 @@
                                             <%* <span aria-hidden="true">&times;</span> *%>
                                         </button>
                                     </div>
-                                    <form action="<%$base_url%>grn_excel_export" method="POST" id="grn_excel_export">
+                                    <form action="<%$base_url%>grn_excel_export" method="POST" id="grn_excel_export" class="m-2">
                                         <div class="modal-body">
                                             <div class="form-group">
                                                 <label for="">Only Accepted Status GRN will be exported.</label>
                                             </div>
                                             <div class="form-group">
                                                 <label for="">Year:</label>
-                                                <select required name="search_year" id="" class="form-control select2">
+                                                <select required name="search_year" id="" class="form-control select2" style="width:100%;">
                                                     <%foreach $fincYears as $fyear%>
                                                         <option <%if $fyear->startYear == $created_year%>selected<%/if%> value="<%$fyear->startYear%>"><%$fyear->displayName%></option>
                                                     <%/foreach%>
@@ -140,7 +140,7 @@
                                             <div class="form-group">
                                                 <label for="">Month:</label>
                                                 <span class="small"><br>Month will be ignored if GRN Number field is provided.</span>
-                                                <select required name="search_month" id="" class="form-control select2">
+                                                <select required name="search_month" id="" class="form-control select2"  style="width:100%;">
                                                     <%foreach $month_data as $key => $val%>
                                                         <option <%if $month_number[$key] eq $created_month%>selected<%/if%> value="<%$month_number[$key]%>"><%$val%></option>
                                                     <%/foreach%>
@@ -209,7 +209,7 @@
 
                             <div class="">
                             <div class="table-responsive text-nowrap">
-                                <table id="gn_report" class="table table-bordered table-striped">
+                                <table id="gn_report" class="table  table-striped">
                                     <thead>
                                         <tr>
                                             
