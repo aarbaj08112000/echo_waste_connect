@@ -102,9 +102,7 @@
       <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
         <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
         <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
-        <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
-        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
-
+        
         <button type="button" class="btn btn-seconday" id="AddProdButton" data-bs-toggle="modal" title="Add Production Qty"
            data-bs-target="#addPromo">
         <i class="ti ti-plus"></i>
@@ -114,7 +112,7 @@
 
       <div class="modal fade" id="addPromo" tabindex="-1" role="dialog"
          aria-labelledby="exampleModalLabel" aria-hidden="true">
-         <div class="modal-dialog modal-lg" role="document">
+         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                <!-- Modal content will be populated here by AJAX -->
             </div>
@@ -127,7 +125,7 @@
           <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="final_inspection_qa">
             <thead>
                <tr>
-                  <th>Sr No</th>
+                  <!-- <th>Sr No</th> -->
                   <th>Output Part Number / Descriptions </th>
                   <th>Date</th>
                   <th>Shift</th>
@@ -149,7 +147,7 @@
                      <%foreach from=$p_q item=u %>
                         <%assign var='output_part_data' value=$u->output_part_data %>
                            <tr>
-                              <td><%$i %></td>
+                              <!--<td><%$i %></td>-->
                               <td><%$output_part_data[0]->part_number %> /
                                  <%$output_part_data[0]->part_description %>
                               </td>
@@ -164,12 +162,8 @@
                               <td>
                                  <%if (!empty($u->onhold_qty)) %>
                                  <button type="button" class="btn btn-warning float-left " data-bs-toggle="modal" data-bs-target="#onhold<%$i %>">
-                                 <%$u->onhold_qty %> </button>
-                                 <%else %>
-                                    0
-                                 <%/if%>
-                                 <div class="modal fade" id="onhold<%$i %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg" role="document">
+                                   <div class="modal fade" id="onhold<%$i %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
                                        <div class="modal-content">
                                           <div class="modal-header">
                                              <h5 class="modal-title" id="exampleModalLabel">
@@ -181,7 +175,7 @@
                                              </button>
                                           </div>
                                           <div class="modal-body">
-                                             <form action="<%base_url('update_p_q_onhold') %>" method="POST" enctype='multipart/form-data' s>
+                                             <form action="<%base_url('update_p_q_onhold') %>" id="update_p_q_onhold<%$i %>" class="update_p_q_onhold update_p_q_onhold<%$i %> custom-form" method="POST" enctype='multipart/form-data' s>
                                                 <div class="row">
                                                    <div class="col-lg-12">
                                                       <div class="form-group">
@@ -193,14 +187,14 @@
                                                       <div class="form-group">
                                                          <label for="">Accept Qty <span class="text-danger">*</span>
                                                          </label>
-                                                         <input type="number" step="any" value="" max="<%$u->onhold_qty %>" min="0" class="form-control" name="accepted_qty" placeholder="Enter Accepted Quantity" required>
+                                                         <input type="text" step="any" value="" data-max="<%$u->onhold_qty %>" min="0" class="form-control onlyNumericInput required-input" name="accepted_qty" placeholder="Enter Accepted Quantity" >
                                                       </div>
                                                    </div>
                                                    <div class="col-lg-12">
                                                       <div class="form-group">
                                                          <label for="">Rejection
                                                          Reason</label>
-                                                         <select name="rejection_reason" id="" class="form-control select2">
+                                                         <select name="rejection_reason" id="" class="form-control select2" style="width:100%">
                                                             <option value="NA">NA</option>
                                                             <%if ($reject_remark) %>
                                                                   <%foreach from=$reject_remark item=r %>
@@ -234,6 +228,11 @@
                                        </div>
                                     </div>
                                  </div>
+                                 <%$u->onhold_qty %> </button>
+                                 <%else %>
+                                    0
+                                 <%/if%>
+                                
                               </td>
                               <td><%$u->status %></td>
                               <td>
@@ -244,7 +243,7 @@
                                     Completed
                                  <%/if%>
                                  <div class="modal fade" id="acceptReject<%$i %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-dialog " role="document">
                                        <div class="modal-content">
                                           <div class="modal-header">
                                              <h5 class="modal-title" id="exampleModalLabel">Add </h5>
@@ -253,7 +252,7 @@
                                              </button>
                                           </div>
                                           <div class="modal-body">
-                                             <form action="<%base_url('update_p_q') %>" method="POST" enctype='multipart/form-data' >
+                                             <form action="<%base_url('update_p_q') %>" id="update_p_q<%$i %>" class="update_p_q update_p_q<%$i %> custom-form " method="POST" enctype='multipart/form-data' >
                                                 <div class="row">
                                                    <div class="col-lg-12">
                                                       <div class="form-group">
@@ -265,20 +264,20 @@
                                                       <div class="form-group">
                                                          <label for="">Accept Qty <span class="text-danger">*</span>
                                                          </label>
-                                                         <input type="number" step="any" value="" max="<%$u->qty %>" min="0" class="form-control" name="accepted_qty" placeholder="Enter Accepted Quantity" required>
+                                                         <input type="text" step="any" value="" data-max="<%$u->qty %>" data-min="0" class="form-control onlyNumericInput required-input" name="accepted_qty" placeholder="Enter Accepted Quantity" >
                                                       </div>
                                                    </div>
                                                    <div class="col-lg-12">
                                                       <div class="form-group">
                                                          <label for="">Onhold Qty <span class="text-danger">*</span>
                                                          </label>
-                                                         <input type="number" step="any" value="" max="<%$u->qty %>" min="0" class="form-control" name="onhold_qty" placeholder="Enter onhold" required>
+                                                         <input type="text" step="any" value="" data-max="<%$u->qty %>" data-min="0" class="form-control  onlyNumericInput required-input" name="onhold_qty" placeholder="Enter onhold" >
                                                       </div>
                                                    </div>
                                                    <div class="col-lg-12">
                                                       <div class="form-group">
                                                          <label for="">Rejection Reason</label>
-                                                         <select name="rejection_reason" id="" class="form-control select2">
+                                                         <select name="rejection_reason" id="" class="form-control select2  onlyNumericInput required-input" style="width: 100%;">
                                                             <option value="NA">NA</option>
                                                             <%if ($reject_remark) %>
                                                                <%foreach from=$reject_remark item=r %>
