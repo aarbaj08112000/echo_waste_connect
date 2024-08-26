@@ -1,55 +1,49 @@
 <%assign var='isMultiClient' value=$session_data['isMultipleClientUnits']%>
-<div class="wrapper">
+<div class="wrapper container-xxl flex-grow-1 container-p-y">
 <div class="content-wrapper">
   <!-- Content Header (Page header) -->
-  <section class="content-header">
-    <div class="container-fluid">
-      <div class="row mb-2">
-        <div class="col-sm-6">
-          <h1>Material Transfer Requests</h1>
-          <%assign var='role'  value=trim($session_data['type']) %>
-        </div>
-        <div class="col-sm-6">
-          <ol class="breadcrumb float-sm-right">
-            <li class="breadcrumb-item"><a href="<%base_url() %>">Home</a></li>
-            <li class="breadcrumb-item active">Material Transfer Requests</li>
-          </ol>
-        </div>
+  <nav aria-label="breadcrumb">
+      <div class="sub-header-left pull-left breadcrumb">
+        <h1>
+          Reports
+          <a hijacked="yes" href="#stock/issue_request/index" class="backlisting-link" title="Back to Issue Request Listing">
+            <i class="ti ti-chevrons-right"></i>
+            <em>Material Requisition</em></a>
+        </h1>
+        <br>
+        <span>Material Transfer Requests</span>
       </div>
+    </nav>
+    <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
+       <%if ($role == "Admin" || $role=="production") %> 
+       <button type="button" class="btn btn-seconday float-left" data-bs-toggle="modal"
+                  data-bs-target="#exampleModal">
+                New Request</button>
+     <%/if%>
+     <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
+      <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
     </div>
-    <!-- /.container-fluid -->
-  </section>
   <!-- Main content -->
   <section class="content">
-    <div class="container-fluid">
+    <div class="">
       <div class="row">
         <div class="col-12">
           <!-- /.card -->
           <div class="card">
-            <div class="card-header">
-              <h3 class="card-title">
-              </h3>
-              <!-- Button trigger modal -->
-              <%if ($role == "Admin" || $role=="production") %>
-	              <button type="button" class="btn btn-primary float-left" data-toggle="modal"
-	                data-target="#exampleModal">
-	              New Request</button>
-              <%/if%>
-            </div>
+            
             <!-- Modal -->
             <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
               aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Material Transfer Request</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                        </button>
                   </div>
                   <div class="modal-body">
                     <form action="<%base_url('add_stock_up') %>" method="POST"
-                      enctype='multipart/form-data'>
+                      enctype='multipart/form-data' id="add_stock_up" class="custom-form">
                       <div class="row">
                         <div class="col-lg-12">
                           <div class="form-group">
@@ -58,7 +52,7 @@
                               / Stock 
                             <%/if%>
                             </label><span class="text-danger">*</span>
-                            <select name="part_id" required class="from-control select2">
+                            <select name="part_id"  class="from-control select2 required-input" style="width: 100%;">
                               <option value="">Select</option>
                               <%if ($child_part) %>
                                     <%foreach from=$child_part item=c %>
@@ -74,7 +68,7 @@
                           <%if ($isMultiClient == "true") %>
 	                          <div class="form-group">
 	                            <label>Transfer From Unit</label><span class="text-danger">*</span><br>
-	                            <select name="clientUnitFrom" id="clientIdFrom" required disabled class="form-control select2">
+	                            <select name="clientUnitFrom" id="clientIdFrom"  disabled class="form-control select2 required-input" style="width: 100%;">
 	                              <option value="">Select</option>
 	                              <%foreach from=$client_list item=cl %>
 		                              <option value="<%$cl->id %>/<%$cl->client_unit %>"
@@ -87,7 +81,7 @@
 	                          <div class="form-group">
 	                            <label for="po_num">Transfer To Unit<span
 	                              class="text-danger">*</span></label>
-	                            <select name="clientUnitTo" id="clientIdTo" class="form-control select2">
+	                            <select name="clientUnitTo" id="clientIdTo" class="form-control select2 required-input" style="width: 100%;">
 	                            </select>
 	                          </div>
                           <%else %>
@@ -99,8 +93,8 @@
                           <div class="form-group">
                             <label for="po_num">Enter Reason <span
                               class="text-danger">*</span></label>
-                            <input type="text" name="reason" required
-                              placeholder="Enter Reason" class="form-control">
+                            <input type="text" name="reason" 
+                              placeholder="Enter Reason" class="form-control required-input">
                           </div>
                           <div class="form-group">
                             <label for="po_num">Upload document</label>
@@ -110,9 +104,9 @@
                           <div class="form-group">
                             <label for="po_num">Enter Qty <span
                               class="text-danger">*</span></label>
-                            <input type="number" name="qty" step="any"
-                              placeholder="Enter Qty" name="qty" required
-                              class="form-control">
+                            <input type="text" name="qty" step="any"
+                              placeholder="Enter Qty" name="qty" 
+                              class="form-control required-input onlyNumericInput">
                             <input type="hidden" name="type" value="minus" step="any"
                               placeholder="Enter Qty" name="qty" required
                               class="form-control">
@@ -122,15 +116,15 @@
                   </div>
                   <div class="modal-footer">
                   <button type="button" class="btn btn-secondary"
-                    data-dismiss="modal">Close</button>
+                    data-bs-dismiss="modal">Close</button>
                   <button type="submit" class="btn btn-primary">Save</button>
                   </div>
                   </form>
                 </div>
               </div>
             </div>
-            <div class="card-body">
-              <table id="example1" class="table table-bordered table-striped">
+            <div class="">
+              <table id="example1" class="table table-striped">
                 <thead>
                   <tr>
                     <th>Sr. No.</th>
@@ -167,8 +161,8 @@
 						                    <td><%$c->created_date %></td>
 						                    <td>
 						                      <%if ($c->status == "pending") %>
-							                      <a class="btn btn-warning"
-							                        href="<%base_url('remove_stock/') %><%$c->id %>">Click To Transfer Stock</a>
+							                      <a class="btn btn-warning transfer-stock-value"
+							                        href="javascript:void(0)" data-href="<%base_url('remove_stock/') %><%$c->id %>">Click To Transfer Stock</a>
 						                      <%else %>
 						                          stock transferred
 						                      <%/if%>
@@ -192,6 +186,9 @@
   </section>
   <!-- /.content -->
 </div>
+<script>
+            var base_url = <%base_url()|json_encode%> ;
+</script>
 <!-- /.content-wrapper -->
 <script>
 	var url = <%site_url("P_Molding/get_filtered_clientUnit")|@json_encode%>;
@@ -215,6 +212,161 @@
   
           }
       });
-  
+      var file_name = "material_transfer_request";
+      var pdf_title = "Material Transfer Requests";
+      var table = $("#example1").DataTable({
+        dom: "Bfrtilp",
+        buttons: [
+            {
+                extend: "csv",
+                text: '<i class="ti ti-file-type-csv"></i>',
+                init: function (api, node, config) {
+                    $(node).attr("title", "Download CSV");
+                },
+                customize: function (csv) {
+                        var lines = csv.split('\n');
+                        var modifiedLines = lines.map(function(line) {
+                            var values = line.split(',');
+                            values.splice(6, 1);
+                            values.splice(4, 1);
+                            return values.join(',');
+                        });
+                        return modifiedLines.join('\n');
+                    },
+                    filename : file_name
+                },
+          
+            {
+                extend: "pdf",
+                text: '<i class="ti ti-file-type-pdf"></i>',
+                init: function (api, node, config) {
+                    $(node).attr("title", "Download Pdf");
+                },
+                filename: file_name,
+                customize: function (doc) {
+                    doc.pageMargins = [15, 15, 15, 15];
+                    doc.content[0].text = pdf_title;
+                    doc.content[0].color = theme_color;
+                    // doc.content[1].table.widths = ["19%", "19%", "13%", "13%", "15%", "15%"];
+                    doc.content[1].table.body[0].forEach(function (cell) {
+                        cell.fillColor = theme_color;
+                    });
+                    doc.content[1].table.body.forEach(function (row, index) {
+                        row.splice(6, 1);
+                        row.splice(4, 1);
+                        row.forEach(function (cell) {
+                            // Set alignment for each cell
+                            cell.alignment = "center"; // Change to 'left' or 'right' as needed
+                        });
+                    });
+                },
+            },
+        ],
+        searching: true,
+        // scrollX: true,
+        scrollY: true,
+        bScrollCollapse: true,
+        columnDefs: [{ sortable: false, targets: 6 },{ sortable: false, targets: 4 }],
+        pagingType: "full_numbers",
+       
+        
+        });
+        $('.dataTables_length').find('label').contents().filter(function() {
+                return this.nodeType === 3; // Filter out text nodes
+        }).remove();
+        setTimeout(function(){
+            $(".dataTables_length select").select2({
+                minimumResultsForSearch: Infinity
+            });
+        },1000)
   });
+
+  $("#add_stock_up").submit(function(e){
+      e.preventDefault();
+      let flag = formValidate("add_stock_up");
+      if(flag){
+        return;
+      }
+      var formData = new FormData($('#add_stock_up')[0]);
+
+      $.ajax({
+        type: "POST",
+        url: base_url+"add_stock_up",
+        // url: "add_invoice_number",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          var responseObject = JSON.parse(response);
+          var msg = responseObject.messages;
+          var success = responseObject.success;
+          if (success == 1) {
+            toastr.success(msg);
+            $(this).parents(".modal").modal("hide")
+            setTimeout(function(){
+              window.location.reload();
+            },1000);
+
+          } else {
+            toastr.error(msg);
+          }
+        },
+        error: function (error) {
+          console.error("Error:", error);
+        },
+      });
+    });
+  $(document).on("click",".transfer-stock-value",function(e){
+      e.preventDefault();
+      console.log("ok")
+      var href = $(this).attr("data-href");
+      $.ajax({
+        type: "GET",
+        url: href,
+        // url: "add_invoice_number",,
+        success: function (response) {
+          var responseObject = JSON.parse(response);
+          var msg = responseObject.messages;
+          var success = responseObject.success;
+          if (success == 1) {
+            toastr.success(msg);
+            $(this).parents(".modal").modal("hide")
+            setTimeout(function(){
+              window.location.reload();
+            },1000);
+
+          } else {
+            toastr.error(msg);
+          }
+        },
+        error: function (error) {
+          console.error("Error:", error);
+        },
+      });
+    });
+  function formValidate(form_class = ''){
+    let flag = false;
+    $(".custom-form#"+form_class+" .required-input").each(function( index ) {
+      var value = $(this).val();
+      if(value == ''){
+        flag = true;
+        var label = $(this).parents(".form-group").find("label").contents().filter(function() {
+          return this.nodeType === 3; // Filter out non-text nodes (nodeType 3 is Text node)
+        }).text().trim();
+        var exit_ele = $(this).parents(".form-group").find("label.error");
+        if(exit_ele.length == 0){
+          var start ="Please enter ";
+          if($(this).prop("localName") == "select"){
+            var start ="Please select ";
+          }
+          label = ((label.toLowerCase()).replace("enter", "")).replace("select", "");
+          var validation_message = start+(label.toLowerCase()).replace(/[^\w\s*]/gi, '');
+          var label_html = "<label class='error'>"+validation_message+"</label>";
+          $(this).parents(".form-group").append(label_html)
+        }
+
+      }
+    });
+    return flag;
+  }
 </script>
