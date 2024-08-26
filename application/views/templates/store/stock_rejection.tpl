@@ -35,8 +35,9 @@
 
                   </button>
                </div>
+               <form action="javascript:void(0)" method="POST" class="custom-form add_stock_rejection" enctype='multipart/form-data'>
                <div class="modal-body">
-                  <form action="javascript:void(0)" method="POST" class="custom-form add_stock_rejection" enctype='multipart/form-data'>
+                  
                      <div class="row">
                         <div class="col-lg-12">
                            <div class="form-group">
@@ -71,7 +72,7 @@
                            </div>
                            <div class="form-group">
                               <label for="po_num">Enter Qty <span class="text-danger">*</span></label>
-                              <input type="number" name="qty" step="any" placeholder="Enter Qty" name="qty"  class="form-control required-input">
+                              <input type="text" name="qty" step="any" placeholder="Enter Qty" name="qty"  class="form-control required-input onlyNumericInput">
                            </div>
                            <div class="form-group">
                               <label for="po_num">Enter Remark </label>
@@ -105,7 +106,7 @@
                   <th>Uploaded Debit Note</th>
                   <th>Qty</th>
                   <th>Transfer Stock</th>
-                  <th>Download Debit Note</th>
+                  <th class="text-center">Download Debit Note</th>
                </tr>
             </thead>
             <tbody>
@@ -131,22 +132,23 @@
                              <%/if%>
                           </td>
                           <td><%$c->qty %></td>
-                          <td>
+                          <td class="text-center">
                              <%if ($c->status == "approved") %>
                               <p class="text-center"><a  href="<%base_url('create_debit_note/') %><%$c->id %>" title="Download"><i class="ti ti-download"></i></a></p>
                              <%else if ($c->status == "stock_transfered") %>
                                <button type="submit" data-bs-toggle="modal" class="btn btn-sm btn-primary" data-bs-target="#exampleModal2<%$i %>">Approve Rejection</button>
-                               <div class="modal fade" id="exampleModal2<%$i %>" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                               <div class="modal fade" id="exampleModal2<%$i %>" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="text-align: left;">
+                                  <div class="modal-dialog  modal-dialog-centered" role="document">
                                      <div class="modal-content">
                                         <div class="modal-header">
                                            <h5 class="modal-title" id="exampleModalLabel">Approve Rejection</h5>
-                                           <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                           <span aria-hidden="true">&times;</span>
+                                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                           
                                            </button>
                                         </div>
+                                         <form action="<%base_url('update_rejection_flow_status') %>" method="POST" class="update_rejection_flow_status">
                                         <div class="modal-body">
-                                           <form action="<%base_url('update_rejection_flow_status') %>" method="POST">
+                                          
                                               <div class="row">
                                                  <div class="col-lg-12">
                                                     <div class="form-group">
