@@ -435,13 +435,15 @@ class StockController extends CommonController
 
 	public function transfer_child_part_to_fg_stock_inhouse()
 	{
-		$customer_part_number  = $this->input->post('customer_part_number');
+
+		$customer_part_number  = strval($this->input->post('customer_part_number'));
 		$child_part_id  = $this->input->post('child_part_id');
 		$part_number  = $this->input->post('part_number');
 		$stock  = (float)$this->input->post('stock');
 		$child_part = $this->InhouseParts->getInhousePartById($child_part_id);
 		$customer_part_data = $this->CustomerPart->getCustomerPartByPartNumber($customer_part_number);
-
+		// pr($customer_part_data,1);
+		$customer_part_id = 
 		$prodQtyColName = $this->Unit->getProdColNmForClientUnit();
 		$fgStockColName = $this->Unit->getFGStockColNmForClientUnit();
 
@@ -457,15 +459,24 @@ class StockController extends CommonController
 		);
 
 		$query = $this->InhouseParts->updateStockById($data_update_child_part, $child_part[0]->id);
-		$customerPartDetails = $this->CustomerPart->getCustomerPartOnlyById($customer_part_number);
-		$query2 = $this->CustomerPart->updateStockById($data_update_new_stock_customer_partt, $customerPartDetails[0]->id);
+		// $customerPartDetails = $this->CustomerPart->getCustomerPartOnlyById($customer_part_number);
+		$query2 = $this->CustomerPart->updateStockById($data_update_new_stock_customer_partt, $customer_part_data[0]->id);
+		$success = 0;
+        $messages = "Something went wrong.";
 		if ($query) {
 			$this->Crud->stock_report($child_part[0]->part_number, $customer_part_number, "production_qty", "fg_stock", $old_stock, $stock);
-			$this->addSuccessMessage('Stock transferred successfully.');
+			$messages = "Stock transferred successfully.";
+			$success = 1;
+			// $this->addSuccessMessage('Stock transferred successfully.');
 		} else {
-			$this->addErrorMessage('Unable to transfer to stock');
+			$messages = "Unable to transfer to stock";
+			// $this->addErrorMessage('Unable to transfer to stock');
 		}
-		$this->redirectMessage();
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 	public function sharing_issue_request_pending()
