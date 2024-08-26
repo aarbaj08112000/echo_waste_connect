@@ -7,6 +7,7 @@ const page = {
         this.dataTable();
         this.filter();
         this.formValidation();
+        
         $(document).on("click",".edit-part",function(){
             var data = $(this).attr("data-value");
             data = JSON.parse(atob(data)); 
@@ -139,6 +140,9 @@ const page = {
         }).remove();
         $(".dataTables_length select").select2({
             minimumResultsForSearch: Infinity
+        });
+        $('#serarch-filter-input').on('keyup', function() {
+            table.search(this.value).draw();
         });
     },
     formValidation: function(){
