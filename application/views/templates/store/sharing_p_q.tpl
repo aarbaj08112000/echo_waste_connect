@@ -1,20 +1,26 @@
-<div class="wrapper">
+<div class="wrapper container-xxl flex-grow-1 container-p-y">
 <div class="content-wrapper">
-   <section class="content-header">
-      <div class="container-fluid">
-         <div class="row mb-2">
-            <div class="col-sm-6">
-               <h1>Sharing Production Qty</h1>
-            </div>
-            <div class="col-sm-6">
-               <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="<%base_url('dashboard') %>">Home</a></li>
-                  <li class="breadcrumb-item active">Production Qty</li>
-               </ol>
-            </div>
-         </div>
+   
+   <div class="sub-header-left pull-left breadcrumb">
+        <h1>
+          Production
+          <a hijacked="yes" href="javascript:void(0)" class="backlisting-link" title="Back to Issue Request Listing">
+            <i class="ti ti-chevrons-right"></i>
+            <em>Sharing Production Qty</em></a>
+        </h1>
+        <br>
+        <span>Sharing Production Qty
+</span>
       </div>
-   </section>
+      <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
+                              <button type="button" class="btn btn-seconday" data-bs-toggle="modal"
+                        data-bs-target="#addPromo">
+                     Add Sharing Production Qty
+                     </button>
+            <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
+      <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
+      
+    </div>
    <section class="content">
       <div>
          <div class="row">
@@ -22,22 +28,23 @@
             <div class="col-lg-12">
                <div class="modal fade" id="addPromo" tabindex="-1" role="dialog"
                   aria-labelledby="exampleModalLabel" aria-hidden="true">
-                  <div class="modal-dialog modal-lg" role="document">
+                  <div class="modal-dialog  modal-dialog-centered" role="document">
                      <div class="modal-content">
                         <div class="modal-header">
                            <h5 class="modal-title" id="exampleModalLabel">Add</h5>
-                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                           <span aria-hidden="true">&times;</span>
+                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                          
                            </button>
                         </div>
+                        <form action="<%base_url('add_production_qty_sharing') %>"
+                                 method="POST" enctype="multipart/form-data" id="add_production_qty_sharing" class="custom-form">
                         <div class="modal-body">
                            <div class="form-group">
-                              <form action="<%base_url('add_production_qty_sharing') %>"
-                                 method="POST" enctype="multipart/form-data">
+                              
                            </div>
                            <div class="form-group">
-                           <label for="on click url">Select Shift Type / Name / Start Time / End Time<span class="text-danger">*</span></label>
-                           <select required name="shift_id" id="shift" class="form-control select2">
+                           <label for="on click url">Shift Type / Name / Start Time / End Time<span class="text-danger">*</span></label>
+                           <select  name="shift_id" id="shift" class="form-control select2 required-input" style="width:100%;">
                           <option value="">Select</option>
                            <%if ($shifts) %>
                                 <%foreach from=$shifts item=s %>
@@ -50,8 +57,8 @@
                            </select>
                            </div>
                            <div class="form-group">
-                           <label for="on click url">Select Operator <span class="text-danger">*</span></label>
-                           <select name="operator_id" id="operator" class="form-control select2" required>
+                           <label for="on click url">Operator <span class="text-danger">*</span></label>
+                           <select name="operator_id" id="operator" class="form-control select2 required-input" style="width:100%;" >
                            <option value="">Select</option>
                            <%if ($operator) %>
                                 <%foreach from=$operator item=s %>
@@ -61,9 +68,9 @@
                            </select>
                            </div>
                            <div class="form-group">
-                           <label for="on click url">Select Machine<span
+                           <label for="on click url">Machine<span
                               class="text-danger">*</span></label>
-                           <select required name="machine_id" id="machine" class="form-control select2">
+                           <select  name="machine_id" id="machine" class="form-control select2 required-input" style="width:100%;">
                            <option value="">Select</option>
                            <%if ($machine) %>
                                 <%foreach from=$machine item=s %>
@@ -75,7 +82,7 @@
                            <div class="form-group">
                            <label for="on click url">Enter Date<span
                               class="text-danger">*</span></label>
-                           <input max="<%date("Y-m-d") %>" type="date"
+                           <input max="<%date('Y-m-d') %>" type="date"
                               value="<%date('Y-m-d') %>" name="date" required
                               class="form-control">
                            </div>
@@ -90,22 +97,17 @@
                   </div>
                </div>
                <div class="card">
-                  <div class="card-header">
-                     <button type="button" class="btn btn-primary" data-toggle="modal"
-                        data-target="#addPromo">
-                     Add Sharing Production Qty
-                     </button>
-                  </div>
-                  <div class="card-body">
-                     <table id="example1" class="table table-bordered table-striped">
+                  
+                  <div class="">
+                     <table id="sharing_p_q" class="table  table-striped">
                         <thead>
                            <tr>
-                              <th>Sr No</th>
-                              <th>Date</th>
-                              <th>Shift</th>
-                              <th>Machine</th>
-                              <th>Operator</th>
-                              <th>View Details</th>
+                              <!-- <th>Sr No</th> -->
+                              <th width="21%">Date</th>
+                              <th width="21%">Shift</th>
+                              <th width="21%">Machine</th>
+                              <th width="21%">Operator</th>
+                              <th width="16%">View Details</th>
                            </tr>
                         </thead>
                         <tbody>
@@ -113,7 +115,7 @@
                                 <%assign var='i' value=1 %>
                                 <%foreach from=$sharing_p_q item=u %>
 			                           <tr>
-			                              <td><%$i %></td>
+			                              <!-- <td><%$i %></td> -->
 			                              <td><%$u->date %></td>
 			                              <td><%$u->shift_type %></td>
 			                              <td><%$u->machine_name %></td>
@@ -136,3 +138,5 @@
       </div>
    </section>
 </div>
+
+<script src="<%$base_url%>public/js/production/sharing_p_q.js"></script>
