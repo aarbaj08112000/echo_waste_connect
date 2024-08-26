@@ -67,12 +67,12 @@
                 <br>
                 <div class="col-lg-12">
                     <div class="card">
-                        <div class="card-body">
+                        <div class="">
                             
-                            <table id="example1" class="table table-bordered table-striped">
+                            <table id="example1" class="table  table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Sr No</th>
+                                        <!-- <th>Sr No</th> -->
                                         <th>Customer Part</th>
                                         <th>Mold Name</th>
                                         <th>No Of Cavity</th>
@@ -93,7 +93,7 @@
                                             <%/if%>
                                            
                                             <tr>
-                                                <td><%$i%></td>
+                                                <!-- <td><%$i%></td> -->
                                                 <td><%$u['customer_name']%>/<%$u['part_number']%>/<%$u['part_description']%></td>
                                                 <td><%$u['mold_name']%></td>
                                                 <td><%$u['no_of_cavity']%></td>
@@ -107,19 +107,19 @@
                                                 <td><%$mold_maintenance_docs[$u['mold_name']][0]->pm_date%></td>
                                                 
                                                 <td> 
-                                                    <button type="button" class="btn btn-xs btn-primary doc_upload" data-bs-toggle="modal" data-bs-target="#uplddoc" data-value = "<%$u['encrpted_data']%>">
-                                                      <i class="fas fa-upload" aria-hidden="true"></i>
-                                                    </button>
+                                                    <a type="button" class=" doc_upload" data-bs-toggle="modal" data-bs-target="#uplddoc" data-value = "<%$u['encrpted_data']%>">
+                                                      <i class="ti ti-upload" aria-hidden="true"></i>
+                                                    </a>
                     
                                                     <%if !empty($mold_maintenance_docs[$u['mold_name']][0]->doc)%>
-                                                        <a title="Download" class="btn btn-xs btn-success" download href="<%$base_url%>documents/<%$mold_maintenance_docs[$u['mold_name']][0]->doc%>"><i class="fas fa-download" aria-hidden="true"></i> </a>
+                                                        <a title="Download" class="" download href="<%$base_url%>documents/<%$mold_maintenance_docs[$u['mold_name']][0]->doc%>"><i class="ti title-download" aria-hidden="true"></i> </a>
                                                     <%/if%>
                   
                                                     
                                                 </td>
                                                 <td>
                                                     <%if !empty($mold_maintenance_docs[$u['mold_name']][0]->doc)%>
-                                                    <a href="<%$base_url%>mold_maintenance_history/<%$u['mold_name']|replace:' ':'_'%>/<%$u['customer_part_id']                                                                                                                                                                                                                                                                         %>" class="btn btn-primary" href=""><i class="fa fa-history" aria-hidden="true"></i></a>
+                                                    <a href="<%$base_url%>mold_maintenance_history/<%$u['mold_name']|replace:' ':'_'%>/<%$u['customer_part_id']                                                                                                                                                                                                                                                                         %>" class="" href=""><i class="ti ti-history" aria-hidden="true"></i></a>
                                                     <%/if%>
                                                 </td>
                                             </tr>
