@@ -18,7 +18,7 @@ const page = {
                     required: true
                 },
                 supplierEmail: {
-                    required: true,
+                    required: false,
                     email:true
                 },
                 supplierNumber: {
@@ -34,7 +34,7 @@ const page = {
                     required: true
                 },
                 supplierMnumber: {
-                    required: true,
+                    required: false,
                     minlength:10,
                     maxlength:10
                 },
@@ -42,7 +42,7 @@ const page = {
                     required: true,
                 },
                 pan_card: {
-                    required: true
+                    required: false
                 },
                 paymentTerms: {
                     required: true
@@ -111,4 +111,3 @@ const page = {
     	$(".select2").select2();
     }
 }
-
