@@ -188,6 +188,37 @@ const page = {
         },
       });
     });
+    $("#update_status_grn_inwarding").submit(function(e){
+      e.preventDefault();
+      var href = $(this).attr("action")
+      var formData = new FormData($(this)[0]);
+      $.ajax({
+        type: "POST",
+        url: href,
+        // url: "add_rejection_flow",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          var responseObject = JSON.parse(response);
+          var msg = responseObject.messages;
+          var success = responseObject.success;
+          if (success == 1) {
+            toastr.success(msg);
+            $(this).parents(".modal").modal("hide")
+            setTimeout(function(){
+              window.location.reload();
+            },1000);
+
+          } else {
+            toastr.error(msg);
+          }
+        },
+        error: function (error) {
+          console.error("Error:", error);
+        },
+      });
+    })
 
   },
   formValidate: function(form_class = ''){
