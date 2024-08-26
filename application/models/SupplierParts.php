@@ -261,6 +261,7 @@ class SupplierParts extends CI_Model {
         $this->db->join("child_part_stock as cs", "cp.id = cs.childPartId AND cs.clientId = $clientId ",'left');
         $this->db->join("uom as u", "u.id = cp.uom_id",'left');
         if (count($condition_arr) > 0) {
+            // pr($condition_arr,1);
             $this->db->limit($condition_arr["length"], $condition_arr["start"]);
             if ($condition_arr["order_by"] != "") {
                 $this->db->order_by($condition_arr["order_by"]);
@@ -972,6 +973,77 @@ class SupplierParts extends CI_Model {
             }
             if ($search_params["supplier_id"] != "") {
                 $this->db->where("c.supplier_id", $search_params["supplier_id"]);
+            }
+            
+        }
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
+
+        // pr($this->db->last_query(),1);
+        return $ret_data;
+    }
+
+    /* for datable */
+     public function get_sharing_issue_request_data(
+        $condition_arr = [],
+        $search_params = ""
+    ) {
+
+        $clientId = $this->Unit->getSessionClientId();
+        $this->db->select(
+            's.id as id,s.status as status,CONCAT(s.created_date," ",s.created_time) as date_time,s.qty as qty, c.part_number as part_number, c.part_description as part_description, c.thickness as part_thickness, c.weight as weight'
+        );
+        $this->db->from("sharing_issue_request as s");
+        $this->db->join("child_part as c", "c.id = s.child_part_id",'left');
+        $this->db->where("s.clientId",$clientId);
+
+        if (count($condition_arr) > 0) {
+            $this->db->limit($condition_arr["length"], $condition_arr["start"]);
+            if ($condition_arr["order_by"] != "") {
+                $this->db->order_by($condition_arr["order_by"]);
+            }
+        }
+
+        if (is_array($search_params) && count($search_params) > 0) {
+            if ($search_params["created_year"] != "") {
+                $this->db->where("s.year", $search_params["created_year"]);
+            }
+            if ($search_params["created_month"] != "") {
+                $this->db->like(
+                    "s.month",
+                    $search_params["created_month"]
+                );
+            }
+            
+        }
+
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+
+        // pr($this->db->last_query(),1);
+        return $ret_data;
+    }
+    public function get_sharing_issue_request_data_Count(
+        $condition_arr = [],
+        $search_params = ""
+    ) {
+       $clientId = $this->Unit->getSessionClientId();
+        $this->db->select(
+            'count(s.id) as total_record'
+        );
+        $this->db->from("sharing_issue_request as s");
+        $this->db->join("child_part as c", "c.id = s.child_part_id",'left');
+        $this->db->where("s.clientId",$clientId);
+
+        if (is_array($search_params) && count($search_params) > 0) {
+            if ($search_params["created_year"] != "") {
+                $this->db->where("s.year", $search_params["created_year"]);
+            }
+            if ($search_params["created_month"] != "") {
+                $this->db->like(
+                    "s.month",
+                    $search_params["created_month"]
+                );
             }
             
         }
