@@ -25,14 +25,11 @@
                     <div class="col-12">
                         <!-- /.card -->
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title"></h3>
-                                <!-- <a class="btn btn-dark" href="<%base_url()%>planing_data/<%$financial_year%>/<%$month%>/<%$customer_id%>">< Back </a> -->
-                            </div>
+                           
                             <!-- /.card-header -->
-                            <div class="card-body">
+                            <div class="">
                             <div class="table-responsive text-nowrap">
-                                <table id="view-planning-data" class="table table-bordered table-striped">
+                                <table id="view-planning-data" class="table  table-striped">
                                     <thead>
                                     
                                         <tr>
@@ -111,5 +108,11 @@ $(document).ready(function() {
     $('.dataTables_length').find('label').contents().filter(function() {
         return this.nodeType === 3; // Filter out text nodes
     }).remove();
+    setTimeout(function(){
+          $(".dataTables_length select").select2({
+              minimumResultsForSearch: Infinity
+          });
+        },1000)
+
 });
 </script>
