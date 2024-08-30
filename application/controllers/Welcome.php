@@ -2907,7 +2907,6 @@ class Welcome extends CommonController
 		$data['gst_structure'] = $this->Crud->read_data("gst_structure");
 		$session_data = $this->session->userdata('entitlements');
 		/* datatable */
-		
         $column[] = [
             "data" => "supplier_name",
             "title" => "Supplier Name",
@@ -5618,8 +5617,13 @@ class Welcome extends CommonController
 			$data['po'][$poo->customer_master_id] = $this->Crud->get_data_by_id("customer_part", $poo->customer_master_id, "id");
 			$data['customer_data'][$data['po'][$poo->customer_master_id][0]->customer_id] = $this->Crud->get_data_by_id("customer", $data['po'][$poo->customer_master_id][0]->customer_id, "id");
 			$data['customer_part_data'][$data['po'][$poo->customer_master_id][0]->customer_part_id] = $this->Crud->get_data_by_id("customer_part_type", $data['po'][$poo->customer_master_id][0]->customer_part_id, "id");
-			$data['customer_part_rate'][$key]->encoded_data = base64_encode(json_encode($data['po'][$poo->customer_master_id][0]));
+			$data['customer_part_rate'][$poo->customer_master_id]->encoded_data = base64_encode(json_encode($data['po'][$poo->customer_master_id][0]));
+            // $data['customer_part_rate_data'][$poo->customer_master_id]
+            $data['customer_part_rate_data'][$poo->customer_master_id][0]->part_number = $data['po'][$poo->customer_master_id][0]->part_number;
+            $data['customer_part_rate_data'][$poo->customer_master_id][0]->part_description = $data['po'][$poo->customer_master_id][0]->part_description;
+            
 		}
+        // pr($data['customer_part_rate'],1);
 		
 		// pr($data['customer_data'],1);
 		// $this->load->view('header');
@@ -5644,14 +5648,22 @@ class Welcome extends CommonController
 
 		// $role_management_data = $this->db->query('SELECT DISTINCT part_number FROM  `customer_part`  ORDER BY `id` DESC');
 		// $data['customer_part_rate_new'] = $role_management_data->result();
-		$role_management_data = $this->db->query('SELECT DISTINCT customer_master_id,operation_id,id FROM `customer_part_operation` WHERE customer_master_id =' . $part_id . '  ORDER BY `id` ASC');
+		$role_management_data = $this->db->query('
+            SELECT DISTINCT cpp.*,cpp.name as name_val,p.name,cp.customer_id,c.customer_name,cp.part_number,cp.part_description,cp.id as customer_part_id
+            FROM `customer_part_operation` as cpp
+            LEFT JOIN operations as p ON p.id = cpp.operation_id
+            LEFT JOIN customer_part as cp ON cp.id = cpp.customer_master_id
+            LEFT JOIN customer as c ON c.id = cp.customer_id
+            WHERE cpp.customer_master_id =' . $part_id . '  ORDER BY `id` ASC
+        ');
 		$data['customer_part_rate'] = $role_management_data->result();
+        // pr($data['customer_part_rate'],1);
 		$data['customer'] = $this->Crud->get_data_by_id("customer_part", $data['part_id'], "id");
 
 		// print_r($data['customer_part']);
-		$this->load->view('header');
-		$this->load->view('customer_part_operation_by_id', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		$this->loadView('sales/customer_part_operation_by_id', $data);
+		// $this->load->view('footer');
 	}
 	public function add_operation_details()
 	{
@@ -5715,15 +5727,20 @@ class Welcome extends CommonController
 
 
 
-		// $role_management_data = $this->db->query('SELECT DISTINCT customer_master_id FROM `customer_part_rate` ORDER BY `id` DESC');
-		// $data['customer_part_rate'] = $role_management_data->result();
+		$role_management_data = $this->db->query('
+            SELECT cpp.*,p.name as operation_name_val,cp.part_description,cp.part_number,c.customer_name
+            FROM `customer_part_operation` as cpp
+            LEFT JOIN operations as p ON p.id = cpp.operation_id
+            LEFT JOIN customer_part as cp ON cp.id = cpp.customer_master_id
+            LEFT JOIN customer as c ON c.id = cp.customer_id
+            WHERE `customer_master_id` = 107
+            ORDER BY `id` DESC
+        ');
+		$data['customer_part_rate'] = $role_management_data->result();
 
-		$data['customer_part_rate'] = $this->Crud->get_data_by_id("customer_part_operation", $customer_master_id, "customer_master_id");
-		// print_r($data['customer_part_rate']);
-
-		$this->load->view('header');
-		$this->load->view('view_part_operation_history', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		$this->loadView('sales/view_part_operation_history', $data);
+		// $this->load->view('footer');
 	}
 	public function customer_price()
 	{
@@ -6257,6 +6274,7 @@ class Welcome extends CommonController
 	}
 	public function add_customer_price()
 	{
+
 		$customer_master_id = $this->input->post('customer_master_id');
 		$rate = $this->input->post('rate');
 		$revision_no = $this->input->post('revision_no');
@@ -6268,13 +6286,15 @@ class Welcome extends CommonController
 			"customer_part_id" => $customer_part_id,
 			"revision_no" => $revision_no,
 		);
+        $success = 0;
+        $messages = "Something went wrong.";
 		$check = $this->Crud->read_data_where("customer_part_rate", $data);
 		if ($check != 0) {
-			echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+            $messages = "Already Exists";
+			// echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 
 			if (!empty($_FILES['uploading_document']['name'])) {
-				echo "not empty file";
 				$image_path = "./documents/";
 				$config['allowed_types'] = '*';
 				$config['upload_path'] = $image_path;
@@ -6289,14 +6309,14 @@ class Welcome extends CommonController
 					$picture4 = $uploadData['file_name'];
 				} else {
 					$picture4 = '';
-					echo "no 1";
+					// echo "no 1";
 				}
 			} else {
 				$picture4 = '';
-				echo "no 2";
+				// echo "no 2";
 			}
 
-			echo "picture4: " . $picture4;
+			// echo "picture4: " . $picture4;
 
 			$data = array(
 				"rate" => $rate,
@@ -6312,14 +6332,23 @@ class Welcome extends CommonController
 
 			$result = $this->Crud->insert_data("customer_part_rate", $data);
 			if ($result) {
-				echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $messages = "Added Sucessfully";
+                $success = 1;
+				// echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $messages = "Unable to Add";
+				// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
+        $result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 	public function add_customer_operation()
 	{
+        
 		$customer_master_id = $this->input->post('customer_master_id');
 		$operation_id = $this->input->post('operation_id');
 		$revision_no = $this->input->post('revision_no');
@@ -6334,9 +6363,12 @@ class Welcome extends CommonController
 			"customer_master_id" => $customer_master_id,
 			// "revision_no" => $revision_no,
 		);
+        $success = 0;
+        $messages = "Something went wrong.";
 		$check = $this->Crud->read_data_where("customer_part_operation", $data);
 		if ($check != 0) {
-			echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+            $messages = "Already Exists";
+			// echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 
 
@@ -6356,11 +6388,19 @@ class Welcome extends CommonController
 
 			$result = $this->Crud->insert_data("customer_part_operation", $data);
 			if ($result) {
-				echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $messages = "Added Sucessfully";
+                $success  =1;
+				// echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $messages = "Unable to Add";
+				// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
+        $result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 	public function add_customer_operation_data()
 	{
@@ -6458,6 +6498,7 @@ class Welcome extends CommonController
 
 	public function updatecustomerpartprice()
 	{
+       
 		$customer_master_id = $this->input->post('customer_master_id');
 		$rate = $this->input->post('rate');
 		$revision_no = $this->input->post('revision_no');
@@ -6471,8 +6512,11 @@ class Welcome extends CommonController
 		);
 		// print_r($data);
 		$check = $this->Crud->read_data_where("customer_part_rate", $data);
+        $success = 0;
+        $messages = "Something went wrong.";
 		if ($check != 0) {
-			echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+            $messages = "Already Exists";
+			// echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 
 			if (!empty($_FILES['uploading_document']['name'])) {
@@ -6490,11 +6534,11 @@ class Welcome extends CommonController
 					$picture4 = $uploadData['file_name'];
 				} else {
 					$picture4 = '';
-					echo "no 1";
+					// echo "no 1";
 				}
 			} else {
 				$picture4 = '';
-				echo "no 2";
+				// echo "no 2";
 			}
 
 			$data = array(
@@ -6511,11 +6555,19 @@ class Welcome extends CommonController
 
 			$result = $this->Crud->insert_data("customer_part_rate", $data);
 			if ($result) {
-				echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $messages = "Added Sucessfully";
+                $success = 1;
+				// echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $messages = "Unable to Add";
+				// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
+        $result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 	public function stock_report($part_number_from, $part_number_to, $from, $to, $transfer_stock, $actual_stock) {
@@ -9296,9 +9348,19 @@ class Welcome extends CommonController
 		$data['child_part_list'] = $this->SupplierParts->readSupplierParts();
 		$data['customer_part_list'] = $this->Crud->read_data("customer_part");
 		$data['bom_list'] = $this->Crud->get_data_by_id("bom", $data['customer_part_id'], "customer_part_id");
-		$this->load->view('header');
-		$this->load->view('bom_by_id', $data);
-		$this->load->view('footer');
+        $role_management_data = $this->db->query('
+            SELECT b.*,u.uom_name,cp.part_number,cp.part_description
+            FROM `bom` as b
+            LEFT JOIN child_part as cp ON cp.id = b.child_part_id
+            LEFT JOIN uom as u ON u.id = cp.uom_id 
+            WHERE `customer_part_id` = '.$data['customer_part_id'].'
+            ORDER BY `id` DESC
+            ');
+        $data['bom_list'] = $role_management_data->result();
+        
+		// $this->load->view('header');
+		$this->loadView('sales/bom_by_id', $data);
+		// $this->load->view('footer');
 	}
 	public function subcon_bom()
 	{
@@ -9311,16 +9373,24 @@ class Welcome extends CommonController
 		$data['child_part_list'] = $this->SupplierParts->readSupplierParts();
 		$data['customer_part_list'] = $this->Crud->read_data("customer_part");
 		// $data['bom_list'] = $this->Crud->read_data("bom");
-		$data['bom_list'] = $this->Crud->get_data_by_id("subcon_bom", $data['customer_part_id'], "customer_part_id");
+		// $data['bom_list'] = $this->Crud->get_data_by_id("subcon_bom", $data['customer_part_id'], "customer_part_id");
+        $role_management_data = $this->db->query('
+            SELECT b.*,u.uom_name,cp.part_number,cp.part_description
+            FROM `subcon_bom` as b
+            LEFT JOIN child_part as cp ON cp.id = b.child_part_id
+            LEFT JOIN uom as u ON u.id = cp.uom_id 
+            WHERE `customer_part_id` = '.$data['customer_part_id'].'
+            ORDER BY `id` DESC
+            ');
+        $data['bom_list'] = $role_management_data->result();
 
 
+		// pr($data['bom_list'],1);
 
-		// print_r($data['customer']);
 
-
-		$this->load->view('header');
-		$this->load->view('subcon_bom', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		$this->loadView('sales/subcon_bom', $data);
+		// $this->load->view('footer');
 	}
 	public function raw_material_inspection()
 	{
@@ -9773,8 +9843,11 @@ class Welcome extends CommonController
 
 		);
 		$check = $this->Crud->read_data_where("bom", $data);
+        $success = 0;
+        $messages = "Something went wrong.";
 		if ($check != 0) {
-			echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+            $messages = "Already Exists";
+			// echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 			$data = array(
 
@@ -9788,11 +9861,19 @@ class Welcome extends CommonController
 			);
 			$result = $this->Crud->insert_data("bom", $data);
 			if ($result) {
-				echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $messages = "Added Sucessfully";
+                $success = 1;
+				// echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $messages = "Unable to Add";
+				// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
+        $result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 	public function add_subcon_bom()
 	{
@@ -9807,9 +9888,12 @@ class Welcome extends CommonController
 
 
 		);
+        $success = 0;
+        $messages = "Something went wrong.";
 		$check = $this->Crud->read_data_where("subcon_bom", $data);
 		if ($check != 0) {
-			echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+            $messages = "Already Exists";
+			// echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 			$data = array(
 
@@ -9823,11 +9907,19 @@ class Welcome extends CommonController
 			);
 			$result = $this->Crud->insert_data("subcon_bom", $data);
 			if ($result) {
-				echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $messages = "Added Sucessfully";
+                $success =1;
+				// echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $messages = "Unable to Add";
+				// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
+        $result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 
@@ -9991,6 +10083,8 @@ class Welcome extends CommonController
 	}
 	public function updatebom()
 	{
+        $success = 0;
+        $messages = "Something went wrong.";
 		$id = $this->input->post('id');
 		$customer_id = $this->input->post('customer_id');
 		$customer_part_id = $this->input->post('customer_part_id');
@@ -10004,7 +10098,8 @@ class Welcome extends CommonController
 		);
 		$check = $this->Crud->read_data_where("bom", $data);
 		if ($check != 0) {
-			echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+            $messages = "Already Exists";
+			// echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 			$data = array(
 
@@ -10018,11 +10113,19 @@ class Welcome extends CommonController
 			);
 			$result = $this->Crud->update_data("bom", $data, $id);
 			if ($result) {
-				echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $messages = "Updated Sucessfully";
+                $success = 1;
+				// echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $messages = "Unable to Add";
+				// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
+        $result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 	public function update_subcon_bom()
 	{
@@ -10037,9 +10140,12 @@ class Welcome extends CommonController
 			"child_part_id" => $child_part_id,
 
 		);
+        $success = 0;
+        $messages = "Something went wrong.";
 		$check = $this->Crud->read_data_where("subcon_bom", $data);
 		if ($check != 0) {
-			echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+            $messages  ="Already Exists";
+			// echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 			$data = array(
 
@@ -10053,11 +10159,19 @@ class Welcome extends CommonController
 			);
 			$result = $this->Crud->update_data("subcon_bom", $data, $id);
 			if ($result) {
-				echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $messages = "Updated Sucessfully";
+                $success =1;
+				// echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $messages = "Unable to Add";
+				// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
+        $result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 
