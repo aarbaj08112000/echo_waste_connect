@@ -1,4 +1,5 @@
 
+
 <div class="wrapper container-xxl flex-grow-1 container-p-y">
   <%assign var='role' value=trim($session_data['type'])%>
 
@@ -70,7 +71,9 @@
     </div>
 
     <div class="w-100">
+
     <input type="text" name="reason" placeholder="Filter Search" class="form-control serarch-filter-input m-3 me-0" id="serarch-filter-input" fdprocessedid="bxkoib">
+
   </div>
 
     <div class="content-wrapper">
@@ -122,21 +125,22 @@
           <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form action="<%base_url('transfer_child_store_to_store_stock')%>" method="POST" enctype="multipart/form-data" id=
-          "transfer_child_store_to_store_stock " class="custom-form">
+          "transfer_child_store_to_store_stock " class="custom-form transfer_child_store_to_store_stock">
         <div class="modal-body">
           <div class="row">
 
             <div class="col-lg-12">
-              
+              <div class="form-group">
                 <label for="">Stock Qty <span class="text-danger">*</span></label>
                 <input type="text" step="any" class="form-control required-input" value="" max="<%$po->$stock_column_name %>" name="stock"  placeholder="Transfer Qty">
                 <input type="hidden" class="form-control" value="<%$po->part_number%>" name="part_number" id="part_number">
                 <input type="hidden" class="form-control" value="<%$po->childPartId%>" name="child_part_id" id="part_id">
+              </div>
             </div>
             <div class="col-lg-12">
-              <br>
+              <div class="form-group">
               <label for="">Supplier Part no / Description </label>
-              <br>
+              
               <%$filter_part_id|pr%>
               <select name="customer_part_number"  id="suppler_parts" class="form-control select2 required-input" style="width: 100%;">
                 <option value="">Select Part</option>
@@ -149,6 +153,7 @@
                 <%/foreach%>         
                
               </select>
+              </div>
             </div>
           </div>
           <div class="modal-footer">
@@ -170,22 +175,25 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
+        <form action="<%base_url('update_production_qty_child_part_production_qty')%>" method="POST" enctype="multipart/form-data">
         <div class="modal-body">
           <div class="row">
             <div class="col-lg-12">
-              <form action="<%base_url('update_production_qty_child_part_production_qty')%>" method="POST" enctype="multipart/form-data">
+              <div class="form-group">
                 <label for="">Production Qty <span class="text-danger">*</span></label>
                 <input type="number" step="any" class="form-control" value="" max="<%$po->$sheet_prod_column_name%>" name="production_qty" min="1" required placeholder="Enter Transfer Qty">
                 <input type="hidden" class="form-control" value="<%$po->part_number%>" name="part_number" required>
                 <input type="hidden" class="form-control" value="<%$po->childPartId%>" name="child_part_id" required>
+              </div>
             </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             <button type="submit" class="btn btn-primary">Save changes</button>
-            </form>
+            
           </div>
         </div>
+        </form>
       </div>
     </div>
   </div>
@@ -225,18 +233,21 @@
           <h5 class="modal-title" id="">Transfer Store Stock to FG Stock</h5>
           <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <form action="<%base_url('transfer_child_part_to_fg_stock')%>" method="POST" enctype="multipart/form-data" id="transfer_child_part_to_fg_stock" class="transfer_child_part_to_fg_stock custom-form">
         <div class="modal-body">
           <div class="row">
             <div class="col-lg-12">
-              <form action="<%base_url('transfer_child_part_to_fg_stock')%>" method="POST" enctype="multipart/form-data">
+              <div class="form-group">
                 <label for="">Enter Stock Qty <span class="text-danger">*</span></label>
-                <input type="number" step="any" class="form-control" value="" max="<%$po->$stock_column_name%>" name="stock" required placeholder="Enter Transfer Qty">
+                <input type="text" step="any" class="form-control required-input onlyNumericInput" value="" data-max="<%$po->$stock_column_name%>" name="stock"  placeholder="Enter Transfer Qty">
                 <input type="hidden" class="form-control" value="<%$po->part_number%>" name="part_number" required>
                 <input type="hidden" class="form-control" value="<%$po->childPartId%>" name="child_part_id" required>
+              </div>
             </div>
             <div class="col-lg-12">
+              <div class="form-group">
               <label for="">Select Customer Part Number / Customer Name </label>
-              <select name="customer_part_number" required id="customer_part_number" class="form-control select2" style="width: 100%;">
+              <select name="customer_part_number"  id="customer_part_number" class="form-control select2 required-input" style="width: 100%;">
               
                 <option value="">Select Part</option>
                 <%foreach  $customer_part_data_new_updated as  $val%>
@@ -244,6 +255,7 @@
                 <%/foreach%>                
               </select>
             </div>
+          </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-second" data-bs-dismiss="modal">Close</button>
