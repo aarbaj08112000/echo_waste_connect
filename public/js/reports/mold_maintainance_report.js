@@ -119,4 +119,7 @@ const datatable = {
 
 $(document).ready(function () {
     datatable.init();    
+    $('#serarch-filter-input').on('keyup', function() {
+        table.search(this.value).draw();
+    });
 })

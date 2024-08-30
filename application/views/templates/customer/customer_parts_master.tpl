@@ -61,6 +61,9 @@
   <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
   <button  type="button" class="modal-title btn btn-seconday" data-bs-toggle="modal" data-bs-target="#addPromo"><i class="ti ti-plus "></i></button>
 </div>
+<div class="w-100">
+<input type="text" name="reason" placeholder="Filter Search" class="form-control serarch-filter-input m-3 me-0" id="serarch-filter-input" fdprocessedid="bxkoib">
+</div>
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <!-- <div class="content-header">

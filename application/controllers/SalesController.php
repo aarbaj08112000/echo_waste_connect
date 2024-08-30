@@ -711,8 +711,6 @@ class SalesController extends CommonController
 			// pr($this->db->last_query(),1);
 			if(empty($sales_details)){
 				$message = "No records found for this export criteria.";
-				
-				
 			}
 			if ($sales_details) {
 					foreach ($sales_details as $sale_details) {
@@ -899,7 +897,7 @@ class SalesController extends CommonController
 		
 		
         $data["data"] = $column;
-        $data["is_searching_enable"] = false;
+        $data["is_searching_enable"] = true;
         $data["is_paging_enable"] = true;
         $data["is_serverSide"] = true;
         $data["is_ordering"] = true;
@@ -920,6 +918,7 @@ class SalesController extends CommonController
 	public function salesReportsAjax()
 	{
 		$post_data = $this->input->post();
+		// pr($post_data,1);
         $column_index = array_column($post_data["columns"], "data");
         $order_by = "";
         foreach ($post_data["order"] as $key => $val) {
@@ -1786,7 +1785,7 @@ class SalesController extends CommonController
 		
 		
 		$data["data"] = $column;
-        $data["is_searching_enable"] = false;
+        $data["is_searching_enable"] = true;
         $data["is_paging_enable"] = true;
         $data["is_serverSide"] = true;
         $data["is_ordering"] = true;

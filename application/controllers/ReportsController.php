@@ -103,7 +103,7 @@ class ReportsController extends CommonController
 		$data['customer_part_data_new_updated2'] = $this->Crud->customQuery('SELECT DISTINCT part_number, id FROM `child_part`');
 
 		$data["data"] = $column;
-        $data["is_searching_enable"] = false;
+        $data["is_searching_enable"] = true;
         $data["is_paging_enable"] = true;
         $data["is_serverSide"] = true;
         $data["is_ordering"] = true;
@@ -402,7 +402,7 @@ class ReportsController extends CommonController
 			'orderable' => false
         ];
 		$data["data"] = $column;
-        $data["is_searching_enable"] = false;
+        $data["is_searching_enable"] = true;
         $data["is_paging_enable"] = true;
         $data["is_serverSide"] = true;
         $data["is_ordering"] = true;

@@ -68,6 +68,11 @@
                                     <i class="ti ti-plus "></i>
                                 </button>
     </div>
+
+    
+    <div class="w-100">
+    <input type="text" name="reason" placeholder="Filter Search" class="form-control serarch-filter-input m-3 me-0" id="serarch-filter-input" fdprocessedid="bxkoib">
+  </div>
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -267,7 +272,7 @@
             </button>
         </div>
         <form action="<%$base_url%>updateCustomer" id="updateCustomerForm" method="POST">
-        <div class="modal-body">
+        <div class="modal-body" style="max-height: 500px; overflow-y: auto;">>
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="form-group">
