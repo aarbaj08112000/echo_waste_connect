@@ -147,7 +147,7 @@ const page = {
             });
         });
          // global searching for datable 
-         $('#serarch-filter-input').on('keyup', function() {
+        $('#serarch-filter-input').on('keyup', function() {
             table.search(this.value).draw();
         });
        

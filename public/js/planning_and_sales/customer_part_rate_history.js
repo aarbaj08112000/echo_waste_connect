@@ -39,7 +39,7 @@ const datatable = {
                             var lines = csv.split('\n');
                             var modifiedLines = lines.map(function(line) {
                                 var values = line.split(',');
-                                values.splice(1, 1);
+                                values.splice(8, 1);
                                 return values.join(',');
                             });
                             return modifiedLines.join('\n');
@@ -79,11 +79,17 @@ const datatable = {
                                 }
                                 cell.alignment = alignment;
                             });
-                            row.splice(1, 1);
+                            row.splice(8, 1);
                         });
                     }
                 },
             ],
+            searching: true,
+        // scrollX: true,
+        scrollY: true,
+        bScrollCollapse: true,
+        columnDefs: [{ sortable: false, targets: 8 }],
+        pagingType: "full_numbers",
     });
     },
     resetFilter:function(){

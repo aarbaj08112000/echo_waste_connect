@@ -32,7 +32,7 @@ class StockController extends CommonController
 		$this->_part_stocks($this->input->post('part_id'),$this->input->post('clientUnit'));
 	}
 
-	public function _part_stocks($filter_part_id, $filter_client='') {
+	public function part_stocks_view($filter_part_id, $filter_client='') {
 
 
 		if ($filter_part_id !='ALL' && $filter_part_id != '') {
@@ -363,6 +363,7 @@ class StockController extends CommonController
 	/**
 	 * Transfer Store to Store
 	 */
+
 	public function transfer_child_store_to_store_stock()
 	{
 		$child_part_to  = $this->input->post('customer_part_number');//transferred to location
@@ -387,14 +388,23 @@ class StockController extends CommonController
 
 		$query = $this->SupplierParts->updateStockById($data_update_child_part, $child_part_id);
 		$query = $this->SupplierParts->updateStockById($data_update_child_part_to, $child_part_to);
-
+		$success = 0;
+        $messages = "Something went wrong.";
 		if ($query) {
 			$this->Crud->stock_report($child_part[0]->part_number, $part_to_data[0]->part_number, "child_part", "child_part", $old_stock, $stock);
-			$this->addSuccessMessage('Stock transferred successfully.');
+			$success = 1;
+			$messages = "Stock transferred successfully.";
+			// $this->addSuccessMessage('Stock transferred successfully.';);
 		} else {
-			$this->addErrorMessage('Unable to transfer store stock.');
+			$messages = "Unable to transfer store stock.";
+			// $this->addErrorMessage('Unable to transfer store stock.');
 		}
-		$this->_part_stocks($child_part_id, null);
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
+		// $this->_part_stocks($child_part_id, null);
 	}
 
 

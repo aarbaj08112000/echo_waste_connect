@@ -3894,6 +3894,10 @@ textarea.form-control-lg {
     .navbar-expand-lg .navbar-toggler {
         display: none
     }
+    .navbar-expand-lg .login-nav-block-mobile {
+        display: none !important;
+    }
+
 
     .navbar-expand-lg .offcanvas {
         position: static;
@@ -11914,9 +11918,18 @@ a.list-group-item-gray.active,button.list-group-item-gray.active {
 .navbar .dropdown:focus,.navbar .dropdown-toggle:focus {
     outline: 0
 }
+.navbar .navbar-toggler label {
+        font-family: 'gilroysemibold';
+    padding-top: 7px;
+    padding-left: 5px;
+    line-height: 2;
+    font-size: 12px;
+}
 
 .navbar .navbar-toggler {
-    border: none
+    border: none;
+        margin-left: auto;
+
 }
 
 .navbar .navbar-toggler:focus {
@@ -29418,10 +29431,125 @@ a.bg-vimeo:hover,a.bg-vimeo:focus {
 .dataTables_scrollBody tbody{
     max-height: unset;
 }
-.table-container {
-    width: 100%; /* Adjust as needed */
-    max-height: 400px; /* Adjust height to fit your design */
+.table-container ,.table-responsive {
+   
+    width: 100% !important;
+    
     overflow-y: clip; /* Enables vertical scrolling */
     overflow-x: auto; /* Enables horizontal scrolling */
     border: 1px solid #ddd; /* Optional: for visual separation */
+}
+table.dataTable.no-footer {
+    border-bottom: 0px solid #111 !important;
+}
+.avatar-indicators.avatar-online{
+    font-size: 28px;
+    background: #dcc6c6;
+    border-radius: 50%;
+    padding: 2px;
+    text-align: center;
+        font-family: 'gilroysemibold';
+}
+
+@media(min-width: 1200px) {
+    .navbar-classic .login-nav-block .dropdown-menu-end {
+                right: 2px;
+        left: auto;
+        margin-top: 12px;
+    }
+
+
+    .navbar-classic .login-nav-block .dropdown-menu-start {
+        right: auto;
+        left: 0
+    }
+
+    .navbar-classic .login-nav-block .dropdown-menu {
+        display: block;
+        visibility: hidden;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all .3s ease-in
+    }
+
+    .navbar-classic .login-nav-block .dropdown-submenu:hover>.dropdown-menu,.navbar-classic .login-nav-block .dropdown:hover>.dropdown-menu {
+        transform: scaleY(1);
+        opacity: 1;
+        visibility: visible
+    }
+}
+
+@media(max-width: 992px) {
+    .navbar-classic .login-nav-block  .navbar-nav .dropdown-menu {
+        margin:0
+    }
+    .navbar-expand-lg .login-nav-block {
+        display: none !important;
+    }
+    #dropdownUserNav h5{
+            font-size: 1rem !important;
+    }
+    #dropdownUserNav a {
+        font-size: 0.8rem !important;
+    }
+    form .error:not(li):not(input) {
+        font-size: 84% !important;
+    }
+    .login-nav-block-mobile .avatar-indicators.avatar-online {
+        font-size: 23px;
+        background: #dcc6c6;
+        border-radius: 50%;
+        padding: 2px;
+        text-align: center;
+        font-family: 'gilroysemibold';
+    }
+
+    .login-nav-block-mobile .avatar-md {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .navbar-classic .login-nav-block  .navbar-nav .dropdown-menu .dropdown-submenu .dropdown-menu {
+        box-shadow: none;
+        margin: 0
+    }
+
+    .login-nav-block .navbar-classic .nav-top-wrap {
+        flex-direction: row
+    }
+
+    .login-nav-block .navbar-classic .nav-top-wrap .dropdown {
+        position: static
+    }
+
+    .login-nav-block .navbar-classic .nav-top-wrap .dropdown-menu {
+        position: absolute;
+        margin: .25rem .75rem!important
+    }
+
+    .login-nav-block .navbar-classic .nav-top-wrap .dropdown-menu .dropdown-submenu .dropdown-menu {
+        position: relative;
+        top: -7px!important;
+        padding: 0!important
+    }
+    .show-nav {
+            position: absolute !important;
+            margin: .25rem .75rem !important;
+            transform: scaleY(1);
+            opacity: 1;
+            visibility: visible;
+            display: block;
+    }
+}
+.login-nav-block  .dropdown-menu h5{
+    font-family: 'gilroysemibold';
+}
+.login-nav-block .dropdown-menu {
+    font-size: .875rem;
+    line-height: 1.375rem;
+    color: #454f5b;
+    border: none;
+    box-shadow: 0 0 1px rgba(60, 66, 87, .05), 0 3px 6px rgba(60, 66, 87, .1), 0 9px 24px rgba(60, 66, 87, .2);
+    border-radius: .5rem;
+    z-index: 1040;
 }

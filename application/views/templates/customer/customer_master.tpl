@@ -22,8 +22,7 @@
             <div class="input-group">
               <select name="customer_name" class="form-control select2" id="customer_name">
               <%foreach $customers as $val%>
-              <option 
-                  value="<%$val->customer_name%>"><%$val->customer_name%></option>
+              <option value="<%$val->customer_name%>"><%$val->customer_name%></option>
           <%/foreach%>
               </select>
             </div>

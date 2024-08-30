@@ -73,6 +73,7 @@ const app = {
 
       this.allowNumber();
       this.removeValidationMessage();
+      this.initResponsive();
   },
   allowNumber:function(){
     $('.onlyNumericInput').on('keypress', function(event) {
@@ -97,5 +98,46 @@ const app = {
           $(this).parents(".form-group").find("label.error").remove()
         }
     })
+  },
+  initResponsive: function(){
+    var viewportWidth = $(window).width();
+    console.log(viewportWidth)
+    // if(viewportWidth > 400 && viewportWidth < 500){
+    //     var $element = $('.paginate_button.last');
+            
+    //       // Get the absolute position of the element
+    //     var offset = $element.offset();
+            
+    //     // Get the current scroll position
+    //     var scrollTop = $(window).scrollTop();
+    //     var scrollLeft = $(window).scrollLeft();
+            
+    //         // Calculate the position relative to the viewport
+    //     var relativeTop = offset.top - scrollTop;
+    //     var relativeLeft = offset.left - scrollLeft;
+    //     var elementWidth = $element.outerWidth();
+    //     var elementHeight = $element.outerHeight();
+    //     var relativeBottom = relativeTop + elementHeight;
+    //     var relativeRight = relativeLeft + elementWidth;
+    //     $(".dataTables_length label").attr("style","left:"+relativeLeft+"px")
+    // }
+    if( viewportWidth < 700){
+      var $targetElement = $('.scrollable');
+      $($targetElement).addClass("w-100")
+      var $previousElement = $targetElement.parent("div");
+      $previousElement.addClass('table-responsive text-nowrap w-100');
+        $(".scrollable").DataTable({
+            dom: "",
+            searching: false,
+            scrollX: true,
+            scrollY: true,
+            "ordering": false
+           
+            });
+      }
+
+      $("#dropdownUser").on("click",function(){
+          $("#dropdownUserNav").toggleClass("show-nav")
+      })
   }
 }

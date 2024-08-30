@@ -29,7 +29,26 @@ function is_valid_array($data = []){
 	}
 	return false;
 }
-
+function defaultDateFormat($date = "") {
+    // Define an array of possible input date formats
+    $formats = [
+        'd-m-Y',  // Format like 12-02-2024
+        'd-Y-m',  // Format like 12-2024-02
+        'Y-m-d',
+        'Y-d-m'  // Format like 2024-12-02
+    ];
+    
+    foreach ($formats as $format) {
+        $dateTime = DateTime::createFromFormat($format, $date);
+        if ($dateTime) {
+            // Return the date in the desired format
+            return $dateTime->format('d/m/Y');
+        }
+    }
+    
+    // Return false if none of the formats match
+    return $date;
+}
 
 function digitalSignature($file_path = '',$location = '',$signer = '',$certpwd ='',$certid='',$customerPrefix='',$digital_signature_url = ''){
 	// checksum = sha256 (APIKEY + timestamp)

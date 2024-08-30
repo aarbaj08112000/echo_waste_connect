@@ -105,7 +105,7 @@ jelly-o tart brownie jelly.
 <div class="row">
 
   <div class="col-xl">
-    <div class="card mb-4 px-3">
+    <div class="card mb-4 ">
       
       <div class="card-body">
         <form id="addchildpart" class="mb-3" action="javascript:void(0)" method="POST" enctype='multipart/form-data'>

@@ -59,7 +59,7 @@
 
       <!-- Main content -->
       <div class="card p-0 mt-4">
-        <div class="p-3">
+        <div class="">
 
           <div class="table-responsive text-nowrap">
             <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="part_family">

@@ -19,6 +19,8 @@
   <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
     <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
     <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
+    <a class="btn btn-seconday" href="<%base_url('customer_part_price/')%><%$customer_part[0]->customer_id%>" id="downloadPDFBtn" title="Back To 
+Customer Master"><i class="ti ti-arrow-left"></i></a>
     
   </div>
 
@@ -36,10 +38,8 @@
                         <!-- /.card -->
 
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">
-
-                                </h3>
+                            <div class="">
+                               
                                 <!-- Button trigger modal -->
                                 <!-- <button type="button" class="btn btn-primary float-left" data-toggle="modal" data-target="#exampleModal">
                                     Add </button> -->
@@ -105,11 +105,11 @@
                             </div>
 
                             <!-- /.card-header -->
-                            <div class="card-body">
-                                <table id="example1" class="table table-bordered table-striped">
+                            <div class="">
+                                <table id="example1" class="table  table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Sr. No.</th>
+                                            <!-- <th>Sr. No.</th> -->
                                             <th>Revision Number</th>
                                             <th>Revision Date</th>
                                             <th>Revision Remark</th>
@@ -118,7 +118,7 @@
                                             <th>Part Description</th>
                                             <th>Part Rate</th>
                                             <th>Customer Part Type</th>
-                                            <th>Price Supporting Document </th>
+                                            <th class="text-center">Price Supporting Document </th>
                                         </tr>
                                     </thead>
                                    
@@ -127,7 +127,7 @@
                                         <%if $customer_part_rate%>
                                             <%foreach $customer_part_rate as $poo%>
                                                 <tr>
-                                                    <td><%$i%></td>
+                                                    <!--<td><%$i%></td> -->
                                                     <td><%$poo->revision_no%></td>
                                                     <td><%$poo->revision_date%></td>
                                                     <td><%$poo->revision_remark%></td>
@@ -137,9 +137,9 @@
                                                     <td><%$po[$poo->customer_master_id][0]->part_description%></td>
                                                     <td><%$poo->rate%></td>
                                                     <td><%$customer_part_data[$po[$poo->customer_master_id]->customer_master_id][0]->customer_type_name%></td>
-                                                    <td>
+                                                    <td class="text-center">
                                                         
-                                                        <a download href="<%$base_url%>documents/<%$customer_part_rate_data[$poo->customer_master_id][0]->uploading_document%>" class="btn btn-sm btn-primary">Download</a>
+                                                        <a download href="<%$base_url%>documents/<%$customer_part_rate_data[$poo->customer_master_id][0]->uploading_document%>" class="" title="Download"><i class="ti ti-download"></i></a>
                                                     </td>
                                                 </tr>
                                                 <%assign var="i" value=$i+1%>
