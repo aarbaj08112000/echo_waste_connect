@@ -29,7 +29,7 @@
                <div class="col-12">
                   <div class="card">
                      <!-- /.card-header -->
-                     <div class="card-body">
+                     <div class="">
                         <table id="example1" class="table table-striped">
                            <thead>
                               <tr>
