@@ -15,13 +15,13 @@
         <!-- Dashboard -->
         <div class="filter-row">
           <li class="nav-small-cap">
-            <span class="hide-menu">Select Month</span>
+            <span class="hide-menu">Select Part</span>
             <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
           </li>
           <li class="sidebar-item">
             <div class="input-group">
             <select name="part_id" id="selectPart" class="form-control select2">
-            <option value="">Select Part ID</option>
+            <option value="">Select Part </option>
             <%foreach from=$customer_part_data_new_updated2 item=c%>
                 <option value="<%$c->id%>" <%if $filter_part_id === $c->id%>selected<%/if%>><%$c->part_number%></option>
             <%/foreach%>
@@ -60,7 +60,9 @@
   <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
   <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
 </div>
-
+<div class="w-100">
+<input type="text" name="reason" placeholder="Filter Search" class="form-control serarch-filter-input m-3 me-0" id="serarch-filter-input" fdprocessedid="bxkoib">
+</div>
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         

@@ -15,6 +15,7 @@ const page = {
             $("#transection_detail_modal").val(data.transaction_details);
             myModal.show();
         })
+      
 
     },
     dataTable: function(){
@@ -109,6 +110,7 @@ const page = {
         $('.dataTables_length').find('label').contents().filter(function() {
             return this.nodeType === 3; // Filter out text nodes
         }).remove();
+       
         table.on('init.dt', function() {
             $(".dataTables_length select").select2({
                 minimumResultsForSearch: Infinity
@@ -129,6 +131,7 @@ const page = {
         $(".reset-filter").on("click",function(){
             that.resetFilter();
         })
+       
     },
     serachParams: function(){
         var supplier_id = $("#supplier_id").val();

@@ -81,6 +81,10 @@
       <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
     </div>
 
+    <div class="w-100">
+    <input type="text" name="reason" placeholder="Filter Search" class="form-control serarch-filter-input m-3 me-0" id="serarch-filter-input" fdprocessedid="bxkoib">
+  </div>
+
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
 
@@ -249,7 +253,10 @@
 <script>
 var file_name = "report_prod_rejection";
 var pdf_title = "Rejection Report";
-new DataTable('#example1',{
+$('#serarch-filter-input').on('keyup', function() {
+            table.search(this.value).draw();
+        });
+var table = new DataTable('#example1',{
    
       dom: "Bfrtilp",
       scrollX: true, 
@@ -294,6 +301,7 @@ new DataTable('#example1',{
    $('.dataTables_length').find('label').contents().filter(function() {
             return this.nodeType === 3; // Filter out text nodes
         }).remove();
+       
         setTimeout(function(){
           $(".dataTables_length select").select2({
               minimumResultsForSearch: Infinity

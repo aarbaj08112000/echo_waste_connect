@@ -86,6 +86,27 @@ class Welcome_model extends CI_Model
             //         $search_params["part_description"]
             //     );
             // }
+
+            if (!empty($search_params["value"])) {
+                $keyword = $search_params["value"];
+                $this->db->group_start(); // Start a group of OR conditions
+                
+                $fields = [
+                    's.supplier_name',
+                    's.supplier_number',
+                    's.email',
+                    's.mobile_no',
+                    's.gst_number',
+                    's.pan_card',
+                    // Add other relevant fields as needed
+                ];
+                
+                foreach ($fields as $field) {
+                    $this->db->or_like($field, $keyword);
+                }
+                
+                $this->db->group_end(); // End the group of OR conditions
+            }
         }
         $result_obj = $this->db->get();
         $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
@@ -99,8 +120,31 @@ class Welcome_model extends CI_Model
 
         $this->db->select('COUNT(s.id) as total_record');
         $this->db->from('supplier as s');
+
+        if (!empty($search_params["value"])) {
+            $keyword = $search_params["value"];
+            $this->db->group_start(); // Start a group of OR conditions
+            
+            $fields = [
+                's.supplier_name',
+                's.supplier_number',
+                's.email',
+                's.mobile_no',
+                's.gst_number',
+                's.pan_card',
+                // Add other relevant fields as needed
+            ];
+            
+            foreach ($fields as $field) {
+                $this->db->or_like($field, $keyword);
+            }
+            
+            $this->db->group_end(); // End the group of OR conditions
+        }
         $result_obj = $this->db->get();
         $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
+
+        
 
        
         return $ret_data;
@@ -299,6 +343,28 @@ class Welcome_model extends CI_Model
         if(is_valid_array($search_params) && $search_params['suppler'] != ''){
             $this->db->where('chn.supplier_id', $search_params['suppler']);
         }
+
+        if (!empty($search_params['value'])) {
+            $keyword = $search_params['value'];
+            $this->db->group_start(); // Start a group of OR conditions
+            
+            $fields = [
+                'chp.part_number',
+                'chp.part_description',
+                'sup.supplier_name',
+                'chn.challan_number',
+                'chn.created_date',
+                'cp.process'
+                // Add more fields if needed
+            ];
+    
+            foreach ($fields as $field) {
+                $this->db->or_like($field, $keyword);
+            }
+    
+            $this->db->group_end(); // End the group of OR conditions
+        }
+
         // $this->db->group_by('cpm.part_rate');
         // if(is_valid_array($search_params) && $search_params['customer'] > 0){
         //     $this->db->where('c.id', $search_params['customer']);
@@ -346,6 +412,27 @@ class Welcome_model extends CI_Model
         if(is_valid_array($search_params) && $search_params['suppler'] != ''){
             $this->db->where('chn.supplier_id', $search_params['suppler']);
         }
+
+        if (!empty($search_params['value'])) {
+            $keyword = $search_params['value'];
+            $this->db->group_start(); // Start a group of OR conditions
+            
+            $fields = [
+                'chp.part_number',
+                'chp.part_description',
+                'sup.supplier_name',
+                'chn.challan_number',
+                'chn.created_date',
+                'cp.process'
+                // Add more fields if needed
+            ];
+    
+            foreach ($fields as $field) {
+                $this->db->or_like($field, $keyword);
+            }
+    
+            $this->db->group_end(); // End the group of OR conditions
+        }
         
         // $this->db->group_by(array('p.id', 'cp.id', 'c.id', 'cp_rate.rate', 'pd.schedule_qty', 'pd.schedule_qty_2'));
         // if($condition_arr["order_by"] == ''){    
@@ -379,6 +466,23 @@ class Welcome_model extends CI_Model
                 $this->db->order_by('c.id', 'DESC');
             }
         
+            if (!empty($search_params['value'])) {
+                $keyword = $search_params['value'];
+                $this->db->group_start(); // Start a group of OR conditions
+                
+                $fields = [
+                    'c.part_number',
+                    'c.part_description',
+                    // Add more fields if needed
+                ];
+        
+                foreach ($fields as $field) {
+                    $this->db->or_like($field, $keyword);
+                }
+        
+                $this->db->group_end(); // End the group of OR conditions
+            }
+
         if (count($condition_arr) > 0) {
             $this->db->limit($condition_arr["length"], $condition_arr["start"]);
             if ($condition_arr["order_by"] != "") {
@@ -396,6 +500,23 @@ class Welcome_model extends CI_Model
         if(is_valid_array($search_params) && $search_params['part'] > 0){
             $this->db->where('id', $search_params['part']);
         }
+        if (!empty($search_params['value'])) {
+            $keyword = $search_params['value'];
+            $this->db->group_start(); // Start a group of OR conditions
+            
+            $fields = [
+                'customer_parts_master.part_number',
+                'customer_parts_master.part_description',
+                // Add more fields if needed
+            ];
+    
+            foreach ($fields as $field) {
+                $this->db->or_like($field, $keyword);
+            }
+    
+            $this->db->group_end(); // End the group of OR conditions
+        }
+        
         $object = $this->db->get();
         $result_data = is_object($object) ? $object->row_array() : [] ;
         return $result_data;

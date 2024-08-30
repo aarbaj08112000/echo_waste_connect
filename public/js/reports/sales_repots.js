@@ -47,6 +47,7 @@ const page = {
 
     },
     dataTable: function(){
+        let that = this;
         var data = this.serachParams();
         table = new DataTable("#example1", {
             dom: "Bfrtilp",
@@ -130,7 +131,7 @@ const page = {
                 // end: 1
             },
             ajax: {
-                data: {'search':data},    
+                data: {'search':that.serachParams()},    
                 url: "SalesController/salesReportsAjax",
                 type: "POST",
             },

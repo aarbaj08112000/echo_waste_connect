@@ -79,6 +79,10 @@
       <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
       <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
     </div>
+    
+    <div class="w-100">
+    <input type="text" name="reason" placeholder="Filter Search" class="form-control serarch-filter-input m-3 me-0" id="serarch-filter-input" fdprocessedid="bxkoib">
+  </div>
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->

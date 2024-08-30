@@ -531,6 +531,23 @@ class CustomerPart extends CI_Model {
             $this->db->order_by('cpt.id', 'DESC');
         }
         
+        if (!empty($search_params['value'])) {
+            $keyword = $search_params['value'];
+            $this->db->group_start(); // Start a group of OR conditions
+    
+            $fields = [
+                'cpt.po_number', // Replace 'some_field' with actual fields in 'customer_po_tracking' you want to search
+                'c.customer_name',
+                // Add more fields if needed
+            ];
+    
+            foreach ($fields as $field) {
+                $this->db->or_like($field, $keyword);
+            }
+    
+            $this->db->group_end(); // End the group of OR conditions
+        }
+
         if (count($condition_arr) > 0) {
             $this->db->limit($condition_arr["length"], $condition_arr["start"]);
             if ($condition_arr["order_by"] != "") {
@@ -551,6 +568,23 @@ class CustomerPart extends CI_Model {
        
         if(is_valid_array($search_params) && $search_params['customer_id'] > 0){
             $this->db->where('cpt.customer_id', $search_params['customer_id']);
+        }
+
+        if (!empty($search_params['value'])) {
+            $keyword = $search_params['value'];
+            $this->db->group_start(); // Start a group of OR conditions
+    
+            $fields = [
+                'cpt.po_number', // Replace 'some_field' with actual fields in 'customer_po_tracking' you want to search
+                'c.customer_name',
+                // Add more fields if needed
+            ];
+    
+            foreach ($fields as $field) {
+                $this->db->or_like($field, $keyword);
+            }
+    
+            $this->db->group_end(); // End the group of OR conditions
         }
 
         $result_obj = $this->db->get();
