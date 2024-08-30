@@ -141,7 +141,7 @@
 
       <!-- Main content -->
       <div class="card p-0 mt-4">
-        <div class="ps-3 mt-2">
+        <div class="">
   
         </div>
 
