@@ -131,7 +131,7 @@ class Welcome extends CommonController
 			$data['month_number'][$i] = $this->Common_admin_model->get_month_number($data['month_data'][$i]);
 		}
 		$data["data"] = $column;
-        $data["is_searching_enable"] = false;
+        $data["is_searching_enable"] = true;
         $data["is_paging_enable"] = true;
         $data["is_serverSide"] = true;
         $data["is_ordering"] = true;
@@ -154,7 +154,7 @@ class Welcome extends CommonController
 
 	public function reportPoBalanceData(){
 		$post_data = $this->input->post();
-
+		
         $column_index = array_column($post_data["columns"], "data");
         $order_by = "";
         foreach ($post_data["order"] as $key => $val) {
@@ -281,7 +281,7 @@ class Welcome extends CommonController
 		// 	}
 		// }
 		$data["data"] = $column;
-        $data["is_searching_enable"] = false;
+        $data["is_searching_enable"] = true;
         $data["is_paging_enable"] = true;
         $data["is_serverSide"] = true;
         $data["is_ordering"] = true;
@@ -490,7 +490,7 @@ class Welcome extends CommonController
 		$data['created_month'] = $created_month;
 		$data['created_year'] = $created_year;
 		$data["data"] = $column;
-        $data["is_searching_enable"] = false;
+        $data["is_searching_enable"] = true;
         $data["is_paging_enable"] = true;
         $data["is_serverSide"] = true;
         $data["is_ordering"] = true;
@@ -3010,7 +3010,7 @@ class Welcome extends CommonController
             "className" => "dt-center",
         ];
         $data["data"] = $column;
-        $data["is_searching_enable"] = false;
+        $data["is_searching_enable"] = true;
         $data["is_paging_enable"] = true;
         $data["is_serverSide"] = true;
         $data["is_ordering"] = true;
@@ -4676,7 +4676,7 @@ class Welcome extends CommonController
 		// }
 
 		$data["data"] = $column;
-        $data["is_searching_enable"] = false;
+        $data["is_searching_enable"] = true;
         $data["is_paging_enable"] = true;
         $data["is_serverSide"] = true;
         $data["is_ordering"] = true;
@@ -4760,7 +4760,7 @@ class Welcome extends CommonController
 	}
 	public function add_users_data()
 	{
-		
+			
 		$ret_arr = [];
 		$msg ='';
 		$success = 1;
@@ -5615,7 +5615,6 @@ class Welcome extends CommonController
 		foreach ($data['customer_part_rate'] as $poo ) {
 			$data['customer_part_rate_data'][$poo->customer_master_id] = $this->Crud->get_data_by_id("customer_part_rate", $poo->customer_master_id, "customer_master_id");
 			$data['po'][$poo->customer_master_id] = $this->Crud->get_data_by_id("customer_part", $poo->customer_master_id, "id");
-
 			$data['customer_data'][$data['po'][$poo->customer_master_id][0]->customer_id] = $this->Crud->get_data_by_id("customer", $data['po'][$poo->customer_master_id][0]->customer_id, "id");
 			$data['customer_part_data'][$data['po'][$poo->customer_master_id][0]->customer_part_id] = $this->Crud->get_data_by_id("customer_part_type", $data['po'][$poo->customer_master_id][0]->customer_part_id, "id");
 			$data['customer_part_rate'][$poo->customer_master_id]->encoded_data = base64_encode(json_encode($data['po'][$poo->customer_master_id][0]));
@@ -9586,7 +9585,7 @@ class Welcome extends CommonController
 		$data['main_total'] = $main_total;
 
 		$data["data"] = $column;
-        $data["is_searching_enable"] = false;
+        $data["is_searching_enable"] = true;
         $data["is_paging_enable"] = true;
         $data["is_serverSide"] = true;
         $data["is_ordering"] = true;
