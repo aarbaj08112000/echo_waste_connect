@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 23:36:30
+/* Smarty version 4.3.2, created on 2024-08-27 14:27:08
   from '/var/www/html/extra_work/erp_converted/application/views/templates/purchase/new_po.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c62ca62dbd31_57808060',
+  'unifunc' => 'content_66cd94e422cd97_68163423',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '478ce50c61fee07372c3f6d115ed840ab3f027d1' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/purchase/new_po.tpl',
-      1 => 1724142425,
+      1 => 1724694253,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c62ca62dbd31_57808060 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66cd94e422cd97_68163423 (Smarty_Internal_Template $_smarty_tpl) {
 ?><!-- Content wrapper -->
 <?php $_smarty_tpl->_assignInScope('entitlements', $_smarty_tpl->tpl_vars['session_data']->value['entitlements']);?>
 <div class="content-wrapper">

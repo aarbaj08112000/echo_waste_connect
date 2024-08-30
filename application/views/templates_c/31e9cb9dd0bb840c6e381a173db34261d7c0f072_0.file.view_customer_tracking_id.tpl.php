@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 19:53:36
+/* Smarty version 4.3.2, created on 2024-08-27 16:10:42
   from '/var/www/html/extra_work/erp_converted/application/views/templates/customer/view_customer_tracking_id.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c5f868f1c764_10653554',
+  'unifunc' => 'content_66cdad2ab09338_75321020',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '31e9cb9dd0bb840c6e381a173db34261d7c0f072' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/customer/view_customer_tracking_id.tpl',
-      1 => 1724249927,
+      1 => 1724755242,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c5f868f1c764_10653554 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66cdad2ab09338_75321020 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->_checkPlugins(array(0=>array('file'=>'/var/www/html/extra_work/erp_converted/application/third_party/smarty/libs/plugins/modifier.date_format.php','function'=>'smarty_modifier_date_format',),));
 ?>
 <div  class="wrapper container-xxl flex-grow-1 container-p-y">
@@ -321,7 +321,7 @@ delete_po" class="delete_po" method="POST">
                         </div>
                         <div class="card p-0 mt-4">
                             <div class="">
-                                <table class="table table-striped scrollable" id="example1">
+                                <table class="table table-striped scrollable" >
                                     <thead>
                                         <tr>
                                             <th>Sr No</th>

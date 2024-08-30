@@ -102,8 +102,8 @@
       <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
         <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
         <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
-        <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
-        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+       <%* <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
+        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button> *%>
         <button type="button" class="btn btn-seconday" data-bs-toggle="modal" data-bs-target="#addPromo" title="Add Downtime Master">
         <i class="ti ti-plus"></i>
         </button>
@@ -120,22 +120,23 @@
 
                   </button>
                </div>
+               <form action="<%base_url('add_downtime_name') %>" method="POST"
+                  enctype="multipart/form-data" id="add_downtime_name">
                <div class="modal-body">
-                  <div class="form-group">
-                     <form action="<%base_url('add_downtime_name') %>" method="POST"
-                        enctype="multipart/form-data">
-                  </div>
+                  
                   <div class="form-group">
                   <label for="on click url">Name<span class="text-danger">*</span></label>
                   <br>
-                  <input required type="text" name="name" placeholder="Enter Name"
+                  <input required type="text" name="namess" placeholder="Enter Name"
                      class="form-control" value="" id="">
                   </div>
-               </div>
+              
                <div class="modal-footer">
                <button type="button" class="btn btn-secondary"
                   data-bs-dismiss="modal">Close</button>
                <button type="submit" class="btn btn-primary">Save changes</button>
+               </div>
+               </div>
                </form>
                </div>
             </div>
@@ -145,7 +146,7 @@
 
       <!-- Main content -->
       <div class="card p-0 mt-4">
-        <div class="p-3">
+        <div class="">
 
           <div class="table-responsive text-nowrap">
             <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="downtime_master">

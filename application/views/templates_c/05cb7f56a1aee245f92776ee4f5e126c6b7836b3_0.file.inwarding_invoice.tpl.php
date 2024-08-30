@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 19:13:31
+/* Smarty version 4.3.2, created on 2024-08-27 16:42:46
   from '/var/www/html/extra_work/erp_converted/application/views/templates/store/inwarding_invoice.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c5ef037520f0_54899976',
+  'unifunc' => 'content_66cdb4aed296b0_16671358',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '05cb7f56a1aee245f92776ee4f5e126c6b7836b3' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/store/inwarding_invoice.tpl',
-      1 => 1724142425,
+      1 => 1724755389,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c5ef037520f0_54899976 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66cdb4aed296b0_16671358 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->_assignInScope('isMultiClient', $_smarty_tpl->tpl_vars['session_data']->value['isMultipleClientUnits']);?>
 <div class="content-wrapper">
   <!-- Content -->

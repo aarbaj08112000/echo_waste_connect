@@ -1,3 +1,4 @@
+
 var file_name = "customer_part";
 var pdf_title = "Customer Part";
 var table = '';

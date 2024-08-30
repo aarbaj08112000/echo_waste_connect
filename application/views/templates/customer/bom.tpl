@@ -7,38 +7,35 @@
 
 
     <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
+    <div class="wrapper container-xxl flex-grow-1 container-p-y ">
         <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <!-- <h1></h1> -->
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Customer item part</li>
-                        </ol>
-                    </div>
-                </div>
-            </div><!-- /.container-fluid -->
-        </section>
-
+        <div class="sub-header-left pull-left breadcrumb">
+                <h1>
+                    Planning & Sales 
+                    <a hijacked="yes" href="#stock/issue_request/index" class="backlisting-link" title="Back to Issue Request Listing">
+                        <i class="ti ti-chevrons-right"></i>
+                        <em>Customer Part</em></a>
+                </h1>
+                <br>
+                <span>Customer item part </span>
+            </div>
+        <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5 listing-btn">
+            
+            <a title="Back To Customer Part" class="btn btn-seconday" href="<%$base_url%>customer_master" type="button"><i class="ti ti-arrow-left"></i></a>
+        </div>
         <!-- Main content -->
         <section class="content">
-            <div class="container-fluid">
+            <div class="">
                 <div class="row">
                     <div class="col-12">
 
                         <!-- /.card -->
 
                         <div class="card">
-                            <div class="card-header">
+                            <div class="">
 
                                 <!-- Button trigger modal -->
-                                <a class="btn btn-danger" href="<%$base_url%>customer_master">
-                                    Back </a>
+                                
 
                                 <!-- <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#exampleModal">
                                     Add </button> -->
@@ -87,12 +84,12 @@
                                 </div>
                             </div>
                             <!-- /.card-header -->
-                            <div class="card-body">
-                                <table id="example1" class="table table-bordered table-striped">
+                            <div class="">
+                                <table id="bom_part" class="table table-striped w-100">
                                     <thead>
                                         <tr>
-                                            <th>Sr. No.</th>
-                                            <!-- <th>Customer Part Number</th> -->
+                                            <!-- <th>Sr. No.</th>
+                                            <th>Customer Part Number</th> -->
                                             <th> Part Number</th>
                                             <th>Part Description</th>
                                             <th>Details</th>
@@ -105,29 +102,14 @@
                                             <th>Customer Subcon bom </th>
                                         </tr>
                                     </thead>
-                                    <tfoot>
-                                        <tr>
-                                            <th>Sr. No.</th>
-                                            <!-- <th>Customer Part Number</th> -->
-                                            <th> Part Number</th>
-                                            <th>Part Description</th>
-                                            <th>Details</th>
-                                            <%if $entitlements.isSheetMetal neq null%>
-                                             <th>Operations BOM</th>
-                                             <%/if%> 
-                                             <%if $entitlements.isPlastic neq null%>
-                                            <!--<th>Deflashing BOM</th> -->
-                                            <%/if%>
-                                            <th>Customer Subcon bom </th>
-                                        </tr>
-                                    </tfoot>
+                                    
                                     <tbody>
                                         <%if $customer_part%>
                                             <%assign var="i" value=1%>
                                             <%foreach from=$customer_part item=c%>
                                                 <%if $customer_id == $c->customer_id%>
                                                     <tr>
-                                                        <td><%$i%></td>
+                                                        <!-- <td><%$i%></td> -->
                                                         <td><%$c->part_number%></td>
                                                         <td><%$c->part_description%></td>
                                                         <td><a href="<%$base_url%>bom_by_id/<%$c->id%>" class="btn btn-info">RM BOM</a></td>
@@ -159,3 +141,4 @@
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
+    <script src="<%$base_url%>/public/js/planning_and_sales/bom_parts.js"></script>

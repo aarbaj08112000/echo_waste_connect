@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 19:15:41
+/* Smarty version 4.3.2, created on 2024-08-25 18:02:07
   from '/var/www/html/extra_work/erp_converted/application/views/templates/purchase/routing.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c5ef85e339f2_48998315',
+  'unifunc' => 'content_66cb2447f0c839_21553303',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '3cae9ad0ee121ba0f4b3a4b91c42abf364556f6a' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/purchase/routing.tpl',
-      1 => 1724142425,
+      1 => 1724589127,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c5ef85e339f2_48998315 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66cb2447f0c839_21553303 (Smarty_Internal_Template $_smarty_tpl) {
 ?>
 <div class="wrapper">
 <!-- Content Wrapper. Contains page content -->
@@ -39,6 +39,12 @@ function content_66c5ef85e339f2_48998315 (Smarty_Internal_Template $_smarty_tpl)
                 <span>Subcon Routing</span>
             </div>
         </nav>
+        <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5 listing-btn">
+            
+                                    <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
+        <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
+           
+        </div>
         <div class="card p-0 mt-4">
 
             <!-- /.card-header -->

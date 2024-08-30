@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 19:13:08
+/* Smarty version 4.3.2, created on 2024-08-28 00:53:58
   from '/var/www/html/extra_work/erp_converted/application/views/templates/purchase/pending_po.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c5eeec4f0bf3_01974106',
+  'unifunc' => 'content_66ce27ce349393_93098231',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '7f54fddf447d98a9b9c8c877524563940efd36ab' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/purchase/pending_po.tpl',
-      1 => 1724142425,
+      1 => 1724694253,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c5eeec4f0bf3_01974106 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66ce27ce349393_93098231 (Smarty_Internal_Template $_smarty_tpl) {
 ?><div class="wrapper">
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">

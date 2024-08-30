@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 22:42:59
+/* Smarty version 4.3.2, created on 2024-08-23 15:18:14
   from '/var/www/html/extra_work/erp_converted/application/views/templates/admin/molding/report_prod_rejection.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c6201bca51f9_02517161',
+  'unifunc' => 'content_66c85adebf2421_69165357',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '98b3dbdaa02982ea18df47c07488d18510f3c87d' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/admin/molding/report_prod_rejection.tpl',
-      1 => 1724142425,
+      1 => 1724406494,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c6201bca51f9_02517161 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66c85adebf2421_69165357 (Smarty_Internal_Template $_smarty_tpl) {
 ?><div class="wrapper container-xxl flex-grow-1 container-p-y">
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme filter-popup-block" style="width: 0px;">
     <div class="app-brand demo justify-content-between">
@@ -59,7 +59,7 @@ function content_66c6201bca51f9_02517161 (Smarty_Internal_Template $_smarty_tpl)
          <div class="row">
             <div class="col-12">
                <!-- /.card -->
-               <div class="card">
+               <div class="card p-0 ">
                   <div class="card-header">
                      <div class="row">
                         <div class="col-lg-6">
@@ -82,13 +82,13 @@ function content_66c6201bca51f9_02517161 (Smarty_Internal_Template $_smarty_tpl)
                         </div>
                      </div>
                      <span class="text-info"> Display more details</span>
-                     <i id="showIcon" class="fas fa-eye" style="cursor: pointer; display: none;"></i>
-                     <i id="hideIcon" class="fas fa-eye-slash" style="cursor: pointer; display: inline;"></i>
+                     <i id="showIcon" class="ti ti-eye fs-4" style="cursor: pointer; display: none;"></i>
+                     <i id="hideIcon" class="ti ti-eye-off fs-4" style="cursor: pointer; display: inline;"></i>
                      <div id="dataAnalysis" style="display: none;">
                         <div class="row">
-                           <div class="col-lg-3">
-                              <div class="card-body" style="text-wrap:nowrap;">
-                                 <table id="exa" class="table table-bordered table-striped">
+                           <div class="col-lg-4 mt-3">
+                              <div class="table-bordered-box" style="text-wrap:nowrap;">
+                                 <table id="exa" class="table  border-primary table-striped me-4" >
                                     <thead>
                                        <tr>
                                           <th>Top Rejection Reason</th>
@@ -119,9 +119,9 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                                  </table>
                               </div>
                            </div>
-                           <div class="col-lg-3">
-                              <div class="card-body" style="text-wrap:nowrap;">
-                                 <table id="exa" class="table table-bordered table-striped">
+                           <div class="col-lg-7 mt-3">
+                              <div class=" table-bordered-box mt-3" style="text-wrap:nowrap;">
+                                 <table id="exa" class="table  table-striped">
                                     <thead>
                                        <tr>
                                           <th>Machine Name</th>
@@ -158,12 +158,17 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                         </div>
                      </div>
                   </div>
-                  <div class="card-body">
+                </div>
+                <div class="card p-0 mt-4">
+                  <div class="">
+                
+
+                  <div class="">
                   <div class="table-responsive text-nowrap">
-                     <table id="example1" class="table table-bordered table-striped">
+                     <table id="example1" class="table  table-striped">
                         <thead>
                            <tr>
-                              <th>Sr. No.</th>
+                              <!-- <th>Sr. No.</th> -->
                               <th>Rejection Reason</th>
                               <th>Rejection QTY</th>
                               <th>Customer</th>
@@ -183,8 +188,8 @@ if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['r']->value) {
 $_smarty_tpl->tpl_vars['r']->do_else = false;
 ?>
 		                           <tr>
-		                              <td><?php echo $_smarty_tpl->tpl_vars['i']->value;?>
-</td>
+		                              <!-- <td><?php echo $_smarty_tpl->tpl_vars['i']->value;?>
+</td> -->
 		                              <td><?php echo $_smarty_tpl->tpl_vars['r']->value->rejection_reason;?>
 </td>
 		                              <td><?php echo $_smarty_tpl->tpl_vars['r']->value->rejection_qty;?>
@@ -223,6 +228,12 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
    <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+<style >
+  .table-bordered-box {
+    margin: .25rem !important;
+    border: 1px solid var(--bs-theme-color);
+  }
+</style>
 <?php echo '<script'; ?>
 >
 var file_name = "report_prod_rejection";
@@ -239,20 +250,23 @@ var pdf_title = "Rejection Report";
        document.getElementById("hideIcon").style.display = "none";
    });
    // datatable initilization.
-   new DataTable('#example1',{
-      dom: 'Bfrtip',
-      buttons: [
-              {     
+  
+ 
+      table =  new DataTable('#example1',{
+        dom: 'Bfrtilp',
+        scrollX: false, 
+        buttons: [
+                {     
                     extend: 'csv',
-                      text: '<i class="ti ti-file-type-csv"></i>',
-                      init: function(api, node, config) {
-                      $(node).attr('title', 'Download CSV');
-                      },
-                      customize: function (csv) {
+                        text: '<i class="ti ti-file-type-csv"></i>',
+                        init: function(api, node, config) {
+                        $(node).attr('title', 'Download CSV');
+                        },
+                        customize: function (csv) {
                             var lines = csv.split('\n');
                             var modifiedLines = lines.map(function(line) {
                                 var values = line.split(',');
-                                values.splice(13, 1);
+                                values.splice(8, 1);
                                 return values.join(',');
                             });
                             return modifiedLines.join('\n');
@@ -260,7 +274,7 @@ var pdf_title = "Rejection Report";
                         filename : file_name
                     },
                 
-                  {
+                    {
                     extend: 'pdf',
                     text: '<i class="ti ti-file-type-pdf"></i>',
                     init: function(api, node, config) {
@@ -268,36 +282,25 @@ var pdf_title = "Rejection Report";
                         
                     },
                     filename: file_name,
-                   
-                    customize: function (doc) {
-                      doc.pageMargins = [15, 15, 15, 15];
-                      doc.content[0].text = pdf_title;
-                      doc.content[0].color = theme_color;
-                        // doc.content[1].table.widths = ['15%', '19%', '13%', '13%','15%', '15%', '10%'];
-                        doc.content[1].table.body[0].forEach(function(cell) {
-                            cell.fillColor = theme_color;
-                        });
-                        doc.content[1].table.body.forEach(function(row, rowIndex) {
-                            row.forEach(function(cell, cellIndex) {
-                                var alignmentClass = $('#example1 tbody tr:eq(' + rowIndex + ') td:eq(' + cellIndex + ')').attr('class');
-                                var alignment = '';
-                                if (alignmentClass && alignmentClass.includes('dt-left')) {
-                                    alignment = 'left';
-                                } else if (alignmentClass && alignmentClass.includes('dt-center')) {
-                                    alignment = 'center';
-                                } else if (alignmentClass && alignmentClass.includes('dt-right')) {
-                                    alignment = 'right';
-                                } else {
-                                    alignment = 'left';
-                                }
-                                cell.alignment = alignment;
-                            });
-                            row.splice(14, 1);
-                        });
-                    }
+                    
+                    
                 },
             ],
-   });
+            searching: true,
+    // scrollX: true,
+    scrollY: true,
+    bScrollCollapse: true,
+    pagingType: "full_numbers",
+    });
+      $('.dataTables_length').find('label').contents().filter(function() {
+            return this.nodeType === 3; // Filter out text nodes
+        }).remove();
+        setTimeout(function(){
+          $(".dataTables_length select").select2({
+              minimumResultsForSearch: Infinity
+          });
+        },1000)
+    
 <?php echo '</script'; ?>
 >
 </body>

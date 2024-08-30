@@ -33,21 +33,34 @@ class P_Molding extends CommonController
 
 	public function add_grades()
 	{
+		$ret_arr = [];
+		$success = 1;
+		$msg = '';
 		$customer_count = $this->Common_admin_model->get_data_by_id_count("grades", $this->input->post('name'), "name");
 		if ($customer_count > 0) {
-			echo "<script>alert('Error : already Present!!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$msg = 'Error : already Present!!!!';
+			$success = 0;
+			// echo "<script>alert('Error : already Present!!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 			$data = array(
 				'name' => $this->input->post('name')
 			);
 
 			$insert = $this->Common_admin_model->insert('grades', $data);
+			
 			if ($insert) {
-				echo "<script>alert('Data Added  ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				// echo "<script>alert('Data Added  ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$msg = 'Grade added successfully.';
 			} else {
-				echo "<script>alert('Error While operations  !!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$msg = 'Error While operations  !!!!';
+				$success = 0;
+				// echo "<script>alert('Error While operations  !!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
+		$ret_arr['msg'] = $msg;
+		$ret_arr['success'] = $success;
+		
+		echo json_encode($ret_arr);
 	}
 
 	public function get_filtered_clientUnit() {
@@ -686,13 +699,18 @@ class P_Molding extends CommonController
 
 	public function add_mold_maintenance()
 	{
+		$ret_arr = [];
+		$msg = '';
+		$success = 1;
 		$data2 = array(
 			'customer_part_id' => $this->input->post('customer_part_id'),
 			'mold_name' => $this->input->post('mold_name')
 		);
 		$check = $this->Crud->read_data_where("mold_maintenance", $data2);
 		if ($check != 0) {
-			echo "<script>alert('Customer Part and Mold Name already exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$msg = 'Customer Part and Mold Name already exists';
+			$success = 0;
+			// echo "<script>alert('Customer Part and Mold Name already exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 			$data = array(
 				'no_of_cavity' => $this->input->post('no_of_cavity'),
@@ -706,14 +724,21 @@ class P_Molding extends CommonController
 			$inser_query = $this->Crud->insert_data("mold_maintenance", $data);
 
 			if ($inser_query) {
-				$this->addSuccessMessage('Added Successfully.');
+				// $this->addSuccessMessage('Added Successfully.');
+				$msg = 'Added Successfully.';
 			} else {
 				$this->addErrorMessage('Failed to add record.Try again.');
-				$this->redirectMessage();
+				$msg = 'Failed to add record.Try again.';
+				$success = 0;
+				// $this->redirectMessage();
 			}
 			$data['filter_child_part_id'] = $this->input->post('customer_part_id');
-			$this->mold_maintenance($this->input->post('customer_part_id'));
+			// $this->mold_maintenance($this->input->post('customer_part_id'));
+			
 		}
+		$ret_arr['msg'] = $msg;
+		$ret_arr['success'] = $success;
+		echo json_encode($ret_arr);
 	}
 
 
@@ -957,7 +982,9 @@ class P_Molding extends CommonController
 		AND cust.id = part.customer_id");
 		
 		//echo "filter_part: ".$filter_part;
-
+		if($filter_part == '' || $filter_part == null){
+			$filter_part = 'All';
+		}
 		if(!empty($filter_part) && $filter_part == 'All'){
 				$data['mold_maintenance_results'] = $this->Crud->customQuery("SELECT mold.id as id, mold.*, part.id as customer_part_id, part.part_number, part.part_description, cust.customer_name FROM
 				customer_part part, customer cust, mold_maintenance mold
@@ -974,6 +1001,7 @@ class P_Molding extends CommonController
 			group by mold.customer_part_id, mold.mold_name
 			order by mold.id desc");
 		}	
+		
 		
 		//echo "<br> DONE ====>";
 
@@ -1518,6 +1546,9 @@ class P_Molding extends CommonController
 	public function update_mold_maintenance()
 	{
 		$id = $this->input->post('id');
+		$ret_arr = [];
+		$msg = '';
+		$success = 1;
 		$data = array(
 				'no_of_cavity' => $this->input->post('no_of_cavity'),
 				'mold_name' => $this->input->post('mold_name'),
@@ -1529,14 +1560,22 @@ class P_Molding extends CommonController
 			$inser_query = $this->Crud->update_data("mold_maintenance", $data, $id, "id");
 			if ($inser_query) {
 				if ($inser_query) {
-					$this->addSuccessMessage('Record updated successfully.');
+					// $this->addSuccessMessage('Record updated successfully.');
+					$msg = 'Mold Maintenance updated successfully.';
 				} else {
-					$this->addErrorMessage('Failed to update. Try again.');
+					// $this->addErrorMessage('Failed to update. Try again.');
+					$msg = 'Failed to update. Try again.';
+					$success = 0;
 				}
 			} else {
 				$this->addErrorMessage('Failed to update. Try again.');
+				$msg = 'Failed to update. Try again.';
+				$success = 0;
 			}
-		$this->mold_maintenance($this->input->post('filter_child_part_id'));
+		// $this->mold_maintenance($this->input->post('filter_child_part_id'));
+		$ret_arr['msg'] = $msg;
+		$ret_arr['success'] = $success;
+		echo json_encode($ret_arr);
 	}
 
 	public function view_rejection_details()

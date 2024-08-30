@@ -1,3 +1,4 @@
+
 $( document ).ready(function() {
     page.init();
 });
@@ -115,4 +116,3 @@ const page = {
     }
     
 }
-

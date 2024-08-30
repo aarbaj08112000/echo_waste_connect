@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 21:26:13
+/* Smarty version 4.3.2, created on 2024-08-23 14:07:36
   from '/var/www/html/extra_work/erp_converted/application/views/templates/reports/reports_grn.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c60e1d9c8b31_17482938',
+  'unifunc' => 'content_66c84a50805314_01375058',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '300806b912fb40b3a79e4086d6b644990f68f0d0' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/reports/reports_grn.tpl',
-      1 => 1724255712,
+      1 => 1724402255,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c60e1d9c8b31_17482938 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66c84a50805314_01375058 (Smarty_Internal_Template $_smarty_tpl) {
 ?><div class="wrapper container-xxl flex-grow-1 container-p-y">
     <!-- Content Wrapper. Contains page content -->
 
@@ -166,14 +166,14 @@ $_smarty_tpl->tpl_vars['i']->first = $_smarty_tpl->tpl_vars['i']->iteration === 
                                                                                     </button>
                                     </div>
                                     <form action="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
-grn_excel_export" method="POST" id="grn_excel_export">
+grn_excel_export" method="POST" id="grn_excel_export" class="m-2">
                                         <div class="modal-body">
                                             <div class="form-group">
                                                 <label for="">Only Accepted Status GRN will be exported.</label>
                                             </div>
                                             <div class="form-group">
                                                 <label for="">Year:</label>
-                                                <select required name="search_year" id="" class="form-control select2">
+                                                <select required name="search_year" id="" class="form-control select2" style="width:100%;">
                                                     <?php
 $_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['fincYears']->value, 'fyear');
 $_smarty_tpl->tpl_vars['fyear']->do_else = true;
@@ -191,7 +191,7 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                                             <div class="form-group">
                                                 <label for="">Month:</label>
                                                 <span class="small"><br>Month will be ignored if GRN Number field is provided.</span>
-                                                <select required name="search_month" id="" class="form-control select2">
+                                                <select required name="search_month" id="" class="form-control select2"  style="width:100%;">
                                                     <?php
 $_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['month_data']->value, 'val', false, 'key');
 $_smarty_tpl->tpl_vars['val']->do_else = true;
@@ -282,7 +282,7 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
 
                             <div class="">
                             <div class="table-responsive text-nowrap">
-                                <table id="gn_report" class="table table-bordered table-striped">
+                                <table id="gn_report" class="table  table-striped">
                                     <thead>
                                         <tr>
                                             

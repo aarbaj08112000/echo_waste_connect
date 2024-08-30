@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 22:45:15
+/* Smarty version 4.3.2, created on 2024-08-27 10:03:58
   from '/var/www/html/extra_work/erp_converted/application/views/templates/chart.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c620a3199244_47257470',
+  'unifunc' => 'content_66cd5736baa177_07586198',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '7040e2b88307fc830c9db784cc94729f1e7f666b' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/chart.tpl',
-      1 => 1724142425,
+      1 => 1724694252,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c620a3199244_47257470 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66cd5736baa177_07586198 (Smarty_Internal_Template $_smarty_tpl) {
 ?><div class="wrapper">
     <!-- Navbar -->
 

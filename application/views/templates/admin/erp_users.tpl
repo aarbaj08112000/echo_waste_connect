@@ -1,21 +1,28 @@
-<div class="wrapper">
-<div class="content-wrapper" >
-   <section class="content-header">
-      <div class="container-fluid">
-         <div class="row mb-2">
-            <div class="col-sm-6">
-               <h1>ERP Users</h1>
-            </div>
-            <div class="col-sm-6">
-               <ol class="breadcrumb float-sm-right">
-                  <li class="breadcrumb-item"><a href="<%base_url('dashboard') %>">Home</a></li>
-                  <li class="breadcrumb-item active">Part Family</li>
-               </ol>
-            </div>
-         </div>
+<div class="wrapper container-xxl flex-grow-1 container-p-y">
+<nav aria-label="breadcrumb">
+      <div class="sub-header-left pull-left breadcrumb">
+        <h1>
+        Admin
+          <a hijacked="yes" href="#stock/issue_request/index" class="backlisting-link" title="Back to Issue Request Listing" >
+            <i class="ti ti-chevrons-right" ></i>
+            <em >ERP Users</em></a>
+        </h1>
+        <br>
+        <span >ERP Users</span>
       </div>
-      <!-- /.container-fluid -->
-   </section>
+    </nav>
+    <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
+    <button type="button" class="btn btn-seconday" data-bs-toggle="modal" data-bs-target="#addPromo">
+                     Add ERP Users
+                     </button>
+  <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
+  <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
+  <%*<button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
+  <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button> *%>
+</div>
+<div class="content-wrapper" >
+
+
    <!-- Main content -->
    <section class="content">
       <div>
@@ -25,17 +32,17 @@
             <div class="col-lg-12">
                <!-- Modal -->
                <div class="modal fade" id="addPromo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                  <div class="modal-dialog modal-lg" role="document">
+                  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                      <div class="modal-content">
                         <div class="modal-header">
                            <h5 class="modal-title" id="exampleModalLabel">Add EPR Users</h5>
-                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                            <span aria-hidden="true">&times;</span>
                            </button>
                         </div>
+                        <form action="<%base_url('add_users_data') %>" method="POST" enctype="multipart/form-data" id="addTransporterForm"> 
                         <div class="modal-body">
                            <div class="form-group">
-                              <form action="<%base_url('add_users_data') %>" method="POST" enctype="multipart/form-data">
                            </div>
                            <div class="form-group">
                            <label for="on click url">User Full Name<span class="text-danger">*</span></label> <br>
@@ -66,24 +73,20 @@
                            <option value="Sales">Sales</option>
                            </select>
                            </div>
-                        </div>
-                        <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                        </form>
+                           <div class="modal-footer">
+                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                           <button type="submit" class="btn btn-primary">Save changes</button>
+                           </form>
+                           </div>
                         </div>
                      </div>
                   </div>
                </div>
                <div class="card">
-                  <div class="card-header">
-                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addPromo">
-                     Add ERP Users
-                     </button>
-                  </div>
+                 
                   <!-- /.card-header -->
-                  <div class="card-body">
-                     <table id="example1" class="table table-bordered table-striped">
+                  <div class="table-responsive text-nowrap">
+                     <table id="erp_users" class="table table-striped w-100">
                         <thead>
                            <tr>
                               <th>Sr No</th>
@@ -103,7 +106,7 @@
 		                              <td><%$u->user_email %></td>
 		                              <td><%$u->user_password %></td>
 		                              <td><%$u->type %></td>
-		                              <!-- <td><?php echo $u->user_role ?></td> -->
+		                             
 		                           </tr>
 		                        <%assign var='i' value=$i+1 %>
 		                        <%/foreach%>
@@ -124,3 +127,5 @@
    </section>
    <!-- /.content -->
 </div>
+
+<script src="<%$base_url%>public/js/admin/erp_user.js"></script>

@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 18:13:07
+/* Smarty version 4.3.2, created on 2024-08-28 00:53:07
   from '/var/www/html/extra_work/erp_converted/application/views/templates/customer/customer.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c5e0db486609_42520302',
+  'unifunc' => 'content_66ce279b6925b5_21046150',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '7ca49d080e76b64e89d14820b115e35340744205' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/customer/customer.tpl',
-      1 => 1724244185,
+      1 => 1724694253,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c5e0db486609_42520302 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66ce279b6925b5_21046150 (Smarty_Internal_Template $_smarty_tpl) {
 ?><div class="wrapper container-xxl flex-grow-1 container-p-y">
     <!-- Navbar -->
 

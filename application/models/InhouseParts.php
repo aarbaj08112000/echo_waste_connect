@@ -16,6 +16,18 @@ class InhouseParts extends CI_Model {
          return false;
     }
 
+
+    public function getInhousePartData() {
+        $part_details = $this->Crud->customQuery("SELECT parts.*, stock.* 
+            FROM  inhouse_parts parts
+            LEFT JOIN inhouse_parts_stock stock
+            ON parts.id = stock.inhouse_parts_id
+            AND stock.clientId = " . $this->Unit->getSessionClientId() . " 
+           
+            ORDER BY parts.id desc");
+        return $part_details;
+    }
+
     /**
      * Check whether stock entry is there for inhouse part
      */

@@ -16,6 +16,17 @@ class SupplierParts extends CI_Model {
          return false;
     }
 
+    public function getchildPart(){
+        $unitId = $this->Unit->getSessionClientId() ;
+        $part_details = $this->Crud->customQuery("SELECT parts.*, stock.* 
+            FROM  child_part parts
+            LEFT JOIN child_part_stock stock
+            ON parts.id = stock.childPartId
+            AND stock.clientId = " . $unitId . " 
+            ORDER BY parts.id desc");
+        return $part_details;
+    }
+
     /**
      * Check whether stock entry is there for supplier part
      */

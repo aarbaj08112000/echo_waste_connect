@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 19:14:57
+/* Smarty version 4.3.2, created on 2024-08-26 23:19:56
   from '/var/www/html/extra_work/erp_converted/application/views/templates/store/view_supplier_challan.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c5ef59765962_12327799',
+  'unifunc' => 'content_66ccc0446a0e07_10422029',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'b5b7c1bb9ea3f101166378dd291d04ca0b28c556' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/store/view_supplier_challan.tpl',
-      1 => 1724142425,
+      1 => 1724694253,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c5ef59765962_12327799 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66ccc0446a0e07_10422029 (Smarty_Internal_Template $_smarty_tpl) {
 ?>
 <div class="content-wrapper">
   <!-- Content -->

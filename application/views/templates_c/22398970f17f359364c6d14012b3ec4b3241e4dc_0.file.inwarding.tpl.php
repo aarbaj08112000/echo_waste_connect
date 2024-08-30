@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 19:13:27
+/* Smarty version 4.3.2, created on 2024-08-27 13:55:48
   from '/var/www/html/extra_work/erp_converted/application/views/templates/store/inwarding.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c5eeffe197d0_85876217',
+  'unifunc' => 'content_66cd8d8ca83796_19979141',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '22398970f17f359364c6d14012b3ec4b3241e4dc' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/store/inwarding.tpl',
-      1 => 1724142425,
+      1 => 1724694253,
       2 => 'file',
     ),
   ),
@@ -20,8 +20,9 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c5eeffe197d0_85876217 (Smarty_Internal_Template $_smarty_tpl) {
-?><div class="content-wrapper">
+function content_66cd8d8ca83796_19979141 (Smarty_Internal_Template $_smarty_tpl) {
+?>
+<div class="content-wrapper">
   <!-- Content -->
 
   <div class="container-xxl flex-grow-1 container-p-y">
@@ -44,8 +45,8 @@ function content_66c5eeffe197d0_85876217 (Smarty_Internal_Template $_smarty_tpl)
       <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
         <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
         <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
-        <!-- <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button> -->
-        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+        <!-- <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
+        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button> -->
       </div>
 
       <!-- Main content -->

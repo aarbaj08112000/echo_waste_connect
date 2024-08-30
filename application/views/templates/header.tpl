@@ -103,7 +103,7 @@
    <body>
       <!-- Layout wrapper -->
       <div class="layout-wrapper layout-content-navbar">
-      <div class="layout-container">
+      <div class="layout-container ">
       <!-- Menu -->
       <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme hide">
          <div class="app-brand demo">
@@ -112,6 +112,7 @@
             <img src="<%$base_url%>public/img/logo.png" alt="" width="30">
             </span>
             <span class="app-brand-text demo menu-text fw-bolder ms-2">AROM</span>
+
             </a>
             <a href="javascript:void(0);" class="layout-menu-toggle layout-menu-toggle-popup menu-link text-large ms-auto d-block">
             <i class="bx bx-chevron-right bx-sm align-middle"></i>
@@ -380,7 +381,7 @@
       <div class="layout-page">
       <!-- Navbar -->
       <!-- / Navbar -->
-      <nav class="navbar navbar-expand-lg bg-navbar-theme">
+      <nav class="navbar navbar-expand-lg bg-navbar-theme navbar-classic">
          <div class="container-fluid">
             <a href="home" class="app-brand-link navbar-brand">
             <span class="app-brand-logo demo">
@@ -390,16 +391,36 @@
             </a>
             <!-- <a class="navbar-brand" href="#">Navbar</a> -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+            <span class="navbar-toggler-icon"></span> <label>Menu</label>
             </button>
+            <div class="navbar-right-wrap ms-2 d-flex nav-top-wrap navbar-nav login-nav-block-mobile">
+               <ul class="navbar-right-wrap ms-auto d-flex nav-top-wrap navbar-nav">
+                  <li class="ms-2 dropdown">
+                     <a class="rounded-circle  " id="dropdownUser" aria-expanded="false">
+                        <div class="avatar avatar-md avatar-indicators avatar-online"><%$session_data['user_name'][0]%></div>
+                     </a>
+                     <div data-bs-popper="static" class="dropdown-menu dropdown-menu-end  dropdown-menu dropdown-menu-end" aria-labelledby="dropdownUser" id="dropdownUserNav">
+                        <div data-rr-ui-dropdown-item="" class="px-4 pb-0 pt-2  ">
+                           <div class="lh-1 ">
+                              <h5 class="mb-1">  <%$session_data['user_name']%></h5>
+                              <a class="text-inherit fs-6" href="javascript:void(0)"><%$session_data['user_email']%></a>
+                             
+                           </div>
+                           <div class=" dropdown-divider mt-3 mb-2"></div>
+                        </div>
+                        <a data-rr-ui-dropdown-item="" class="dropdown-item" role="button" tabindex="0" href="<%base_url('logout')%>"><i class="ti ti-power me-2" ti></i>Sign Out</a>
+                     </div>
+                  </li>
+               </ul>
+            </div>
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                <ul class="navbar-nav">
                   <li class="nav-item">
                      <a class="nav-link active" aria-current="page" href="<%base_url('dashboard')%>">Dashboard</a>
                   </li>
-                  <li class="nav-item">
+                  <!-- <li class="nav-item">
                      <a class="nav-link" href="<%base_url('home_2')%>">Charts</a>
-                  </li>
+                  </li> -->
                   <%if ($role == "Purchase" || $role == "Admin") %>
                   <li class="nav-item dropdown">
                      <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="navbarDropdownMenuLinkPurchase" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -793,13 +814,33 @@
                         </li>
                         <!-- <li><a class="dropdown-item" href="#">Approval</a></li>
                            <li><a class="dropdown-item" href="#">Master</a></li> -->
-                        <li><a class="dropdown-item" href="<%$base_url%>">User</a></li>
-                        <li><a class="dropdown-item" href="<%$base_url%>">Configurations</a></li>
+                        <li><a class="dropdown-item" href="<%base_url('erp_users')%>">User</a></li>
+                        <li><a class="dropdown-item" href="<%base_url('configs')%>">Configurations</a></li>
                      </ul>
                   </li>
                   <%/if%>
-                  <li class="nav-item">
+                  <!-- <li class="nav-item">
                     <a href="<%base_url('logout')%>" class="nav-link">Logout</a>
+                  </li> -->
+               </ul>
+            </div>
+            <div class="navbar-right-wrap ms-2 d-flex nav-top-wrap navbar-nav login-nav-block">
+               <ul class="navbar-right-wrap ms-auto d-flex nav-top-wrap navbar-nav">
+                  <li class="ms-2 dropdown">
+                     <a class="rounded-circle  " id="dropdownUser" aria-expanded="false">
+                        <div class="avatar avatar-md avatar-indicators avatar-online"><%$session_data['user_name'][0]%></div>
+                     </a>
+                     <div data-bs-popper="static" class="dropdown-menu dropdown-menu-end  dropdown-menu dropdown-menu-end" aria-labelledby="dropdownUser" id="dropdownUserNav">
+                        <div data-rr-ui-dropdown-item="" class="px-4 pb-0 pt-2  ">
+                           <div class="lh-1 ">
+                              <h5 class="mb-1">  <%$session_data['user_name']%></h5>
+                              <a class="text-inherit fs-6" href="javascript:void(0)"><%$session_data['user_email']%></a>
+                             
+                           </div>
+                           <div class=" dropdown-divider mt-3 mb-2"></div>
+                        </div>
+                        <a data-rr-ui-dropdown-item="" class="dropdown-item" role="button" tabindex="0" href="<%base_url('logout')%>"><i class="ti ti-power me-2" ti></i>Sign Out</a>
+                     </div>
                   </li>
                </ul>
             </div>

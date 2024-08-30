@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 23:48:52
+/* Smarty version 4.3.2, created on 2024-08-23 14:38:42
   from '/var/www/html/extra_work/erp_converted/application/views/templates/reports/reports_incoming_quality.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c62f8c384a31_32697296',
+  'unifunc' => 'content_66c8519ac28171_34902189',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'e3ff84a4af9f8f5a70295b527b5f4ad413907e7c' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/reports/reports_incoming_quality.tpl',
-      1 => 1724142425,
+      1 => 1724404122,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c62f8c384a31_32697296 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66c8519ac28171_34902189 (Smarty_Internal_Template $_smarty_tpl) {
 ?><div class="wrapper container-xxl flex-grow-1 container-p-y">
     <!-- Navbar -->
 
@@ -137,9 +137,9 @@ $_smarty_tpl->tpl_vars['i']->first = $_smarty_tpl->tpl_vars['i']->iteration === 
                            
 
                             <!-- /.card-header -->
-                            <div class="card-body">
+                            <div class="">
                             <div class="table-responsive text-nowrap">
-                                <table id="income_report" class="table table-bordered table-striped">
+                                <table id="income_report" class="table  table-striped">
                                     <thead>
 
                                         <tr>

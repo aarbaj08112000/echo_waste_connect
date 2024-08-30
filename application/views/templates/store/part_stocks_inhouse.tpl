@@ -1,3 +1,4 @@
+
 <div class="content-wrapper">
   <!-- Content -->
 <%assign var='role' value=trim($session_data['type']) %>

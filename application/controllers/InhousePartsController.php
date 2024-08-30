@@ -388,13 +388,22 @@ class InhousePartsController extends CommonController
 				"production_qty" => $stock,
 		);
 		
+		$ret_arr = [];
+		$success = 1;
+		$msg = '';
 		$result = $this->InhouseParts->updateStockById($data, $id);
 		if ($result) {
-			$this->addSuccessMessage('Record updated successfully');
+			// $this->addSuccessMessage('Record updated successfully');
+			$msg = 'Record updated successfully';
+
 		} else {
-			$this->addErrorMessage('Unable to update record. Please try again.');
+			// $this->addErrorMessage('Unable to update record. Please try again.');
+			$msg = 'Unable to update record. Please try again.';
 		}
-		$this->inhouse_parts_admin($id);
+		// $this->inhouse_parts_admin($id);
+		$ret_arr['success'] = $success;
+		$ret_arr['msg'] = $msg;
+		echo json_encode($ret_arr);
 	}
 
 

@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 22:55:16
+/* Smarty version 4.3.2, created on 2024-08-28 23:04:26
   from '/var/www/html/extra_work/erp_converted/application/views/templates/customer/bom.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c622fc954b91_70185353',
+  'unifunc' => 'content_66cf5fa20361c9_45225928',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '943b2922973062e7fa08b34497bf79ba53f55e78' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/customer/bom.tpl',
-      1 => 1724142425,
+      1 => 1724866302,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c622fc954b91_70185353 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66cf5fa20361c9_45225928 (Smarty_Internal_Template $_smarty_tpl) {
 ?><div style="width:100%" class="wrapper">
     <!-- Navbar -->
 
@@ -30,39 +30,36 @@ function content_66c622fc954b91_70185353 (Smarty_Internal_Template $_smarty_tpl)
 
 
     <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
+    <div class="wrapper container-xxl flex-grow-1 container-p-y ">
         <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <!-- <h1></h1> -->
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Customer item part</li>
-                        </ol>
-                    </div>
-                </div>
-            </div><!-- /.container-fluid -->
-        </section>
-
+        <div class="sub-header-left pull-left breadcrumb">
+                <h1>
+                    Planning & Sales 
+                    <a hijacked="yes" href="#stock/issue_request/index" class="backlisting-link" title="Back to Issue Request Listing">
+                        <i class="ti ti-chevrons-right"></i>
+                        <em>Customer Part</em></a>
+                </h1>
+                <br>
+                <span>Customer item part </span>
+            </div>
+        <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5 listing-btn">
+            
+            <a title="Back To Customer Part" class="btn btn-seconday" href="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+customer_master" type="button"><i class="ti ti-arrow-left"></i></a>
+        </div>
         <!-- Main content -->
         <section class="content">
-            <div class="container-fluid">
+            <div class="">
                 <div class="row">
                     <div class="col-12">
 
                         <!-- /.card -->
 
                         <div class="card">
-                            <div class="card-header">
+                            <div class="">
 
                                 <!-- Button trigger modal -->
-                                <a class="btn btn-danger" href="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
-customer_master">
-                                    Back </a>
+                                
 
                                 <!-- <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#exampleModal">
                                     Add </button> -->
@@ -123,12 +120,12 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                                 </div>
                             </div>
                             <!-- /.card-header -->
-                            <div class="card-body">
-                                <table id="example1" class="table table-bordered table-striped">
+                            <div class="">
+                                <table id="bom_part" class="table table-striped w-100">
                                     <thead>
                                         <tr>
-                                            <th>Sr. No.</th>
-                                            <!-- <th>Customer Part Number</th> -->
+                                            <!-- <th>Sr. No.</th>
+                                            <th>Customer Part Number</th> -->
                                             <th> Part Number</th>
                                             <th>Part Description</th>
                                             <th>Details</th>
@@ -141,22 +138,7 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                                             <th>Customer Subcon bom </th>
                                         </tr>
                                     </thead>
-                                    <tfoot>
-                                        <tr>
-                                            <th>Sr. No.</th>
-                                            <!-- <th>Customer Part Number</th> -->
-                                            <th> Part Number</th>
-                                            <th>Part Description</th>
-                                            <th>Details</th>
-                                            <?php if ($_smarty_tpl->tpl_vars['entitlements']->value['isSheetMetal'] != null) {?>
-                                             <th>Operations BOM</th>
-                                             <?php }?> 
-                                             <?php if ($_smarty_tpl->tpl_vars['entitlements']->value['isPlastic'] != null) {?>
-                                            <!--<th>Deflashing BOM</th> -->
-                                            <?php }?>
-                                            <th>Customer Subcon bom </th>
-                                        </tr>
-                                    </tfoot>
+                                    
                                     <tbody>
                                         <?php if ($_smarty_tpl->tpl_vars['customer_part']->value) {?>
                                             <?php $_smarty_tpl->_assignInScope('i', 1);?>
@@ -168,8 +150,8 @@ $_smarty_tpl->tpl_vars['c']->do_else = false;
 ?>
                                                 <?php if ($_smarty_tpl->tpl_vars['customer_id']->value == $_smarty_tpl->tpl_vars['c']->value->customer_id) {?>
                                                     <tr>
-                                                        <td><?php echo $_smarty_tpl->tpl_vars['i']->value;?>
-</td>
+                                                        <!-- <td><?php echo $_smarty_tpl->tpl_vars['i']->value;?>
+</td> -->
                                                         <td><?php echo $_smarty_tpl->tpl_vars['c']->value->part_number;?>
 </td>
                                                         <td><?php echo $_smarty_tpl->tpl_vars['c']->value->part_description;?>
@@ -213,5 +195,9 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
+    <?php echo '<script'; ?>
+ src="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
+/public/js/planning_and_sales/bom_parts.js"><?php echo '</script'; ?>
+>
 <?php }
 }

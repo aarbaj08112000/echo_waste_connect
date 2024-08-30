@@ -1,3 +1,4 @@
+
 <%assign var='isMultiClient' value=$session_data['isMultipleClientUnits']%>
 <div class="content-wrapper">
   <!-- Content -->

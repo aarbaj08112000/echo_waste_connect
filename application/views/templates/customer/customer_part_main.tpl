@@ -1,4 +1,4 @@
-<div style="width:100%" class="wrapper">
+<div class="wrapper container-xxl flex-grow-1 container-p-y">
     <!-- Navbar -->
 
     <!-- /.navbar -->
@@ -8,108 +8,29 @@
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <!-- <h1></h1> -->
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Customer item part</li>
-                        </ol>
-                    </div>
-                </div>
-            </div><!-- /.container-fluid -->
-        </section>
-
+         <div class="sub-header-left pull-left breadcrumb">
+            <h1>
+            Planning &amp; Sales 
+            <a hijacked="yes" href="#stock/issue_request/index" class="backlisting-link" title="Back to Issue Request Listing">
+            <i class="ti ti-chevrons-right"></i>
+            <em>Customer item part</em></a>
+            </h1>
+            <br>
+            <span> Customer Part Operation</span>
+        </div>
+        
+        <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5 listing-btn">
+            <a title="Back To Customer Part" class="btn btn-seconday" href="<%$base_url%>customer_master" type="button"><i class="ti ti-arrow-left"></i></a>
+        </div>
         <!-- Main content -->
         <section class="content">
-            <div class="container-fluid">
+            <div class="">
                 <div class="row">
                     <div class="col-12">
-
-                        <!-- /.card -->
-
                         <div class="card">
-                            <div class="card-header">
-                                <!-- Button trigger modal -->
-                                <a class="btn btn-danger" href="<%$base_url%>customer_master">
-                                    Back
-                                </a>
-
-                                <!-- <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#exampleModal">
-                                    Add </button> -->
-
-                                <!-- Modal -->
-                                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog " role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">Add </h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form action="<%$base_url%>addbom" method="POST">
-                                                    <div class="row">
-                                                        <div class="col-lg-12">
-                                                            <!-- <div class="form-group">
-                                                                <label for="operation_number">Operation Number</label><span class="text-danger">*</span>
-                                                                <input type="text" name="operationNumber" class="form-control" required id="exampleInputPassword1" placeholder="Operation Number">
-                                                            </div>-->
-
-                                                            <!-- <div class="form-group">
-                                                                <label> Customer Part </label><span class="text-danger">*</span>
-                                                                <select class="form-control select2" name="customer_part_id" style="width: 100%;">
-                                                                    <%foreach from=$customer_part_list item=c%>
-                                                                        <option value="<%$c->id%>"><%$c->part_number%>/<%$c->part_description%></option>
-                                                                    <%/foreach%>
-                                                                </select>
-                                                            </div> -->
-                                                            <div class="form-group">
-                                                                <label> item part </label><span class="text-danger">*</span>
-                                                                <select class="form-control select2" name="child_part_id" style="width: 100%;">
-                                                                    <%foreach from=$child_part_list item=c1%>
-                                                                        <option value="<%$c1->id%>"><%$c1->part_number%>/<%$c1->part_description%></option>
-                                                                    <%/foreach%>
-                                                                </select>
-                                                            </div>
-
-                                                            <div class="form-group">
-                                                                <label for="po_num">Quantity</label><span class="text-danger">*</span>
-                                                                <input type="number" name="quantity" required class="form-control" id="exampleInputEmail1" placeholder="Enter Quantity" aria-describedby="emailHelp">
-                                                                <input type="hidden" name="customer_part_id" value="<%$customer[0]->id%>" required class="form-control" id="exampleInputEmail1" placeholder="Enter Quantity" aria-describedby="emailHelp">
-                                                            </div>
-                                                        </div>
-
-                                                        <!-- <div class="col-lg-6">
-                                                            <div class="form-group">
-                                                                <label for="operation_name">Operation Name</label><span class="text-danger">*</span>
-                                                                <input type="text" name="operataionName" class="form-control" required id="exampleInputPassword1" placeholder="Operation Name ">
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="fixture_number">Fixture Number</label><span class="text-danger">*</span>
-                                                                <input type="text" name="fixtureNumber" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Fixture Number">
-                                                            </div>
-                                                        </div> -->
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                        <button type="submit" class="btn btn-primary">Save changes</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             <!-- /.card-header -->
-                            <div class="card-body">
-                                <table id="example1" class="table table-bordered table-striped">
+                            <div class=" ">
+                                <table id="customer_part_main_view" class="table table-striped w-100">
                                     <thead>
                                         <tr>
                                             <th>Sr. No.</th>
@@ -119,15 +40,7 @@
                                             <th>Details</th>
                                         </tr>
                                     </thead>
-                                    <tfoot>
-                                        <tr>
-                                            <th>Sr. No.</th>
-                                            <!-- <th>Customer Part Number</th> -->
-                                            <th> Part Number</th>
-                                            <th>Part Description</th>
-                                            <th>Details</th>
-                                        </tr>
-                                    </tfoot>
+                                    
                                     <tbody>
                                         <%if $customer_part%>
                                             <%assign var="i" value=1%>
@@ -149,6 +62,7 @@
                             </div>
                             <!-- /.card-body -->
                         </div>
+                    </div>
                         <!-- /.card -->
                     </div>
                     <!-- /.col -->
@@ -160,3 +74,53 @@
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
+
+<script type="text/javascript">
+    
+$( document ).ready(function() {
+    
+  page.init();
+});
+var file_name = "customer_drawing";
+var pdf_title = "Customer Part Drawing";
+var table = '';
+const page = {
+    init:function(){
+        let that = this;
+        that.dataTable();
+    },
+    dataTable: function() {
+        var data = {};
+        table = $("#customer_part_main_view").DataTable({
+        dom: "Bfrtilp",
+        searching: true,
+        scrollX: true,
+        scrollY: true,
+        bScrollCollapse: true,
+        columnDefs: [{ sortable: false, targets: 3 }],
+        pagingType: "full_numbers",
+       
+        
+        });
+        $('.dataTables_length').find('label').contents().filter(function() {
+                return this.nodeType === 3; // Filter out text nodes
+        }).remove();
+        setTimeout(function(){
+            $(".dataTables_length select").select2({
+                minimumResultsForSearch: Infinity
+            });
+        },1000)
+
+        // global searching for datable 
+        $('#serarch-filter-input').on('keyup', function() {
+            table.search(this.value).draw();
+        });
+            // table = $('#example1').DataTable();
+      },
+
+   
+
+}
+
+
+</script>

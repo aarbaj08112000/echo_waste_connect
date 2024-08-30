@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 21:15:20
+/* Smarty version 4.3.2, created on 2024-08-28 00:53:22
   from '/var/www/html/extra_work/erp_converted/application/views/templates/purchase/supplier.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c60b90447ed0_93657561',
+  'unifunc' => 'content_66ce27aae550b2_25560926',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '00a76d500c5cb588906daa454321f8b656f76c2d' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/purchase/supplier.tpl',
-      1 => 1724142425,
+      1 => 1724694253,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c60b90447ed0_93657561 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66ce27aae550b2_25560926 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->_assignInScope('entitlements', $_smarty_tpl->tpl_vars['session_data']->value['entitlements']);?>
 <!-- Content wrapper -->
 <div class="container-xxl flex-grow-1 container-p-y">

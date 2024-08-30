@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 20:32:22
+/* Smarty version 4.3.2, created on 2024-08-28 00:54:05
   from '/var/www/html/extra_work/erp_converted/application/views/templates/purchase/view_new_po_by_id.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c6017ea8b8e5_14295597',
+  'unifunc' => 'content_66ce27d588c6c0_14798248',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '0e46a5cc1a197a48e54e3579b588f3629d13f137' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/purchase/view_new_po_by_id.tpl',
-      1 => 1724142425,
+      1 => 1724694253,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c6017ea8b8e5_14295597 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66ce27d588c6c0_14798248 (Smarty_Internal_Template $_smarty_tpl) {
 ?><!-- Content wrapper -->
 <?php $_smarty_tpl->_assignInScope('expired', 'no');
 if (($_smarty_tpl->tpl_vars['new_po']->value[0]->expiry_po_date > date('Y-m-d'))) {

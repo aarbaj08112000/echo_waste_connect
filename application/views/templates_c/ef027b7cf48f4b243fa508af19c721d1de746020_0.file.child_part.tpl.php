@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 17:10:39
+/* Smarty version 4.3.2, created on 2024-08-27 14:30:37
   from '/var/www/html/extra_work/erp_converted/application/views/templates/purchase/child_part.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c5d237e84526_06254530',
+  'unifunc' => 'content_66cd95b584d6f9_06275884',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'ef027b7cf48f4b243fa508af19c721d1de746020' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/purchase/child_part.tpl',
-      1 => 1724142425,
+      1 => 1724749236,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c5d237e84526_06254530 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66cd95b584d6f9_06275884 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->_assignInScope('entitlements', $_smarty_tpl->tpl_vars['session_data']->value['entitlements']);?>
 <!-- Content wrapper -->
 
@@ -129,7 +129,7 @@ jelly-o tart brownie jelly.
 <div class="row">
 
   <div class="col-xl">
-    <div class="card mb-4 px-3">
+    <div class="card mb-4 ">
       
       <div class="card-body">
         <form id="addchildpart" class="mb-3" action="javascript:void(0)" method="POST" enctype='multipart/form-data'>

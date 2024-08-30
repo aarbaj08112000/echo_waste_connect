@@ -7,15 +7,15 @@ const datatable = {
         that.dataTable();
         $(document).on('click','.search-filter',function(e){
             let customer_name = $("#customer_name").val();
-            table.column(1).search(customer_name).draw();
+            table.column(0).search(customer_name).draw();
         })
         $(document).on('click','.reset-filter',function(e){
            that.resetFilter();
         })
         $(document).on("click",".add-revision",function(){
             var data = $(this).attr("data-value");
-            data = JSON.parse(atob(data)); JBM
-            console.log(data);
+            data = JSON.parse(atob(data)); 
+            
             $('#part_number').val(data[1]['part_number']);
             $('#revision_no').val(data[0].revision_no);
             $('#part_description').val(data[1].part_description);
@@ -85,7 +85,7 @@ const datatable = {
 
     },
     resetFilter:function(){
-        table.column(1).search('').draw();
+        table.column(0).search('').draw();
     }
 
 }

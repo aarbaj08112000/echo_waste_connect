@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 19:13:41
+/* Smarty version 4.3.2, created on 2024-08-26 23:20:02
   from '/var/www/html/extra_work/erp_converted/application/views/templates/store/stock_rejection.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c5ef0d1948b8_77022871',
+  'unifunc' => 'content_66ccc04a6b2d13_91949244',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '9848a8b99f496e87b6710a1b950af8cae26184c8' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/store/stock_rejection.tpl',
-      1 => 1724142425,
+      1 => 1724694253,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c5ef0d1948b8_77022871 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66ccc04a6b2d13_91949244 (Smarty_Internal_Template $_smarty_tpl) {
 ?>
 <div class="content-wrapper">
   <!-- Content -->
@@ -58,8 +58,9 @@ function content_66c5ef0d1948b8_77022871 (Smarty_Internal_Template $_smarty_tpl)
 
                   </button>
                </div>
+               <form action="javascript:void(0)" method="POST" class="custom-form add_stock_rejection" enctype='multipart/form-data'>
                <div class="modal-body">
-                  <form action="javascript:void(0)" method="POST" class="custom-form add_stock_rejection" enctype='multipart/form-data'>
+                  
                      <div class="row">
                         <div class="col-lg-12">
                            <div class="form-group">
@@ -114,7 +115,7 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                            </div>
                            <div class="form-group">
                               <label for="po_num">Enter Qty <span class="text-danger">*</span></label>
-                              <input type="number" name="qty" step="any" placeholder="Enter Qty" name="qty"  class="form-control required-input">
+                              <input type="text" name="qty" step="any" placeholder="Enter Qty" name="qty"  class="form-control required-input onlyNumericInput">
                            </div>
                            <div class="form-group">
                               <label for="po_num">Enter Remark </label>
@@ -148,7 +149,7 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
                   <th>Uploaded Debit Note</th>
                   <th>Qty</th>
                   <th>Transfer Stock</th>
-                  <th>Download Debit Note</th>
+                  <th class="text-center">Download Debit Note</th>
                </tr>
             </thead>
             <tbody>
@@ -190,7 +191,7 @@ echo $_smarty_tpl->tpl_vars['c']->value->id;?>
                           </td>
                           <td><?php echo $_smarty_tpl->tpl_vars['c']->value->qty;?>
 </td>
-                          <td>
+                          <td class="text-center">
                              <?php if (($_smarty_tpl->tpl_vars['c']->value->status == "approved")) {?>
                               <p class="text-center"><a  href="<?php echo base_url('create_debit_note/');
 echo $_smarty_tpl->tpl_vars['c']->value->id;?>
@@ -199,18 +200,19 @@ echo $_smarty_tpl->tpl_vars['c']->value->id;?>
                                <button type="submit" data-bs-toggle="modal" class="btn btn-sm btn-primary" data-bs-target="#exampleModal2<?php echo $_smarty_tpl->tpl_vars['i']->value;?>
 ">Approve Rejection</button>
                                <div class="modal fade" id="exampleModal2<?php echo $_smarty_tpl->tpl_vars['i']->value;?>
-" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="text-align: left;">
+                                  <div class="modal-dialog  modal-dialog-centered" role="document">
                                      <div class="modal-content">
                                         <div class="modal-header">
                                            <h5 class="modal-title" id="exampleModalLabel">Approve Rejection</h5>
-                                           <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                           <span aria-hidden="true">&times;</span>
+                                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                           
                                            </button>
                                         </div>
+                                         <form action="<?php echo base_url('update_rejection_flow_status');?>
+" method="POST" class="update_rejection_flow_status">
                                         <div class="modal-body">
-                                           <form action="<?php echo base_url('update_rejection_flow_status');?>
-" method="POST">
+                                          
                                               <div class="row">
                                                  <div class="col-lg-12">
                                                     <div class="form-group">

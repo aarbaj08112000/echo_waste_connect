@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 22:43:41
+/* Smarty version 4.3.2, created on 2024-08-28 01:04:05
   from '/var/www/html/extra_work/erp_converted/application/views/templates/subcom_challan/subcon_supplier_challan_part_report.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c620456b0809_51508364',
+  'unifunc' => 'content_66ce2a2dc11eb7_90995816',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'bc450c0115b3d960368b0120be22336012ac501e' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/subcom_challan/subcon_supplier_challan_part_report.tpl',
-      1 => 1724142425,
+      1 => 1724694253,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c620456b0809_51508364 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66ce2a2dc11eb7_90995816 (Smarty_Internal_Template $_smarty_tpl) {
 ?><div  class="wrapper container-xxl flex-grow-1 container-p-y">
 
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme filter-popup-block" style="width: 0px;">
@@ -132,7 +132,7 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
            <div class="card">
                 
                 <!-- /.card-header -->
-                <div class="card-body">
+                <div class="">
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
                             <tr>
@@ -235,5 +235,6 @@ $_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
 <?php echo '<script'; ?>
  src="<?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
 /public/js/reports/subcom_report.js"><?php echo '</script'; ?>
-><?php }
+>
+<?php }
 }

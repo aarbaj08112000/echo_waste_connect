@@ -36,21 +36,10 @@ class PLMIntegration extends CommonController
 		);*/
 		$data['customer_part'] = $this->Crud->get_data_by_id("customer_part", $customer_id,"customer_id");
 		
-		if(!empty($search_part_id)) {
-			if($search_part_id!='ALL'){
-				$custom_query = 'SELECT DISTINCT drawing.customer_master_id FROM `customer_part_drawing` as drawing, `customer_part` as
-				part  where part.customer_id = '.$customer_id.' AND part.id = drawing.customer_master_id AND part.id = '.$search_part_id .' ORDER BY drawing.id DESC';
-			}else{
-				$custom_query = 'SELECT DISTINCT drawing.customer_master_id FROM `customer_part_drawing` as drawing, `customer_part` as
+		$custom_query = 'SELECT DISTINCT drawing.customer_master_id FROM `customer_part_drawing` as drawing, `customer_part` as
 				part  where part.customer_id = '.$customer_id.' AND part.id = drawing.customer_master_id  ORDER BY drawing.id DESC';
-			}
-			//$role_management_data = $this->db->query($custom_query);
-			//$data['customer_part_drawing'] = $role_management_data->result();
-			$data['customer_part_drawing'] = $this->Crud->customQuery($custom_query);
-		}
+		$data['customer_part_drawing'] = $this->Crud->customQuery($custom_query);
 
-		//old
-		//$role_management_data = $this->db->query('SELECT DISTINCT customer_master_id FROM `customer_part_drawing` ORDER BY `id` DESC');
 		
 		$data['search_part_id'] = $search_part_id;
 
@@ -60,7 +49,7 @@ class PLMIntegration extends CommonController
 				$data['po'][$poo->customer_master_id] = $this->Crud->get_data_by_id("customer_part", $poo->customer_master_id, "id");
 				$data['customer_part_drawing'][$key]->encoded_data = base64_encode(json_encode(array_merge($data['customer_part_drawing_data'][$poo->customer_master_id],$data['po'][$poo->customer_master_id])));
 				}
-			}
+		}
 		
 		// $this->getPage('customer_part_drawing_by_id', $data);
 		$data['entitlements'] = $this->session->userdata('entitlements');
@@ -84,15 +73,11 @@ class PLMIntegration extends CommonController
 		);
 		$data['customer_part'] = $this->Crud->get_data_by_id_multiple_condition("customer_part", $criteria);
 	
-		if(!empty($search_part_id)) {
-			if($search_part_id!='ALL'){
 				$uniqueCheck = array(
-					'id' => $search_part_id,
 					'customer_id' => $customer_id
 				);
-			}
 			$data['search_customer_part'] = $this->Crud->get_data_by_id_multiple_condition("customer_part", $uniqueCheck);
-		}
+
 
 		
 		if ($data['customer_part']) {
@@ -126,9 +111,12 @@ class PLMIntegration extends CommonController
 			// "revision_no" => $revision_no,
 		);
 		$check = $this->Crud->read_data_where("customer_part_drawing", $data);
+		$success = 0;
+        $messages = "Something went wrong.";
 		if ($check != 0) {
-			$this->addErrorMessage('Record already exists.');
-			$this->redirectMessage();
+			$messages = "Record already exists.";
+			// $this->addErrorMessage('Record already exists.');
+			// $this->redirectMessage();
 		} else {
 
 			if (!empty($_FILES['drawing']['name'])) {
@@ -210,12 +198,20 @@ class PLMIntegration extends CommonController
 
 			$result = $this->Crud->insert_data("customer_part_drawing", $data);
 			if ($result) {
-				$this->addSuccessMessage('Record added.');
+				$messages = "Record added.";
+				$success = 1;
+				// $this->addSuccessMessage('Record added.');
 			} else {
-				$this->addErrorMessage('Failed to add record.');
+				$messages  ="Failed to add record.";
+				// $this->addErrorMessage('Failed to add record.');
 			}
-			$this->redirectMessage();
+			// $this->redirectMessage();
 		}
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 	
 	public function add_customer_document()
@@ -224,11 +220,13 @@ class PLMIntegration extends CommonController
 		$customer_id = $this->input->post('customer_id');
 		$type = $this->input->post('type');
 		$document_name = $this->input->post('document_name');
-
+		$success = 0;
+        $messages = "Something went wrong.";
 		$check = 0;
 		if ($check != 0) {
-			$this->addErrorMessage('Record already exists.');
-			$this->redirectMessage();
+			$messages = "Record already exists.";
+			// $this->addErrorMessage('Record already exists.');
+			// $this->redirectMessage();
 		} else {
 
 			if (!empty($_FILES['document']['name'])) {
@@ -265,15 +263,23 @@ class PLMIntegration extends CommonController
 				"date" => $this->current_date,
 				"time" => $this->current_time,
 			);
-
+			// pr($data,1);
 			$result = $this->Crud->insert_data("customer_part_documents", $data);
 			if ($result) {
-				$this->addSuccessMessage('Record added.');
+				$messages = "Record added.";
+				$success = 1;
+				// $this->addSuccessMessage('Record added.');
 			} else {
-				$this->addErrorMessage('Failed to add record.');
+				$messages = "Failed to add record.";
+				// $this->addErrorMessage('Failed to add record.');
 			}
-			$this->redirectMessage();
+			// $this->redirectMessage();
 		}
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 	public function view_part_drawing_history()
@@ -302,10 +308,13 @@ class PLMIntegration extends CommonController
 			"customer_master_id" => $customer_master_id,
 			"revision_no" => $revision_no,
 		);
+		$success = 0;
+        $messages = "Something went wrong.";
 		$check = $this->Crud->read_data_where("customer_part_drawing", $data);
 		if ($check != 0) {
-			$this->addErrorMessage('Record already exists.');
-			$this->redirectMessage();
+			$messages = "Record already exists.";
+			// $this->addErrorMessage('Record already exists.');
+			// $this->redirectMessage();
 		} else {
 
 			if (!empty($_FILES['drawing']['name'])) {
@@ -390,12 +399,20 @@ class PLMIntegration extends CommonController
 
 			$result = $this->Crud->insert_data("customer_part_drawing", $data);
 			if ($result) {
-				$this->addSuccessMessage('Record updated.');
+				$messages = "Record updated.";
+				$success = 1;
+				// $this->addSuccessMessage('Record updated.');
 			} else {
-				$this->addErrorMessage('Failed to update record.');
+				$messages = "Failed to update record.";
+				// $this->addErrorMessage('Failed to update record.');
 			}
-			$this->redirectMessage();
+			// $this->redirectMessage();
 		}
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 	public function update_drawing()
@@ -403,7 +420,8 @@ class PLMIntegration extends CommonController
 		$id = $this->input->post('id');
 
 		$type = $this->input->post('type');
-
+		$success = 0;
+        $messages = "Something went wrong.";
 		if (!empty($_FILES['file']['name'])) {
 			$image_path = "./documents/";
 			$config['allowed_types'] = '*';
@@ -430,14 +448,22 @@ class PLMIntegration extends CommonController
 			$type => $drawing,
 		);
 
+		
 		$result = $this->Crud->update_data("customer_part_drawing", $data, $id);
 		if ($result) {
-			$this->addSuccessMessage('Record updated.');
+			$messages = "Record updated.";
+			$success = 1;
+			// $this->addSuccessMessage('Record updated.');
 		} else {
-			$this->addErrorMessage('Failed to update record.');
+			$messages = "Failed to update record.";
+			// $this->addErrorMessage('Failed to update record.');
 		}
-	
-		$this->redirectMessage();
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
+		// $this->redirectMessage();
 	}
 
 	public function part_document_by_name() 
@@ -454,9 +480,24 @@ class PLMIntegration extends CommonController
 		$role_management_data = $this->db->query('SELECT * FROM `customer_part_documents` WHERE customer_id = ' . $customer_id . 
 		' AND customer_master_id = ' . $part_id . ' AND type = "'.$type.'" ');
 		$data['customer_part_doc'] = $role_management_data->result();
-		$data['customer_part']  = $this->Crud->get_data_by_id("customer_part", $part_id, "id");
-
-		$this->getPage('part_document_by_name', $data);
+		$data['customer_part'] = $customer_part = $this->Crud->get_data_by_id("customer_part", $part_id, "id");
+		$customer_arr = [];
+		$key = 0;
+		if ($customer_part) {
+			foreach ($customer_part as $c) {
+            	if ($customer_id == $c->customer_id) {
+                	$customer = $this->Crud->get_data_by_id("customer", $c->customer_id, "id");
+                    if ($part_id == $c->id) {
+                    	$customer_arr[$key] = $customer[0];
+                    	$customer_arr[$key]->part_number = $c->part_number;
+                    	$customer_arr[$key]->part_description = $c->part_description;
+                    }
+                }
+            }
+		}
+		$data['entitlements'] = $this->session->userdata('entitlements');
+		$data['customer_arr'] = $customer_arr;                                                                
+		$this->loadView('sales/part_document_by_name', $data);
 	}
 
 	public function update_part_document_individual()
@@ -488,15 +529,23 @@ class PLMIntegration extends CommonController
 			"document" => $document,
 			"document_name" => $document_name
 		);
-
+		$success = 0;
+        $messages = "Something went wrong.";
 		$query = $this->Common_admin_model->update("customer_part_documents", $data, "id", $id);
 
 		if ($query) {
-			$this->addSuccessMessage('Document updated.');
+			$messages = "Document updated.";
+			$success = 1;
+			// $this->addSuccessMessage('Document updated.');
 		} else {
-			$this->addErrorMessage('Failed to update document.');
+			$messages = "Failed to update document.";
+			// $this->addErrorMessage('Failed to update document.');
 		}
-		$this->redirectMessage();
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 

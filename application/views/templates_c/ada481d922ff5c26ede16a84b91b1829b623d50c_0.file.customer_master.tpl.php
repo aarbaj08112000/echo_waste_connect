@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 18:09:15
+/* Smarty version 4.3.2, created on 2024-08-27 23:55:31
   from '/var/www/html/extra_work/erp_converted/application/views/templates/customer/customer_master.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c5dff384ab88_57235125',
+  'unifunc' => 'content_66ce1a1b81d334_98639545',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'ada481d922ff5c26ede16a84b91b1829b623d50c' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/customer/customer_master.tpl',
-      1 => 1724243954,
+      1 => 1724783088,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c5dff384ab88_57235125 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66ce1a1b81d334_98639545 (Smarty_Internal_Template $_smarty_tpl) {
 ?><div  class="wrapper container-xxl flex-grow-1 container-p-y">
 
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme filter-popup-block" style="width: 0px;">
@@ -50,8 +50,7 @@ $_smarty_tpl->tpl_vars['val']->do_else = true;
 if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['val']->value) {
 $_smarty_tpl->tpl_vars['val']->do_else = false;
 ?>
-              <option 
-                  value="<?php echo $_smarty_tpl->tpl_vars['val']->value->customer_name;?>
+              <option value="<?php echo $_smarty_tpl->tpl_vars['val']->value->customer_name;?>
 "><?php echo $_smarty_tpl->tpl_vars['val']->value->customer_name;?>
 </option>
           <?php
@@ -184,7 +183,7 @@ addCustomer" method="POST">
                                 <table id="example1" class="table  table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Sr. No.</th>
+                                            <!-- <th>Sr. No.</th> -->   
                                             <th>Name</th>
                                             <th>Code</th>
                                             <th>Part</th>
@@ -209,8 +208,8 @@ if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['t']->value) {
 $_smarty_tpl->tpl_vars['t']->do_else = false;
 ?>
                                                 <tr>
-                                                    <td><?php echo $_smarty_tpl->tpl_vars['i']->value;?>
-</td>
+                                                    <!-- <td><?php echo $_smarty_tpl->tpl_vars['i']->value;?>
+</td> -->
                                                     <td><?php echo $_smarty_tpl->tpl_vars['t']->value->customer_name;?>
 </td>
                                                     <td><?php echo $_smarty_tpl->tpl_vars['t']->value->customer_code;?>

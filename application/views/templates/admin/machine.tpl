@@ -102,8 +102,8 @@
       <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
         <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
         <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
-        <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
-        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+      <%*  <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
+        <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button> *%>
         <button type="button" class="btn btn-seconday" data-bs-toggle="modal" title="Add Machine"
         data-bs-target="#addPromo">
         <i class="ti ti-plus"></i>
@@ -120,24 +120,23 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
 
           </button>
-        </div>
+          </div>
+          <form action="<%base_url('add_machine') %>" method="POST"
+            enctype="multipart/form-data" id="add_machine">
         <div class="modal-body">
-          <div class="form-group">
-            <form action="<%base_url('add_machine') %>" method="POST"
-              enctype="multipart/form-data">
-            </div>
+        
             <div class="form-group">
               <label for="on click url">Name<span class="text-danger">*</span></label>
               <br>
-              <input required type="text" name="name" placeholder="Enter Name"
+              <input required type="text" name="namess" placeholder="Enter Name"
               class="form-control" value="" id="">
             </div>
-          </div>
-          <div class="modal-footer">
+            <div class="modal-footer">
             <button type="button" class="btn btn-secondary"
             data-bs-dismiss="modal">Close</button>
             <button type="submit" class="btn btn-primary">Save changes</button>
-          </form>
+            </div>
+            </form>
         </div>
       </div>
     </div>

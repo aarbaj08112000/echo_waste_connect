@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 21:15:06
+/* Smarty version 4.3.2, created on 2024-08-30 15:36:00
   from '/var/www/html/extra_work/erp_converted/application/views/templates/purchase/child_part_view.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c60b8291cd80_49305482',
+  'unifunc' => 'content_66d199881bf696_55757452',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'bf726aa0e9bd75c229d4f97cec130f9f7a9fd891' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/purchase/child_part_view.tpl',
-      1 => 1724142425,
+      1 => 1725012238,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c60b8291cd80_49305482 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66d199881bf696_55757452 (Smarty_Internal_Template $_smarty_tpl) {
 ?><!-- Content wrapper -->
 
 <?php $_smarty_tpl->_assignInScope('entitlements', $_smarty_tpl->tpl_vars['session_data']->value['entitlements']);?>

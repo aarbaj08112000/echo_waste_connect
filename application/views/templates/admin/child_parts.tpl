@@ -23,59 +23,18 @@
               </li>
               <li class="sidebar-item">
                 <div class="input-group">
-                  <select name="child_part_id" class="form-control select2" id="part_number_search">
-                    <option value="">Select Part Number</option>
-                    <%foreach from=$supplier_part_list item=parts%>
-                    <option value="<%$parts->id%>"><%$parts->part_number %></option>
-                    <%/foreach%>
-                  </select>
+                <select name="part_id_selected" class="form-control select2" id="part_id_selected">
+                <%foreach from=$part_select_list item=c %>
+                <option
+                   <%if ($part_id_selected === $c->id) %>selected <%/if%>
+                   value="<%$c->part_number%>"><%$c->part_number %>/<%$c->part_description %>
+                </option>
+                <%/foreach%>
+             </select>
                 </div>
               </li>
             </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Part Description</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="part_description_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
+
 
           </ul>
         </div>
@@ -111,37 +70,12 @@
 
       <!-- Main content -->
       <div class="card p-0 mt-4">
-        <div class="p-3">
-          <form action="<%base_url('child_parts') %>" method="POST"
-             enctype="multipart/form-data">
-             <div class="row">
-                <div class="col-lg-4">
-                   <div style="width: 400px;">
-                      <div class="form-group">
-                         <label for="on click url">Select Part Number <span
-                            class="text-danger">*</span></label> <br>
-                         <select name="part_id_selected" class="form-control select2" id="">
-                            <%foreach from=$part_select_list item=c %>
-                            <option
-                               <%if ($part_id_selected === $c->id) %>selected <%/if%>
-                               value="<%$c->id %>"><%$c->part_number %>/<%$c->part_description %>
-                            </option>
-                            <%/foreach%>
-                         </select>
-                      </div>
-                   </div>
-                </div>
-                <div class="col-lg-4">
-                   <label for="">&nbsp;</label> <br>
-                   <button class="btn btn-secondary">Search </button>
-                </div>
-             </div>
-          </form>
+        <div class="">
           <div class="table-responsive text-nowrap">
-            <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="child_parts">
+            <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped " style="border-collapse: collapse;" border-color="#e1e1e1" id="child_parts">
               <thead>
                  <tr>
-                    <th>Sr. No.</th>
+                    <!--<th>Sr. No.</th> -->
                     <th>Part Number</th>
                     <th>Part Description</th>
                     <th>Stock</th>
@@ -155,7 +89,7 @@
                   <%if ($child_part) %>
                       <%foreach from=$child_part item=po %>
                      <tr>
-                        <td><%$i %></td>
+                        <!-- <td><%$i %></td> -->
                         <td><%$po->part_number %></td>
                         <td><%$po->part_description %></td>
                         <td><%$po->stock %></td>

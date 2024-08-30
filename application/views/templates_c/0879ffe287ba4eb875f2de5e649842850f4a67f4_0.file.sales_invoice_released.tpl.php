@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 16:04:24
+/* Smarty version 4.3.2, created on 2024-08-27 15:28:49
   from '/var/www/html/extra_work/erp_converted/application/views/templates/sales/sales_invoice_released.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c5c2b05fe4c7_40937786',
+  'unifunc' => 'content_66cda359dd9421_00659199',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '0879ffe287ba4eb875f2de5e649842850f4a67f4' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/sales/sales_invoice_released.tpl',
-      1 => 1724236463,
+      1 => 1724694253,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c5c2b05fe4c7_40937786 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66cda359dd9421_00659199 (Smarty_Internal_Template $_smarty_tpl) {
 ?><div class="wrapper wrapper container-xxl flex-grow-1 container-p-y">
     <!-- Navbar -->
     <!-- /.navbar -->
@@ -329,7 +329,7 @@ var file_name = "report_prod_rejection";
 var pdf_title = "Rejection Report";
 new DataTable('#example1',{
    
-      dom: 'Bfrtip',
+      dom: "Bfrtilp",
       scrollX: true, 
       buttons: [
               {     
@@ -359,36 +359,26 @@ new DataTable('#example1',{
                     },
                     filename: file_name,
                    
-                    customize: function (doc) {
-                      doc.pageMargins = [15, 15, 15, 15];
-                      doc.content[0].text = pdf_title;
-                      doc.content[0].color = theme_color;
-                        // doc.content[1].table.widths = ['15%', '19%', '13%', '13%','15%', '15%', '10%'];
-                        doc.content[1].table.body[0].forEach(function(cell) {
-                            cell.fillColor = theme_color;
-                        });
-                        doc.content[1].table.body.forEach(function(row, rowIndex) {
-                            row.forEach(function(cell, cellIndex) {
-                                var alignmentClass = $('#example1 tbody tr:eq(' + rowIndex + ') td:eq(' + cellIndex + ')').attr('class');
-                                var alignment = '';
-                                if (alignmentClass && alignmentClass.includes('dt-left')) {
-                                    alignment = 'left';
-                                } else if (alignmentClass && alignmentClass.includes('dt-center')) {
-                                    alignment = 'center';
-                                } else if (alignmentClass && alignmentClass.includes('dt-right')) {
-                                    alignment = 'right';
-                                } else {
-                                    alignment = 'left';
-                                }
-                                cell.alignment = alignment;
-                            });
-                            row.splice(14, 1);
-                        });
-                    }
+                    
                 },
             ],
+            searching: true,
+    // scrollX: true,
+    scrollY: true,
+    bScrollCollapse: true,
+    columnDefs: [{ sortable: false, targets: 7 }],
+    pagingType: "full_numbers",
    });
+   $('.dataTables_length').find('label').contents().filter(function() {
+            return this.nodeType === 3; // Filter out text nodes
+        }).remove();
+        setTimeout(function(){
+          $(".dataTables_length select").select2({
+              minimumResultsForSearch: Infinity
+          });
+        },1000)
 
 <?php echo '</script'; ?>
-><?php }
+>
+<?php }
 }

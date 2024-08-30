@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.3.2, created on 2024-08-21 18:00:19
+/* Smarty version 4.3.2, created on 2024-08-27 10:14:31
   from '/var/www/html/extra_work/erp_converted/application/views/templates/customer/customer_parts_master.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.3.2',
-  'unifunc' => 'content_66c5dddb2d3a32_73871791',
+  'unifunc' => 'content_66cd59af2677b9_08951216',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '2c65e091952e251250bb2a1cdcb59f2d0432cd19' => 
     array (
       0 => '/var/www/html/extra_work/erp_converted/application/views/templates/customer/customer_parts_master.tpl',
-      1 => 1724243418,
+      1 => 1724694253,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_66c5dddb2d3a32_73871791 (Smarty_Internal_Template $_smarty_tpl) {
+function content_66cd59af2677b9_08951216 (Smarty_Internal_Template $_smarty_tpl) {
 ?><div class="wrapper container-xxl flex-grow-1 container-p-y">
 
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme filter-popup-block" style="width: 0px;">

@@ -111,4 +111,3 @@ const page = {
     	$(".select2").select2();
     }
 }
-

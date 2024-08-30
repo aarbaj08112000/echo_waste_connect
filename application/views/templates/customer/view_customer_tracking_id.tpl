@@ -264,7 +264,7 @@
                         </div>
                         <div class="card p-0 mt-4">
                             <div class="">
-                                <table class="table table-striped scrollable" id="example1">
+                                <table class="table table-striped scrollable" >
                                     <thead>
                                         <tr>
                                             <th>Sr No</th>

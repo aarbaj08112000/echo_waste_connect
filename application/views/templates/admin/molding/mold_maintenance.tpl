@@ -1,3 +1,8 @@
+<style>
+.select2-container--default{
+  width:100% !important;
+}
+</style>
 
 <div class="content-wrapper">
   <!-- Content -->
@@ -23,56 +28,17 @@
               </li>
               <li class="sidebar-item">
                 <div class="input-group">
-                  <select name="child_part_id" class="form-control select2" id="part_number_search">
-                    <option value="">Select Part Number</option>
-                    <%foreach from=$supplier_part_list item=parts%>
-                    <option value="<%$parts->id%>"><%$parts->part_number %></option>
-                    <%/foreach%>
-                  </select>
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Part Description</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="part_description_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
+                <select name="child_part_id" required class="form-control select2" id="part_id_selected">
+                <option value="">Select</option>
+                <option <%if ($filter_child_part_id === "All") %>selected<%/if%> value="All">All</option>
+                <%if ($part_selection) %>
+                <%foreach from=$part_selection item=part %>
+                <option <%if ($filter_child_part_id === $part->id) %>selected<%/if%> value="<%$part->customer_name %>/<%$part->part_number %>/<%$part->part_description %>">
+                  <%$part->customer_name %>/<%$part->part_number %>/<%$part->part_description %>
+                </option>
+                <%/foreach%>
+                <%/if%>
+              </select>
                 </div>
               </li>
             </div>
@@ -105,12 +71,12 @@
         <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
         <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
 
-        <button type="button" class="btn btn-seconday" data-bs-toggle="modal" data-bs-target="#addPromo" title="Add Mold Master">
+        <button type="button" class="btn btn-seconday" data-bs-toggle="modal" data-bs-target="#addPromo1" title="Add Mold Master">
           <i class="ti ti-plus"></i>
         </button>
       </div>
 
-      <div class="modal fade" id="addPromo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal fade" id="addPromo1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
           <div class="modal-content">
             <div class="modal-header">
@@ -119,13 +85,13 @@
 
               </button>
             </div>
+            <form action="<%base_url('add_mold_maintenance') %>" method="POST" enctype="multipart/form-data" id>
             <div class="modal-body">
               <div class="form-group">
-                <form action="<%base_url('add_mold_maintenance') %>" method="POST" enctype="multipart/form-data">
                 </div>
                 <div class="form-group">
                   <label for="on click url">Select Customer Part<span class="text-danger">*</span></label>
-                  <select name="customer_part_id" required id="" class="form-control select2">
+                  <select name="customer_part_id" required id="main_customer_part_id" class="form-control select2">
                     <%if ($new_part_selection) %>
                     <%foreach from=$new_part_selection item=part %>
                     <option value="<%$part->id %>">
@@ -138,7 +104,7 @@
                 <div class="form-group">
                   <label for="on click url">Mold Name<span class="text-danger">*</span></label>
                   <br>
-                  <input required type="text" name="mold_name" placeholder="Enter Mold Name" class="form-control" value="" id="">
+                  <input  type="text" name="mold_name" placeholder="Enter Mold Name" class="form-control" value="" id="">
                 </div>
                 <div class="form-group">
                   <label for="on click url">Ownership<span class="text-danger">*</span></label>
@@ -150,23 +116,24 @@
                 <div class="form-group">
                   <label for="on click url">No Of Cavity<span class="text-danger">*</span></label>
                   <br>
-                  <input required type="number" name="no_of_cavity" placeholder="Enter No Of Cavity" class="form-control" value="" id="">
+                  <input  type="text" name="no_of_cavity" placeholder="Enter No Of Cavity" class="form-control onlyNumericInput" value="" id="">
                 </div>
                 <div class="form-group">
                   <label for="on click url">Mold PM Frequency<span class="text-danger">*</span></label>
                   <br>
-                  <input required type="number" name="target_life" placeholder="Enter Mold PM Frequency" class="form-control" value="" id="">
+                  <input required type="text" name="target_life" placeholder="Enter Mold PM Frequency" class="form-control onlyNumericInput" value="" id="">
                 </div>
                 <div class="form-group">
                   <label for="on click url">Mold Life Over Frequency<span class="text-danger">*</span></label>
                   <br>
-                  <input required type="number" name="target_over_life" placeholder="Enter Mold Life Over Frequency" class="form-control" value="" id="">
+                  <input required type="text" name="target_over_life" placeholder="Enter Mold Life Over Frequency" class="form-control onlyNumericInput" value="" id="">
                 </div>
-              </div>
+             
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="submit" class="btn btn-primary">Save changes</button>
               </form>
+              </div>
             </div>
           </div>
         </div>
@@ -174,33 +141,8 @@
 
       <!-- Main content -->
       <div class="card p-0 mt-4">
-        <div class="ps-3 mt-2">
-          <form action="<%base_url('view_mold_by_filter') %>" method="POST" enctype="multipart/form-data">
-            <div class="row">
-              <div class="col-lg-4">
-                <div style="width: 400px;">
-                  <div class="form-group">
-                    <label for="on click url">Select Part Number <span class="text-danger">*</span></label> <br>
-                    <select name="child_part_id" required class="form-control select2" id="">
-                      <option value="">Select</option>
-                      <option <%if ($filter_child_part_id === "All") %>selected<%/if%> value="All">All</option>
-                      <%if ($part_selection) %>
-                      <%foreach from=$part_selection item=part %>
-                      <option <%if ($filter_child_part_id === $part->id) %>selected<%/if%> value="<%$part->id %>">
-                        <%$part->customer_name %>/<%$part->part_number %>/<%$part->part_description %>
-                      </option>
-                      <%/foreach%>
-                      <%/if%>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-4">
-                <label for="">&nbsp;</label> <br>
-                <button class="btn btn-secondary">Search </button>
-              </div>
-            </div>
-          </form>
+        <div class="">
+  
         </div>
 
 
@@ -234,72 +176,10 @@
                   <td><%$u->target_over_life %></td>
                   <td><%$u->target_life %></td>
                   <td>
-                    <button type="button" class="btn no-btn" data-bs-toggle="modal" data-bs-target="#addProm<%$i %>">
+                    <button type="button" class="btn no-btn edit-part" data-bs-toggle="modal"data-value="<%base64_encode(json_encode($u))%>" data-bs-target="#addProm">
                       <i class="ti ti-edit"></i>
                     </button>
-                    <div class="modal fade" id="addProm<%$i %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Update Mold Master</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-
-                            </button>
-                          </div>
-                          <div class="modal-body">
-                            <div class="form-group">
-                              <form action="<%base_url('update_mold_maintenance') %>" method="POST" enctype="multipart/form-data">
-                              </div>
-                              <div class="form-group">
-                                <label for="on click url">Select Customer Part<span class="text-danger">*</span></label>
-                                <select name="customer_part_id" class="form-control select2" disabled>
-                                  <%if ($part_selection) %>
-                                  <%foreach from=$part_selection item=part %>
-                                  <option <%if ($u->customer_part_id == $part->id) %>selected<%/if%> value="<%$part->id %>">
-                                    <%$part->customer_name %>/<%$part->part_number %>/<%$part->part_description %>
-                                  </option>
-                                  <%/foreach%>
-                                  <%/if%>
-                                </select>
-                              </div>
-                              <div class="form-group">
-                                <label for="on click url">Mold Name<span class="text-danger">*</span></label>
-                                <br>
-                                <input type="text" value="<%$u->mold_name %>" name="mold_name" placeholder="Enter Mold Name" class="form-control">
-                              </div>
-                              <div class="form-group">
-                                <label for="on click url">Select Ownership<span class="text-danger">*</span></label>
-                                <select name="ownership" required id="" class="form-control">
-                                  <option value="Customer" <%if ($u->ownership == 'Customer') %>selected<%/if%>>Customer</option>
-                                  <option value="Client" <%if ($u->ownership == 'Client') %>selected<%/if%>>Client</option>
-                                </select>
-                              </div>
-                              <div class="form-group">
-                                <label for="on click url">No Of Cavity<span class="text-danger">*</span></label>
-                                <br>
-                                <input required type="number" value="<%$u->no_of_cavity %>" name="no_of_cavity" placeholder="Enter No Of Cavity" class="form-control" value="" id="">
-                              </div>
-                              <div class="form-group">
-                                <label for="on click url">Mold PM Frequency<span class="text-danger">*</span></label>
-                                <br>
-                                <input required type="number" value="<%$u->target_life %>" name="target_life" placeholder="Enter Mold PM Frequency" class="form-control" value="" id="">
-                              </div>
-                              <div class="form-group">
-                                <label for="on click url">Mold Life Over Frequency<span class="text-danger">*</span></label>
-                                <br>
-                                <input required type="number" value="<%$u->target_over_life %>"  name="target_over_life" placeholder="Enter Mold Life Over Frequency" class="form-control" value="" id="">
-                                <input required type="hidden" value="<%$u->id %>"  name="id" placeholder="Enter Mold Life Over Frequency" class="form-control" value="" id="">
-                                <input required type="hidden" value="<%$filter_child_part_id %>" name="filter_child_part_id" class="form-control">
-                              </div>
-                            </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                              <button type="submit" class="btn btn-primary">Save changes</button>
-                            </div>
-                          </form>
-                        </div>
-                      </div>
-                    </div>
+                   
                   </td>
                 </tr>
                 <%assign var='i' value=$i+1 %>
@@ -313,8 +193,65 @@
       </div>
       <!-- /.col -->
 
+      <div class="modal fade" id="addProm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Update Mold Master</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <form action="<%base_url('update_mold_maintenance')%>" method="POST" enctype="multipart/form-data" id="update_mold_form">
+                  <div class="modal-body">
+                      <div class="form-group">
+                          <label for="customer_part_id">Select Customer Part<span class="text-danger">*</span></label>
+                          <select name="customer_part_id" class="form-control select2" disabled id="selected_customer_part">
+                              <%if ($part_selection) %>
+                              <%foreach from=$part_selection item=part %>
+                              <option <%if ($u->customer_part_id == $part->id) %>selected<%/if%> value="<%$part->id %>">
+                                  <%$part->customer_name %>/<%$part->part_number %>/<%$part->part_description %>
+                              </option>
+                              <%/foreach%>
+                              <%/if%>
+                          </select>
+                      </div>
+                      <div class="form-group">
+                          <label for="mold_name">Mold Name<span class="text-danger">*</span></label>
+                          <input type="text" value="<%$u->mold_name %>" name="mold_name" placeholder="Enter Mold Name" class="form-control" id="mod_name">
+                      </div>
+                      <div class="form-group">
+                          <label for="ownership">Select Ownership<span class="text-danger">*</span></label>
+                          <select name="ownership" required class="form-control" id="ownership">
+                              <option value="Customer" <%if ($u->ownership == 'Customer') %>selected<%/if%>>Customer</option>
+                              <option value="Client" <%if ($u->ownership == 'Client') %>selected<%/if%>>Client</option>
+                          </select>
+                      </div>
+                      <div class="form-group">
+                          <label for="no_of_cavity">No Of Cavity<span class="text-danger">*</span></label>
+                          <input required type="text" value="<%$u->no_of_cavity %>" name="no_of_cavity" id="no_of_cavity" placeholder="Enter No Of Cavity" class="form-control onlyNumericInput">
+                      </div>
+                      <div class="form-group">
+                          <label for="target_life">Mold PM Frequency<span class="text-danger">*</span></label>
+                          <input required type="text" value="<%$u->target_life %>" name="target_life" id="target_life" placeholder="Enter Mold PM Frequency" class="form-control onlyNumericInput">
+                      </div>
+                      <div class="form-group">
+                          <label for="target_over_life">Mold Life Over Frequency<span class="text-danger">*</span></label>
+                          <input required type="text" value="<%$u->target_over_life %>" id="target_over_life" name="target_over_life" placeholder="Enter Mold Life Over Frequency" class="form-control onlyNumericInput">
+                          <input type="hidden" value="<%$u->id %>" name="id" id="id">
+                          <input type="hidden" value="<%$filter_child_part_id %>" name="filter_child_part_id" id="filter_child_part_id">
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Save changes</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+  
+                    
 
-      <div class="content-backdrop fade"></div>
+
     </div>
 
 

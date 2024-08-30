@@ -7,7 +7,7 @@ $route['login'] = 'LogonDashboard/login';
 $route['logout'] = 'LogonDashboard/logout';
 $route['signin'] = 'LogonDashboard/signin';
 $route['index'] = 'LogonDashboard/index';
-$route['dashboard'] = 'LogonDashboard/dashboard';
+$route['dashboard'] = 'Dashboard/dashboard';
 // $route['dashboard_new'] = 'Dashboard/dashboard';
 $route['home_2'] = 'LogonDashboard/home_2';
 
@@ -27,9 +27,10 @@ $route['transfer_child_part_to_store_stock'] = 'Welcome/transfer_child_part_to_s
 
 
 #--------------------- STOCK  ------------
-$route['part_stocks'] = 'StockController/part_stocks';
+$route['part_stocks'] = 'StockController/part_stocks_view';
 $route['view_part_stocks'] = 'StockController/view_part_stocks';
 $route['transfer_child_store_to_store_stock'] = 'StockController/transfer_child_store_to_store_stock';
+$route['transfer_child_store_to_store_stock_view'] = 'StockController/transfer_child_store_to_store_stock_view';
 $route['transfer_child_part_to_fg_stock'] = 'StockController/transfer_child_part_to_fg_stock';
 $route['update_production_qty_child_part'] = 'StockController/update_production_qty_child_part';
 $route['transfer_child_part_to_fg_stock_inhouse'] = 'StockController/transfer_child_part_to_fg_stock_inhouse';
@@ -238,7 +239,7 @@ $route['gst'] = 'welcome/gst';
 $route['add_gst'] = 'welcome/add_gst';
 
 $route['pdfg'] = 'welcome/pdfg';
-$route['child_part/(:any)'] = 'welcome/child_part';
+	$route['child_part/(:any)'] = 'welcome/child_part';
 $route['operation_bom'] = 'welcome/operation_bom';
 $route['inhouse_parts'] = 'welcome/inhouse_parts';
 
