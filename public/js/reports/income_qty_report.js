@@ -111,6 +111,9 @@ const page = {
         $(".dataTables_length select").select2({
             minimumResultsForSearch: Infinity
         });
+        $('#serarch-filter-input').on('keyup', function() {
+            table.search(this.value).draw();
+        });
     },
     formValidation: function(){
         let that = this;

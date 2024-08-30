@@ -3,6 +3,17 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class AROMConfigController extends CI_Controller {
 	
+
+	function __construct() {
+		parent::__construct();
+		$current_method = $this->router->fetch_method();
+		$session_data = $this->session->userData();
+		$bypass_arr = ['login'];
+		if(!is_valid_array($session_data) && isset($session_data['clientUnit']) && !in_array($current_method, $bypass_arr)){
+			redirect('login');
+		}
+	}
+
 	/**
 	 * Configure current financial year
 	 */

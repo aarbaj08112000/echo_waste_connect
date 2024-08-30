@@ -1,6 +1,4 @@
 
-
-
 <div class="wrapper container-xxl flex-grow-1 container-p-y">
   <%assign var='role' value=trim($session_data['type'])%>
 
@@ -285,3 +283,4 @@
            
           </script>
 <script src="<%$base_url%>/public/js/reports/supplier_part_stock_report.js"></script>
+

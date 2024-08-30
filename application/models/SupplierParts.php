@@ -469,9 +469,28 @@ class SupplierParts extends CI_Model {
                 $this->db->order_by($condition_arr["order_by"]);
             }
         }
+        if (is_valid_array($search_params) && !empty($search_params['value'])) {
+            $keyword = $search_params['value'];
+            $this->db->group_start(); // Start a group of OR conditions
+            
+            $fields = [
+                'cpm.part_number',
+                'cpm.part_description',
+                's.supplier_name',
+                'gs.gst_description',
+                // Add more fields as needed
+            ];
+            
+            foreach ($fields as $field) {
+                $this->db->or_like($field, $keyword);
+            }
+            
+            $this->db->group_end(); // End the group of OR conditions
+        }
         if($condition_arr["order_by"] == ""){
             $this->db->order_by('cpm.id', 'desc');
         }
+       
         $result_obj = $this->db->get();
         $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
         return $ret_data;
@@ -485,6 +504,24 @@ class SupplierParts extends CI_Model {
         $this->db->where('cpm.admin_approve', 'accept');
         if(is_valid_array($search_params) && $search_params['supplier_id'] > 0){
             $this->db->where('s.id', $search_params['supplier_id']);
+        }
+        if (is_valid_array($search_params) && !empty($search_params['value'])) {
+            $keyword = $search_params['value'];
+            $this->db->group_start(); // Start a group of OR conditions
+            
+            $fields = [
+                'cpm.part_number',
+                'cpm.part_description',
+                's.supplier_name',
+                'gs.gst_description',
+                // Add more fields as needed
+            ];
+            
+            foreach ($fields as $field) {
+                $this->db->or_like($field, $keyword);
+            }
+            
+            $this->db->group_end(); // End the group of OR conditions
         }
         $result_obj = $this->db->get();
         $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
@@ -502,6 +539,26 @@ class SupplierParts extends CI_Model {
         if(is_valid_array($search_params) && $search_params['part_id'] > 0){
             $this->db->where('parts.id', $search_params['part_id']);
         }
+
+        if (is_valid_array($search_params) && !empty($search_params['value'])) {
+            $keyword = $search_params['value'];
+            $this->db->group_start(); // Start a group of OR conditions
+            
+            $fields = [
+                'parts.part_number',
+                'parts.part_description',
+                'stock.stock',
+                'uom.uom_name',
+                // Add more fields as needed
+            ];
+    
+            foreach ($fields as $field) {
+                $this->db->or_like($field, $keyword);
+            }
+    
+            $this->db->group_end(); // End the group of OR conditions
+        }
+
         if (count($condition_arr) > 0) {
             $this->db->limit($condition_arr["length"], $condition_arr["start"]);
             if ($condition_arr["order_by"] != "") {
@@ -524,6 +581,24 @@ class SupplierParts extends CI_Model {
         if(is_valid_array($search_params) && $search_params['part_id'] > 0){
             $this->db->where('parts.id', $search_params['part_id']);
         }
+        if (is_valid_array($search_params) && !empty($search_params['value'])) {
+            $keyword = $search_params['value'];
+            $this->db->group_start(); // Start a group of OR conditions
+            
+            $fields = [
+                'parts.part_number',
+                'parts.part_description',
+                'stock.stock',
+                'uom.uom_name',
+                // Add more fields as needed
+            ];
+    
+            foreach ($fields as $field) {
+                $this->db->or_like($field, $keyword);
+            }
+    
+            $this->db->group_end(); // End the group of OR conditions
+        }
         $query = $this->db->get();
         $result = is_object($query) ? $query->row_array() : [];
         return $result;
@@ -543,6 +618,27 @@ class SupplierParts extends CI_Model {
         if(is_valid_array($search_params) && $search_params['year'] > 0){
             $this->db->where('po.created_year', $search_params['year']);
         }
+
+        if (!empty($search_params['value'])) {
+            $keyword = $search_params['value'];
+            $this->db->group_start(); // Start a group of OR conditions
+            
+            $fields = [
+                'po.po_number',
+                'po.status',
+                's.supplier_name',
+                'c.part_number',
+                'c.part_description',
+                // Add more fields if needed
+            ];
+    
+            foreach ($fields as $field) {
+                $this->db->or_like($field, $keyword);
+            }
+    
+            $this->db->group_end(); // End the group of OR conditions
+        }
+
         if (count($condition_arr) > 0) {
             $this->db->limit($condition_arr["length"], $condition_arr["start"]);
             if ($condition_arr["order_by"] != "") {
@@ -570,6 +666,25 @@ class SupplierParts extends CI_Model {
         }
         if(is_valid_array($search_params) && $search_params['year'] > 0){
             $this->db->where('po.created_year', $search_params['year']);
+        }
+        if (!empty($search_params['value'])) {
+            $keyword = $search_params['value'];
+            $this->db->group_start(); // Start a group of OR conditions
+            
+            $fields = [
+                'po.po_number',
+                'po.status',
+                's.supplier_name',
+                'c.part_number',
+                'c.part_description',
+                // Add more fields if needed
+            ];
+    
+            foreach ($fields as $field) {
+                $this->db->or_like($field, $keyword);
+            }
+    
+            $this->db->group_end(); // End the group of OR conditions
         }
         $this->db->group_by('po.id');
         $query = $this->db->get();
@@ -631,6 +746,32 @@ class SupplierParts extends CI_Model {
         if(is_valid_array($search_params) && $search_params['year'] > 0){
             $this->db->where('grn.created_year', $search_params['year']);
         }
+
+        if (!empty($search_params['value'])) {
+            $keyword = $search_params['value'];
+            $this->db->group_start(); // Start a group of OR conditions
+            
+            $fields = [
+                'grn.inwarding_id',
+                'inward.grn_number',
+                'grn.po_number',
+                'grn.invoice_number',
+                's.supplier_name',
+                'part.part_number',
+                'part.part_description',
+                'part.hsn_code',
+                'u.uom_name',
+                'po.po_number',
+                // Add more fields if needed
+            ];
+    
+            foreach ($fields as $field) {
+                $this->db->or_like($field, $keyword);
+            }
+    
+            $this->db->group_end(); // End the group of OR conditions
+        }
+
         if (count($condition_arr) > 0) {
             $this->db->limit($condition_arr["length"], $condition_arr["start"]);
             if ($condition_arr["order_by"] != "") {
@@ -661,6 +802,32 @@ class SupplierParts extends CI_Model {
         if(is_valid_array($search_params) && $search_params['year'] > 0){
             $this->db->where('grn.created_year', $search_params['year']);
         }
+
+        if (!empty($search_params['value'])) {
+            $keyword = $search_params['value'];
+            $this->db->group_start(); // Start a group of OR conditions
+            
+            $fields = [
+                'grn.inwarding_id',
+                'inward.grn_number',
+                'grn.po_number',
+                'grn.invoice_number',
+                's.supplier_name',
+                'part.part_number',
+                'part.part_description',
+                'part.hsn_code',
+                'u.uom_name',
+                'po.po_number',
+                // Add more fields if needed
+            ];
+    
+            foreach ($fields as $field) {
+                $this->db->or_like($field, $keyword);
+            }
+    
+            $this->db->group_end(); // End the group of OR conditions
+        }
+
         
         $query = $this->db->get();
         $result = is_object($query) ? $query->row_array() : [];
@@ -694,6 +861,28 @@ class SupplierParts extends CI_Model {
         if(is_valid_array($search_params) && $search_params['year'] > 0){
             $this->db->where('grn.created_year', $search_params['year']);
         }
+
+        if (!empty($search_params['value'])) {
+            $keyword = $search_params['value'];
+            $this->db->group_start(); // Start a group of OR conditions
+            
+            $fields = [
+                'grn.qty',
+                'po.po_number',
+                'inward.grn_number',
+                'supplier.supplier_name',
+                'child_part.part_number',
+                'child_part.part_description',
+                // Add more fields if needed
+            ];
+    
+            foreach ($fields as $field) {
+                $this->db->or_like($field, $keyword);
+            }
+    
+            $this->db->group_end(); // End the group of OR conditions
+        }
+
         if (count($condition_arr) > 0) {
             $this->db->limit($condition_arr["length"], $condition_arr["start"]);
             if ($condition_arr["order_by"] != "") {
@@ -723,6 +912,29 @@ class SupplierParts extends CI_Model {
         if(is_valid_array($search_params) && $search_params['year'] > 0){
             $this->db->where('grn.created_year', $search_params['year']);
         }
+
+        if (!empty($search_params['value'])) {
+            $keyword = $search_params['value'];
+            $this->db->group_start(); // Start a group of OR conditions
+            
+            $fields = [
+                'grn.qty',
+                'po.po_number',
+                'inward.grn_number',
+                'supplier.supplier_name',
+                'child_part.part_number',
+                'child_part.part_description',
+                // Add more fields if needed
+            ];
+    
+            foreach ($fields as $field) {
+                $this->db->or_like($field, $keyword);
+            }
+    
+            $this->db->group_end(); // End the group of OR conditions
+        }
+
+        
         $query = $this->db->get();
         $result = is_object($query) ? $query->row_array() : [];
         // pr($this->db->last_query(),1);
@@ -755,6 +967,28 @@ class SupplierParts extends CI_Model {
         if(is_valid_array($search_params) && $search_params['year'] > 0){
             $this->db->where('grn.created_year', $search_params['year']);
         }
+
+        if (!empty($search_params['value'])) {
+            $keyword = $search_params['value'];
+            $this->db->group_start(); // Start a group of OR conditions
+            
+            $fields = [
+                'grn.qty',
+                'po.po_number',
+                'inward.grn_number',
+                'supplier.supplier_name',
+                'child_part.part_number',
+                'child_part.part_description',
+                // Add more fields if needed
+            ];
+    
+            foreach ($fields as $field) {
+                $this->db->or_like($field, $keyword);
+            }
+    
+            $this->db->group_end(); // End the group of OR conditions
+        }
+
         if (count($condition_arr) > 0) {
             $this->db->limit($condition_arr["length"], $condition_arr["start"]);
             if ($condition_arr["order_by"] != "") {
@@ -788,6 +1022,28 @@ class SupplierParts extends CI_Model {
         if(is_valid_array($search_params) && $search_params['year'] > 0){
             $this->db->where('grn.created_year', $search_params['year']);
         }
+
+        if (!empty($search_params['value'])) {
+            $keyword = $search_params['value'];
+            $this->db->group_start(); // Start a group of OR conditions
+            
+            $fields = [
+                'grn.qty',
+                'po.po_number',
+                'inward.grn_number',
+                'supplier.supplier_name',
+                'child_part.part_number',
+                'child_part.part_description',
+                // Add more fields if needed
+            ];
+    
+            foreach ($fields as $field) {
+                $this->db->or_like($field, $keyword);
+            }
+    
+            $this->db->group_end(); // End the group of OR conditions
+        }
+
         $query = $this->db->get();
         $result = is_object($query) ? $query->row_array() : [];
         // pr($this->db->last_query(),1);
@@ -829,6 +1085,25 @@ class SupplierParts extends CI_Model {
         //     $this->db->order_by('s.id', 'DESC');
         // }
         
+        if (!empty($search_params['value'])) {
+            $keyword = $search_params['value'];
+            $this->db->group_start(); // Start a group of OR conditions
+            
+            $fields = [
+                'parts.part_number',
+                'parts.part_description',
+                'uom_data.uom_name',
+                'child_part_type.part_type_name',
+                // Add more fields if needed
+            ];
+    
+            foreach ($fields as $field) {
+                $this->db->or_like($field, $keyword);
+            }
+    
+            $this->db->group_end(); // End the group of OR conditions
+        }
+
         if (count($condition_arr) > 0) {
             $this->db->limit($condition_arr["length"], $condition_arr["start"]);
             if ($condition_arr["order_by"] != "") {
@@ -866,6 +1141,25 @@ class SupplierParts extends CI_Model {
         // if(is_valid_array($search_params) && $search_params['customer_part_id'] > 0){
         //     $this->db->where('s.customer_id', $search_params['customer_part_id']);
         // }        
+
+        if (!empty($search_params['value'])) {
+            $keyword = $search_params['value'];
+            $this->db->group_start(); // Start a group of OR conditions
+            
+            $fields = [
+                'parts.part_number',
+                'parts.part_description',
+                'uom_data.uom_name',
+                'child_part_type.part_type_name',
+                // Add more fields if needed
+            ];
+    
+            foreach ($fields as $field) {
+                $this->db->or_like($field, $keyword);
+            }
+    
+            $this->db->group_end(); // End the group of OR conditions
+        }
 
         $result_obj = $this->db->get();
         $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];

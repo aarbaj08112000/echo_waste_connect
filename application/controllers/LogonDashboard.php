@@ -119,6 +119,7 @@ class LogonDashboard extends CommonController
 				);
 				$this->session->set_userdata($user_data);
 				$this->session->set_userdata('entitlements',$entitlements);
+				
 				if(empty($clientUnit)){
 					$clientUnit = 1;
 				}
@@ -130,6 +131,7 @@ class LogonDashboard extends CommonController
 				$this->session->set_userdata('noOfClients',$this->getNoOfClients()); //Total no of client in DB
 				$this->session->set_flashdata('login', 'success');
 				// redirect('index');
+				// pr($this->session->userdata,1);
 				$success = 1;
 				$messages = "User Login successfully";
 			}
@@ -320,7 +322,7 @@ class LogonDashboard extends CommonController
 
         $shifts = $this->Crud->read_data_acc("shifts");
         $data['shifts'] = $shifts;
-        // pr($shifts,1);
+       
                                     
 		$this->getPage('dashboard', $data);
 	}
