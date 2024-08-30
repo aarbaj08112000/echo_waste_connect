@@ -19,7 +19,7 @@ $(document).ready(function() {
                     var lines = csv.split('\n');
                     var modifiedLines = lines.map(function(line) {
                         var values = line.split(',');
-                        values.splice(4, 4); // Make sure this logic is correct for your use case
+                        values.splice(3, 1); // Make sure this logic is correct for your use case
                         return values.join(',');
                     });
                     return modifiedLines.join('\n');
@@ -45,7 +45,7 @@ $(document).ready(function() {
                             // Custom alignment logic
                             cell.alignment = 'left'; // Default to left, adjust based on your needs
                         });
-                        row.splice(4, 4); // Make sure this logic is correct for your use case
+                        row.splice(3, 1); // Make sure this logic is correct for your use case
                     });
                 }
             },
