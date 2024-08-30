@@ -70,12 +70,12 @@
 
       <!-- Main content -->
       <div class="card p-0 mt-4">
-        <div class="p-3">
+        <div class="">
           <div class="table-responsive text-nowrap">
-            <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="child_parts">
+            <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped " style="border-collapse: collapse;" border-color="#e1e1e1" id="child_parts">
               <thead>
                  <tr>
-                    <th>Sr. No.</th>
+                    <!--<th>Sr. No.</th> -->
                     <th>Part Number</th>
                     <th>Part Description</th>
                     <th>Stock</th>
@@ -89,7 +89,7 @@
                   <%if ($child_part) %>
                       <%foreach from=$child_part item=po %>
                      <tr>
-                        <td><%$i %></td>
+                        <!-- <td><%$i %></td> -->
                         <td><%$po->part_number %></td>
                         <td><%$po->part_description %></td>
                         <td><%$po->stock %></td>
