@@ -69,7 +69,7 @@
 
       <!-- Main content -->
       <div class="card p-0 mt-4">
-        <div class="p-3">
+        <div class="">
          
 
           <div class="table-responsive text-nowrap">
