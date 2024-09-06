@@ -27,6 +27,13 @@ class FGStockController extends CommonController
 		$data['inhouse_parts'] = $this->InhouseParts->getUniquePartNumber();
 		$data['customer_parts'] = $this->CustomerPart->readCustomerParts();
 		/* datatable */
+		$column[] = [
+            "data" => "customer_parts_master_id",
+            "title" => "customer_parts_master_id",
+            "width" => "15%",
+            "className" => "dt-left",
+            "visible" => false
+        ];
         $column[] = [
             "data" => "part_number",
             "title" => "Part Number",
@@ -87,15 +94,15 @@ class FGStockController extends CommonController
             base_url() .
             'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Employee data found..!</div>';
         $data["is_top_searching_enable"] = true;
-        $data["sorting_column"] = json_encode([]);
+        $data["sorting_column"] = json_encode([[0, 'desc']]);
         $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
         $data["admin_url"] = base_url();
         $data["base_url"] = base_url();
         // $ajax_json['teacher_data'] = $this->session->userdata();
         // pr($ajax_json['designation'],1);
-		$this->getPage('store/fw_stock', $data,"Yes","Yes");
+		$this->loadView('store/fw_stock', $data,"Yes","Yes");
 
-		$this->loadView('store/fw_stock', $data);
+		// $this->loadView('store/fw_stock', $data);
 
 	}
 	public function get_fg_stock_view()

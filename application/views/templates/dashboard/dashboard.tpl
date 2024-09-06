@@ -847,8 +847,7 @@
                            </div>
                         </div>
                      </div>
-                  </div>
-                </div>
+                  
                      <div class="tab-pane fade " id="purchase-grn" role="tabpanel" aria-labelledby="purchase-grn-tab" data-tab="PurchaseGRN">
                         <div class="row ">
                            <div class="col-lg-5">

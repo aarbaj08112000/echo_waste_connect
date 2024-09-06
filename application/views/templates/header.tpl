@@ -97,7 +97,7 @@
       <!-- swal toaster 
       <link rel="stylesheet" href="<%$base_url%>public/plugin/sweetalert2/sweetalert2.min.css">
       <script src="<%$base_url%>public/plugin/sweetalert2/sweetalert2.all.min.js"></script>-->
-
+  
       
    </head>
    <body>
@@ -376,6 +376,11 @@
             </li>
          </ul>
       </aside>
+
+      <div class="main-wrap main-wrap--white main-loader-box" style="display: none;">
+         <div class="loader-div"></div>
+      </div>
+
       <!-- / Menu -->
       <!-- Layout container -->
       <div class="layout-page">
@@ -383,7 +388,7 @@
       <!-- / Navbar -->
       <nav class="navbar navbar-expand-lg bg-navbar-theme navbar-classic">
          <div class="container-fluid">
-            <a href="home" class="app-brand-link navbar-brand">
+            <a href="dashboard" class="app-brand-link navbar-brand">
             <span class="app-brand-logo demo">
             <img src="<%$base_url%>public/img/logo.png" alt="" width="30">
             </span>

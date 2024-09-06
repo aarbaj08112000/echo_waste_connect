@@ -947,6 +947,7 @@ class P_Molding extends CommonController
 
 	public function add_molding_final_inspection_location()
 	{
+
 		$customer_part_id =  $this->input->post('customer_part_id');
 		$qty =  $this->input->post('qty');
 
@@ -960,13 +961,22 @@ class P_Molding extends CommonController
 			"month" => $this->month,
 			"year" => $this->year,
 		);
-
+		$success = 0;
+        $messages = "Something went wrong.";
 		$inser_query = $this->Crud->insert_data("final_inspection_request", $data);
 		if ($inser_query) {
-			echo "<script>alert('successfully added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$messages = "successfully added";
+			$success = 1;
+			// echo "<script>alert('successfully added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-			echo "<script>alert('Error In User Adding ,try again');document.location='erp_users'</script>";
+			$messages = "Error In User Adding ,try again";
+			// echo "<script>alert('Error In User Adding ,try again');document.location='erp_users'</script>";
 		}
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 		// echo "<script>alert('Added Successfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 	}
 

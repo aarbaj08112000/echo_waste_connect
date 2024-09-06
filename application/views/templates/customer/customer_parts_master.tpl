@@ -90,30 +90,7 @@
             <div>
                 <!-- Small boxes (Stat box) -->
                 <div class="row">
-                    <div class="col-lg-12">
-                        <div class="row">
-                            <div class="col-lg-12 ml-3">
-                                <%if $this->session->flashdata && $this->session->flashdata('errors')%>
-                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                        <strong>Error : </strong> <%$this->session->flashdata('errors')%>
-                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                <%/if%>
-                                <%if $this->session->flashdata && $this->session->flashdata('success')%>
-                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                        <strong>Success :</strong> <%$this->session->flashdata('success')%>
-                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                <%/if%>
-                            </div>
-                        </div>
-                    </div>
-
-                    <br>
+                   
                     <div class="col-lg-12">
 
                         <!-- Modal -->

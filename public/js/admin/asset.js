@@ -50,7 +50,16 @@ $(document).ready(function() {
                 }
             },
         ],
+        searching: true,
+        // scrollX: true,
+        scrollY: true,
+        bScrollCollapse: true,
+        // columnDefs: [{ sortable: false, targets: 7 }],
+        pagingType: "full_numbers",
     });
+    $('#serarch-filter-input').on('keyup', function() {
+            table.search(this.value).draw();
+        });
 
     $('#add_shifts_form').validate({
         rules: {

@@ -50,6 +50,8 @@ class GlobalConfigController extends CommonController
 
 	public function addConfig()
 	{
+
+
 		$label =$this->input->post('display_label');
 		$name = $this->input->post('config_name');
 		$value = $this->input->post('config_value');
@@ -69,14 +71,23 @@ class GlobalConfigController extends CommonController
 			"ARMUserOnly" => $forArom,
 			"canModify" => $canModify
 		);
-
+		$success = 0;
+        $messages = "Something went wrong.";
 		$result = $this->Crud->insert_data("global_configuration", $data);
 		if ($result) {
-			$this->addSuccessMessage('Configuration added successfully.');
+			$messages = "Configuration added successfully.";
+			$success = 1;
+			// $this->addSuccessMessage('Configuration added successfully.');
 		} else {
-			$this->addErrorMessage('Unable to add configuration. Please try again.');
+			$messages = "Unable to add configuration. Please try again.";
+			// $this->addErrorMessage('Unable to add configuration. Please try again.');
 		}
-		$this->redirectMessage();
+		// $this->redirectMessage();
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 

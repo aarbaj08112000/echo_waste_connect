@@ -877,6 +877,13 @@ class Welcome extends CommonController
 
 		/* datatable */
         $column[] = [
+            "data" => "id",
+            "title" => "Id",
+            "width" => "7%",
+            "className" => "dt-center",
+            "visible" => false
+        ];
+        $column[] = [
             "data" => "po_number",
             "title" => "PO Number",
             "width" => "14%",
@@ -919,7 +926,7 @@ class Welcome extends CommonController
             "className" => "dt-center",
         ];
         $data["data"] = $column;
-        $data["is_searching_enable"] = false;
+        $data["is_searching_enable"] = true;
         $data["is_paging_enable"] = true;
         $data["is_serverSide"] = true;
         $data["is_ordering"] = true;
@@ -929,7 +936,7 @@ class Welcome extends CommonController
             base_url() .
             'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Part GRN data found..!</div>';
         $data["is_top_searching_enable"] = true;
-        $data["sorting_column"] = json_encode([]);
+        $data["sorting_column"] = json_encode([[0, 'desc']]);
         $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
         $data["admin_url"] = base_url();
         $data["base_url"] = base_url();
@@ -988,6 +995,13 @@ class Welcome extends CommonController
 		
 		/* datatable */
         $column[] = [
+            "data" => "id",
+            "title" => "Id",
+            "width" => "7%",
+            "className" => "",
+            "visible" => false
+        ];
+        $column[] = [
             "data" => "po_number",
             "title" => "PO Number",
             "width" => "10%",
@@ -1039,7 +1053,7 @@ class Welcome extends CommonController
         ];
         
         $data["data"] = $column;
-        $data["is_searching_enable"] = false;
+        $data["is_searching_enable"] = true;
         $data["is_paging_enable"] = true;
         $data["is_serverSide"] = true;
         $data["is_ordering"] = true;
@@ -1049,7 +1063,7 @@ class Welcome extends CommonController
             base_url() .
             'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No GRN Validation data found..!</div>';
         $data["is_top_searching_enable"] = true;
-        $data["sorting_column"] = json_encode([]);
+        $data["sorting_column"] = json_encode([[0, 'desc']]);
         $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
         $data["admin_url"] = base_url();
         $data["base_url"] = base_url();
@@ -3752,6 +3766,13 @@ class Welcome extends CommonController
 					ORDER BY child_part_id asc');
 		/* datatable */
         $column[] = [
+            "data" => "id",
+            "title" => "Id",
+            "width" => "7%",
+            "className" => "dt-center",
+            "visible" => false
+        ];
+        $column[] = [
             "data" => "admin_approve",
             "title" => "Approval Status",
             "width" => "14%",
@@ -3838,7 +3859,7 @@ class Welcome extends CommonController
         ];
 
         $data["data"] = $column;
-        $data["is_searching_enable"] = false;
+        $data["is_searching_enable"] = true;
         $data["is_paging_enable"] = true;
         $data["is_serverSide"] = true;
         $data["is_ordering"] = true;
@@ -3848,7 +3869,7 @@ class Welcome extends CommonController
             base_url() .
             'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Supplier Part Price data found..!</div>';
         $data["is_top_searching_enable"] = true;
-        $data["sorting_column"] = json_encode([]);
+        $data["sorting_column"] = json_encode([[0, 'desc']]);
         $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
         $data["admin_url"] = base_url();
         $data["base_url"] = base_url();
@@ -3892,6 +3913,7 @@ class Welcome extends CommonController
 			$data[$key]['rev_history'] = $rev_history;
 			$edit_url = $base_url."child_part_supplier?id=".$value['id'];
 			$data[$key]['action'] = "<a href='".$edit_url."'><i class='ti ti-edit edit-part' title='Edit'></i></a>";
+            $data[$key]['revision_date'] = defaultDateFormat($value['revision_date']);
 		}
 		$data["data"] = $data;
         $total_record = $this->welcome_model->get_child_part_supplier_count([], $post_data["search"]);

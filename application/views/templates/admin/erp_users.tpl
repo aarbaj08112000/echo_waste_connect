@@ -82,14 +82,17 @@
                      </div>
                   </div>
                </div>
-               <div class="card">
+               <div class="w-100">
+                <input type="text" name="reason" placeholder="Filter Search" class="form-control serarch-filter-input m-3 me-0" id="serarch-filter-input" fdprocessedid="bxkoib">
+            </div>
+               <div class="card w-100">
                  
                   <!-- /.card-header -->
                   <div class="table-responsive text-nowrap">
                      <table id="erp_users" class="table table-striped w-100">
                         <thead>
                            <tr>
-                              <th>Sr No</th>
+                              <!--<th>Sr No</th> -->
                               <th>Full Name</th>
                               <th>Email</th>
                               <th>Password</th>
@@ -101,7 +104,7 @@
                                 <%assign var='i' value=1 %>
                                 <%foreach from=$user_info item=u %>
 		                           <tr>
-		                              <td><%$i %></td>
+		                              <!--<td><%$i %></td>-->
 		                              <td><%$u->user_name %></td>
 		                              <td><%$u->user_email %></td>
 		                              <td><%$u->user_password %></td>

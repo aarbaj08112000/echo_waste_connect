@@ -1,56 +1,76 @@
 var table = '';
-var file_name = "child_parts";
-var pdf_title = "child_parts";
+var file_name = "item_master";
+var pdf_title = "Item Master";
 
 $(document).ready(function() {
 
     // Initialize the DataTable
-    table = new DataTable('#child_parts', {
-        dom: 'Bfrtip',
-        scrollX: true,
+    table = $("#child_parts").DataTable({
+        dom: "Bfrtilp",
         buttons: [
-            {     
-                extend: 'csv',
-                text: '<i class="ti ti-file-type-csv"></i>',
-                init: function(api, node, config) {
-                    $(node).attr('title', 'Download CSV');
-                },
-                customize: function(csv) {
-                    var lines = csv.split('\n');
-                    var modifiedLines = lines.map(function(line) {
-                        var values = line.split(',');
-                        values.splice(3, 1); // Make sure this logic is correct for your use case
-                        return values.join(',');
-                    });
-                    return modifiedLines.join('\n');
-                },
-                filename: file_name
-            },
             {
-                extend: 'pdf',
+                extend: "csv",
+                text: '<i class="ti ti-file-type-csv"></i>',
+                init: function (api, node, config) {
+                    $(node).attr("title", "Download CSV");
+                },
+                customize: function (csv) {
+                        var lines = csv.split('\n');
+                        var modifiedLines = lines.map(function(line) {
+                            var values = line.split(',');
+                            values.splice(3, 1);
+                            return values.join(',');
+                        });
+                        return modifiedLines.join('\n');
+                    },
+                    filename : file_name
+                },
+          
+            {
+                extend: "pdf",
                 text: '<i class="ti ti-file-type-pdf"></i>',
-                init: function(api, node, config) {
-                    $(node).attr('title', 'Download Pdf');
+                init: function (api, node, config) {
+                    $(node).attr("title", "Download Pdf");
                 },
                 filename: file_name,
-                customize: function(doc) {
+                customize: function (doc) {
                     doc.pageMargins = [15, 15, 15, 15];
                     doc.content[0].text = pdf_title;
                     doc.content[0].color = theme_color;
-                    doc.content[1].table.body[0].forEach(function(cell) {
+                    // doc.content[1].table.widths = ["19%", "19%", "13%", "13%", "15%", "15%"];
+                    doc.content[1].table.body[0].forEach(function (cell) {
                         cell.fillColor = theme_color;
                     });
-                    doc.content[1].table.body.forEach(function(row) {
-                        row.forEach(function(cell) {
-                            // Custom alignment logic
-                            cell.alignment = 'left'; // Default to left, adjust based on your needs
+                    doc.content[1].table.body.forEach(function (row, index) {
+                        row.splice(3, 1);
+                        row.forEach(function (cell) {
+                            // Set alignment for each cell
+                            cell.alignment = "center"; // Change to 'left' or 'right' as needed
                         });
-                        row.splice(3, 1); // Make sure this logic is correct for your use case
                     });
-                }
+                },
             },
         ],
-    });
+        searching: true,
+        // scrollX: true,
+        scrollY: true,
+        bScrollCollapse: true,
+        columnDefs: [{ sortable: false, targets: 3 }],
+        pagingType: "full_numbers",
+       
+        
+        });
+        $('#serarch-filter-input').on('keyup', function() {
+            table.search(this.value).draw();
+        });
+        $('.dataTables_length').find('label').contents().filter(function() {
+                return this.nodeType === 3; // Filter out text nodes
+        }).remove();
+        setTimeout(function(){
+            $(".dataTables_length select").select2({
+                minimumResultsForSearch: Infinity
+            });
+        },1000)
 
     // Custom search filter event
     $('.search-filter').on('click', function(e) {
@@ -67,6 +87,9 @@ $(document).ready(function() {
         table.column(1).search('').draw();
         $('.close-filter-btn').trigger('click');
     })
+    $('#serarch-filter-input').on('keyup', function() {
+            table.search(this.value).draw();
+        });
    
 
     // Form validation and submission

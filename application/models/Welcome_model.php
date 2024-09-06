@@ -29,12 +29,21 @@ class Welcome_model extends CI_Model
             if ($search_params["part_number"] != "") {
                 $this->db->where("cpm.child_part_id", $search_params["part_number"]);
             }
-            // if ($search_params["part_description"] != "") {
-            //     $this->db->like(
-            //         "cp.part_description",
-            //         $search_params["part_description"]
-            //     );
-            // }
+            if ($search_params["value"] != "") {
+                $search = $search_params["value"];
+                $this->db->group_start(); // Start a group for 'like' queries
+                $this->db->like('gs.code', $search);
+                $this->db->or_like('u.uom_name', $search);
+                $this->db->or_like('s.supplier_name', $search);
+                $this->db->or_like('cpm.admin_approve', $search);
+                $this->db->or_like('cpm.revision_no', $search);
+                $this->db->or_like('cpm.revision_remark', $search);
+                $this->db->or_like('cpm.revision_date', $search);
+                $this->db->or_like('cpm.part_number', $search);
+                $this->db->or_like('cpm.part_description', $search);
+                $this->db->or_like('cpm.part_rate', $search);
+                $this->db->group_end(); // End the group
+            }
         }
 	    $result_obj = $this->db->get();
 	    $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
@@ -56,6 +65,24 @@ class Welcome_model extends CI_Model
 				AND cpm.child_part_id = cpm2.child_part_id
 				AND cpm.id < cpm2.id','left');
 	    $this->db->where('cpm2.id',NULL);
+        if ($search_params["part_number"] != "") {
+                $this->db->where("cpm.child_part_id", $search_params["part_number"]);
+            }
+            if ($search_params["value"] != "") {
+                $search = $search_params["value"];
+                $this->db->group_start(); // Start a group for 'like' queries
+                $this->db->like('gs.code', $search);
+                $this->db->or_like('u.uom_name', $search);
+                $this->db->or_like('s.supplier_name', $search);
+                $this->db->or_like('cpm.admin_approve', $search);
+                $this->db->or_like('cpm.revision_no', $search);
+                $this->db->or_like('cpm.revision_remark', $search);
+                $this->db->or_like('cpm.revision_date', $search);
+                $this->db->or_like('cpm.part_number', $search);
+                $this->db->or_like('cpm.part_description', $search);
+                $this->db->or_like('cpm.part_rate', $search);
+                $this->db->group_end(); // End the group
+            }
 	
         $result_obj = $this->db->get();
         $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
@@ -98,6 +125,7 @@ class Welcome_model extends CI_Model
                     's.mobile_no',
                     's.gst_number',
                     's.pan_card',
+                    'payment_terms'
                     // Add other relevant fields as needed
                 ];
                 
@@ -547,59 +575,16 @@ class Welcome_model extends CI_Model
         }
 
         if (is_array($search_params) && count($search_params) > 0) {
-            // if ($search_params["part_number"] != "") {
-            //     $this->db->where("cp.id", $search_params["part_number"]);
-            // }
-            // if ($search_params["part_description"] != "") {
-            //     $this->db->like(
-            //         "cp.part_description",
-            //         $search_params["part_description"]
-            //     );
-            // }
-            // if ($search_params["employee_name"] != "") {
-            //     $this->db->or_like(
-            //         "em.first_name",
-            //         $search_params["employee_name"]
-            //     );
-            //     $this->db->or_like(
-            //         "em.last_name",
-            //         $search_params["employee_name"]
-            //     );
-            // }
-            // if ($search_params["employee_code"] != "") {
-            //     $this->db->like(
-            //         "em.employee_code",
-            //         $search_params["employee_code"]
-            //     );
-            // }
-            // if ($search_params["join_date"] != "") {
-            //     $this->db->where(
-            //         "em.employment_date >=",
-            //         mysqlFormat($search_params["join_date_from"])
-            //     );
-            //     $this->db->where(
-            //         "em.employment_date <=",
-            //         mysqlFormat($search_params["join_date_to"])
-            //     );
-            // }
-            // if ($search_params["email"] != "") {
-            //     $this->db->like(
-            //         "em.email",
-            //         $search_params["email"]
-            //     );
-            // }
-            // if ($search_params["department"] != "") {
-            //     $this->db->where(
-            //         "d.department_id",
-            //         $search_params["department"]
-            //     );
-            // }
-            // if ($search_params["designation"] != "") {
-            //     $this->db->where(
-            //         "de.id",
-            //         $search_params["designation"]
-            //     );
-            // }
+            if ($search_params["value"] != "") {
+                $search = $search_params["value"];
+                $this->db->group_start(); // Start a group for 'like' queries
+                $this->db->like('p.po_number', $search);
+                $this->db->or_like('p.po_date', $search);
+                $this->db->or_like('p.created_date', $search);
+                $this->db->or_like('p.expiry_po_date', $search);
+                $this->db->or_like('s.supplier_name', $search);
+                $this->db->group_end(); // End the group
+            }
         }
 
         $result_obj = $this->db->get();
@@ -630,59 +615,18 @@ class Welcome_model extends CI_Model
         }
 
         if (is_array($search_params) && count($search_params) > 0) {
-            // if ($search_params["part_number"] != "") {
-            //     $this->db->where("cp.id", $search_params["part_number"]);
-            // }
-            // if ($search_params["part_description"] != "") {
-            //     $this->db->like(
-            //         "cp.part_description",
-            //         $search_params["part_description"]
-            //     );
-            // }
-            // if ($search_params["employee_name"] != "") {
-            //     $this->db->or_like(
-            //         "em.first_name",
-            //         $search_params["employee_name"]
-            //     );
-            //     $this->db->or_like(
-            //         "em.last_name",
-            //         $search_params["employee_name"]
-            //     );
-            // }
-            // if ($search_params["employee_code"] != "") {
-            //     $this->db->like(
-            //         "em.employee_code",
-            //         $search_params["employee_code"]
-            //     );
-            // }
-            // if ($search_params["join_date"] != "") {
-            //     $this->db->where(
-            //         "em.employment_date >=",
-            //         mysqlFormat($search_params["join_date_from"])
-            //     );
-            //     $this->db->where(
-            //         "em.employment_date <=",
-            //         mysqlFormat($search_params["join_date_to"])
-            //     );
-            // }
-            // if ($search_params["email"] != "") {
-            //     $this->db->like(
-            //         "em.email",
-            //         $search_params["email"]
-            //     );
-            // }
-            // if ($search_params["department"] != "") {
-            //     $this->db->where(
-            //         "d.department_id",
-            //         $search_params["department"]
-            //     );
-            // }
-            // if ($search_params["designation"] != "") {
-            //     $this->db->where(
-            //         "de.id",
-            //         $search_params["designation"]
-            //     );
-            // }
+            if (is_array($search_params) && count($search_params) > 0) {
+            if ($search_params["value"] != "") {
+                    $search = $search_params["value"];
+                    $this->db->group_start(); // Start a group for 'like' queries
+                    $this->db->like('p.po_number', $search);
+                    $this->db->or_like('p.po_date', $search);
+                    $this->db->or_like('p.created_date', $search);
+                    $this->db->or_like('p.expiry_po_date', $search);
+                    $this->db->or_like('s.supplier_name', $search);
+                    $this->db->group_end(); // End the group
+                }
+            }
         }
 
         $result_obj = $this->db->get();
@@ -724,6 +668,17 @@ class Welcome_model extends CI_Model
                     $search_params["part_description"]
                 );
             }
+            if ($search_params["value"] != "") {
+                $search = $search_params["value"];
+                $this->db->group_start(); // Start a group for 'like' queries
+                $this->db->like('i.delivery_unit', $search);
+                $this->db->or_like('i.invoice_number', $search);
+                $this->db->or_like('i.invoice_date', $search);
+                $this->db->or_like('i.grn_number', $search);
+                $this->db->or_like('i.grn_date', $search);
+                $this->db->or_like('np.po_number', $search);
+                $this->db->group_end(); // End the group
+            }
             
         }
 
@@ -755,6 +710,17 @@ class Welcome_model extends CI_Model
                     "cp.part_description",
                     $search_params["part_description"]
                 );
+            }
+            if ($search_params["value"] != "") {
+                $search = $search_params["value"];
+                $this->db->group_start(); // Start a group for 'like' queries
+                $this->db->like('i.delivery_unit', $search);
+                $this->db->or_like('i.invoice_number', $search);
+                $this->db->or_like('i.invoice_date', $search);
+                $this->db->or_like('i.grn_number', $search);
+                $this->db->or_like('i.grn_date', $search);
+                $this->db->or_like('np.po_number', $search);
+                $this->db->group_end(); // End the group
             }
             
         }

@@ -217,6 +217,7 @@
         display: block !important;
         top: 85px;
         right: 14px;
+        margin-bottom: 0px !important;
     }
     .dt-top-btn .btn{
             padding: 6px !important;
@@ -386,5 +387,11 @@
     }
     .chart-box {
           margin-bottom: 15px;
+    }
+}
+@media (min-width: 992px) {
+    .navbar-classic .container-fluid {
+                padding-right: 1.625rem;
+        padding-left: 1.625rem;
     }
 }

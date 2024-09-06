@@ -21,7 +21,9 @@
 
    <div class="content-wrapper" >
       <!-- Content Header (Page header) -->
-      
+      <div class="w-100">
+            <input type="text" name="reason" placeholder="Filter Search" class="form-control serarch-filter-input m-3 me-0" id="serarch-filter-input" fdprocessedid="bxkoib">
+        </div>
       <!-- Main content -->
       <section class="content">
          <div class="">
@@ -33,7 +35,7 @@
                         <table id="example1" class="table table-striped">
                            <thead>
                               <tr>
-                                 <th>Sr. No.</th>
+                                 <!-- <th>Sr. No.</th> -->
                                  <th>Action</th>
                                  <th>Revision Number</th>
                                  <th>Revision Remark</th>
@@ -57,7 +59,7 @@
                                          	<%assign var='uom_data' value=$poo->uom_data %>
                                             <%assign var='gst_structure2' value=$poo->gst_structure2 %>
 				                            <tr>
-				                                <td><%$i %></td>
+				                                <!--<td><%$i %></td>-->
 				                                <td>
 				                                    <button type="submit" data-bs-toggle="modal" class="btn btn-sm " data-bs-target="#exampleModaledit2<%$i %>"> <i class="ti ti-edit"></i></button>
 				                                    <div class="modal fade" id="exampleModaledit2<%$i %>" tabindex=" -1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
