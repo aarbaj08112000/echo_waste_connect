@@ -107,6 +107,7 @@ const page = {
             info: true,
             autoWidth: true,
             lengthChange: true,
+            order: sorting_column,
             // fixedColumns: {
             //     leftColumns: 2,
             //     // end: 1
@@ -126,6 +127,7 @@ const page = {
                 minimumResultsForSearch: Infinity
             });
         });
+
 
         $('#serarch-filter-input').on('keyup', function() {
             table.search(this.value).draw();

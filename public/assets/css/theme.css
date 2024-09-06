@@ -1,6 +1,6 @@
 /* custom css */
 .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody {
-    height: calc(100vh - 323px);
+    height: calc(100vh - 394px);
 }
 
 .dataTables_info,.dataTables_length{
@@ -420,3 +420,99 @@ textarea:focus, input:focus{
 
 
 
+/* loader css */
+.main-loader-box .loader-div:before, .main-loader-box .loader-div:after {
+content: '';
+position: absolute;
+top: 50%;
+left: 50%;
+display: block;
+width: 1em; /* Increase width */
+
+    height: 1em; /* Increase height */
+
+    border-radius: 0.5em; /* Adjust border-radius */
+transform: translate(-50%, -50%);
+}
+.main-loader-box .loader-div:before {
+animation: before 2s infinite;
+}
+.main-loader-box .loader-div:after {
+animation: after 2s infinite;
+}
+
+@keyframes before {
+  0% {
+
+        width: 1em; /* Match size */
+
+        box-shadow: 2em -1em rgba(225, 20, 98, 0.75), -2em 1em rgba(111, 202, 220, 0.75);
+
+    }
+
+    35% {
+
+        width: 5em; /* Match size */
+
+        box-shadow: 0 -1em rgba(225, 20, 98, 0.75), 0 1em rgba(111, 202, 220, 0.75);
+
+    }
+
+    70% {
+
+        width: 1em; /* Match size */
+
+        box-shadow: -2em -1em rgba(225, 20, 98, 0.75), 2em 1em rgba(111, 202, 220, 0.75);
+
+    }
+
+    100% {
+
+        box-shadow: 2em -1em rgba(225, 20, 98, 0.75), -2em 1em rgba(111, 202, 220, 0.75);
+
+    }
+}
+@keyframes after {
+  0% {
+
+        height: 1em; /* Match size */
+
+        box-shadow: 1em 2em rgba(61, 184, 143, 0.75), -1em -2em rgba(233, 169, 32, 0.75);
+
+    }
+
+    35% {
+
+        height: 5em; /* Match size */
+
+        box-shadow: 1em 0 rgba(61, 184, 143, 0.75), -1em 0 rgba(233, 169, 32, 0.75);
+
+    }
+
+    70% {
+
+        height: 1em; /* Match size */
+
+        box-shadow: 1em -2em rgba(61, 184, 143, 0.75), -1em 2em rgba(233, 169, 32, 0.75);
+
+    }
+
+    100% {
+
+        box-shadow: 1em 2em rgba(61, 184, 143, 0.75), -1em -2em rgba(233, 169, 32, 0.75);
+
+    }
+}
+
+.main-loader-box .loader-div {
+   background: rgba(255, 255, 255, 0.7);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 9998;
+}
+.loader-show {
+   overflow: hidden !important;
+}

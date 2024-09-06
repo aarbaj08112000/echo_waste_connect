@@ -75,6 +75,10 @@ const page = {
 	            minimumResultsForSearch: Infinity
 	        });
         },1000)
+
+        $('#serarch-filter-input').on('keyup', function() {
+            table.search(this.value).draw();
+        });
         
         
     },

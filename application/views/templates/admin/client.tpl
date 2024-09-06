@@ -158,16 +158,18 @@
       </div>
     </div>
 
-
+    <div class="w-100">
+            <input type="text" name="reason" placeholder="Filter Search" class="form-control serarch-filter-input m-3 me-0" id="serarch-filter-input" fdprocessedid="bxkoib">
+    </div>
     <!-- Main content -->
-    <div class="card p-0 mt-4">
+    <div class="card p-0 mt-4 w-100">
  
 
       <div class="table-responsive text-nowrap">
         <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="client">
           <thead>
             <tr>
-              <th>Sr. No.</th>
+              <!-- <th>Sr. No.</th> -->
               <th>Client Unit</th>
               <th>Client Name</th>
               <th>Contact Person</th>
@@ -190,7 +192,7 @@
             <%if ($client_list) %>
             <%foreach from=$client_list item=t %>
             <tr>
-              <td><%$i %></td>
+              <!-- <td><%$i %></td>-->
               <td><%$t->client_unit %></td>
               <td><%$t->client_name %></td>
               <td><%$t->contact_person %></td>

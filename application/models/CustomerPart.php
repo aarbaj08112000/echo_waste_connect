@@ -593,5 +593,96 @@ class CustomerPart extends CI_Model {
         
         return $ret_data;
     }
+     /* for datable */
+
+    // SELECT
+    // parts.*,
+    // stock.*
+    // FROM
+    //     customer_parts_master parts
+    // LEFT JOIN customer_parts_master_stock stock ON
+    //     parts.id = stock.customer_parts_master_id AND stock.clientId = 1
+    // WHERE
+    //     parts.id = 247
+    // ORDER BY
+    //     parts.id
+    // DESC
+    
+    public function get_fg_stock_view(
+        $condition_arr = [],
+        $search_params = ""
+    ) {
+        $clientId = $this->Unit->getSessionClientId();
+        $this->db->select(
+            'parts.part_number as part_number ,parts.part_description as part_description, stock.fg_stock as fg_stock,stock.molding_production_qty as molding_production_qty,stock.production_rejection as production_rejection,stock.production_scrap as production_scrap,stock.final_inspection_location as final_inspection_location,parts.id as customer_parts_master_id'
+        );
+        $this->db->from("customer_parts_master as parts");
+        $this->db->join("customer_parts_master_stock as stock", "parts.id = stock.customer_parts_master_id AND stock.clientId = $clientId ",'left');
+        if (count($condition_arr) > 0) {
+            $this->db->limit($condition_arr["length"], $condition_arr["start"]);
+            if ($condition_arr["order_by"] != "") {
+                $this->db->order_by($condition_arr["order_by"]);
+            }
+        }
+
+        if (is_array($search_params) && count($search_params) > 0) {
+            if ($search_params["part_id"] != "") {
+                $this->db->where("parts.id", $search_params["part_id"]);
+            }
+            
+            if ($search_params["value"] != "") {
+                $search = $search_params["value"];
+                $this->db->group_start(); // Start a group for 'like' queries
+                $this->db->like('parts.part_number', $search);
+                $this->db->or_like('parts.part_description', $search);
+                $this->db->or_like('stock.fg_stock', $search);
+                $this->db->or_like('stock.molding_production_qty', $search);
+                $this->db->or_like('stock.production_rejection', $search);
+                $this->db->or_like('stock.production_scrap', $search);
+                $this->db->or_like('stock.final_inspection_location', $search);
+                $this->db->group_end(); // End the group
+            }
+
+        }
+
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+
+        // pr($this->db->last_query(),1);
+        return $ret_data;
+    }
+    public function get_fg_stock_view_count(
+        $condition_arr = [],
+        $search_params = ""
+    ) {
+        $clientId = $this->Unit->getSessionClientId();
+        $this->db->select(
+            'COUNT(parts.id) as total_record'
+        );
+        $this->db->from("customer_parts_master as parts");
+        $this->db->join("customer_parts_master_stock as stock", "parts.id = stock.customer_parts_master_id AND stock.clientId = $clientId ",'left');
+        if (is_array($search_params) && count($search_params) > 0) {
+            if ($search_params["part_id"] != "") {
+                $this->db->where("parts.id", $search_params["part_id"]);
+            }
+            if ($search_params["value"] != "") {
+                $search = $search_params["value"];
+                $this->db->group_start(); // Start a group for 'like' queries
+                $this->db->like('parts.part_number', $search);
+                $this->db->or_like('parts.part_description', $search);
+                $this->db->or_like('stock.fg_stock', $search);
+                $this->db->or_like('stock.molding_production_qty', $search);
+                $this->db->or_like('stock.production_rejection', $search);
+                $this->db->or_like('stock.production_scrap', $search);
+                $this->db->or_like('stock.final_inspection_location', $search);
+                $this->db->group_end(); // End the group
+            }
+        }
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
+
+        // pr($this->db->last_query(),1);
+        return $ret_data;
+    }
 }
 ?>

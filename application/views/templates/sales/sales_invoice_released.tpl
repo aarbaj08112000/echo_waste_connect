@@ -104,7 +104,7 @@
                                 <table id="example1" class="table  table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Sr.No.</th>
+                                            <!--<th>Sr.No.</th>-->
                                             <th>Invoice Date</th>
                                             <th>Vehicle Number</th>
                                             <th>Sales Invoice Number</th>
@@ -126,7 +126,7 @@
                                                 
                                                 <%if isset($c->status)%>
                                                     <tr>
-                                                        <td><%$srNo%></td>
+                                                        <!-- <td><%$srNo%></td> -->
                                                         <td><%$c->created_date%></td>
                                                         <td><%$c->vehicle_number%></td>
                                                         <td><%$c->sales_number%></td>

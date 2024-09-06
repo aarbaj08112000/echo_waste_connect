@@ -45,6 +45,8 @@ function defaultDateFormat($date = "") {
             return $dateTime->format('d/m/Y');
         }
     }
+
+    $date = $date == "" || $date == null ? display_no_character() : display_no_character();
     
     // Return false if none of the formats match
     return $date;

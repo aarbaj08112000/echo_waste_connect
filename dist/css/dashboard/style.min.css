@@ -1151,7 +1151,7 @@
 
 /* dashboard nav tab */
 .dashboard-nav-tab {
-    margin-right: 34px;
+        margin-right: 0px;
     margin-bottom: 0;
     border-top: 1px solid #d8d8d8;
     padding: 14px 0;
@@ -1241,13 +1241,14 @@
 }
 
 .unit-drop-down {
-    width: 30%!important;
+    width: 21% !important;
 }
 .year-drop-down select{
-    width: 100%!important;
+    width: auto !important;
 }
 .year-drop-down .select2-container{
         margin-top: -2px !important;
+            width: 171px !important;
 }
 .year-drop-down .select2-selection--single{
     border: 1px solid #EAE9EA !important;
@@ -1538,7 +1539,7 @@ a.view-all-btn{
 }
 @media (min-width: 992px) {
     .container, .container-fluid, .container-sm, .container-md, .container-lg, .container-xl, .container-xxl {
-        padding-right: 1.625rem;
+                padding-right: 0.4rem;
         padding-left: 6px;
     }
 }

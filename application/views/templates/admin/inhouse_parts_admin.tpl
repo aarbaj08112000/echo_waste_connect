@@ -66,9 +66,11 @@
       </div>
 
 
-
+      <div class="w-100">
+            <input type="text" name="reason" placeholder="Filter Search" class="form-control serarch-filter-input m-3 me-0" id="serarch-filter-input" fdprocessedid="bxkoib">
+        </div>
       <!-- Main content -->
-      <div class="card p-0 mt-4">
+      <div class="card p-0 mt-4 w-100">
         <div class="">
          
 
