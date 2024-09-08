@@ -119,7 +119,7 @@
 		                                    Stock Transferred
 		                                <%/if%>
 		                              </td>
-		                              <td><%$u->created_date %> / <%$u->created_time %></td>
+		                              <td><%defaultDateFormat($u->created_date) %> / <%$u->created_time %></td>
 		                           </tr>
 		                        <%assign var='i' value=$i+1 %>
 		                        <%/foreach%>

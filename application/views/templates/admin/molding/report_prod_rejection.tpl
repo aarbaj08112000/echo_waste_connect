@@ -143,7 +143,7 @@
 		                              <td><%$r->rejection_qty %></td>
 		                              <td><%$r->customer_name %></td>
 		                              <td><%$r->part_number %></td>
-		                              <td><%$r->prod_date %>/ <%$r->shift_type %></td>
+		                              <td><%defaultDateFormat($r->prod_date) %>/ <%$r->shift_type %></td>
 		                              <td><%$r->machine_name %></td>
 		                              <td><%$r->operator_name %></td>
 		                           </tr>

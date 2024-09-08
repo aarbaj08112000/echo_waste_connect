@@ -226,6 +226,8 @@ class POTrackingController extends CommonController {
 			$data[$key]['view_details'] = $view_details;
 			$data[$key]['po_doc'] = $po_doc;
 			$data[$key]['action'] = $action;
+			$data[$key]['po_start_date'] = defaultDateFormat($val['po_start_date']);
+			$data[$key]['po_end_date'] = defaultDateFormat($val['po_end_date']);
 		}
 		
 		$data["data"] = $data;

@@ -274,7 +274,7 @@
                             </div>
                             </td>
                             <td><%$customer_part_drawing_data[$poo->customer_master_id][0]->revision_no%></td>
-                            <td><%$customer_part_drawing_data[$poo->customer_master_id][0]->revision_date%></td>
+                            <td><%defaultDateFormat($customer_part_drawing_data[$poo->customer_master_id][0]->revision_date)%></td>
                             <td><%$customer_part_drawing_data[$poo->customer_master_id][0]->revision_remark%></td>
                             <td><%$po[$poo->customer_master_id][0]->part_number%></td>
                             <td><%$po[$poo->customer_master_id][0]->part_description%></td>

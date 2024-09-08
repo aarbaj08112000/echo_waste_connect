@@ -33,11 +33,11 @@
                </div>
                <div class="tgdp-rgt-tp-sect">
                   <p class="tgdp-rgt-tp-ttl">PO Date</p>
-                  <p class="tgdp-rgt-tp-txt"><%$new_po[0]->po_date %></p>
+                  <p class="tgdp-rgt-tp-txt"><%defaultDateFormat($new_po[0]->po_date) %></p>
                </div>
                <div class="tgdp-rgt-tp-sect">
                   <p class="tgdp-rgt-tp-ttl">PO Expiry Date</p>
-                  <p class="tgdp-rgt-tp-txt"><%$new_po[0]->expiry_po_date %></p>
+                  <p class="tgdp-rgt-tp-txt"><%defaultDateFormat($new_po[0]->expiry_po_date) %></p>
                </div>
                <div class="tgdp-rgt-tp-sect">
                   <p class="tgdp-rgt-tp-ttl">PO Remark</p>
@@ -303,7 +303,7 @@
                      <td><%$p->process %></td>
                      <%/if%>
                      <td><%$part_rate_new %></td>
-                     <td><%$p->created_date %></td>
+                     <td><%defaultDateFormat($p->created_date) %></td>
                      <td>
                         <%if ($new_po[0]->status == "pending") %>
                         <!-- Button trigger modal -->

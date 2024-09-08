@@ -145,9 +145,9 @@
                                  <td><%$u->rejection_invoice_no %></td>
                                  <td><%$u->customer_name %></td>
                                  <td><%$u->document_number %></td>
-                                 <td><%$u->debit_note_date %></td>
+                                 <td><%defaultDateFormat($u->debit_note_date) %></td>
                                  <td><%$u->sales_invoice_number %></td>
-                                 <td><%$u->client_invoice_date %></td>
+                                 <td><%defaultDateFormat($u->client_invoice_date) %></td>
                                  <td><%$u->debit_basic_amt %></td>
                                  <td><%$u->debit_gst_amt %></td>
                                  <td class="text-center">

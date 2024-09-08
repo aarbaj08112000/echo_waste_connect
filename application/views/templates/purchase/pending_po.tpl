@@ -53,13 +53,13 @@
                                                             <%$s->po_number %>
                                                         </td>
                                                         <td>
-                                                            <%$s->expiry_po_date %>
+                                                            <%defaultDateFormat($s->expiry_po_date) %>
                                                         </td>
                                                         <td>
-                                                            <%$s->po_date %>
+                                                            <%defaultDateFormat($s->po_date) %>
                                                         </td>
                                                         <td>
-                                                            <%$s->created_date %>
+                                                            <%defaultDateFormat($s->created_date) %>
                                                         </td>
                                                         <td>
                                                             <%if ($s->status == "accept") %>

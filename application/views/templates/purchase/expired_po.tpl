@@ -43,8 +43,8 @@
                                         <tr>
                                            <!-- <td><%$i %></td>-->
                                             <td><%$s->po_number %></td>
-                                            <td><%$s->po_date %></td>
-                                            <td><%$s->created_date %></td>
+                                            <td><%defaultDateFormat($s->po_date) %></td>
+                                            <td><%defaultDateFormat($s->created_date) %></td>
                                             <td>
                                                 <%if ($s->status == "accept") %>
                                                     <a href="<%base_url('download_my_pdf/') %><%$s->id %>" class="btn btn-primary" href="">Download</a>

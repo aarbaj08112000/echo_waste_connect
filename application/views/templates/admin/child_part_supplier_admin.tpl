@@ -103,7 +103,7 @@
 							                     </td>
 							                     <td><%$po[0]->revision_no %></td>
 							                     <td><%$po[0]->revision_remark %></td>
-							                     <td><%$po[0]->revision_date %></td>
+							                     <td><%defaultDateFormat($po[0]->revision_date) %></td>
 							                     <td><%$po[0]->part_number %></td>
 							                     <td><%$po[0]->part_description %></td>
 							                     <td><%$gst_structure2[0]->code %></td>

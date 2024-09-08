@@ -112,7 +112,7 @@
 			                              <%/if%>
 			                              <td><%$config->config_value %></td>
 			                              <td><%$config->note %></td>
-			                              <td><%$config->updatedttm %></td>
+			                              <td><%getDefaultDateTime($config->updatedttm) %></td>
 			                              <td><%$config->updated_user %></td>
 			                              <td>
 			                                 <%if ($config->canModify) %>
