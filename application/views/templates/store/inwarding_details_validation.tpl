@@ -55,7 +55,7 @@
                           <div class="tgdp-rgt-tp-sect">
                               <p class="tgdp-rgt-tp-ttl">PO Date</p>
                               <p class="tgdp-rgt-tp-txt">
-                              <%$new_po[0]->po_date %>
+                              <%defaultDateFormat($new_po[0]->po_date) %>
                               </p>
                           </div>
                           <div class="tgdp-rgt-tp-sect">

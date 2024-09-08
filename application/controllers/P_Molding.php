@@ -1537,6 +1537,8 @@ class P_Molding extends CommonController
 				$data[$key]['transfer'] = '<a class="btn btn-warning" href="'.base_url('molding_stock_transfer_click/').$value['id'].'">Click To Transfer Stock</a>';
 			}
 			
+			$data[$key]['date'] = getDefaultDateTime($value['date']);
+			
 		}
 		$data["data"] = $data;
         $total_record = $this->CustomerPart->get_molding_stock_transfer_count([], $post_data["search"]);

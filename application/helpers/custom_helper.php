@@ -122,5 +122,23 @@ function formateFormDate($date =''){
 	return $date;
 }
 
+ function getDefaultDateTime($str = ''){
+	$formats = [
+        'Y-m-d H:i:s',
+        'd-m-Y H:i:s',
+        'm/d/Y H:i:s', 
+        'Y/m/d H:i:s', 
+        'd/m/Y H:i:s',
+        
+    ];
+
+    foreach ($formats as $format) {
+        $dateTime = DateTime::createFromFormat($format, $str);
+        if ($dateTime !== false) {
+            return $dateTime->format('d/m/Y H:i:s');
+        }
+    }
+}
+
 
 ?>

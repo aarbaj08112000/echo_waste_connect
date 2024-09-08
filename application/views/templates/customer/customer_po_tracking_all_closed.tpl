@@ -126,8 +126,8 @@
                                                     <td><%$i+1%></td>
                                                     <td><%$customer_data[$s->customer_id][0]->customer_name%></td>
                                                     <td><%$s->po_number%></td>
-                                                    <td><%$s->po_start_date%></td>
-                                                    <td><%$s->po_end_date%></td>
+                                                    <td><%defaultDateFormat($s->po_start_date)%></td>
+                                                    <td><%defaultDateFormat($s->po_end_date)%></td>
                                                     <td><%$s->po_amedment_number%></td>
                                                     <td><%$s->reason%></td>
                                                     <td><%$s->remark%></td>

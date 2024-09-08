@@ -138,11 +138,11 @@
                        <tr>
                           <!-- <td><%$i %></td> -->
                           <td><%$t->grn_number %></td>
-                          <td><%$t->invoice_date %></td>
+                          <td><%defaultDateFormat($t->invoice_date) %></td>
                           <td><%$t->po_number %></td>
                           <td><%$t->supplier_name %></td>
                           <td><%$t->invoice_number %></td>
-                          <td><%$t->invoice_date %></td>
+                          <td><%defaultDateFormat($t->invoice_date) %></td>
                           <td><%$t->status %></td>
                           <%if ($isMultiClient == "true") %>
                           <td><%$t->delivery_unit %></td>

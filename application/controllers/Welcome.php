@@ -177,6 +177,8 @@ class Welcome extends CommonController
 
 		foreach ($data as $key => $value) {
 			$data[$key]['received_qty'] = $value['qty'] - $value['pending_qty'];
+			$data[$key]['created_date'] =defaultDateFormat($value['created_date']);
+			$data[$key]['expiry_po_date'] =  defaultDateFormat($value['expiry_po_date']);
 		}
 
 		$data["data"] = $data;
@@ -974,6 +976,9 @@ class Welcome extends CommonController
 			$data[$key]['po_number'] = '<a href="'.base_url().'inwarding_invoice/'.$value['id'].'"  class="po-number">'.$value['po_number'].'</a>';
 			$data[$key]['download_po'] = '<a href="'.base_url().'download_my_pdf/'.$value['id'].'" class="btn btn-primary">Download</a>';
 			$data[$key]['action'] = '<a data-id="'.$value['id'].'" href="javascript:void(0)" class="btn btn-danger close-po">Close</a>';
+			$data[$key]['po_date'] = defaultDateFormat($value['po_date']);
+			$data[$key]['created_date'] = defaultDateFormat($value['created_date']);
+			$data[$key]['expiry_po_date'] = defaultDateFormat($value['expiry_po_date']);
 		}
 		$data["data"] = $data;
         $total_record = $this->welcome_model->get_inwarding_view_count([], $post_data["search"]);
@@ -1099,6 +1104,8 @@ class Welcome extends CommonController
 		foreach ($data as $key => $value) {
 			$edit_data = base64_encode(json_encode($value)); 
 			$data[$key]['view_details'] = '<a href="'.base_url("inwarding_details_validation/").$value['id'].'/'.$value['po_id'].'" class="btn btn-danger">Validation Details</a></td>';
+			$data[$key]['grn_date'] = defaultDateFormat($value['grn_date']);
+			$data[$key]['invoice_date'] = defaultDateFormat($value['invoice_date']);
 		}
 		// pr($data,1);
 		$data["data"] = $data;
@@ -3712,7 +3719,8 @@ class Welcome extends CommonController
 		foreach ($data as $key => $value) {
 			$edit_data = base64_encode(json_encode($value)); 
 			$data[$key]['rev_history'] = '<a type="submit" data-toggle="modal" class="" data-target="#exampleModaledit2<%$i%>"> <i class="ti ti-edit" data-edit ='. $edit_data.'></i></a>  ' . "<a href='" . base_url() . "price_revision/" . $value['part_number'] . "/" . $value['supplier_id'] . "' class=''> <i class='ti ti-history'></i></a>";
-			$data[$key]['quotation_doc'] = "<a href='" . base_url('documents') . "/" . $val['part_number'] . $val['quotation_document'] . "' download><i class='ti ti-download'></i></a>";
+			$data[$key]['quotation_doc'] = "<a href='" . base_url('documents') . "/" . $value['part_number'] . $value['quotation_document'] . "' download><i class='ti ti-download'></i></a>";
+			$data[$key]['revision_date'] = defaultDateFormat($value['revision_date']);
 		}
 
 		$data["data"] = $data;
