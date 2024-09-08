@@ -331,7 +331,7 @@ class Welcome extends CommonController
 
 		foreach ($data as $key => $value) {
 
-			$data[$key]['po_date'] = $this->Crud->getDateByFormat($value['po_date']);
+			$data[$key]['po_date'] = defaultDateFormat($value['po_date']);
 		}
 
 		$data["data"] = $data;
@@ -569,10 +569,10 @@ class Welcome extends CommonController
 
 		$data = $this->SupplierParts->getIncomeReportView($condition_arr,$post_data["search"]);
 		// pr($data,1);
-		// foreach ($data as $key => $value) {
-		// 	$edit_data = base64_encode(json_encode($value));
-		// 	$data[$key]['action'] = "<i class='ti ti-edit edit-part' title='Edit' data-value='$edit_data'></i>";
-		// }
+		foreach ($data as $key => $value) {
+			
+			$data[$key]['created_date'] = defaultDateFormat($value['created_date']);
+		}
 		$data["data"] = $data;
         $total_record = $this->SupplierParts->getIncomeReportViewCount($condition_arr, $post_data["search"]);
         $data["recordsTotal"] = $total_record['tot_records'];
@@ -9663,6 +9663,7 @@ class Welcome extends CommonController
 			$date2 = date_create($val['created_date']);
 			$diff = date_diff($date1, $date2);
 			$data[$key]['aging'] = $diff->format("%R%a");
+			$data[$key]['created_date'] = defaultDateFormat($val['created_date']);
 		
 		}
 		

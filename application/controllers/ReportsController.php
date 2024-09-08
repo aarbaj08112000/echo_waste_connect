@@ -442,9 +442,12 @@ class ReportsController extends CommonController
         $base_url = $this->config->item("base_url");
 		$data = $this->SupplierParts->getGNRepotData($condition_arr,$post_data["search"]);
 		
+        
+
 		foreach($data as $k=>$v){
-			$data[$k]['po_date']= $this->Crud->getDateByFormat($v['po_date']);
-			$data[$k]['invoice_date'] = $this->Crud->getDateByFormat($v['invoice_date']);
+			$data[$k]['po_date']= defaultDateFormat($v['po_date']);
+			$data[$k]['invoice_date'] = defaultDateFormat($v['invoice_date']);
+			$data[$k]['grn_created_date'] = defaultDateFormat($v['grn_created_date']);
 			$gst_amount = $v['sgst_amount'] + $v['cgst_amount'] + $v['igst_amount'] + $v['tcs_amount'];
 			// Calculate total_with_gst
 			$total_with_gst = $gst_amount + $v['base_amount'];
