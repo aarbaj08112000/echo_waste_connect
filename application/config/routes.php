@@ -388,6 +388,7 @@ $route['addOtherData'] = 'welcome/addOtherData';
 $route['updateOtherData'] = 'welcome/updateOtherData';
 
 $route['supplier'] = 'welcome/supplier';
+$route['add_supplier'] = 'welcome/addSupplierDetails';
 $route['updateSupplier'] = 'welcome/updateSupplier';
 $route['addSupplier'] = 'welcome/addSupplier';
 

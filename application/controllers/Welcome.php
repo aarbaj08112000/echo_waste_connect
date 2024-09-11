@@ -722,7 +722,7 @@ class Welcome extends CommonController
 		$this->load->view('footer');
 	}
 
-	public function supplier()
+	public function addSupplierDetails()
 
 	{
 		$get_data = $this->input->get();
@@ -736,8 +736,18 @@ class Welcome extends CommonController
 		}
 		$data['mode'] = $mode;
 		// pr($data,1);
-		$this->loadView('purchase/supplier', $data);
+		$this->loadView('purchase/add_update_supplier', $data);
 	}
+    public function supplier()
+    {
+        $supplier_list = $this->Crud->read_data_where_result("supplier", array("admin_approve" => "pending"));
+        $data['supplier_list'] = $supplier_list->result();
+        // $data['supplier_list'] = $this->Crud->read_data_with_admin("supplier");
+        // $this->load->view('header');
+        // $this->load->view('supplier', $data);
+        // $this->load->view('footer');
+        $this->loadView('purchase/supplier', $data);
+    }
 
 	// public function approved_supplier()
 	// {
@@ -1701,6 +1711,11 @@ class Welcome extends CommonController
         $data['status'] = $status;
         $data['actual_price'] = $actual_price;
         $data['isMultiClient'] = $this->session->userdata['isMultipleClientUnits'];
+        $is_accept_inwarding = false;
+        if(count($data['po_parts']) > 0){
+            $is_accept_inwarding = true;
+        }
+        $data['is_accept_inwarding'] = $is_accept_inwarding;
 		// $this->load->view('header');
 		$this->loadView('quality/inwarding_details_accept_reject', $data);
 		// $this->load->view('footer');
@@ -2075,14 +2090,23 @@ class Welcome extends CommonController
 			'child_part_id' => $this->input->post('child_part_id'),
 
 		);
-
+		$success = 0;
+        $messages = "Something went wrong.";
 		$insert = $this->Common_admin_model->insert('raw_material_inspection_master', $data);
 
 		if ($insert) {
-			echo "<script>alert('Added Successfully !!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$messages = "Added Successfully !!";
+			$success = 1;
+			// echo "<script>alert('Added Successfully !!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-			echo "<script>alert('Error While operations  !!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$messages = "Error While operations  !!!!";
+			// echo "<script>alert('Error While operations  !!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 
@@ -2097,15 +2121,24 @@ class Welcome extends CommonController
 			'evalution_mesaurement_technique' => $this->input->post('evalution_mesaurement_technique'),
 
 		);
-
+		$success = 0;
+        $messages = "Something went wrong.";
 		// $insert = $this->Common_admin_model->insert('raw_material_inspection_report', $data);
 		$insert = $this->Common_admin_model->update("raw_material_inspection_master", $data, "id", $id);
 
 		if ($insert) {
-			echo "<script>alert('Updated Successfully !!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$success = 1;
+			$messages  ="Updated Successfully !!";
+			// echo "<script>alert('Updated Successfully !!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-			echo "<script>alert('Error While operations  !!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$messages = "Error While operations  !!!!";
+			// echo "<script>alert('Error While operations  !!!!');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 
@@ -8105,10 +8138,12 @@ class Welcome extends CommonController
 			"part_rate" => $part_rate,
 
 		);
+		
 		$sucess = 1;
 		$msg = '';
+		
 		$result = $this->Crud->update_data("child_part_master", $data, $id);
-
+		
 		if ($result) {
 			$msg = 'Price Update successfully.';
 		} else {
@@ -8448,7 +8483,7 @@ class Welcome extends CommonController
 
 
 		$success = 0;
-		$message = 0;
+		$message = "Something went wrong";
 		$mode =  $this->input->post('mode');
 		if($mode == "Add"){
 			$data = array(
@@ -8529,7 +8564,8 @@ class Welcome extends CommonController
 		$gst_no = $this->input->post('ugst_no');
 		$admin_approve = $this->input->post('admin_approve');
 		$with_in_state = $this->input->post('with_in_state');
-
+        $success = 0;
+        $message = "Something went wrong";
 		if (!empty($_FILES['nda_document']['name'])) {
 			$image_path = "./documents/";
 			$config['allowed_types'] = '*';
@@ -8545,11 +8581,11 @@ class Welcome extends CommonController
 				$picture4 = $uploadData['file_name'];
 			} else {
 				$picture4 = $this->input->post('nda_document_old');
-				echo "no 1";
+				// echo "no 1";
 			}
 		} else {
 			$picture4 = $this->input->post('nda_document_old');
-			echo "no 2";
+			// echo "no 2";
 		}
 		if (!empty($_FILES['registration_document']['name'])) {
 			$image_path = "./documents/";
@@ -8566,11 +8602,11 @@ class Welcome extends CommonController
 				$picture5 = $uploadData['file_name'];
 			} else {
 				$picture5 = $this->input->post('registration_document_old');
-				echo $this->input->post('registration_document_old');
+				// echo $this->input->post('registration_document_old');
 			}
 		} else {
 			$picture5 = $this->input->post('registration_document_old');
-			echo $this->input->post('registration_document_old');
+			// echo $this->input->post('registration_document_old');
 		}
 
 		if (!empty($_FILES['other_document_1']['name'])) {
@@ -8588,11 +8624,11 @@ class Welcome extends CommonController
 				$picture6 = $uploadData['file_name'];
 			} else {
 				$picture6 = $this->input->post('other_document_1_old');
-				echo "no 1";
+				// echo "no 1";
 			}
 		} else {
 			$picture6 = $this->input->post('other_document_1_old');
-			echo "no 2";
+			// echo "no 2";
 		}
 		if (!empty($_FILES['other_document_2']['name'])) {
 			$image_path = "./documents/";
@@ -8609,11 +8645,11 @@ class Welcome extends CommonController
 				$picture7 = $uploadData['file_name'];
 			} else {
 				$picture7 = $this->input->post('other_document_2_old');
-				echo "no 1";
+				// echo "no 1";
 			}
 		} else {
 			$picture7 = $this->input->post('other_document_2_old');
-			echo "no 2";
+			// echo "no 2";
 		}
 		if (!empty($_FILES['other_document_3']['name'])) {
 			$image_path = "./documents/";
@@ -8630,13 +8666,12 @@ class Welcome extends CommonController
 				$picture8 = $uploadData['file_name'];
 			} else {
 				$picture7 = $this->input->post('other_document_3_old');
-				echo "no 1";
+				// echo "no 1";
 			}
 		} else {
 			$picture8 = $this->input->post('other_document_3_old');
-			echo "no 2";
+			// echo "no 2";
 		}
-
 
 		$data = array(
 			'supplier_number' => $number,
@@ -8649,12 +8684,11 @@ class Welcome extends CommonController
 			"gst_number" => $gst_no,
 			"payment_terms" => $paymentTerms,
 
-
-
 		);
 		$check = false;
 		if ($check == true) {
-			echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+            $message = "Already Exists";
+			// echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 			$data = array(
 				'supplier_name' => $name,
@@ -8676,11 +8710,20 @@ class Welcome extends CommonController
 			);
 			$result = $this->Crud->update_data("supplier", $data, $id);
 			if ($result) {
-				echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $message = "Updated Sucessfully";
+                $success = 1;
+				// echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				echo "<script>alert(' Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $message = "Not Updated";
+				// echo "<script>alert(' Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
+        $return_arr =[
+            "success" =>$success,
+            "message" =>$message
+        ];
+        echo json_encode($return_arr);
+        exit();
 	}
 	public function updateloading_user()
 	{
@@ -9421,9 +9464,10 @@ class Welcome extends CommonController
 		$data['child_part'] = $this->SupplierParts->getSupplierPartById($data['child_part_id']);
 		$data['raw_material_inspection_master'] = $this->Crud->get_data_by_id("raw_material_inspection_master", $data['child_part_id'], "child_part_id");
 		// print_r($data['customer']);
-		$this->load->view('header');
-		$this->load->view('raw_material_inspection', $data);
-		$this->load->view('footer');
+		$this->loadView('purchase/raw_material_inspection', $data);
+		// $this->load->view('header');
+		// $this->load->view('raw_material_inspection', $data);
+		// $this->load->view('footer');
 	}
 	public function raw_material_inspection_inwarding()
 	{

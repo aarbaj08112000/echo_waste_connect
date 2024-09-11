@@ -72,14 +72,17 @@ class SalesController extends CommonController
 			foreach ($data['new_sales'] as $c) {
 				$sales_id = $c->id;
 				$po_parts = $this->Crud->get_data_by_id("sales_parts", $sales_id, "sales_id");
-				$final_po_amount[$sales_id] = 0;
+				$final_po_amount = 0;
 				if ($po_parts) {
 					foreach ($po_parts as $p) {
-						$data['subtotal'][$sales_id] =  $p->total_rate - $p->gst_amount;
-						$data['row_total'][$sales_id] =(float) $p->total_rate+(float)$p->tcs_amount;
-						$data['final_po_amount'][$sales_id] = (float)$final_po_amount[$sales_id] + (float)$row_total[$sales_id];
+						$subtotal +=  $p->total_rate - $p->gst_amount;
+						$row_total =(float) $p->total_rate+(float)$p->tcs_amount;
+						$final_po_amount = (float)$final_po_amount + (float)$row_total;
 					}
 				}
+				$data['subtotal'][$sales_id] = $subtotal;
+				$data['row_total'][$sales_id] = $row_total;
+				$data['final_po_amount'][$sales_id] = $final_po_amount;
 	
 			}
 		}
@@ -89,6 +92,7 @@ class SalesController extends CommonController
 			$data['month_data'][$i] = $this->Common_admin_model->get_month($i);
 			$data['month_number'][$i] = $this->Common_admin_model->get_month_number($data['month_data'][$i]);
 		}
+		// pr($data,1);
 		$this->loadView('sales/sales_invoice_released', $data);
 	}
 

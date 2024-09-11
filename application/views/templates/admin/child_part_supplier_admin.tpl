@@ -51,9 +51,11 @@
                            </thead>
                            <tbody>
                               <%assign var='i' value=1 %>
+							  
                                 <%if ($child_part_list)  %>
                                     <%foreach from=$child_part_list item=poo %>
                                  		<%assign var='po' value=$poo->po %>
+										 
                                         <%if ($po[0]->admin_approve == "no") %>
                                          	<%assign var='supplier_data' value=$poo->supplier_data %>
                                          	<%assign var='uom_data' value=$poo->uom_data %>
@@ -73,6 +75,7 @@
 				                                             </div>
 															 <form action="<%base_url('updatechildpart_supplier_admin') %>" method="POST" enctype='multipart/form-data' class="approve-price">
 				                                             <div class="modal-body">
+															
 				                                                   <div class="row">
 				                                                      <div class="col-lg-12">
 				                                                         <input value="<%$po[0]->id %>" type="hidden" name="id" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Customer Name">
@@ -86,7 +89,7 @@
 				                                                         <div class="form-group">
 				                                                            <label for="po_num">Part Price </label><span class="text-danger">*</span>
 				                                                            <input type="text" value="<%$po[0]->part_rate  %>" name="upart_desc"   class="form-control onlyNumericInput" id="exampleInputEmail1">
-				                                                            <input type="hidden" value="<%$po[0]->id  %>" name="id"  required class="form-control" id="exampleInputEmail1" >
+				                                                            
 				                                                         </div>
 				                                                      </div>
 				                                                   </div>

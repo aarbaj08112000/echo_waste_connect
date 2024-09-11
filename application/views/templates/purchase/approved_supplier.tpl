@@ -80,7 +80,7 @@
     <!-- <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Tables /</span> Basic Tables</h4> -->
 
     <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5 listing-btn">
-      <a class="btn btn-seconday action-button-box" type="button"  title="Add Supplier Part Price" href="supplier">
+      <a class="btn btn-seconday action-button-box" type="button"  title="Add Supplier " href="add_supplier">
         <span>Add Supplier</span>
       </a>
 

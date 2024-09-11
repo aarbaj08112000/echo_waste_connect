@@ -96,7 +96,6 @@ const page = {
                 type:"post",
                 success: function(result){
                   var data = JSON.parse(result);
-                  conole.log(data)
                   if (data.success == 1) {
                       toastr.success(data.messages);
                       setTimeout(function () {

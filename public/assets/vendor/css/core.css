@@ -11928,7 +11928,8 @@ a.list-group-item-gray.active,button.list-group-item-gray.active {
 
 .navbar .navbar-toggler {
     border: none;
-        margin-left: auto;
+    margin-left: auto;
+    margin-right: 10px;
 
 }
 

@@ -10,7 +10,7 @@
             <em >Supplier</em></a>
          </h1>
          <br>
-         <span >Add Supplier</span>
+         <span >Supplier List</span>
       </div>
    </nav>
    <div class="dt-top-btn d-grid gap-2 d-md-flex  mb-5 listing-btn">
@@ -22,165 +22,345 @@
       </div>
    </div>
    <!-- Basic Layout -->
-   <div class="row">
-      <div class="col-xl">
-         <div class="card mb-4 px-3">
-            <div class="card-body">
-               <form id="addsupplier" class="mb-3" action="javascript:void(0)" method="POST" enctype='multipart/form-data'>
-                  <input type="hidden" value="<%$mode%>" name="mode">
-                  <input type="hidden" value="<%$id%>" name="supplier_id">
-                  <div class="row">
-                     <div class="col-lg-6 ">
-                        <div class="form-group mb-3">
-                           <label for="machine_name" class="form-label">Supplier Name</label><span
-                              class="text-danger">*</span>
-                           <input type="text" name="supplierName" value="<%$supplier_name%>" 
-                              class="form-control" 
-                              placeholder="Enter Supplier Name">
-                        </div>
-                     </div>
-                     <div class="col-lg-6 ">
-                        <div class="form-group mb-3">
-                           <label for="machine_name" class="form-label">Supplier Email</label>
-                           <input type="text" name="supplierEmail" value="<%$email%>"
-                              class="form-control" 
-                              placeholder="Enter Supplier Email">
-                        </div>
-                     </div>
-                     <%if $mode eq 'Update'%>
-                     <div class="col-lg-6 ">
-                        <div class="form-group mb-3">
-                           <label for="machine_name" class="form-label">Approve Supplier</label>
-                            <select class="form-control select2" name="admin_approve"
-                              style="width: 100%;">
-                              <option value="yes" <%if $admin_approve eq 'pending'%>selected<%/if%>>Pending</option>
-                              <option value="no" <%if $admin_approve eq 'accept'%>selected<%/if%>>Accept</option>
-                           </select>
-                        </div>
-                     </div>
-                     <%/if%>
-                     <div class="col-lg-6 ">
-                        <div class="form-group mb-3">
-                           <label for="machine_name" class="form-label">Supplier Code</label><span
-                              class="text-danger">*</span>
-                           <input type="text" name="supplierNumber" value="<%$supplier_number%>"
-                              class="form-control" <%if $mode eq 'Update'%>readonly<%/if%> 
-                              placeholder="Enter Supplier Number">
-                        </div>
-                     </div>
-                     <div class="col-lg-6 ">
-                        <div class="form-group mb-3">
-                           <label class="form-label">With in State </label><span
-                              class="text-danger">*</span>
-                           <select class="form-control select2" name="with_in_state"
-                              style="width: 100%;">
-                              <option value="yes" <%if $with_in_state eq 'yes'%>selected<%/if%>>Yes</option>
-                              <option value="no" <%if $with_in_state eq 'no'%>selected<%/if%>>No</option>
-                           </select>
-                        </div>
-                     </div>
-                     <div class="col-lg-6 ">
-                        <div class="form-group mb-3">
-                           <label for="machine_name" class="form-label">Supplier Address</label><span
-                              class="text-danger">*</span>
-                           <input type="text" name="supplierlocation" value="<%$location%>"
-                              class="form-control"
-                              placeholder="Enter Supplier Location">
-                        </div>
-                     </div>
-                     <div class="col-lg-6 ">
-                        <div class="form-group mb-3">
-                           <label for="customer_location" class="form-label">State</label><span
-                              class="text-danger">*</span>
-                           <input type="text" name="state" value="<%$state%>"
-                              class="form-control"  placeholder="Enter State">
-                        </div>
-                     </div>
-                     <div class="col-lg-6 ">
-                        <div class="form-group mb-3">
-                           <label for="machine_name" class="form-label">Supplier Mobile Number</label>
-                           <input type="text" name="supplierMnumber" value="<%$mobile_no%>"
-                              class="form-control onlyNumericInput" 
-                              placeholder="Enter Supplier Mobile Number">
-                        </div>
-                     </div>
-                     <div class="col-lg-6 ">
-                        <div class="form-group mb-3">
-                           <label for="customer_location" class="form-label">GST Number</label><span
-                              class="text-danger">*</span>
-                           <input type="text" name="gst_no" value="<%$gst_number%>"
-                              class="form-control" 
-                              placeholder="Enter GST Number">
-                        </div>
-                     </div>
-                     <div class="col-lg-6 ">
-                        <div class="form-group mb-3">
-                           <label for="machine_name" class="form-label">Supplier Pan</label>
-                           <input type="text" name="pan_card" class="form-control" value="<%$pan_card%>"
-                              placeholder="Enter Supplier pan card">
-                        </div>
-                     </div>
-                     <div class="col-lg-6 ">
-                        <div class="form-group mb-3">
-                           <label for="payment_terms" class="form-label">Payment Terms</label><span
-                              class="text-danger">*</span>
-                           <input type="text" step="any"  name="paymentTerms" value="<%$payment_terms%>"
-                              class="form-control" 
-                              placeholder="Payment Terms">
-                        </div>
-                     </div>
-                     <div class="col-lg-6 ">
-                        <div class="form-group mb-3">
-                           <label for="machine_name" class="form-label">Upload NDA Document</label>
-                           <input type="file" name="nda_document" 
-                              class="form-control"
-                              placeholder="Enter Upload NDA Document">
-                        </div>
-                     </div>
-                     <div class="col-lg-6 ">
-                        <div class="form-group mb-3">
-                           <label for="machine_name" class="form-label">Other Document 2</label>
-                           <input type="file" name="other_document_2"
-                              class="form-control" 
-                              placeholder="Enter Supplier Mobile Number">
-                        </div>
-                     </div>
-                     <div class="col-lg-6 ">
-                        <div class="form-group mb-3">
-                           <label for="machine_name" class="form-labelorm">Upload Registration
-                           Document</label>
-                           <input type="file" name="registration_document"
-                              class="form-control" 
-                              placeholder="Enter Supplier Mobile Number">
-                        </div>
-                     </div>
-                     <div class="col-lg-6 ">
-                        <div class="form-group mb-3">
-                           <label for="machine_name" class="form-label">Other Document 3</label>
-                           <input type="file" name="other_document_3"
-                              class="form-control" 
-                              placeholder="Enter Supplier Mobile Number">
-                        </div>
-                     </div>
-                     <div class="col-lg-6 ">
-                        <div class="form-group mb-3">
-                           <label for="machine_name" class="form-label">Other Document 1</label>
-                           <input type="file" name="other_document_1"
-                              class="form-control" 
-                              placeholder="Enter Supplier Mobile Number">
-                        </div>
-                     </div>
-                     
+   <div class="content-wrapper" >
+      <!-- Content Header (Page header) -->
+      <div class="w-100">
+            <input type="text" name="reason" placeholder="Filter Search" class="form-control serarch-filter-input m-3 me-0" id="serarch-filter-input" fdprocessedid="bxkoib">
+        </div>
+      <!-- Main content -->
+      <section class="content">
+         <div class="">
+            <div class="row">
+               <div class="col-12">
+                  <div class="card">
+                     <!-- /.card-header -->
+                     <div class="">
+                        <table id="example1" class="table table-striped">
+                           <thead>
+                           <tr>
+                              <!-- <th>Sr. No.</th> -->
+                              <th>Supplier Name</th>
+                              <th>Supplier Address</th>
+                              <th>PAN</th>
+                              <th>GST Number</th>
+                              <th>State</th>
+                              <th>Payment Terms</th>
+                              <th>NDA Documents</th>
+                              <th>Registration Documents</th>
+                              <th>Other Document 1</th>
+                              <th>Other Document 2</th>
+                              <th>Admin Approval</th>
+                              <th>With In State</th>
+                              <th>Action</th>
+                           </tr>
+                        </thead>
+                          <tbody>
+                           <%assign var='i' value=1 %>
+                           <%if ($supplier_list)  %>
+                              <%foreach from=$supplier_list item=s %>
+                           <tr>
+                              <!-- <td><%$i %></td> -->
+                              <td><%$s->supplier_name %></td>
+                              <!-- <td><?php echo $s->supplier_number; ?></td> -->
+                              <td><%$s->location %></td>
+                              <!-- <td><php echo $s->email; ?></td>
+                                 <td><php echo $s->mobile_no; ?></td> -->
+                              <td><%$s->pan_card  %></td>
+                              <td><%$s->gst_number  %></td>
+                              <td><%$s->state %></td>
+                              <td><%$s->payment_terms %></td>
+                              <td>
+                                 <%if (!empty($s->nda_document)) %>
+                                 <a href="<%base_url('documents/') %><%$s->nda_document %>"
+                                    download>Download</a>
+                                 <%/if%>
+                              </td>
+                              <td>
+                                 <%if (!empty($s->registration_document)) %>
+                                 <a href="<%base_url('documents/') %><%$s->registration_document %>"
+                                    download>Download</a>
+                                 <%/if%>
+                              </td>
+                              <td>
+                                 <%if (!empty($s->other_document_1)) %>
+                                 <a href="<%base_url('documents/') %><%$s->other_document_1 %>"
+                                    download>Download</a>
+                                 <%/if%>
+                              </td>
+                              <td>
+                                 <%if (!empty($s->other_document_2))  %>
+                                 <a href="<%base_url('documents/') %><%$s->other_document_2 %>"
+                                    download>Download</a>
+                                 <%/if%>
+                              </td>
+                              <td>
+                                 <%$s->admin_approve %>
+                              </td>
+                              <td><%$s->with_in_state %></td>
+                              <td>
+                                 <a type="button" data-bs-toggle="modal" class=""
+                                    data-bs-target="#exampleModal2<%$i %>"> <i
+                                    class="ti ti-edit"></i></a>
+                                 <div class="modal fade" id="exampleModal2<%$i %>"
+                                    tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                                       <div class="modal-content">
+                                          <div class="modal-header">
+                                             <h5 class="modal-title" id="exampleModalLabel">Update
+                                                Supplier Number
+                                             </h5>
+                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close">
+                                             </button>
+                                          </div>
+                                           <form
+                                             action="<%base_url('updateSupplier') %>" method="POST" enctype="multipart/form-data" class="custom-form updateSupplier updateSupplier<%$i %>" id="updateSupplier<%$i %>">
+                                          <div class="modal-body">
+                                             <div class="row">
+                                                <div class="col-lg-6">
+                                                  
+                                                      <div class="form-group">
+                                                         <label for="machine_name">Supplier
+                                                         Name</label><span
+                                                            class="text-danger">*</span>
+                                                         <input value="<%$s->id %>"
+                                                            name="id" type="hidden" 
+                                                            class="form-control required-input" id="updateName"
+                                                            aria-describedby="emailHelp"
+                                                            placeholder="Enter Supplier Name">
+                                                         <input
+                                                            value="<%$s->supplier_name %>"
+                                                            readonly name="updateName"
+                                                            type="text" required
+                                                            class="form-control" id="updateName"
+                                                            aria-describedby="emailHelp"
+                                                            placeholder="Enter Supplier Name">
+                                                      </div>
+                                                      <div class="form-group">
+                                                         <label for="machine_name">Approve
+                                                         Supplier</label><span
+                                                            class="text-danger">*</span>
+                                                         <select name="admin_approve" 
+                                                            id="" class="form-control required-input">
+                                                            <option value="accept">accept
+                                                            </option>
+                                                            <option value="pending">pending
+                                                            </option>
+                                                         </select>
+                                                      </div>
+                                                      <div class="form-group">
+                                                         <label for="machine_name">Supplier
+                                                         Number</label><span
+                                                            class="text-danger">*</span>
+                                                         <input
+                                                            value="<%$s->supplier_number %>"
+                                                            readonly name="updateNumber"
+                                                            type="text" required
+                                                            class="form-control" id="updateName"
+                                                            aria-describedby="emailHelp"
+                                                            placeholder="Enter Supplier Number">
+                                                      </div>
+                                                      <div class="form-group">
+                                                         <label for="machine_name">Supplier
+                                                         Address</label><span
+                                                            class="text-danger">*</span>
+                                                         <input type="text"
+                                                            value="<%$s->location %>"
+                                                            name="updatesupplierlocation"
+                                                             class="form-control required-input"
+                                                            id="exampleInputEmail1"
+                                                            aria-describedby="emailHelp"
+                                                            placeholder="Enter Supplier Number">
+                                                      </div>
+                                                      <div class="form-group">
+                                                         <label for="machine_name">Supplier
+                                                         Mobile Number</label><span
+                                                            class="text-danger">*</span>
+                                                         <input type="text"
+                                                            value="<%$s->mobile_no %>"
+                                                            name="updatesupplierMnumber"
+                                                             class="form-control required-input onlyNumericInput"
+                                                            id="exampleInputEmail1"
+                                                            aria-describedby="emailHelp"
+                                                            placeholder="Enter Supplier Number">
+                                                      </div>
+                                                      <div class="form-group">
+                                                         <label for="machine_name">Other Document
+                                                         2</label>
+                                                         <input type="file"
+                                                            name="other_document_2"
+                                                            class="form-control"
+                                                            id="exampleInputEmail1"
+                                                            aria-describedby="emailHelp"
+                                                            placeholder="Enter Supplier Mobile Number">
+                                                         <input type="hidden"
+                                                            name="other_document_2_old"
+                                                            value="<%$s->other_document_2 %>"
+                                                            class="form-control"
+                                                            id="exampleInputEmail1"
+                                                            aria-describedby="emailHelp"
+                                                            placeholder="Enter Supplier Mobile Number">
+                                                      </div>
+                                                      <div class="form-group">
+                                                         <label for="machine_name">Other Document
+                                                         3</label>
+                                                         <input type="file"
+                                                            name="other_document_3"
+                                                            class="form-control"
+                                                            id="exampleInputEmail1"
+                                                            aria-describedby="emailHelp"
+                                                            placeholder="Enter Supplier Mobile Number">
+                                                         <input type="hidden"
+                                                            name="other_document_3_old"
+                                                            value="<%$s->other_document_3 %>"
+                                                            class="form-control"
+                                                            id="exampleInputEmail1"
+                                                            aria-describedby="emailHelp"
+                                                            placeholder="Enter Supplier Mobile Number">
+                                                      </div>
+                                                      
+                                                      <div class="form-group">
+                                                         <label>With in State </label><span
+                                                            class="text-danger">*</span>
+                                                         <select class="form-control select2 required-input"
+                                                            name="with_in_state"
+                                                            style="width: 100%;">
+                                                            <option <%if ($s->with_in_state == "yes") %>
+                                                               selected <%/if%> value="yes">
+                                                               Yes
+                                                            </option>
+                                                            <option <%if ($s->with_in_state == "no") %>selected <%/if%> value="no">No
+                                                            </option>
+                                                         </select>
+                                                      </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                <div class="form-group">
+                                                <label for="machine_name">Supplier
+                                                Email</label><span
+                                                   class="text-danger">*</span>
+                                                <input type="email"
+                                                   value="<%$s->email %>"
+                                                   name="updatesupplierEmail" 
+                                                   class="form-control required-input"
+                                                   id="exampleInputEmail1"
+                                                   aria-describedby="emailHelp"
+                                                   placeholder="Enter Supplier Email">
+                                                </div>
+                                                <div class="form-group">
+                                                <label for="customer_location">Add
+                                                State</label><span
+                                                   class="text-danger">*</span>
+                                                <input type="text" name="ustate" 
+                                                   value="<%$s->state  %>"
+                                                   class="form-control required-input"
+                                                   id="exampleInputEmail1"
+                                                   aria-describedby="emailHelp"
+                                                   placeholder="Add State">
+                                                </div>
+                                                <div class="form-group">
+                                                <label for="customer_location">Add GST
+                                                Number</label><span
+                                                   class="text-danger">*</span>
+                                                <input type="text" name="ugst_no" 
+                                                   value="<%$s->gst_number %>"
+                                                   class="form-control required-input"
+                                                   id="exampleInputEmail1"
+                                                   aria-describedby="emailHelp"
+                                                   placeholder="Add GST Number">
+                                                </div>
+                                                <div class="form-group">
+                                                <label for="machine_name">Other Document
+                                                1</label>
+                                                <input type="file" name="other_document_1"
+                                                   class="form-control"
+                                                   id="exampleInputEmail1"
+                                                   aria-describedby="emailHelp"
+                                                   placeholder="Enter Supplier Mobile Number">
+                                                <input type="hidden"
+                                                   name="other_document_1_old"
+                                                   value="<%$s->other_document_1 %>"
+                                                   class="form-control"
+                                                   id="exampleInputEmail1"
+                                                   aria-describedby="emailHelp"
+                                                   placeholder="Enter Supplier Mobile Number">
+                                                </div>
+                                                <div class="form-group">
+                                                <label for="payment_terms">Payment
+                                                Terms</label><span
+                                                   class="text-danger">*</span>
+                                                <input type="text"
+                                                   value="<%$s->payment_terms %>"
+                                                   name="upaymentTerms" 
+                                                   class="form-control required-input"
+                                                   id="exampleInputEmail1"
+                                                   aria-describedby="emailHelp"
+                                                   placeholder="Payment Terms">
+                                                </div>
+                                                <div class="form-group">
+                                                <label for="machine_name">Upload
+                                                Registration Document</label>
+                                                <input type="file"
+                                                   name="registration_document"
+                                                   class="form-control"
+                                                   id="exampleInputEmail1"
+                                                   aria-describedby="emailHelp"
+                                                   placeholder="Enter Supplier Mobile Number">
+                                                <input type="hidden"
+                                                   name="registration_document_old"
+                                                   value="<%$s->registration_document %>"
+                                                   class="form-control"
+                                                   id="exampleInputEmail1"
+                                                   aria-describedby="emailHelp"
+                                                   placeholder="Enter Supplier Mobile Number">
+                                                </div>
+                                                <div class="form-group">
+                                                         <label for="machine_name">Upload NDA
+                                                         Document</label>
+                                                         <input type="file" name="nda_document"
+                                                            class="form-control"
+                                                            id="exampleInputEmail1"
+                                                            aria-describedby="emailHelp"
+                                                            placeholder="Enter Supplier Mobile Number">
+                                                         <input type="hidden"
+                                                            name="nda_document_old"
+                                                            class="form-control"
+                                                            value="<%$s->nda_document %>"
+                                                            id="exampleInputEmail1"
+                                                            aria-describedby="emailHelp"
+                                                            placeholder="Enter Supplier Mobile Number">
+                                                      </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                   data-bs-dismiss="modal">Close</button>
+                                                <button type="submit"
+                                                   class="btn btn-primary">Save
+                                                changes</button>
+                                                </div>
+                                                </form>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 
+                              </td>
+                           </tr>
+                           <%assign var='i' value=$i+1 %>
+                           <%/foreach%>
+                           <%/if%>
+                        </tbody>
+                     </table>
                   </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+                  <!-- /.card-body -->
+               </div>
+               <!-- /.card -->
+            </div>
+            <!-- /.col -->
          </div>
-
-         </div>
-         
-
-         </form>
-         </div>
-      </div>
+         <!-- /.row -->
    </div>
 </div>
 </div>
@@ -190,5 +370,5 @@
 <script type="text/javascript">
    var base_url = <%$base_url|@json_encode%>
 </script>
-<script src="<%$base_url%>public/js/purchase/add_supplier.js"></script>
+<script src="<%$base_url%>public/js/purchase/supplier_admin.js"></script>
 <!-- Content wrapper -->

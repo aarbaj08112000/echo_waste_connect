@@ -684,5 +684,7 @@ class CustomerPart extends CI_Model {
         // pr($this->db->last_query(),1);
         return $ret_data;
     }
+
+    
 }
 ?>

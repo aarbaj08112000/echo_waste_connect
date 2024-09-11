@@ -73,9 +73,14 @@ const app = {
             width: 0
           },100)
         }else{
+          let width = 330;
+          var viewportWidth = $(window).width();
+          if( viewportWidth < 700){
+              width = 253;
+          }
           $(".filter-popup-block").addClass("show")
           $(".filter-popup-block").animate({
-            width: 330
+            width: width
           },100)
         }
         
@@ -103,6 +108,18 @@ const app = {
       this.allowNumber();
       this.removeValidationMessage();
       this.initResponsive();
+      $(".quick-menu-bar").on("click",function(){
+        if($(this).hasClass("active")){
+          $("#menu_overlay").removeClass("open");
+          $(this).removeClass("active");
+          $("body").removeClass("loader-show")
+        }else{
+          $("#menu_overlay").addClass("open");
+          $(this).addClass("active");
+          $("body").addClass("loader-show")
+        }
+        
+      })
   },
   allowNumber:function(){
     $('.onlyNumericInput').on('keypress', function(event) {

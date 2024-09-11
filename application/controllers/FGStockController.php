@@ -195,12 +195,9 @@ class FGStockController extends CommonController
 			$part_id_selected = $this->input->post("part_id_selected");
 		}
 
-		if (!empty($part_id_selected)) {
-			$data['child_part'] = $this->CustomerPart->getCustomerPartById($part_id_selected);
-		} else {
-			$data['child_part'] = "";
-		}
-
+		$part_id_selected =1;
+		$data['child_part'] = $this->CustomerPart->getCustomerPartdata($part_id_selected);
+		
 		$data['enableStockUpdate'] = $this->isEnableStockUpdate();
 		$this->loadView('admin/customer_parts_admin', $data);
 	}
@@ -212,14 +209,22 @@ class FGStockController extends CommonController
 		$data = array(
 			"fg_stock" => $stock
 		);
-
+		$success = 0;
+        $messages = "Something went wrong.";
 		$result = $this->CustomerPart->updateStockById($data, $id);
 		if ($result) {
-			$this->addSuccessMessage('Stock updated successfully.');
+			$messages = "Stock updated successfully.";
+			$success = 1;
+			// $this->addSuccessMessage('Stock updated successfully.');
 		} else {
-			$this->addErrorMessage('Unable to update stock. Please try again.');
+			$messages = "Unable to update stock. Please try again.";
+			// $this->addErrorMessage('Unable to update stock. Please try again.');
 		}
-		$this->customer_parts_admin($id);
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 }

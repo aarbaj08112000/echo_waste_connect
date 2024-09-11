@@ -286,7 +286,7 @@
                            <div class="form-group">
                             <label class="form-label" style="display: none;">Accept Qty</label>
                            <input type="text"  min="0" value="" id="searchTxt"
-                              step="any"  max="<%$p->verified_qty %>"
+                              step="any"  data-max="<%$p->verified_qty %>"
                               placeholder="Accept Qty" name="accept_qty" class="form-control onlyNumericInput required-input">
                            <input type="hidden"
                               value="<%$p->qty %>"

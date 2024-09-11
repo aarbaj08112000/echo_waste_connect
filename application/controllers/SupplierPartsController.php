@@ -334,7 +334,10 @@ class SupplierPartsController extends CommonController
 
 		foreach ($data as $key => $value) {
 			$edit_data = base64_encode(json_encode($value)); 
-			$data[$key]['action'] = "<i class='ti ti-edit edit-part' title='Edit' data-value='$edit_data'></i>";
+			$data[$key]['action'] = "<i class='ti ti-edit edit-part' title='Edit' data-value='$edit_data'></i>
+			<a href=".base_url('raw_material_inspection/').$value['part_id']."><i class='ti ti-eye ' title='View Inward Inspection' ></i></a>
+			";
+			
 		}
 		$data["data"] = $data;
         $total_record = $this->SupplierParts->get_child_part_view_count([], $post_data["search"]);
@@ -390,7 +393,7 @@ class SupplierPartsController extends CommonController
 				"max_uom" => $max_uom,
 				"min_uom" => $child_part_data[0]->min_uom,
 			);
-
+			
 		$message = "";
 		$success = 0;
 			$result = $this->SupplierParts->updatePartById($data , $id);

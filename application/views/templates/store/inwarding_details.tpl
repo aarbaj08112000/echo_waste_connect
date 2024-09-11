@@ -314,7 +314,7 @@
                           <div class="form-group">
                           <label for="tool_number" style="display:none ;">Inwarding Qty </label>
                           <input type="text"  step="any"
-                                max="<%$p->pending_qty %>"
+                                data-max="<%$p->pending_qty %>"
                                 placeholder="Inwarding Qty"
                                 name="qty"
                                 class="form-control required-input onlyNumericInput">
@@ -372,7 +372,7 @@
                        <div class="form-group">
                        <label> Inwarding Qty </label><span class="text-danger">*</span>
                        <input type="text"  step="any"
-                          max="<%$p->pending_qty %>"
+                       data-max="<%$p->pending_qty %>"
                           name="qty"
                           value="<%$grn_details_data[0]->qty %>"
                           class="form-control required-input onlyNumericInput">
@@ -443,7 +443,7 @@
                        <form action="<%base_url('add_grn_qty_subcon_view') %>"
                           method="post">
                        <input type="number" required step="any"
-                          max="<%$p->pending_qty %>"
+                       data-max="<%$p->pending_qty %>"
                           placeholder="Inwarding Qty" name="qty"
                           class="form-control">
                        <input type="hidden" name="inwarding_id"

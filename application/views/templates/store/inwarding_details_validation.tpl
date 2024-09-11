@@ -350,7 +350,7 @@
               <%$grn_details_data[0]->qty %>
               <%else %>
               <form action="javascript:void(0);"  method="post" class="add_grn_qty_form add_grn_qty_form_<%$p->part_id %> custom-form" data-id="<%$p->part_id %>">
-                <input type="text" max="<%$p->pending_qty %>"
+                <input type="text" data-max="<%$p->pending_qty %>"
                 placeholder="Inwarding Qty2" name="qty" step="any"
                 class="form-control required-input onlyNumericInput">
                 <input type="hidden" name="inwarding_id"
@@ -401,7 +401,7 @@
                 <div class="form-group">
                 <label for="tool_number" style="display:none ;">GRN Validation Qty </label>
                 <input style="width: 200px ;" type="text"
-                max="<%$grn_details_data[0]->qty %>"
+                data-max="<%$grn_details_data[0]->qty %>"
                 step="any" placeholder="Qty" name="verified_qty"
                 class="form-control input-group-sm required-input onlyNumericInput">
               </div>

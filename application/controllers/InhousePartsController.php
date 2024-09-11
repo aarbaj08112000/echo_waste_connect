@@ -295,7 +295,7 @@ class InhousePartsController extends CommonController
 				"min_uom" => $child_part_data[0]->min_uom,
 			);
 
-		
+		pr($data,1);
 			$result = $this->InhouseParts->updatePartById($data, $id);
 			if($result) {
 				$stockData = array(
