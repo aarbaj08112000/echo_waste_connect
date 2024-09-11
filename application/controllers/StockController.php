@@ -32,8 +32,7 @@ class StockController extends CommonController
 		$this->_part_stocks($this->input->post('part_id'),$this->input->post('clientUnit'));
 	}
 
-	public function part_stocks_view($filter_part_id, $filter_client='') {
-
+	public function part_stocks_view($filter_part_id = 0, $filter_client='') {
 
 		if ($filter_part_id !='ALL' && $filter_part_id != '') {
 			$data['child_part_list'] = $this->SupplierParts->getSupplierPartById($filter_part_id);

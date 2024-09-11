@@ -408,7 +408,7 @@
 
                                                 <form action="<?php echo base_url('add_grn_qty') ?>" method="post">
 
-                                                    <input type="number" max="<?php echo $p->pending_qty; ?>"
+                                                    <input type="number" data-max="<?php echo $p->pending_qty; ?>"
                                                         placeholder="Inwarding Qty2" name="qty" step="any"
                                                         class="form-control">
                                                     <input type="hidden" name="inwarding_id"
@@ -464,7 +464,7 @@
 
                                                 <form action="<?php echo base_url('update_grn_qty') ?>" method="post">
                                                     <input style="width: 200px ;" type="number"
-                                                        max="<?php echo $grn_details_data[0]->qty; ?>"
+                                                        data-max="<?php echo $grn_details_data[0]->qty; ?>"
                                                         step="any" placeholder="Qty" name="verified_qty"
                                                         class="form-control input-group-sm">
                                                     <input type="hidden"

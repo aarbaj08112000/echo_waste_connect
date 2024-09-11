@@ -245,9 +245,35 @@
         padding: 4px;
         margin-top: 0px !important;
     }
-    .select2-container {
-      width: 288px !important;
+    .layout-menu-fixed .filter-popup-block {
+        right: -252px !important;
+        left: auto !important;
     }
+    .filter-popup-block.menu .app-brand.demo {
+        height: 58px;
+        margin-top: 0px;
+    }
+    .filter-popup-block .app-brand-text.menu-text {
+        font-size: 19px !important;
+        font-family: "GilroyMedium" !important;
+        letter-spacing: 0.25px;
+        font-weight: 800;
+    }
+    .filter-popup-block .filter-row .nav-small-cap .hide-menu {
+        font-size: 13px;
+    }
+    .filter-block .select2-container--default .select2-selection.select2-selection--single {
+        height: 34px !important;
+    }
+    .filter-popup-block .select2-selection--single .select2-selection__rendered {
+        line-height: 31px !important;
+        font-size: 13px !important;
+        padding-left: 12px !important;
+        width: 100% !important;
+    }
+    /*.select2-container {
+      width: 288px !important;
+    }*/
     .tgdp-rgt-tp-sect {
         float: left;
         width: 50%;

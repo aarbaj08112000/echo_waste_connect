@@ -18,7 +18,7 @@ $(document).ready(function() {
                         var lines = csv.split('\n');
                         var modifiedLines = lines.map(function(line) {
                             var values = line.split(',');
-                            values.splice(4, 1);
+                            values.splice(3, 1);
                             return values.join(',');
                         });
                         return modifiedLines.join('\n');
@@ -42,7 +42,7 @@ $(document).ready(function() {
                         cell.fillColor = theme_color;
                     });
                     doc.content[1].table.body.forEach(function (row, index) {
-                        row.splice(4, 1);
+                        row.splice(3, 1);
                         row.forEach(function (cell) {
                             // Set alignment for each cell
                             cell.alignment = "center"; // Change to 'left' or 'right' as needed
@@ -55,7 +55,7 @@ $(document).ready(function() {
         // scrollX: true,
         scrollY: true,
         bScrollCollapse: true,
-        columnDefs: [{ sortable: false, targets: 4}],
+        columnDefs: [{ sortable: false, targets: 3}],
         pagingType: "full_numbers",
        
         
@@ -75,7 +75,6 @@ $(document).ready(function() {
     $(document).on("click",".update_edit",function(){
         var data = $(this).attr("data-value");
         data = JSON.parse(atob(data)); 
-        console.log(data)
         
         var option = '';
        
@@ -91,16 +90,15 @@ $(document).ready(function() {
     $('.search-filter').on('click', function(e) {
         let part_val = $('#part_id_selected').val();
         // Ensure that the table and column exist before applying the search
-        console.log(part_val);
         if (table && part_val) {
-            table.column(1).search(part_val).draw();
+            table.column(0).search(part_val).draw();
         }
         $('.close-filter-btn').trigger('click');
     });
 
     $('.reset-filter').on('click',function(e){
         $('#part_id_selected').val('');
-        table.column(1).search('').draw();
+        table.column(0).search('').draw();
         $('.close-filter-btn').trigger('click');
     })
    

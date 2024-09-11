@@ -398,6 +398,7 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span> <label>Menu</label>
             </button>
+            <i class="ti ti-category quick-menu-bar login-nav-block-mobile" title="Quick Menu"></i>
             <div class="navbar-right-wrap ms-2 d-flex nav-top-wrap navbar-nav login-nav-block-mobile">
                <ul class="navbar-right-wrap ms-auto d-flex nav-top-wrap navbar-nav">
                   <li class="ms-2 dropdown">
@@ -449,7 +450,7 @@
                         <li class="dropdown-submenu">
                            <a href="javascript:void(0)" class="dropdown-toggle dropdown-item" data-toggle="dropdown" aria-expanded="false">Supplier</a>
                            <ul class="dropdown-menu">
-                              <li><a href="<%base_url('supplier')%>" class="dropdown-item">Add Supplier</a></li>
+                              <li><a href="<%base_url('add_supplier')%>" class="dropdown-item">Add Supplier</a></li>
                               <li><a href="<%base_url('approved_supplier')%>" class="dropdown-item">View Supplier</a></li>
                            </ul>
                         </li>
@@ -829,6 +830,7 @@
                   </li> -->
                </ul>
             </div>
+            <i class="ti ti-category quick-menu-bar login-nav-block" title="Quick Menu"></i>
             <div class="navbar-right-wrap ms-2 d-flex nav-top-wrap navbar-nav login-nav-block">
                <ul class="navbar-right-wrap ms-auto d-flex nav-top-wrap navbar-nav">
                   <li class="ms-2 dropdown">
