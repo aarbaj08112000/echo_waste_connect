@@ -130,15 +130,16 @@
 
                   </button>
                </div>
+               <form action="<%base_url('add_machine_request_details') %>"
+               method="POST" enctype="multipart/form-data" id="add_machine_request_details" class="add_machine_request_details custom-form">
                <div class="modal-body">
                   <div class="form-group">
-                     <form action="<%base_url('add_machine_request_details') %>"
-                        method="POST" enctype="multipart/form-data">
+                    
                   </div>
                   <div class="form-group">
                   <label for="on click url">Select Child Part<span
                      class="text-danger">*</span></label>
-                  <select name="child_part_id" required id="" class="form-control select2">
+                  <select name="child_part_id"  id="" class="form-control select2 required-input">
                   <option value="">Select</option>
                   <%if ($child_part) %>
                        <%foreach from=$child_part item=c %>
@@ -152,8 +153,8 @@
                   <div class="form-group">
                   <label for="on click url">Enter Qty <span
                      class="text-danger">*</span></label>
-                  <input type="number" step="any" required placeholder="Enter Qty"
-                     class="form-control" name="qty">
+                  <input type="text" step="any"  placeholder="Enter Qty"
+                     class="form-control onlyNumericInput  required-input" name="qty">
                   <input type="hidden" value="<%$machine_request_id %>"
                      step="any" name="machine_request_id" required placeholder="Enter Qty"
                      class="form-control">
@@ -225,22 +226,23 @@
                                     
                                      </button>
                                   </div>
+                                  <form
+                                           action="<%base_url('issue_material_request_qty') %>"
+                                           method="POST" enctype="multipart/form-data" id="issue_material_request_qty<%$i %>" class="issue_material_request_qty<%$i %> issue_material_request_qty custom-form">
                                   <div class="modal-body">
                                      <div class="form-group">
-                                        <form
-                                           action="<%base_url('issue_material_request_qty') %>"
-                                           method="POST" enctype="multipart/form-data">
+                                        
                                      </div>
                                      <div class="form-group">
-                                     <label for="on click url">Enter Accept Qty
+                                     <label for="on click url">Enter Accept Qty</label>
                                      (Current Stock:<%$req->stock %>)<span
-                                        class="text-danger">*</span></label>
+                                        class="text-danger">*</span>
                                      <br>
                                      <%if ($req->stock > 0 && $req->qty <= $req->stock) %>
-                                       <input required type="number" name="accepted_qty"
+                                       <input  type="text" name="accepted_qty"
                                           placeholder="Enter Accept Qty"
-                                          class="form-control" min="1"
-                                          max="<%$req->qty %>" value="" id="">
+                                          class="form-control required-input onlyNumericInput" data-min="1"
+                                          data-max="<%$req->qty %>" value="" id="">
                                        <input type="hidden" value="<%$machine_request_id %>"
                                           name="machine_request_id" required
                                           class="form-control">
@@ -295,4 +297,4 @@
 
 
 
-  <script src="<%$base_url%>public/js/production/machine_request_details.js"></script>
+  <script src="<%base_url()%>public/js/production/machine_request_details.js"></script>

@@ -1,4 +1,4 @@
-/* custom css */
+P/* custom css */
 .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody {
     height: calc(100vh - 394px);
 }
@@ -544,7 +544,7 @@ animation: after 2s infinite;
     overflow-y: auto;
     opacity: 1;
     visibility: visible;
-    height: calc(100vh - 64px);
+    height: calc(100vh - 142px);
     transform: translate(0%, 0) matrix(1, 0, 0, 1, 0, 0);
 }
 .menu_overlay .heading {
@@ -573,6 +573,7 @@ animation: after 2s infinite;
     border-radius: 10px;
         margin-right: 1%;
     margin-left: 0;
+    border: 1px solid #e9d6d6;
 }
 .menu_overlay .sitemap-blocks {
     margin: 35px 40px 40px 40px;
@@ -624,6 +625,12 @@ animation: after 2s infinite;
     border-bottom: 1px solid #b5b3b326;
     margin-bottom: 10px;
     padding-bottom: 9px;
+    font-size: 17px !important;
+    text-transform: uppercase;
+}
+a.nav-active-link {
+    font-size: 16px !important;
+    text-transform: uppercase;
 }
 .sitemap-items .box ul.sitemap{
         margin-left: 13px;
@@ -633,13 +640,31 @@ animation: after 2s infinite;
     position: relative;
     margin-bottom: 4px;;
 }
-.sitemap-items ul.sitemap li:marker {
-    font-size: 22px;
-    content: "•";
-    position: absolute;
-    left: 20px;
-    color: #7E7E7E;
+.sitemap-items .box ul.sitemap li:hover a{
+    color: blue !important;
 }
+.sitemap-items .box ul.sitemap li:hover{
+        background: #f1f1f9;
+}
+.sitemap-items li::marker {
+    unicode-bidi: isolate;
+    font-variant-numeric: tabular-nums;
+    text-transform: none;
+    text-indent: 0px !important;
+    text-align: start !important;
+    text-align-last: start !important;
+    content: "\ea65";
+    font-family: "tabler-icons" !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+
+}
+
 .quick-menu-bar {
     font-size: 28px;
     color: #544444;
@@ -674,6 +699,65 @@ animation: after 2s infinite;
         width: auto;
     }
 }
+
+.sitemap-blocks .report-menu {
+    color:#49eb49;
+}
+.sitemap-blocks .master-menu {
+    color:#d86fe0;
+}
+.new_sitemap_items .color-legend-block {
+    float: right;
+}
+.new_sitemap_items .color-legend-block span{
+    font-size: 16px;
+    color: #806868;
+}
+.new_sitemap_items .color-legend-block span::before {
+    unicode-bidi: isolate;
+    font-variant-numeric: tabular-nums;
+    text-transform: none;
+    text-indent: 0px !important;
+    text-align: start !important;
+    text-align-last: start !important;
+    content: "\f698";
+    font-family: "tabler-icons" !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    font-size: 1.3em;
+    position: relative;
+    top: 2.1px;
+}
+.new_sitemap_items .color-legend-block span.quick-menu::before{
+    color: var(--bs-theme-color);
+}
+.new_sitemap_items .color-legend-block span.report-menu::before{
+    color:#49eb49;
+}
+.new_sitemap_items .color-legend-block span.master-menu::before{
+    color:#d86fe0;
+}
+
 .select2 {
     width: 100% !important;
 }
+
+
+/* pdf btn disign */
+.pdf-btn-block .view-original,.pdf-btn-block .original,.pdf-btn-block .acknowledge,.pdf-btn-block .extra-copy,.pdf-btn-block .triplicate,.pdf-btn-block .duplicate{
+    width: 10%;
+}
+.pdf-btn-block .packaging-sticker{
+    width: 12%;
+}
+
+.pdf-btn-block .original-check,.pdf-btn-block .duplicate-check,.pdf-btn-block .triplicate-check,.pdf-btn-block .acknowledge-check,.pdf-btn-block .extra-copy-check{
+    width: 10%;
+}
+
+

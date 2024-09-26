@@ -29,6 +29,7 @@ class GlobalConfigController extends CommonController
 		$this->date = $d["day"];
 		$this->month = $d["month"];
 		$this->year = $d["year"];
+		$this->load->model('GlobalConfigModel');
 	}
 	
 	private function getPage($viewPage,$viewData){
@@ -164,5 +165,145 @@ class GlobalConfigController extends CommonController
 		echo json_encode($ret_arr);
 	}
 	
+	public function groupMaster(){
+		// checkGroupAccess("approved_supplier","list");
+		$data['groups'] = $this->GlobalConfigModel->getGroupData();
+		// pr($data,1);
+		$this->loadView('admin/group_master', $data);
+	}
+	public function groupMenu(){
+		$get_data = $this->input->get();
+		$group_id = $get_data['id'];
+		$data['group_id'] = $group_id;
+		$group_details = $this->GlobalConfigModel->getGroupData($group_id);
+		$data['group_details'] = $group_details[0];
+		$data['groups_menu'] = $this->GlobalConfigModel->getGroupRightsData($group_id);
+		$this->loadView('admin/group_master_menu', $data);
+	}
+	public function updateGroupMenuRight(){
+		$post_data = $this->input->post();
+		$menu_data = $post_data['menu'];
+		$group_id = $post_data['group_id'];
+		$access_data = ["list","add","update","export","delete"];
+		$group_menu_right = [];
+		foreach ($menu_data as $key => $value) {
+			$group_right_id = $value['group_right_id'];
+			$access_arr = array_keys($value['access']);
+			$missing_access = (isset($value['access'])) ? array_diff($access_data, $access_arr) : $access_data;
+			$update_arr = [];
+			$update_arr['group_rights_id'] = $group_right_id;
+			foreach ($value['access'] as $key_val => $val) {
+				$update_arr[$key_val] = $val;
+			}
+			foreach ($missing_access as $key_val => $val) {
+				$update_arr[$val] = "No";
+			}
+			$group_menu_right[] = $update_arr;
+		}
+		$success = 0;
+        $messages = "Something went wrong.";
+		if(is_array($group_menu_right) && count($group_menu_right)){
+			$affected_rows = $this->GlobalConfigModel->updateGroupRightsData($group_menu_right);
+			if($affected_rows > 0){
+				$success = 1;
+				$messages = "Group Right updated successfully.";
+			}
+		}
+        $result['message'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
+	}
+
+	public function updateGroupMaster(){
+		$post_data = $this->input->post();
+
+		$update_arr = [
+			"group_name" => $post_data['group_name'],
+			"status" => $post_data['status']
+		];
+		$group_master_id = $post_data['group_master_id'];
+		$affected_rows = $this->GlobalConfigModel->updateGroupMasterData($update_arr,$group_master_id);
+		if($affected_rows > 0){
+			$success = 1;
+			$messages = "Group data updated successfully.";
+			$menu_data = $this->GlobalConfigModel->getAllMenuData();
+			$menu_arr = array_column($menu_data, "menu_master_id");
+			$group_rights_data = $this->GlobalConfigModel->getGroupRightsData($group_master_id);
+			$group_rights_arr = array_column($group_rights_data, "menu_master_id");
+			$pending_menu = array_diff($menu_arr, $group_rights_arr);
+			$group_rights_insert_arr = [];
+			foreach ($pending_menu as $key => $value) {
+				$group_rights_insert_arr[] = [
+						"group_master_id" => $group_master_id,
+						"menu_master_id" => $value,
+						"list" => "No",
+						"add" => "No",
+						"update" => "No",
+						"delete" => "No",
+						"export" => "No"
+
+					];
+			}
+			if(is_valid_array($group_rights_insert_arr)){
+				$this->GlobalConfigModel->insertGroupRights($group_rights_insert_arr);
+			}
+			
+		}
+		$result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
+		
+	}
+	public function addGroupMaster(){
+		$post_data = $this->input->post();
+		$group_name = $post_data['group_name'];
+		$group_code = $post_data['group_code'];
+		$status = $post_data['status'];
+
+		$dublicate_group_code = $this->GlobalConfigModel->checkGroupCodeExist($group_code);
+		$dublicate_group_name = $this->GlobalConfigModel->checkGroupNameExist($group_name);
+		$success = 0;
+        $messages = "Something went wrong.";
+		if(count($dublicate_group_code) > 0){
+			$messages = "Group code already exist.";
+		}else if(count($dublicate_group_name) > 0){
+			$messages = "Group name already exist.";
+		}else{
+			$insert_date = [
+				"group_name" => $group_name,
+				"group_code" => $group_code,
+				"status" => $status
+			];
+			$insert_id = $this->GlobalConfigModel->insertGroup($insert_date);
+			if($insert_id > 0){
+				$menu_data = $this->GlobalConfigModel->getAllMenuData();
+				$group_rights_arr = [];
+				foreach ($menu_data as $key => $value) {
+					$group_rights_arr[] = [
+						"group_master_id" => $insert_id,
+						"menu_master_id" => $value['menu_master_id'],
+						"list" => "No",
+						"add" => "No",
+						"update" => "No",
+						"delete" => "No",
+						"export" => "No"
+
+					];
+				}
+				if(count($group_rights_arr) > 0){
+					$this->GlobalConfigModel->insertGroupRights($group_rights_arr);
+				}
+				$messages = "Group added successfully.";
+				$success = 1;
+			}
+		}
+		$result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
+	}
+
 
 }

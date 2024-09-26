@@ -944,7 +944,7 @@ class SupplierParts extends CI_Model {
     public function getInspectionsReportView($condition_arr = [],$search_params = []){
         $clientId = $this->Unit->getSessionClientId();
 
-// Main query to fetch required data
+    // Main query to fetch required data
         $this->db->select('
             grn.*, 
             po.*, 
@@ -954,7 +954,7 @@ class SupplierParts extends CI_Model {
         ');
         $this->db->from('grn_details grn');
         $this->db->join('new_po po', 'po.id = grn.po_number', 'left');
-        $this->db->join('inwarding inward', 'inward.id = grn.inwarding_id', 'left');
+        $this->db->join('inwarding inward', 'inward.id = grn.inwarding_id AND inward.status = "validate_grn"', 'left');
         $this->db->join('supplier supplier', 'supplier.id = po.supplier_id', 'left');
         $this->db->join('child_part child_part', 'child_part.id = grn.part_id', 'left');
         $this->db->join('po_parts po_parts', 'po.id = po_parts.po_id AND grn.part_id = po_parts.part_id', 'left');
@@ -1065,7 +1065,7 @@ class SupplierParts extends CI_Model {
 
         $this->db->select('parts.*, stock.*, uom_data.*, child_part_type.*, 
         SUM(IFNULL(grn_details.reject_qty, 0)) AS scrap_stock, 
-        SUM(CASE WHEN grn_details.accept_qty = 0 THEN IFNULL(grn_details.verified_qty, 0) ELSE 0 END) AS underinspection_stock, 
+        SUM( CASE WHEN grn_details.accept_qty = 0 && inw.status = "validate_grn"  THEN IFNULL(grn_details.verified_qty, 0)ELSE 0 END) AS underinspection_stock, 
         SUM(IFNULL(job_card_details.store_reject_qty, 0)) AS store_scrap, 
         (SUM(IFNULL(stock.stock, 0)) * parts.store_stock_rate) AS total_value');
         $this->db->from('child_part parts');
@@ -1073,6 +1073,7 @@ class SupplierParts extends CI_Model {
         $this->db->join('uom uom_data', 'parts.uom_id = uom_data.id', 'left');
         $this->db->join('part_type child_part_type', 'parts.child_part_id = child_part_type.id', 'left');
         $this->db->join('grn_details', 'parts.id = grn_details.part_id', 'left');
+        $this->db->join('inwarding inw', 'inw.id = grn_details.inwarding_id', 'left');
         $this->db->join('job_card_details', 'parts.part_number = job_card_details.item_number', 'left');
         $this->db->group_by('parts.id');
         // $this->db->order_by('parts.id', 'desc');
@@ -1347,6 +1348,37 @@ class SupplierParts extends CI_Model {
         // pr($this->db->last_query(),1);
         return $ret_data;
     }
+
+    /**
+     * Read all part details including stock
+     */
+    public function getSupplierPartByIds($id = array(), $unitId=null) {
+        if(empty($unitId)){
+            $unitId = $this->Unit->getSessionClientId() ;
+        }
+        
+        $unitId = $this->Unit->getSessionClientId();
+        $this->db->select('parts.*, stock.*,stock.childPartId');
+        $this->db->from('child_part parts');
+        $this->db->join('child_part_stock stock', 'parts.id = stock.childPartId AND stock.clientId = ' . $unitId .'', 'left');
+        $this->db->where_in(' parts.id', $id);
+        $query = $this->db->get();
+        $parts_data = $query->result();
+        
+        return $parts_data;
+    }
+
+    /**
+     * Read all part details including stock
+     */
+    public function updateBatchSupplierPartByIds($update_data = array()) {
+        $affected_rows = $this->db->update_batch("child_part_stock", $update_data, "childPartStockId");
+        $affected_rows = $affected_rows == 0 ? 1 : $affected_rows;
+        return $affected_rows;
+    }
+
+
+    
 
 }
 ?>

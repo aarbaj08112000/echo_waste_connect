@@ -758,6 +758,9 @@ $route['cancel_eWayBill'] = 'NewEWayBillController/cancel_eWayBill';
 #$route['add_MultiVehicleDet_EWayBill'] = 'NewEWayBillController/add_MultiVehicleDet_EWayBill';
 
 #========================== Adaequare ENDS ===========================================
-$route['test_tpl'] = 'welcome/test_tpl';
+// $route['test_tpl'] = 'welcome/test_tpl';
+// $route['group_master'] = 'GlobalConfigController/groupMaster';
+// $route['group_menu'] = 'GlobalConfigController/groupMenu';
+// $route['forbidden_page'] = 'welcome/forbidden_page';
 
 

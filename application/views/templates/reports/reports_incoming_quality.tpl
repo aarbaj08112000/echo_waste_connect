@@ -102,7 +102,7 @@
 
                             <!-- /.card-header -->
                             <div class="">
-                            <div class="table-responsive text-nowrap">
+                            <div class=" text-nowrap">
                                 <table id="income_report" class="table  table-striped">
                                     <thead>
 

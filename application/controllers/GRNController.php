@@ -549,7 +549,7 @@ class GRNController extends CommonController
         		$messages = "Something went wrong.";
 				$inwarding_id = $this->input->post('inwarding_id');
 				$status = $this->input->post('status');
-
+				// pr($this->input->post(),1);
 				$data = array(
 					"status" => $status
 				);

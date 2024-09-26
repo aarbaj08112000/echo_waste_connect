@@ -106,7 +106,7 @@
         <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
         <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
 
-        <button type="button" title="Add Rejection" class="btn btn-seconday float-left" data-bs--toggle="modal" data-bs-target="#exampleModal">
+        <button type="button" title="Add Rejection" class="btn btn-seconday float-left" data-bs-toggle="modal" data-bs-target="#exampleModal">
           <i class="ti ti-plus"></i>
         </button>
         <%assign var='base_url' value='p_q_molding_production' %>
@@ -117,245 +117,123 @@
 
       </div>
 
-      <div class="modal fade" id="addPromo" tabindex="-1" role="dialog"
-      aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div
+    class="modal fade"
+    id="exampleModal"
+    role="dialog"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role=" document">
         <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Add Molding Production Quantity</h5>
-            <button type="button" class="btn-close" data-bs--dismiss="modal" aria-label="Close">
-
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="form-group">
-              <form
-              action="<%base_url('add_production_qty_molding_production') %>"
-              method="POST" enctype="multipart/form-data">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Rejection</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <div class="form-group">
-              <label for="on click url">Customer Name / Part Number / Part Description<span
-                class="text-danger">*</span></label>
-                <select required name="customer_part_id" id="" class="form-control select2">
-                  <option value="">Select</option>
-                  <%if ($customer_part_new) %>
-                  <%foreach from=$customer_part_new item=s %>
-                  <option value="<%$s->id %>">
-                    <%$s->customer_name %> / <%$s->part_number %> / <%$s->part_description %>
-                  </option>
-                  <%/foreach%>
-                  <%/if%>
-                </select>
-              </div>
-              <div class="row">
-                <div class="col-lg-6">
-                  <div class="form-group">
-                    <label for="on click url">Machine<span
-                      class="text-danger">*</span></label>
-                      <select required name="machine_id" id="" class="form-control select2">
-                        <option value="">Select</option>
-                        <%if ($machine) %>
-                        <%foreach from=$machine item=s %>
-                        <option value="<%$s->id %>"><%$s->name %></option>
-                        <%/foreach%>
-                        <%/if%>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-lg-6">
-                    <div class="form-group">
-                      <label for="on click url">Select Customer Part / Mold Name / Cavity<span class="text-danger">*</span></label>
-                      <select required name="mold_id" id="" class="form-control select2">
-                        <%if ($mold_maintenance) %>
-                        <%foreach from=$mold_maintenance item=s %>
-                        <option value="<%$s->id %>">
-                          <%$s->part_number %>/<%$s->part_description %>/<%$s->mold_name %>/<%$s->no_of_cavity %>
-                        </option>
-                        <%/foreach%>
-                        <%/if%>
-                      </select>
-                    </div>
-                  </div>
-                </div>
+            <form action="<%base_url('add_rejection_details') %>" method="POST" id="add_rejection_details" class="add_rejection_details custom-form">
+            <div class="modal-body">
                 <div class="row">
-                  <div class="col-lg-6">
-                    <div class="form-group">
-                      <label for="on click url">Date
-                        <span class="text-danger">*</span></label>
-                        <input max="<%date('Y-m-d') %>" type="date"
-                        value="<%date('Y-m-d') %>" name="date" required
-                        class="form-control">
-                      </div>
-                    </div>
-                    <div class="col-lg-6">
-                      <div class="form-group">
-                        <label required for="on click url">Shift Type / Name / Start Time /
-                          End Time<span class="text-danger">*</span></label>
-                          <select name="shift_id" name="" id="" class="form-control select2">
-                            <option value="">Select</option>
-                            <%if ($shifts) %>
-                            <%foreach from=$shifts item=s %>
-                            <option value="<%$s->id %>">
-                              <%$s->shift_type %> / <%$s->name %> / <%$s->start_time %> / <%$s->end_time %>
-                            </option>
-                            <%/foreach%>
-                            <%/if%>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-lg-6">
-                        <div class="form-group">
-                          <label for="on click url">Production OK Quantity<span
-                            class="text-danger">*</span></label>
-                            <input type="number" min="1" value="0" name="qty" required
-                            class="form-control">
-                          </div>
-                        </div>
-                        <div class="col-lg-6">
-                          <div class="form-group">
-                            <label for="on click url">Production Rejection<span
-                              class="text-danger">*</span></label>
-                              <input type="number" min="0" value="0" name="rejection_qty" required
-                              class="form-control">
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-lg-4">
+                    <div class="col-12">
+                        
                             <div class="form-group">
-                              <label for="on click url">Production Minutes<span
-                                class="text-danger">*</span></label>
-                                <input type="number" step="any" name="production_hours" required
-                                class="form-control">
-                              </div>
+                                <label for="">Rejection Reason<span class="text-danger">*</span></label>
+                                <select
+                                    name="rejection_reason"
+                                    id=""
+                                    class="form-control select2 required-input"
+                                    >
+                                    <%foreach from=$reject_remark item=r    %>
+                                    <option value="<%$r->id %>">
+                                        <%$r->name %>
+                                    </option>
+                                    <%/foreach%>
+                                </select>
                             </div>
-                            <div class="col-lg-4">
-                              <div class="form-group">
-                                <label for="on click url">Downtime in min <span
-                                  class="text-danger">*</span></label>
-                                  <input type="number" step="any" name="downtime_in_min" required
-                                  class="form-control">
-                                </div>
-                              </div>
-                              <div class="col-lg-4">
-                                <div class="form-group">
-                                  <label for="on click url">Setup in min <span
-                                    class="text-danger">*</span></label>
-                                    <input type="number" step="any" name="setup_time_in_min" required
-                                    class="form-control">
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="row">
-                                <div class="col-lg-4">
-                                  <div class="form-group">
-                                    <label for="on click url">Finish Part Weight <span
-                                      class="text-danger">*</span></label>
-                                      <input type="number" step="any" name="finish_part_weight" required
-                                      class="form-control">
-                                    </div>
-                                  </div>
-                                  <div class="col-lg-4">
-                                    <div class="form-group">
-                                      <label for="on click url">Runner Weight <span
-                                        class="text-danger">*</span></label>
-                                        <input type="number" step="any" name="runner_weight" required
-                                        class="form-control">
-                                      </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                      <div class="form-group">
-                                        <label for="on click url">Wastage / Gattha / Lumps (Kg)<span
-                                          class="text-danger">*</span></label>
-                                          <input type="number" step="any" name="wastage" required
-                                          class="form-control">
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div class="row">
-                                      <div class="col-lg-6">
-                                        <div class="form-group">
-                                          <label for="on click url">Cycle Time Per Shot (sec) <span
-                                            class="text-danger">*</span></label>
-                                            <input type="number" step="any" name="cycle_time" required
-                                            class="form-control">
-                                          </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                          <div class="form-group">
-                                            <label for="on click url">Operator<span
-                                              class="text-danger">*</span></label>
-                                              <select required name="operator_id" id="" class="form-control select2">
-                                                <option value="">Select</option>
-                                                <%if ($operator) %>
-                                                <%foreach from=$operator item=s %>
-                                                <option value="<%$s->id %>"><%$s->name %></option>
-                                                <%/foreach%>
-                                                <%/if%>
-                                              </select>
-                                            </div>
-                                          </div>
-                                        </div>
-                                        <div class="form-group">
-                                          <label for="on click url">Remark</label>
-                                          <input type="text" name="remark" class="form-control">
-                                        </div>
-                                      </div>
-                                      <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary">Save changes</button>
-                                      </form>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
+
+                            <div class="form-group">
+                                <label for="">Rejection Qty<span class="text-danger">*</span></label>
+                                <input
+                                    type="text"
+                                    name="rejection_qty"
+                                    
+                                    value=""
+                                    class="form-control required-input">
+                                <input
+                                    type="hidden"
+                                    readonly="readonly"
+                                    class="form-control"
+                                    name="molding_production_id"
+                                    value="<%$molding_production_id %>">
+                            </div>
+                            <div class="form-group">
+                                <label for="">Cavity</label>
+                                <input type="text" name="cavity" value="" class="form-control">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card p-0 mt-4">     
+<div class="card-header">
+<div class="row">
+    <div class="tgdp-rgt-tp-sect">
+        <p class="tgdp-rgt-tp-ttl">Customer Name</p>
+        <p class="tgdp-rgt-tp-txt">
+        <%$customer_part_details[0]->customer_name %>
+        </p>
+    </div>
+    <div class="tgdp-rgt-tp-sect">
+        <p class="tgdp-rgt-tp-ttl">Part Number</p>
+        <p class="tgdp-rgt-tp-txt">
+        <%$customer_part_details[0]->part_number %>
+        </p>
+    </div>
+    <div class="tgdp-rgt-tp-sect">
+        <p class="tgdp-rgt-tp-ttl">Part Description</p>
+        <p class="tgdp-rgt-tp-txt" title="12">
+        <%$customer_part_details[0]->part_description %>
+        </p>
+    </div>
+    <div class="tgdp-rgt-tp-sect">
+    <p class="tgdp-rgt-tp-ttl">Supplier Location</p>
+    <p class="tgdp-rgt-tp-txt" title="12">
+        12
+    </p>
+</div>
+<div class="tgdp-rgt-tp-sect">
+    <p class="tgdp-rgt-tp-ttl">Date</p>
+    <p class="tgdp-rgt-tp-txt" title="12">
+    <%$molding_prod_details[0]->date %>
+    </p>
+</div>
+<div class="tgdp-rgt-tp-sect">
+    <p class="tgdp-rgt-tp-ttl">Shift</p>
+    <p class="tgdp-rgt-tp-txt" title="12">
+    <%$molding_prod_details[0]->shift_type %>/<%$molding_prod_details[0]->shift_name %>
+    </p>
+</div>
+<div class="tgdp-rgt-tp-sect">
+    <p class="tgdp-rgt-tp-ttl">Machine</p>
+    <p class="tgdp-rgt-tp-txt" title="12">
+    <%$molding_prod_details[0]->name %>
+    </p>
+</div>
+
+</div>
+</div>
+</div>
 
                               <!-- Main content -->
                               <div class="card p-0 mt-4">
-                                <div class="row">
-                                  <div class="col-lg-3">
-                                    <div class="form-group">
-                                      <label for="po_num">Customer Name</label>
-                                      <input type="text" readonly value="<%$customer_part_details[0]->customer_name %>" required class="form-control">
-                                    </div>
-                                  </div>
-                                  <div class="col-lg-2">
-                                    <div class="form-group">
-                                      <label for="po_num">Part Number</label>
-                                      <input type="text" readonly value="<%$customer_part_details[0]->part_number %>" required class="form-control">
-                                    </div>
-                                  </div>
-                                  <div class="col-lg-2">
-                                    <div class="form-group">
-                                      <label for="po_num">Part Description</label>
-                                      <input type="text" readonly value="<%$customer_part_details[0]->part_description %>" required class="form-control">
-                                    </div>
-                                  </div>
-                                  <div class="col-lg-2">
-                                    <div class="form-group">
-                                      <label for="date">Date</label>
-                                      <input type="text" readonly value="<%$molding_prod_details[0]->date %>" required class="form-control">
-                                    </div>
-                                  </div>
-                                  <div class="col-lg-1">
-                                    <div class="form-group">
-                                      <label for="po_num">Shift</label><br>
-                                      <label for="po_num">
-
-                                        <%$molding_prod_details[0]->shift_type %>/<%$molding_prod_details[0]->shift_name %>
-                                      </div>
-                                    </div>
-                                    <div class="col-lg-2">
-                                      <div class="form-group">
-                                        <label for="po_num">Machine</label>
-                                        <input type="text" readonly value="<%$molding_prod_details[0]->name %>" required class="form-control">
-                                      </div>
-                                    </div>
-
-                                  </div>
+                                
                                   <div class="table-responsive text-nowrap">
                                     <table width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped" style="border-collapse: collapse;" border-color="#e1e1e1" id="rejection_details">
                                       <thead>
@@ -377,9 +255,9 @@
                                           <td><%$r->rejection_qty %></td>
                                           <td><%$r->cavity %></td>
                                           <td>
-                                            <button type="submit" data-bs-toggle="modal" class="btn btn-sm btn-primary" data-bs-target="#exampleModal2<%$i %>"> <i class="fas fa-edit"></i></button>
+                                            <a type="submit" data-bs-toggle="modal" class="" data-bs-target="#exampleModal2<%$i %>"> <i class="ti ti-edit"></i></a>
                                             <div class="modal fade" id="exampleModal2<%$i %>" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                              <div class="modal-dialog modal-lg" role="document">
+                                              <div class="modal-dialog  modal-dialog-centered" role="document">
                                                 <div class="modal-content">
                                                   <div class="modal-header">
                                                     <h5 class="modal-title" id="exampleModalLabel">Update Rejection</h5>
@@ -387,13 +265,14 @@
                                                       <span aria-hidden="true">&times;</span>
                                                     </button>
                                                   </div>
+                                                  <form action="<%base_url('update_rejection_details') %>" id="update_rejection_details<%$i %>" class="update_rejection_details update_rejection_details<%$i %> custom-form" method="POST">
                                                   <div class="modal-body">
-                                                    <form action="<%base_url('update_rejection_details') %>" method="POST">
+                                                   
                                                       <div class="form-group">
                                                         <label for="">Rejection Reason<span
                                                           class="text-danger">*</span></label>
                                                           <select name="rejection_reason" id=""
-                                                          class="form-control select2" required>
+                                                          class="form-control select2 required-input" >
                                                           <%foreach from=$reject_remark item=rr %>
                                                           <option
                                                           value="<%$rr->id %>"
@@ -409,9 +288,9 @@
                                                         class="text-danger">*</span></label>
                                                         <input type="text"
                                                         name="rejection_qty"
-                                                        required
+                                                        
                                                         value="<%$r->rejection_qty %>"
-                                                        class="form-control">
+                                                        class="form-control  required-input">
                                                         <input type="hidden"
                                                         readonly class="form-control"
                                                         name="molding_production_id"
@@ -437,22 +316,22 @@
                                                 </div>
                                               </div>
                                             </div>
-                                            <button type="submit" data-bs-toggle="modal" class="btn btn-sm btn-danger ml-4" data-bs-target="#exampleModal3<%$i %>"> <i class="far fa-trash-alt"></i></button>
+                                            <a type="submit" data-bs-toggle="modal" class=" ml-4" data-bs-target="#exampleModal3<%$i %>"> <i class="ti ti-trash"></i></a>
                                             <!-- Button trigger modal -->
                                             <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                             Launch demo modal
                                           </button> -->
                                           <!-- Modal -->
                                           <div class="modal fade" id="exampleModal3<%$i %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
                                               <div class="modal-content">
                                                 <div class="modal-header">
                                                   <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
-                                                  <button type="button" class="close" data-bs-dismiss="modal" aria-label="Cancel">
+                                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel">
                                                     <span aria-hidden="true">&times;</span>
                                                   </button>
                                                 </div>
-                                                <form action="<%base_url('delete') %>" method="POST">
+                                                <form action="<%base_url('delete') %>" id="delete_row<%$i %>" class="delete_row<%$i %> delete_row" method="POST">
                                                   <div class="modal-body">
                                                     <input value="<%$r->id %>" name="id" type="hidden" required class="form-control">
                                                     <input value="mold_production_rejection_details" name="table_name" type="hidden" required class="form-control">
@@ -483,4 +362,4 @@
                             <div class="content-backdrop fade"></div>
                           </div>
 
-                          <script src="<%$base_url%>public/js/production/rejection_details.js"></script>
+                          <script src="<%base_url()%>public/js/production/rejection_details.js"></script>

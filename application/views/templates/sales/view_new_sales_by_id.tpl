@@ -205,42 +205,63 @@
             <%/if%>
             <%if $new_sales[0]->status == "lock" || $new_sales[0]->status == "pending"%>
             <div class="card mt-3">
-               <div class="card-header">
+               <div class="card-header pdf-btn-block">
                     <div class="row">
                     <%if $new_sales[0]->status == "lock" || $new_sales[0]->status == "pending"%>
-                    <div class="col-lg-1" style="    width: 9%;">
-                        <div class="form-group">
+                    <div class="col-lg-1 view-original" >
+                        <div class="form-group ">
                             <a class="btn btn-success" href="<%$base_url%>view_generate_sales_invoice/<%$uri_segment_2%>" target="_blank">View Original</a>
                         </div>
                     </div>
                     <%/if%>
                     <%if $new_sales[0]->status == "lock"%>
-                    <div class="col-lg-1" style="    width: 9%;">
+                    <div class="col-lg-1 original" >
                         <div class="form-group">
                             <a class="btn btn-success" href="<%$base_url%>generate_sales_invoice/<%$uri_segment_2%>/ORIGINAL_FOR_RECIPIENT">Original</a>
                         </div>
                     </div>
-                    <div class="col-lg-1" style="    width: 9%;">
+                    <div class="col-lg-1 duplicate" >
                         <div class="form-group">
                             <a class="btn btn-success" href="<%$base_url%>generate_sales_invoice/<%$uri_segment_2%>/DUPLICATE_FOR_TRANSPORTER">Duplicate</a>
                         </div>
                     </div>
-                    <div class="col-lg-1" style="    width: 9%;">
+                    <div class="col-lg-1 triplicate" >
                         <div class="form-group">
                             <a class="btn btn-success" href="<%$base_url%>generate_sales_invoice/<%$uri_segment_2%>/TRIPLICATE_FOR_SUPPLIER">Triplicate</a>
                         </div>
                     </div>
-                    <div class="col-lg-1" style="margin-right: 30px; width: 9%;">
+                    <div class="col-lg-1 acknowledge" >
                         <div class="form-group" >
                             <a class="btn btn-success" href="<%$base_url%>generate_sales_invoice/<%$uri_segment_2%>/ACKNOWLEDGEMENT_COPY">Acknowledge</a>
                         </div>
                     </div>
-                    <div class="col-lg-1" style="    width: 9%;">
+                    <div class="col-lg-1 extra-copy" >
                         <div class="form-group">
                             <a class="btn btn-success" href="<%$base_url%>generate_sales_invoice/<%$uri_segment_2%>/EXTRA_COPY">Extra Invoice</a>
                         </div>
                     </div>
-                    <div class="col-lg-1" style="    width: 12%;">
+                    <%if empty($einvoice_res_data[0]->Status)%>
+                        <%if empty($einvoice_res_data[0]->Irn)%>
+                          <div class="col-lg-1 extra-copy" >
+                              <div class="form-group">
+                                   <a class="btn btn-info "  href="<%base_url('generate_E_invoice/')%><%$uri_segment_2%>/EINVOICE" target="_blank">E-Invoice </a>
+                              </div>
+                          </div>
+                        <%else%>
+                          <div class="col-lg-1 extra-copy" >
+                              <div class="form-group">
+                                   <a class="btn btn-info"  href="<%base_url('get_E_invoice/')%><%$uri_segment_2%>">Get E-Invoice Details</a>
+                              </div>
+                          </div>
+                        <%/if%>
+                    <%/if%>
+                    <?php
+                              $new_sales_id = $this->uri->segment('2');
+                              $status = $einvoice_res_data[0]->Status;
+                              $irnNo = $einvoice_res_data[0]->Irn;
+                              if (empty($status)) {
+                                  
+                    <div class="col-lg-1 packaging-sticker" >
                         <div class="form-group">
                             <button type="button" class="btn btn-info" data-bs-toggle="modal"
                                 data-bs-target="#printForTally" id="printSticker">
@@ -269,37 +290,37 @@
             <!-- Print selection -->
             <form action="<%$base_url%>print_sales_invoice/<%$uri_segment_2%>" method="post" class="mt-4">
                <div class="row">
-                  <div class="col-lg-1 mt-2">
+                  <div class="col-lg-1 mt-2 original-check">
                      <div class="form-group">    
                         <input type="checkbox" id="original" name="interests[]" value="ORIGINAL_FOR_RECIPIENT">
                         <label for="original">Original</label><br>
                      </div>
                   </div>
-                  <div class="col-lg-1  mt-2">
+                  <div class="col-lg-1  mt-2 duplicate-check">
                      <div class="form-group">    
                         <input type="checkbox" id="duplicate" name="interests[]" value="DUPLICATE_FOR_TRANSPORTER">
                         <label for="duplicate">Duplicate</label><br>
                      </div>
                   </div>
-                  <div class="col-lg-1 mt-2">
+                  <div class="col-lg-1 mt-2 triplicate-check">
                      <div class="form-group">
                         <input type="checkbox" id="triplicate" name="interests[]" value="TRIPLICATE_FOR_SUPPLIER">
                         <label for="triplicate">Triplicate</label><br>
                      </div>
                   </div>
-                  <div class="col-lg-1 mt-2">
+                  <div class="col-lg-1 mt-2 acknowledge-check">
                      <div class="form-group" >   
                         <input type="checkbox" id="acknowledge" name="interests[]" value="ACKNOWLEDGEMENT_COPY">
                         <label for="acknowledge">Acknowledge</label><br>
                      </div>
                   </div>
-                  <div class="col-lg-1 mt-2">
+                  <div class="col-lg-1 mt-2 extra-copy-check">
                      <div class="form-group">   
                         <input type="checkbox" id="extraCopy" name="interests[]" value="EXTRA_COPY">
-                        <label for="extraCopy">EXTRA COPY</label><br>
+                        <label for="extraCopy">Extra Copy</label><br>
                      </div>
-                  </div>
-                  <div class="col-lg-1">
+                  </div>        
+                  <div class="col-lg-1 print-btn">
                      <div class="form-group">
                         <button type="submit" onclick="this.form.target='_blank';return true;" class="btn btn-info btn"> Print </button>
                      </div>

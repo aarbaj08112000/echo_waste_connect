@@ -332,7 +332,7 @@ class CustomerPart extends CI_Model {
             m_req.id AS request_no, 
             m.name AS machine_name, 
             o.name AS operator_name, 
-            CONCAT(part_master.part_number,"<br>(", part.part_description,")") AS customer_part, 
+            CONCAT(part.part_number,"<br>(", part.part_description,")") AS customer_part, 
             CONCAT(child.part_number,"<br>(",child.part_description,")") AS child_part, 
             u.uom_name, 
             req_parts.qty, 

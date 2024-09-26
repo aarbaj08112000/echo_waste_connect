@@ -10,6 +10,7 @@ const page = {
     init: function() {
         this.filter();
         this.dataTable();
+        this.validate_form();
         
     },
     dataTable: function() {
@@ -83,8 +84,8 @@ const page = {
           });
         },1000)
         // table = $('#example1').DataTable();
-        this.serachParams();
-        this.serachParams();
+        // this.serachParams();
+        // this.serachParams();
   
     },
     filter: function(){
@@ -108,32 +109,151 @@ const page = {
         });
     },
     serachParams: function(){
-        table.draw(); // Trigger DataTables redraw
-        $.fn.dataTable.ext.search.push(
-            function(settings, data, dataIndex) {
-                var date_range_filter =  $("#date_range_filter").val();
-                var dates = date_range_filter.split(' - ');
-                var startDate = dates[0].replace(/\//g, '-');
-                var endDate = dates[1].replace(/\//g, '-');
-                
-                var date = data[2]; // Assuming the date is in the 5th column (index 4)
-
-                if (
-                    (startDate === '' && endDate === '') ||
-                    (startDate === '' && new Date(date) <= new Date(endDate)) ||
-                    (new Date(startDate) <= new Date(date) && endDate === '') ||
-                    (new Date(startDate) <= new Date(date) && new Date(date) <= new Date(endDate))
-                ) {
-                    return true;
-                }
-                return false;
+        let that = this;
+        var date_filter_val = $("#date_range_filter").val();
+        console.log(date_filter_val);
+        $.ajax({
+            url: base_url+'P_Molding/filter_p_q_molding_production_data',
+            type: "POST",
+            data: {
+                date_filter_val: date_filter_val
+            },
+            cache: false,
+            success: function(response) {
+                let response_arr = JSON.parse(response);
+                console.log(response_arr.html);
+                $('#p_q_molding_production_view').DataTable().destroy();
+                $("#p_q_molding_production_view tbody").html(response_arr.html);
+                that.dataTable();
             }
-        );
+        });
+
+        // table.draw(); // Trigger DataTables redraw
+        // $.fn.dataTable.ext.search.push(
+        //     function(settings, data, dataIndex) {
+        //         var date_range_filter =  $("#date_range_filter").val();
+        //         var dates = date_range_filter.split(' - ');
+        //         var startDate = dates[0].replace(/\//g, '-');
+        //         var endDate = dates[1].replace(/\//g, '-');
+                
+        //         var date = data[2]; // Assuming the date is in the 5th column (index 4)
+
+        //         if (
+        //             (startDate === '' && endDate === '') ||
+        //             (startDate === '' && new Date(date) <= new Date(endDate)) ||
+        //             (new Date(startDate) <= new Date(date) && endDate === '') ||
+        //             (new Date(startDate) <= new Date(date) && new Date(date) <= new Date(endDate))
+        //         ) {
+        //             return true;
+        //         }
+        //         return false;
+        //     }
+        // );
     },
     resetFilter: function(){
         $('#date_range_filter').data('daterangepicker').setStartDate(start_date);
         $('#date_range_filter').data('daterangepicker').setEndDate(end_date);
         this.serachParams();
     },
+    validate_form: function(){
+        let that = this;
+        $(".update_p_q_molding_production").submit(function(e){
+        e.preventDefault();
+        var href = $(this).attr("action");
+        var id = $(this).attr("id");
+        let flag = that.formValidate(id);
+
+        if(flag){
+          return;
+        }
+        console.log(flag);
+        return;
+        var formData = new FormData($('.'+id)[0]);
+
+        $.ajax({
+          type: "POST",
+          url: href,
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function (response) {
+            var responseObject = JSON.parse(response);
+            var msg = responseObject.messages;
+            var success = responseObject.success;
+            if (success == 1) {
+              toastr.success(msg);
+              $(this).parents(".modal").modal("hide")
+              setTimeout(function(){
+                window.location.reload();
+              },1000);
+
+            } else {
+              toastr.error(msg);
+            }
+          },
+          error: function (error) {
+            console.error("Error:", error);
+          },
+        });
+      });
+    },
+    formValidate: function(form_class = ''){
+        let flag = false;
+        $(".custom-form."+form_class+" .required-input").each(function( index ) {
+          var value = $(this).val();
+          var dataMax = parseFloat($(this).attr('data-max'));
+          var dataMin = parseFloat($(this).attr('data-min'));
+          if(value == ''){
+            flag = true;
+            var label = $(this).parents(".form-group").find("label").contents().filter(function() {
+              return this.nodeType === 3; // Filter out non-text nodes (nodeType 3 is Text node)
+            }).text().trim();
+            var exit_ele = $(this).parents(".form-group").find("label.error");
+            if(exit_ele.length == 0){
+              var start ="Please enter ";
+              if($(this).prop("localName") == "select"){
+                var start ="Please select ";
+              }
+              label = ((label.toLowerCase()).replace("enter", "")).replace("select", "");
+              var validation_message = start+(label.toLowerCase()).replace(/[^\w\s*]/gi, '');
+              var label_html = "<label class='error'>"+validation_message+"</label>";
+              $(this).parents(".form-group").append(label_html)
+            }
+          }
+          else if(dataMin !== undefined && dataMin > value){
+            flag = true;
+            var label = $(this).parents(".form-group").find("label").contents().filter(function() {
+              return this.nodeType === 3; // Filter out non-text nodes (nodeType 3 is Text node)
+            }).text().trim();
+            var exit_ele = $(this).parents(".form-group").find("label.error");
+            if(exit_ele.length == 0){
+              var end =" must be greater than or equal to "+dataMin;
+              label = ((label.toLowerCase()).replace("enter", "")).replace("select", "");
+              label = (label.toLowerCase()).replace(/[^\w\s*]/gi, '');
+              label = label.charAt(0).toUpperCase() + label.slice(1);
+              var validation_message =label +end;
+              var label_html = "<label class='error'>"+validation_message+"</label>";
+              $(this).parents(".form-group").append(label_html)
+            }
+            }else if(dataMax !== undefined && dataMax < value){
+              flag = true;
+              var label = $(this).parents(".form-group").find("label").contents().filter(function() {
+                return this.nodeType === 3; // Filter out non-text nodes (nodeType 3 is Text node)
+              }).text().trim();
+              var exit_ele = $(this).parents(".form-group").find("label.error");
+              if(exit_ele.length == 0){
+                var end =" must be less than or equal to "+dataMax;
+                label = ((label.toLowerCase()).replace("enter", "")).replace("select", "");
+                label = (label.toLowerCase()).replace(/[^\w\s*]/gi, '');
+                label = label.charAt(0).toUpperCase() + label.slice(1)
+                var validation_message =label +end;
+                var label_html = "<label class='error'>"+validation_message+"</label>";
+                $(this).parents(".form-group").append(label_html)
+              }
+          }
+        });
+       
+        return flag;
+    }
    
 };

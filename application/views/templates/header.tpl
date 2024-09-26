@@ -433,51 +433,22 @@
                      Purchase
                      </a>
                      <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkPurchaseSubmenu">
-                        <li class="dropdown-submenu">
-                           <a href="javascript:void(0)" class="dropdown-toggle dropdown-item" data-toggle="dropdown" aria-expanded="false">Item Master</a>
-                           <ul class="dropdown-menu">
-                              <li><a href="<%base_url('child_part/direct')%>" class="dropdown-item">Add Item</a></li>
-                              <li><a href="<%base_url('child_part_view')%>" class="dropdown-item">View Item</a></li>
-                           </ul>
+                        <li >
+                           <a href="<%base_url('new_po')%>" class="dropdown-item">Purchase PO</a>
                         </li>
-                        <li class="dropdown-submenu">
-                           <a href="javascript:void(0)" class="dropdown-toggle dropdown-item" data-toggle="dropdown" aria-expanded="false">Supplier Parts</a>
-                           <ul class="dropdown-menu">
-                              <li><a href="<%base_url('child_part_supplier')%>" class="dropdown-item">Add Supplier Parts price</a></li>
-                              <li><a href="<%base_url('child_part_supplier_view')%>" class="dropdown-item">View Supplier Parts price</a></li>
-                           </ul>
+                        <li><a href="<%base_url('new_po_sub')%>" class="dropdown-item">Subcon PO</a></li>
+                        <li><a href="<%base_url('new_po_list_supplier')%>" class="dropdown-item">Supplierwise PO List</a></li>
+                        <li >
+                           <a href="<%base_url('child_part_view')%>" class="dropdown-item">Item Master</a>
                         </li>
-                        <li class="dropdown-submenu">
-                           <a href="javascript:void(0)" class="dropdown-toggle dropdown-item" data-toggle="dropdown" aria-expanded="false">Supplier</a>
-                           <ul class="dropdown-menu">
-                              <li><a href="<%base_url('add_supplier')%>" class="dropdown-item">Add Supplier</a></li>
-                              <li><a href="<%base_url('approved_supplier')%>" class="dropdown-item">View Supplier</a></li>
-                           </ul>
+                        <li >
+                           <a href="<%base_url('child_part_supplier_view')%>" class="dropdown-item">Purchase Parts Price</a>
                         </li>
-                        <li class="dropdown-submenu">
-                           <a href="javascript:void(0)" class="dropdown-toggle dropdown-item" data-toggle="dropdown" aria-expanded="false">Regular PO</a>
-                           <ul class="dropdown-menu">
-                              <li><a href="<%base_url('new_po')%>" class="dropdown-item">Generate PO</a></li>
-                              <li><a href="<%base_url('new_po_list_supplier')%>" class="dropdown-item">Supplierwise PO List</a></li>
-                              <li><a href="<%base_url('pending_po')%>" class="dropdown-item">Pending PO</a></li>
-                              <li><a href="<%base_url('rejected_po')%>" class="dropdown-item">Reject PO</a></li>
-                              <li><a href="<%base_url('expired_po')%>" class="dropdown-item">Expired PO</a></li>
-                              <li><a href="<%base_url('closed_po')%>" class="dropdown-item">Closed PO</a></li>
-                           </ul>
+                        <li >
+                           <a href="<%base_url('approved_supplier')%>" class="dropdown-item">Supplier</a>
                         </li>
-                        <li class="dropdown-submenu">
-                           <a href="javascript:void(0)" class="dropdown-toggle dropdown-item" data-toggle="dropdown" aria-expanded="false">Sub Con</a>
-                           <ul class="dropdown-menu">
-                              <li><a href="<%base_url('new_po_sub')%>" class="dropdown-item">Generate subcon PO</a></li>
-                              <li><a href="<%base_url('new_po_list_supplier')%>" class="dropdown-item">view subcon po list </a></li>
-                              <li><a href="<%base_url('routing')%>" class="dropdown-item">subcon routing</a></li>
-                              <li><a href="<%base_url('routing_customer')%>" class="dropdown-item">customer subcon routing</a></li>
-                              <li><a href="<%base_url('pending_po')%>" class="dropdown-item">Pending PO</a></li>
-                              <li><a href="<%base_url('rejected_po')%>" class="dropdown-item">Reject PO</a></li>
-                              <li><a href="<%base_url('expired_po')%>" class="dropdown-item">Expired PO</a></li>
-                              <li><a href="<%base_url('closed_po')%>" class="dropdown-item">Closed PO</a></li>
-                           </ul>
-                        </li>
+                        <li><a href="<%base_url('routing')%>" class="dropdown-item">Subcon routing</a></li>
+                        <li><a href="<%base_url('routing_customer')%>" class="dropdown-item">customer subcon routing</a></li>
                      </ul>
                   </li>
                   <%/if%>
@@ -487,13 +458,8 @@
                      Store
                      </a>
                      <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkStoreSubmenu">
-                        <li class="dropdown-submenu">
-                           <a href="javascript:void(0)" class="dropdown-toggle dropdown-item" data-toggle="dropdown" aria-expanded="false">Inwarding</a>
-                           <ul class="dropdown-menu">
-                              <li><a href="<%base_url('inwarding')%>" class="dropdown-item">Part GRN</a></li>
-                              <li><a href="<%base_url('grn_validation')%>" class="dropdown-item">GRN Qty validation</a></li>
-                           </ul>
-                        </li>
+                        <li><a href="<%base_url('inwarding')%>" class="dropdown-item">GRN Entry</a></li>
+                        <li><a href="<%base_url('grn_validation')%>" class="dropdown-item">GRN Qty Validation</a></li>
                         <li class="dropdown-submenu">
                            <a href="javascript:void(0)" class="dropdown-toggle dropdown-item" data-toggle="dropdown" aria-expanded="false">Challan</a>
                            <ul class="dropdown-menu">
@@ -503,14 +469,9 @@
                               <li><a href="<%base_url('view_supplier_challan_subcon')%>" class="dropdown-item">Customerwise Challan List</a></li>
                            </ul>
                         </li>
-                        <li class="dropdown-submenu">
-                           <a href="javascript:void(0)" class="dropdown-toggle dropdown-item" data-toggle="dropdown" aria-expanded="false">Stock</a>
-                           <ul class="dropdown-menu">
-                              <li><a href="<%base_url('part_stocks')%>" class="dropdown-item">Supplier Part stocks</a></li>
-                              <li><a href="<%base_url('part_stocks_inhouse')%>" class="dropdown-item">Inhouse Part stocks</a></li>
-                              <li><a href="<%base_url('fw_stock')%>" class="dropdown-item">FG Stock</a></li>
-                           </ul>
-                        </li>
+                        <li><a href="<%base_url('part_stocks')%>" class="dropdown-item">Purchase Stock Transfer</a></li>
+                        <li><a href="<%base_url('part_stocks_inhouse')%>" class="dropdown-item">Inhouse Stock Transfer</a></li>
+                        <li><a href="<%base_url('fw_stock')%>" class="dropdown-item">FG Stock Transfer</a></li>
                         <%if ($entitlements['isSheetMetal']!=null) %>
                         <li class="dropdown-submenu">
                            <a href="javascript:void(0)" class="dropdown-toggle dropdown-item" data-toggle="dropdown" aria-expanded="false">Material Requisition</a>
@@ -542,21 +503,12 @@
                      </a>
                      <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkProductionSubmenu">
                         <%if ($entitlements['isPlastic']!=null) %>
-                          <li><a href="<%base_url('machine_request')%>" class="dropdown-item">Material
-                              Request: Add</a>
-                           </li>
-                          <li><a href="<%base_url('machine_request_completed')%>" class="dropdown-item">Material
-                              Request Report</a>
+                          <li><a href="<%base_url('machine_request')%>" class="dropdown-item">Material Request</a>
                            </li>
                         <%/if%>
-                        <li class="dropdown-submenu">
-                           <a href="javascript:void(0)" class="dropdown-toggle dropdown-item" data-toggle="dropdown" aria-expanded="false">Stock</a>
-                           <ul class="dropdown-menu">
-                              <li><a href="<%base_url('part_stocks')%>" class="dropdown-item">Supplier Part stocks</a></li>
-                              <li><a href="<%base_url('part_stocks_inhouse')%>" class="dropdown-item">Inhouse Part stocks</a></li>
-                              <li><a href="<%base_url('fw_stock')%>" class="dropdown-item">FG Stock</a></li>
-                           </ul>
-                        </li>
+                        <li><a href="<%base_url('part_stocks')%>" class="dropdown-item">Purchase Stock Transfer</a></li>
+                        <li><a href="<%base_url('part_stocks_inhouse')%>" class="dropdown-item">Inhouse Stock Transfer</a></li>
+                        <li><a href="<%base_url('fw_stock')%>" class="dropdown-item">FG Stock Transfer</a></li>
                          <%if ($entitlements['isSheetMetal']!=null) %>
                            <li><a href="<%base_url('stock_down')%>"
                               class="dropdown-item">Material
@@ -586,26 +538,9 @@
                            </li>
                         <%/if%>
                         <%if ($entitlements['isPlastic']!=null) %>
-                           <li class="dropdown-submenu ">
-                              <a  href="javascript:void(0)" role="button" data-toggle="dropdown"  aria-expanded="false"
-                                 class="dropdown-item dropdown-toggle">
-                              Molding Production </a>
-                              <ul  class="dropdown-menu ">
-                                 <li><a href="<%base_url('p_q_molding_production')%>"
-                                    class="dropdown-item">
-                                    Add</a>
-                                 </li>
-                                 <li><a href="<%base_url('view_p_q_molding_production')%>"
-                                    class="dropdown-item">View</a></li>
-                              </ul>
-                           </li>
-                           <li><a href="<%base_url('molding_stock_transfer ')%>"
-                              class="dropdown-item">Molding Stock Transfer </a></li>
-                           <li>
-                              <a href="<%base_url('final_inspection')%>" class="dropdown-item">Final
-                              Inspection
-                              </a>
-                           </li>
+                           <li><a href="<%base_url('p_q_molding_production')%>" class="dropdown-item">Molding Production</a></li>
+                           <li><a href="<%base_url('view_p_q_molding_production')%>" class="dropdown-item">Molding Production Approval</a></li>
+                           
                       <%/if%>
                       <%if ($entitlements['isJobRoot']!=null) %> 
                         <li><a href="<%base_url('job_card_issued')%>" class="dropdown-item">WIP Job
@@ -620,20 +555,22 @@
                      </a>
                      <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkQualitySubmenu">
                         <li><a href="<%base_url('accept_reject_validation')%>" class="dropdown-item">Inward Inspection</a></li>
-                           <li><a href="<%base_url('remarks')%>" class="dropdown-item">Rejection Reasons</a>
-                           </li>
-                           <li><a href="<%base_url('stock_rejection')%>" class="dropdown-item">Stock
-                              Rejection</a>
-                           </li>
-                           <%if ($entitlements['isSheetMetal']!=null) %>
+                        <%if ($entitlements['isPlastic']!=null) %>
+                           <li><a href="<%base_url('final_inspection')%>" class="dropdown-item">Final Inspection</a></li>
+                        <%/if%>
+                        <%if ($entitlements['isSheetMetal']!=null) %>
                            <li><a href="<%base_url('final_inspection_qa')%>" class="dropdown-item">Final
                               Inspection Production
                               </a>
                            </li>
                            <%/if%>
-                           <li><a href="<%base_url('grn_rejection')%>" class="dropdown-item">GRN
+                           <li><a href="<%base_url('remarks')%>" class="dropdown-item">Rejection Reasons</a>
+                           </li>
+                           <li><a href="<%base_url('stock_rejection')%>" class="dropdown-item">Stock
                               Rejection</a>
                            </li>
+                           
+                          
                            <li><a href="<%base_url('rejection_invoices')%>"
                               class="dropdown-item">Rejection
                               Invoices</a>
@@ -648,15 +585,9 @@
                      Planning & Sales
                      </a>
                      <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkPnSSubmenu">
-                        <li class="dropdown-submenu">
-                           <a href="javascript:void(0)" class="dropdown-toggle dropdown-item" data-toggle="dropdown" aria-expanded="false">Sale Invoice</a>
-                           <ul class="dropdown-menu">
-                              <li><a href="<%base_url('new_sales')%>" class="dropdown-item">Create Sale Invoice</a></li>
-                              <li><a href="<%base_url('sales_invoice_released')%>" class="dropdown-item">View sale Invoice</a></li>
-                              <li><a href="<%base_url('rejection_invoices')%>" class="dropdown-item">Rejection Invoice</a></li>
-                              <li><a href="<%base_url('rejection_flow')%>" class="dropdown-item">Rejection Flow</a></li>
-                           </ul>
-                        </li>
+                        <li><a href="<%base_url('new_sales')%>" class="dropdown-item">Create Sale Invoice</a></li>
+                        <li><a href="<%base_url('sales_invoice_released')%>" class="dropdown-item">View sale Invoice</a></li>
+                        <li><a href="<%base_url('rejection_invoices')%>" class="dropdown-item">Rejection Invoice</a></li>
                         <li class="dropdown-submenu">
                            <a href="javascript:void(0)" class="dropdown-toggle dropdown-item" data-toggle="dropdown" aria-expanded="false">Customer</a>
                            <ul class="dropdown-menu">
@@ -666,25 +597,11 @@
                               <li><a href="<%base_url('consignee')%>" class="dropdown-item">Consignee</a></li>
                            </ul>
                         </li>
-                        <li class="dropdown-submenu">
-                           <a href="javascript:void(0)" class="dropdown-toggle dropdown-item" data-toggle="dropdown" aria-expanded="false">Customer PO QTY Tracking</a>
-                           <ul class="dropdown-menu">
-                              <%if ($entitlements['po_import_export']!=null) %>
-                                 <li><a href="<%base_url('customer_po_tracking_importExport')%>"
-                                    class="dropdown-item">Import/Export PO Tracking</a></li>
-                              <%/if%>
-                              <li><a href="<%base_url('customer_po_tracking')%>" class="dropdown-item">create Po QTY Tracking</a></li>
-                              <li><a href="<%base_url('customer_po_tracking_all')%>" class="dropdown-item">View pending</a></li>
-                              <li><a href="<%base_url('customer_po_tracking_all_closed')%>" class="dropdown-item">View Closed</a></li>
-                           </ul>
-                        </li>
+                        <li><a href="<%base_url('customer_po_tracking_all')%>" class="dropdown-item">Sales Order</a></li>
                         <%if ($role == "Sales" || $role == "Admin") %>
-                        <li class="dropdown-submenu">
-                           <a href="javascript:void(0)" class="dropdown-toggle dropdown-item" data-toggle="dropdown" aria-expanded="false">Customer Scheduling</a>
-                           <ul class="dropdown-menu">
-                              <li><a href="<%base_url('planning_year_page')%>" class="dropdown-item">Monthly Plan</a></li>
-                              <li><a href="<%base_url('planning_shop_order_details')%>" class="dropdown-item">Shop Order details</a></li>
-                              <%if ($entitlements['isJobRoot']!=null) %> 
+                        <li><a href="<%base_url('planning_year_page')%>" class="dropdown-item">Monthly Schedule</a></li>
+                              <li><a href="<%base_url('planning_shop_order_details')%>" class="dropdown-item">Shop Order</a></li>
+                        <%if ($entitlements['isJobRoot']!=null) %> 
                                  <li><a href="<%base_url('job_card')%>" class="dropdown-item">Create
                                     JOB
                                     Card</a>
@@ -695,8 +612,6 @@
                                     JOB Card</a>
                                  </li>
                               <%/if%>
-                           </ul>
-                        </li>
                         <%/if%>
                         <%if ($entitlements['isSheetMetal']!=null) %>
                         <li class="dropdown-submenu">
@@ -723,11 +638,10 @@
                            <li><a href="<%base_url('child_part_view')%>" class="dropdown-item">Item
                               Master</a>
                            </li>
-                           <li><a href="<%base_url('approved_supplier')%>" class="dropdown-item">Approved
-                              Supplier List</a>
+                           <li><a href="<%base_url('approved_supplier')%>" class="dropdown-item">Approved Suppliers</a>
                            </li>
                            <li><a href="<%base_url('child_part_supplier_report')%>"
-                              class="dropdown-item">Supplier part price</a></li>
+                              class="dropdown-item">Purchase Price Report</a></li>
                            <li><a href="<%base_url('supplier_parts_stock_report')%>"
                               class="dropdown-item">Supplier Parts Stock</a></li>
                            <li><a href="<%base_url('reports_po_balance_qty')%>" class="dropdown-item">PO Summary Report</a></li>
@@ -741,6 +655,9 @@
                            <li><a href="<%base_url('reports_inspection')%>" class="dropdown-item">Under
                               Inspection Parts Report</a>
                            </li>
+                            <li><a href="<%base_url('grn_rejection')%>" class="dropdown-item">GRN
+                              Rejection</a>
+                           </li>
                            <li><a href="<%base_url('part_stocks')%>" class="dropdown-item">Current Supplier
                               Part(Item) Stock </a>
                            </li>
@@ -748,8 +665,8 @@
                               Dispatch
                               vs Balance qty required</a>
                            </li>
-                           <li><a href="<%base_url('pei_chart_sales_values_in_rs')%>"
-                              class="dropdown-item">Sales Values In Rs</a></li>
+                           <!-- <li><a href="<%base_url('pei_chart_sales_values_in_rs')%>"
+                              class="dropdown-item">Sales Values In Rs</a></li> -->
                            <%if ($entitlements['isSheetMetal']!=null) %>
                            <li><a href="<%base_url('customer_part_wip_stock_report')%>"
                               class="dropdown-item">CUSTOMER PART WIP STOCK REPORT </a></li>
@@ -758,10 +675,21 @@
                               class="dropdown-item">Subcon Supplier-Challan part stock report </a></li>
                            <li><a href="<%base_url('mold_maintenance_report')%>" 
                               class="dropdown-item">Mold Life report </a></li>
+                              <li><a href="<%base_url('pending_po')%>" class="dropdown-item">PO Under Approval</a></li>
+                           <li><a href="<%base_url('rejected_po')%>" class="dropdown-item">Reject PO</a></li>
+                           <li><a href="<%base_url('expired_po')%>" class="dropdown-item">Expired PO</a></li>
+                           <li><a href="<%base_url('closed_po')%>" class="dropdown-item">Closed PO</a></li>
+                           <%if ($entitlements['isPlastic']!=null) %>
+                              <li><a href="<%base_url('machine_request_completed')%>" class="dropdown-item">Material Request Report</a>
+                              </li>
+                           <%/if%>
+                           <%if ($entitlements['isPlastic']!=null) %>
+                              <li><a href="<%base_url('molding_stock_transfer ')%>" class="dropdown-item">Molding Stock Transfer </a></li>
+                           <%/if%>
                      </ul>
-                  </li>
-                  <%if ($role == "Admin") %>
-                  <li class="nav-item dropdown">
+                           </li>
+                           <%if ($role == "Admin") %>
+                           <li class="nav-item dropdown">
                      <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="navbarDropdownMenuLinkAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                      Admin
                      </a>
@@ -823,8 +751,10 @@
                         <li><a class="dropdown-item" href="<%base_url('erp_users')%>">User</a></li>
                         <li><a class="dropdown-item" href="<%base_url('configs')%>">Configurations</a></li>
                      </ul>
-                  </li>
-                  <%/if%>
+                           </li>
+                           <%/if%>
+                           
+                  
                   <!-- <li class="nav-item">
                     <a href="<%base_url('logout')%>" class="nav-link">Logout</a>
                   </li> -->

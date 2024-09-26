@@ -356,8 +356,8 @@
                 
                 <div class="card p-0 mt-4">
                     <!-- /.card-header -->
-                    <div class="card-body">
-                        <table id="example1" class="table table-bordered table-striped">
+                    <div class="">
+                        <table id="example1" class="table table-striped">
                             <thead>
                                 <tr>
                                     <th>Sr. No..</th>
@@ -390,14 +390,15 @@
                                 <%if $planing_data%>
                                     <%foreach from=$planing_data item=t%>
                                         <%if $month == $t->month%>
+                                            <%assign var="planing_data_val" value=$t->planing_data%>
                                             <%assign var="issued" value=0%>
                                             <%assign var="closed" value=0%>
-                                            <%assign var="main_qty" value=$planing_data[0]->schedule_qty%>
+                                            <%assign var="main_qty" value=$planing_data_val[0]->schedule_qty%>
                                             <%assign var="subtotal1" value=0%>
                                             <%assign var="rate" value=0%>
                                             <%if $customer_part_rate[$t->customer_part_id]%>
                                                 <%assign var="rate" value=$customer_part_rate[$t->customer_part_id][0]->rate%>
-                                                <%assign var="subtotal1" value=$customer_part_rate[$t->customer_part_id][0]->rate * $planing_data[0]->schedule_qty%>
+                                                <%assign var="subtotal1" value=$customer_part_rate[$t->customer_part_id][0]->rate * $planing_data_val[0]->schedule_qty%>
 
                                                 <%assign var="total1" value=$total1 + $subtotal1%>
                                             <%/if%>
@@ -412,19 +413,20 @@
                                                     <%assign var="total_dispatched_qty" value=$total_dispatched_qty + $dispatch_sales_qty%>
                                                 <%/foreach%>
                                             <%/if%>
-                                            <%assign var="balance_s_qty" value= $planing_data[0]->schedule_qty - $total_dispatched_qty%>
+                                            <%assign var="balance_s_qty" value= $planing_data_val[0]->schedule_qty - $total_dispatched_qty%>
                                 <tr>
+
                                     <td><%$i%></td>
                                     <td><%$customer_part_data[$t->customer_part_id][0]->part_number%></td>
                                     <td><%$customer_part_data[$t->customer_part_id][0]->part_description%></td>
-                                    <td><%$customers_data[0]->customer_name%></td>
+                                    <td><%$customers_data[$t->customer_part_id][0]->customer_name%></td>
                                     <td><%$t->month%></td>
-                                    <td><%$planing_data[0]->schedule_qty%></td>
+                                    <td><%$planing_data_val[0]->schedule_qty%></td>
                                     <!-- <td><%$planing_data[0]->schedule_qty_2%></td> -->
                                     <%if $entitlements.isJobCard != null%>
                                     <td></td>
                                     <td>
-                                        <%$planing_data[0]->schedule_qty - $job_card_qty%>
+                                        <%$planing_data_val[0]->schedule_qty - $job_card_qty%>
                                     </td>
 
                                     <td><%$issued%></td>
@@ -442,15 +444,15 @@
                                         Rs. <%$subtotal1%> 
                                     </td>
                                     <td class="noExport">
-                                        <a class="btn btn-info"
-                                            href="<%$base_url%>view_planing_data/<%$t->id%>/<%$customer_part_data[$t->customer_part_id][0]->customer_id%>"><i class="fas fa-eye"></i></a>
+                                        <a class=""
+                                            href="<%$base_url%>view_planing_data/<%$t->id%>/<%$customer_part_data[$t->customer_part_id][0]->customer_id%>"><i class="ti ti-eye"></i></a>
                                             <!-- Edit Modal -->
                                     </td>
                                     <td>
-                                        <button title="Edit" type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        <a title="Edit" type="button" class="" data-bs-toggle="modal"
                                             data-bs-target="#editenew<%$i%>">
-                                            <i class="fa fa-edit"></i>
-                                        </button>
+                                            <i class="ti ti-edit"></i>
+                                        </a>
                                                                                <div class="modal fade" id="editenew<%$i%>" tabindex="-1"
                                             role="dialog" aria-labelledby="exampleModalLabel"
                                             aria-hidden="true">
@@ -463,14 +465,15 @@
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>
+                                                    <form action="<%$base_url%>update_planning_data"
+                                                            method="POST" enctype="multipart/form-data" id="update_planning_data<%$i%>" class="update_planning_data<%$i%> update_planning_data custom-form">
                                                     <div class="modal-body">
-                                                        <form action="<%$base_url%>update_planning_data"
-                                                            method="POST" enctype="multipart/form-data">
+                                                        
                                                             <div class="form-group">
                                                                 <label for="contractorName">Enter Schedule Qty</label>
                                                                 <span class="text-danger">*</span>
-                                                                <input type="text" value="<%$planing_data[0]->schedule_qty%>"  name="schedule_qty"
-                                                                    class="form-control onlyNumericInput">
+                                                                <input type="text" value="<%$planing_data_val[0]->schedule_qty%>"  name="schedule_qty"
+                                                                    class="form-control onlyNumericInput required-input">
                                                                 <input required value="<%$t->id%>"
                                                                     type="hidden" class="form-control"
                                                                     name="planning_id">
@@ -775,6 +778,43 @@
                
             }
         });
+        $(".update_planning_data").submit(function(e){
+          e.preventDefault();
+          let id = $(this).attr("id");
+          let flag = formValidate(id);
+          let href = $(this).attr("action");
+          if(flag){
+            return;
+          }
+
+          var formData = new FormData($('#'+id)[0]);
+          $.ajax({
+            type: "POST",
+            url: href,
+            // url: "add_invoice_number",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+              var responseObject = JSON.parse(response);
+              var msg = responseObject.messages;
+              var success = responseObject.success;
+              if (success == 1) {
+                toastr.success(msg);
+                $(this).parents(".modal").modal("hide")
+                setTimeout(function(){
+                  window.location.reload();
+                },1000);
+
+              } else {
+                toastr.error(msg);
+              }
+            },
+            error: function (error) {
+              console.error("Error:", error);
+            },
+          });
+        });
         $('#import_customer_planning').on('submit', function(event) {
             // Prevent the form from submitting via the browser
            var form = $(this);
@@ -785,13 +825,15 @@
                     return;
             }else{
                event.preventDefault(); // Prevent the form from submitting via the browser
-               var form = $(this);
-               var formData = form.serialize();
+               // var form = $(this);
+               var formData = new FormData(this);
            
                $.ajax({
                    type: 'POST',
                    url: form.attr('action'),
                    data: formData,
+                   processData: false, // Important! Prevent jQuery from processing the data
+                   contentType: false,
                    success: function(response) {
                        var responseObject = JSON.parse(response);
                         var msg = responseObject.message;
@@ -816,28 +858,60 @@
 
      function formValidate(form_class = ''){
         let flag = false;
-        $(".custom-form#"+form_class+" .required-input").each(function( index ) {
+        $(".custom-form."+form_class+" .required-input").each(function( index ) {
           var value = $(this).val();
-
+          var dataMax = parseFloat($(this).attr('data-max'));
+          var dataMin = parseFloat($(this).attr('data-min'));
           if(value == ''){
             flag = true;
             var label = $(this).parents(".form-group").find("label").contents().filter(function() {
-                return this.nodeType === 3; // Filter out non-text nodes (nodeType 3 is Text node)
+              return this.nodeType === 3; // Filter out non-text nodes (nodeType 3 is Text node)
             }).text().trim();
             var exit_ele = $(this).parents(".form-group").find("label.error");
             if(exit_ele.length == 0){
-                var start ="Please enter ";
-                if($(this).prop("localName") == "select"){
-                    var start ="Please select ";
-                }
+              var start ="Please enter ";
+              if($(this).prop("localName") == "select"){
+                var start ="Please select ";
+              }
+              label = ((label.toLowerCase()).replace("enter", "")).replace("select", "");
+              var validation_message = start+(label.toLowerCase()).replace(/[^\w\s*]/gi, '');
+              var label_html = "<label class='error'>"+validation_message+"</label>";
+              $(this).parents(".form-group").append(label_html)
+            }
+          }
+          else if(dataMin !== undefined && dataMin > value){
+            flag = true;
+            var label = $(this).parents(".form-group").find("label").contents().filter(function() {
+              return this.nodeType === 3; // Filter out non-text nodes (nodeType 3 is Text node)
+            }).text().trim();
+            var exit_ele = $(this).parents(".form-group").find("label.error");
+            if(exit_ele.length == 0){
+              var end =" must be greater than or equal to "+dataMin;
+              label = ((label.toLowerCase()).replace("enter", "")).replace("select", "");
+              label = (label.toLowerCase()).replace(/[^\w\s*]/gi, '');
+              label = label.charAt(0).toUpperCase() + label.slice(1);
+              var validation_message =label +end;
+              var label_html = "<label class='error'>"+validation_message+"</label>";
+              $(this).parents(".form-group").append(label_html)
+            }
+            }else if(dataMax !== undefined && dataMax < value){
+              flag = true;
+              var label = $(this).parents(".form-group").find("label").contents().filter(function() {
+                return this.nodeType === 3; // Filter out non-text nodes (nodeType 3 is Text node)
+              }).text().trim();
+              var exit_ele = $(this).parents(".form-group").find("label.error");
+              if(exit_ele.length == 0){
+                var end =" must be less than or equal to "+dataMax;
                 label = ((label.toLowerCase()).replace("enter", "")).replace("select", "");
-                var validation_message = start+(label.toLowerCase()).replace(/[^\w\s*]/gi, '');
+                label = (label.toLowerCase()).replace(/[^\w\s*]/gi, '');
+                label = label.charAt(0).toUpperCase() + label.slice(1)
+                var validation_message =label +end;
                 var label_html = "<label class='error'>"+validation_message+"</label>";
                 $(this).parents(".form-group").append(label_html)
-            }
-            
+              }
           }
         });
+       
         return flag;
     }
     });
