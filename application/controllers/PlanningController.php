@@ -71,12 +71,17 @@ class PlanningController extends CommonController
 		$data['customer_id'] = $customer_id;
 
 		if ($data['planing_data']) {
-			foreach ($data['planing_data'] as $t) {
+			foreach ($data['planing_data'] as $key => $t) {
 				if ($data['month'] == $t->month) {
+
 					$data['customer_part_data'][$t->customer_part_id] = $this->Crud->get_data_by_id("customer_part", $t->customer_part_id, "id");
+					$data['customers_data'][$t->customer_part_id] = $this->Crud->get_data_by_id("customer", $data['customer_part_data'][$t->customer_part_id][0]->customer_id, "id");
+					// pr($data['customers_data'][$t->customer_part_id],1);
 					$data['customer_part_rate'][$t->customer_part_id] = $this->Crud->get_data_by_id("customer_part_rate", $t->customer_part_id, "customer_master_id");
 					$customers_data[$customer_part_data[0]->customer_id] = $this->Crud->get_data_by_id("customer", $customer_part_data[$t->customer_part_id][0]->customer_id, "id");
-					$planing_data[$t->id] = $this->Crud->get_data_by_id("planing_data", $t->id, "planing_id");
+					$planing_data_val= $this->Crud->get_data_by_id("planing_data", $t->id, "planing_id");
+					// pr($planing_data_val[count($planing_data_val)-1]);
+					$data['planing_data'][$key]->planing_data[0] = $planing_data_val[count($planing_data_val)-1];
 					$month_number = $this->Common_admin_model->get_month_number($month);
 					$year_number = substr($financial_year, 3, strlen($financial_year));
 					$data['sales_invoice'][$t->customer_part_id] = $this->Crud->customQuery('SELECT sum(p.qty) as dispatched_qty FROM new_sales s, sales_parts p
@@ -92,6 +97,7 @@ class PlanningController extends CommonController
 		}
 		$data['segment_2'] =$this->uri->segment('2');
 		$data['segment_3'] =$this->uri->segment('3');
+		// pr($data['planing_data'],1);
 		// $this->load- >view('header');
 		// $this->load->view('planing_data', $data);
 		// $this->load->view('footer');
@@ -230,6 +236,8 @@ class PlanningController extends CommonController
 			"clientId" =>  $this->Unit->getSessionClientId()
 		);
 		$planing_data = $this->Crud->get_data_by_id_multiple("planing", $data1);
+		$success = 0;
+        $messages = "Something went wrong.";
 		if ($planing_data) {
 			$arr = array(
 				'customer_part_id' => $customer_part_id
@@ -254,22 +262,32 @@ class PlanningController extends CommonController
 						"financial_year" => $financial_year,
 						"month" => $month_id,
 					);
-
+					// pr($data,1);
 					$result = $this->Crud->update_data("planing_data", $data, $planing_data[0]->id);
 				}
 				if ($result) {
-					$this->addSuccessMessage('Plan sucessfully updated.');
+					$messages = "Plan sucessfully updated.";
+					$success = 1;
+					// $this->addSuccessMessage('Plan sucessfully updated.');
 				} else {
-					$this->addErrorMessage('Unable to update,please check bom and price data');
+					$messages = "Unable to update,please check bom and price data";
+					// $this->addErrorMessage('Unable to update,please check bom and price data');
 				}
 			} else {
-				$this->addErrorMessage('Unable to update, please check bom and price data');
+				$messages = "Unable to update, please check bom and price data";
+				// $this->addErrorMessage('Unable to update, please check bom and price data');
 			}
 			
 		}else{
-			$this->addWarningMessage('No details found to update. Please try again.');
+			$messages = "No details found to update. Please try again.";
+			// $this->addWarningMessage('No details found to update. Please try again.');
 		}
-		$this->redirectMessage('planing_data/'.$financial_year.'/'.$month_id.'/'.$customer_id);
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
+		// $this->redirectMessage('planing_data/'.$financial_year.'/'.$month_id.'/'.$customer_id);
 	}
 
 	public function view_all_child_parts_schedule()
@@ -383,6 +401,7 @@ class PlanningController extends CommonController
  		$success = 0;
 	    $message = 'Something went wrong.';
 		//only valid types are allowed.
+
 		if($this->isValidUploadFileType()=="false"){
 			$message = "Only Excel sheets are allowed.";
 			 // $this->addErrorMessage("Only Excel sheets are allowed.");
@@ -477,6 +496,7 @@ class PlanningController extends CommonController
 							 	$message = $error;
 								 // $this->addErrorMessage($error);
 							 }else{
+							 	$success = 1;
 							 	$message = "Data imported successfully.";
 								 // $this->addSuccessMessage("Data imported successfully.");
 							 }

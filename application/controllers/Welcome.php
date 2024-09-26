@@ -179,8 +179,16 @@ class Welcome extends CommonController
 			$data[$key]['received_qty'] = $value['qty'] - $value['pending_qty'];
 			$data[$key]['created_date'] =defaultDateFormat($value['created_date']);
 			$data[$key]['expiry_po_date'] =  defaultDateFormat($value['expiry_po_date']);
+            $dateToCheck = strtotime($value['expiry_po_date']);
+            $currentDate = time();
+           
+            if ($dateToCheck < $currentDate) {
+                $data[$key]['status'] = "expired";
+            }
+
 		}
 
+        
 		$data["data"] = $data;
         $total_record = $this->SupplierParts->getPoRepotDataCount([], $post_data["search"]);
 
@@ -3171,7 +3179,7 @@ class Welcome extends CommonController
 				$data[$key]['other_document_3'] = display_no_character();
 			}
 
-			$data[$key]['action'] = "<a href='".$base_url."supplier?id=".$value['id']."' title='Edit'><i class='ti ti-edit ' ></i></a>";
+			$data[$key]['action'] = "<a href='".$base_url."add_supplier?id=".$value['id']."' title='Edit'><i class='ti ti-edit ' ></i></a>";
 		}
 
 		$data["data"] = $data;
@@ -5887,6 +5895,7 @@ class Welcome extends CommonController
 		}
 		$return_arr = [
 			"message" =>$message,
+			"messages" =>$message,
 			"success" => $success
 			];
 		echo json_encode($return_arr);
@@ -10511,4 +10520,7 @@ class Welcome extends CommonController
 			echo "<script>alert('Error While  Updating , Please try Again');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
 	}
+    public function forbidden_page(){
+        $this->loadView('forbidden_page',$data);
+    }
 }

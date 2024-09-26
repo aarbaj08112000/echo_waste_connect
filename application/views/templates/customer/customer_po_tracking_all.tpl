@@ -54,14 +54,20 @@
             <em >Customer PO QTY Tracking</em></a>
         </h1>
         <br>
-        <span >View Pending</span>
+        <span >Sales Order</span>
       </div>
     </nav>
+    <%assign var="entitlements" value=$session_data['entitlements']%>
     <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
       <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
-      <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
+      <!-- <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button> -->
       <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
       <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+      <a class="btn btn-seconday" href="<%base_url('customer_po_tracking')%>" title="Add Sales Order"><i class="ti ti-plus"></i></a>
+      <a class="btn btn-seconday" href="<%base_url('customer_po_tracking_all_closed')%>" title="Close PO"><i class="ti ti-square-x"></i></a>
+      <%if ($entitlements['po_import_export']!=null) %>
+            <a class="btn btn-seconday" href="<%base_url('customer_po_tracking_importExport')%>" title="Import/Export PO Tracking"><i class="ti ti-file-arrow-left"></i></a>
+      <%/if%>
     </div>
 
     <div class="w-100">
@@ -81,7 +87,7 @@
 
                         <!-- /.card -->
 
-                        <div class="card"><!--
+                        <div class="card p-0"><!--
                             <div class="card-header">
                                 <div class="row">
                                      <div class="col-lg-2">

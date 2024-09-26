@@ -44,10 +44,10 @@ class StockController extends CommonController
 
 		//FOR SHEET ONLY
         $sheet_prod_column_name = $this->Unit->getProdColNmForClientUnit();
-
+		
 		//FOR PLASTIC ONLY
 		$plastic_prod_column_name = $this->Unit->getPlasticProdColNmForClientUnit();
-
+		
 		//Sharing_qty
 		$sharingQtyColName = $this->Unit->getSharingQtyColNmForClientUnit();
 
@@ -171,11 +171,13 @@ class StockController extends CommonController
             "className" => "dt-center",
         ];
 		$column[] = [
-            "data" => "$sharingQtyColName",
+            "data" => "$plastic_prod_column_name",
             "title" => "Machine Mold Stock",
             "width" => "7%",
             "className" => "dt-center",
         ];
+
+		// pr($plastic_prod_column_name,1);			
 
         $column[] = [
             "data" => "plastic_prod_details",
@@ -269,14 +271,15 @@ class StockController extends CommonController
 		$sheet_prod_column_name = $this->Unit->getProdColNmForClientUnit();
 		$plastic_prod_column_name = $this->Unit->getPlasticProdColNmForClientUnit();
 		$role = $this->session->userdata('type');
-		
 		foreach ($data as $key => $value) {
+			// pr($value,1);
 			// $edit_data = base64_encode(json_encode($value)); 
 			// $data[$key]['action'] = "<i class='ti ti-edit edit-part' title='Edit' data-value='$edit_data'></i>";
 			$stock_val = $value['stock'] * $value['store_stock_rate'];
 			$transfer_fg = $value[$stock_column_name];
 			$production_stocks = $value[$sheet_prod_column_name];
 			$plastic_prod_details = $value[$plastic_prod_column_name];
+			// pr($plastic_prod_details,1);
 			if($value['stock'] > 0){
 				$stock_temp = base64_encode(json_encode($value)); 
 				$stock_temp_html = '<button type="button" class="btn btn-primary edit-fg" data-bs-toggle="modal"  data-value='.$stock_temp.' data-bs-target="#storeToStore">
@@ -305,10 +308,11 @@ class StockController extends CommonController
 			$data[$key]['stock_html'] = $stock_temp_html;
 			$data[$key]['transfer_fg'] = $transfer_fg;
 			$data[$key]['stock_value'] = $stock_val;
-			$data[$key]['plastic_prod_details'] = $plastic_prod_details;
+			$data[$key][$plastic_prod_column_name] = $plastic_prod_details;
+			$data[$key]['plastic_prod_details'] = $value['production_rejection'];
 			
 		}
-
+		// pr($data,1);
 		$data["data"] = $data;
         $total_record = $this->SupplierParts->getPartStockReportViewCount($condition_arr, $post_data["search"]);
 		

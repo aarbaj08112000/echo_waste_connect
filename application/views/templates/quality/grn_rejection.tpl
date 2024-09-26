@@ -14,7 +14,7 @@
             <em >Inward Inspection</em></a>
           </h1>
           <br>
-          <span >Inward Inspection</span>
+          <span >GRN Rejection</span>
         </div>
       </nav>
 

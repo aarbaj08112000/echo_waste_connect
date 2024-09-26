@@ -13,7 +13,6 @@ const page = {
         $(document).on("click",".edit-part",function(){
             var data = $(this).attr("data-value");
             data = JSON.parse(atob(data)); 
-            console.log(data)
             var option = '';
             if(data.sub_type == 'Regular grn' || data.sub_type == 'RM' ){
                 option = '<option  value="Regular grn">Regular GRN</option><option  value="RM">RM</option>';

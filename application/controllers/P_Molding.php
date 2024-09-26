@@ -344,7 +344,40 @@ class P_Molding extends CommonController
 		}
 		$data['created_year'] = $created_year;
 		$data['created_month'] = $created_month;
-		$data['molding_production'] = $this->Crud->customQuery("
+		$month_arr = [];
+		$data['month_arr'] = $month_arr;
+       	$data['start_date'] = date("Y/06/01");
+		$data['end_date'] = date("Y/m/d");
+		$start_date = date("Y-06-01");
+		$end_date = date("Y-m-d");
+		
+		$data['molding_production'] = $this->view_p_q_molding_production_data($start_date,$end_date);
+		// AND  STR_TO_DATE(mp.created_date, '%d-%m-%Y') BETWEEN STR_TO_DATE('".$start_date."', '%d-%m-%Y') AND STR_TO_DATE('".$end_date."', '%d-%m-%Y')
+			// AND mp.month = ". $created_month . " AND mp.year = " . $created_year
+		for ($i = 1; $i <= 12; $i++) {
+			$month_data = $this->Common_admin_model->get_month($i);
+            $month_number = $this->Common_admin_model->get_month_number($month_data);
+            array_push($month_arr,['month_data'=>$month_data,'month_number'=>$month_number]);
+        }
+        
+       	
+		$this->loadView('admin/molding/view_p_q_molding_production', $data);
+	}
+	public function filter_p_q_molding_production_data(){
+		$post_data = $this->input->post();
+		$date_range = explode(" - ", $post_data['date_filter_val']);
+		$start_date = str_replace("/","-",trim($date_range[0]));
+		$end_date = str_replace("/","-",trim($date_range[1]));
+		$data['molding_production'] = $this->view_p_q_molding_production_data($start_date,$end_date);
+		$data['reject_remark'] = $this->Crud->read_data("reject_remark");
+		$html = $this->smarty->fetch("molding/molding_production_view.tpl",$data);
+		$return['html'] = $html;
+		echo json_encode($return);
+		exit();
+	}
+
+	public function view_p_q_molding_production_data($start_date = "",$end_date = ""){
+		$data = $this->Crud->customQuery("
 			SELECT mp.*,s.name as name,s.name as name,s.ppt as ppt,s.shift_type as shift_type,m.name as machine_name,op.name as operator_name,cp.production_target_per_shift as production_target_per_shift,cp.part_number as part_number,cp.part_description as part_description
 			from molding_production as mp
 			LEFT JOIN shifts as s ON s.id = mp.shift_id
@@ -352,20 +385,10 @@ class P_Molding extends CommonController
 			LEFT JOIN operator as op ON op.id = mp.operator_id
 			LEFT JOIN customer_part as cp ON cp.id = mp.customer_part_id
 			WHERE mp.clientId  = ".$this->Unit->getSessionClientId()." 
-			AND mp.status = 'completed' ");
-			// AND mp.month = ". $created_month . " AND mp.year = " . $created_year
-		// pr($data['molding_production'],1);
-		$month_arr = [];
-		for ($i = 1; $i <= 12; $i++) {
-			$month_data = $this->Common_admin_model->get_month($i);
-            $month_number = $this->Common_admin_model->get_month_number($month_data);
-            array_push($month_arr,['month_data'=>$month_data,'month_number'=>$month_number]);
-        }
-       	$data['month_arr'] = $month_arr;
-       	$data['start_date'] = date("Y/m/01");
-		$data['end_date'] = date("Y/m/d");
-		$this->loadView('admin/molding/view_p_q_molding_production', $data);
+			AND mp.status = 'completed' AND STR_TO_DATE(mp.created_date, '%d-%m-%Y') BETWEEN STR_TO_DATE('$start_date', '%Y-%m-%d') AND STR_TO_DATE('$end_date', '%Y-%m-%d')");
+		return $data;
 	}
+
 
 
 	public function add_production_qty_molding_production()
@@ -550,6 +573,7 @@ class P_Molding extends CommonController
 	public function update_p_q_molding_production()
 	{
 
+		
 		$id = $this->input->post('id');
 		$qty = (int)$this->input->post('qty');
 		// $accepted_qty = $this->input->post('accepted_qty');
@@ -826,87 +850,93 @@ class P_Molding extends CommonController
 		$update_machine_request = array(
 			"status" => $status
 		);
-
+		$success = 0;
+        $messages = "Something went wrong.";
 		$machine_status_update_result = $this->Crud->update_data("machine_request", $update_machine_request, $machine_request_id);
 	
 		if ($machine_status_update_result) {
-			echo "<script>alert('Added Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$messages = "Added Successfully";
+			$success = 1;
+			// echo "<script>alert('Added Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-			echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
+			$messages = "Error IN User  Adding ,try again";
+			// echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
 		}
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 	public function issue_material_request_qty()
 
 	{
-
+		
 		$id = $this->input->post('id');
-
 		$machine_request_id = $this->input->post('machine_request_id');
 
-		$qty = (int)$this->input->post('qty');
-		$accepted_qty = (int)$this->input->post('accepted_qty');
+		$qty = $this->input->post('qty');
+		$accepted_qty = $this->input->post('accepted_qty');
 		$part_number = $this->input->post('part_number');
-		$rejected_qty = (int)$qty - (int)$accepted_qty;
-
-
+		$rejected_qty = $qty - $accepted_qty;
 
 		$data = array(
 			'accepted_qty' => $accepted_qty,
 			'rejected_qty' => $rejected_qty,
 			'status' => "Completed",
 		);
-
+		$success = 0;
+        $messages = "Something went wrong.";
 		$update = $this->Crud->update_data("machine_request_parts", $data, $id);
-
 		if (false && $update != 0) {
-			echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$messages = "Already Exists";
+			// echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-
 			if ($update) {
-
 				$child_part = $this->SupplierParts->getSupplierPartByPartNumber($part_number);
 				$old_stock = $child_part[0]->stock;
-				$old_machine_mold_issue_stock = (int)$child_part[0]->machine_mold_issue_stock;
+
+				$old_machine_mold_issue_stock = $child_part[0]->machine_mold_issue_stock;
 				$new_stock = $old_stock - $accepted_qty;
+
 				$new_machine_mold_issue_stock = $old_machine_mold_issue_stock + $accepted_qty;
 
 				$data23333 = array(
-
 					"stock" => $new_stock,
 					"machine_mold_issue_stock" => $new_machine_mold_issue_stock
-
 				);
-
-
 
 				$update = $this->SupplierParts->updateStockById($data23333, $child_part[0]->id);
 				$child_part[0]->id;
-				//update the status
 
+				//update the status
 				$custom_query = "select count(*) as pendingItems from machine_request_parts where machine_request_id = " . $machine_request_id . " and status ='pending'";
 				$result = $this->Crud->customQuery($custom_query);
 				$isPending = $result[0]->pendingItems;
 
-
-
 				$status = "pending";
-
 				if ($isPending == 0) {
 					$status = "Completed";
 				}
-
 				$update_machine_request = array(
 					"status" => $status,
 				);
 
 				$machine_status_update_result = $this->Crud->update_data("machine_request", $update_machine_request, $machine_request_id);
-				echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$messages = "Updated Sucessfully";
+				$success = 1;
+				// echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				echo "<script>alert(' Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$messages = "Not Updated";
+				// echo "<script>alert(' Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
-
 		}
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 
 	}
 
@@ -1210,6 +1240,7 @@ class P_Molding extends CommonController
 			AND m_req.status = '".$filter_by_status."' 
 			ORDER BY m_req.id DESC");
 
+		
 		$data['filter_by_status'] = $filter_by_status;
 		$this->loadView('admin/molding/machine_request_completed', $data);
 	}
@@ -1340,6 +1371,7 @@ class P_Molding extends CommonController
 			
 			
 		}
+		
 		$data["data"] = $data;
         $total_record = $this->CustomerPart->get_machine_request_completed_count([], $post_data["search"]);
         $data["recordsTotal"] = $total_record['total_record'] != null ? $total_record['total_record'] : 0 ;
@@ -1626,15 +1658,24 @@ class P_Molding extends CommonController
 			"rejection_qty" => $rejection_qty,
 			"cavity" => $cavity
 		);
+		$success = 0;
+        $messages = "Something went wrong.";
 		$insert = $this->Crud->insert_data("mold_production_rejection_details", $data);
 		if ($insert) {
-			$this->addSuccessMessage('Rejection details added successfully.');
+			$messages = "Rejection details added successfully.";
+			$success = 1;
 		} else {
+			
 			if ($this->checkNoDuplicateEntryError()) {
-				$this->addErrorMessage('Unable to add rejection details. Please try again.');
+				$messages = "Unable to add rejection details. Please try again.";
+				// $this->addErrorMessage('Unable to add rejection details. Please try again.');
 			}
 		}
-		$this->redirectMessage();
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 	public function update_rejection_details()
@@ -1653,15 +1694,24 @@ class P_Molding extends CommonController
 		);
 
 		$update = $this->Crud->update_data("mold_production_rejection_details", $data, $id);
-
+		$success = 0;
+        $messages = "Something went wrong.";
 		if ($update) {
-			$this->addSuccessMessage('Rejection details updated successfully.');
+			$messages = "Rejection details updated successfully.";
+			$success = 1;
+			// $this->addSuccessMessage('Rejection details updated successfully.');
 		} else {
 			if ($this->checkNoDuplicateEntryError()) {
-				$this->addErrorMessage('Unable to updated rejection details. Please try again.');
+				$messages = "Unable to updated rejection details. Please try again.";
+				// $this->addErrorMessage('Unable to updated rejection details. Please try again.');
 			}
 		}
-		$this->redirectMessage();
+		// $this->redirectMessage();
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 	public function view_downtime_details()

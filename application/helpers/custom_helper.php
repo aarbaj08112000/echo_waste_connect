@@ -72,9 +72,31 @@ function digitalSignature($file_path = '',$location = '',$signer = '',$certpwd =
 
 	$file = new CURLFile($absolute_path, mime_content_type($absolute_path), basename($absolute_path));
 
-	$api_key = "72ACC113118AA458";
+	/*
+	Production System details:
+	$api_key = "NN3W33MCOH2YNAG3CC6J1RF5NZINU3G1";
+	Domian = arominfotech.truecopy.in
+	URL: https: //arominfotech.truecopy.in/api/tsm/v3/signpdfdoc
+	certid:  sunita_kisan_gaikwad - AMEYA
+	certpwd: Tc%9pxL7cXBiRLkWL38raYgKsUXTOA==
+	Signer: helpdesk+arominfotechapiuser@truecopy.com
+	*/
+
+	$api_key = "NN3W33MCOH2YNAG3CC6J1RF5NZINU3G1";
+	
+	/*
+	Test System details:
+	$api_key = "72ACC113118AA458"; //Test System
+	Domian = usgwstage.truecopy.in
+	URL: https://usgwstage.truecopy.in/api/tsm/v3/signpdfdoc
+	certid:  john_doe_test_2_gcp
+	certpwd: Tc%9pxL7qYeGXW/KjN7GpkofKy22PQ==
+	Signer: helpdesk+pocarominfotechapiuser@truecopy.com
+	*/
 	$time = (int) date("i");
-	$current_timestamp = date("dmYH").":".($time+30).date(":s");
+	//$current_timestamp = date("dmYH").":".($time).date(":s"); -- this is for local
+	$current_timestamp = date("dmYH") . ":" . ($time + 30) . date(":s"); //-- this is for production
+	// pr($current_timestamp,1);
 	$checksum = hash('sha256', $api_key.$current_timestamp);
 	$uuid = "AROM".mt_rand(1000000000, 9999999999);
 	$fields = array(
@@ -86,7 +108,7 @@ function digitalSignature($file_path = '',$location = '',$signer = '',$certpwd =
 	    'signer' => $signer,
 	    'uploadfile' => $file,
 	    'signloc' => $location,
-	    'signannotation' => 'Approved by ABC',
+	    'signannotation' => 'Approved',
 	    'hidetick' => 'true',
 	    'signsize' => ''
 	);
@@ -104,13 +126,15 @@ function digitalSignature($file_path = '',$location = '',$signer = '',$certpwd =
 
 	// Check for errors
 	if(curl_errno($ch)) {
-	    echo 'Error: ' . curl_error($ch);
+	    echo 'Error while doing digital signature : ' . curl_error($ch);
+	    exit();
 	}
 
 	// Close cURL session
 	curl_close($ch);
 	// Print the response from the server
-	// echo $response;	
+	//echo $response;	
+	//exit();
 	$myfile = fopen($file_path, "w") or die("Unable to open file!");
 	fwrite($myfile, $response);
 	fclose($myfile);
@@ -138,6 +162,19 @@ function formateFormDate($date =''){
             return $dateTime->format('d/m/Y H:i:s');
         }
     }
+}
+
+function checkGroupAccess($page_url = "",$type = ""){
+	return true;
+	$CI = &get_instance();
+	$CI->load->model('GlobalConfigModel');
+	$acces = $CI->GlobalConfigModel->check_group_access($page_url,$type);
+	if(!$acces){
+		$forbidden_page = base_url('forbidden_page');
+		header("Location: $forbidden_page");
+		die();
+	}
+	return $acces;
 }
 
 

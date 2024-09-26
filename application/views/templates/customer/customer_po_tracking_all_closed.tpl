@@ -63,6 +63,7 @@
       <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
       <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
       <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
+      <a class="btn btn-seconday" href="<%base_url('customer_po_tracking_all')%>" title="Back To Sales Order"><i class="ti ti-arrow-left"></i></a>
     </div>
     <div class="w-100">
     <input type="text" name="reason" placeholder="Filter Search" class="form-control serarch-filter-input m-3 me-0" id="serarch-filter-input" fdprocessedid="bxkoib">

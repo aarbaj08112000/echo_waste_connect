@@ -295,14 +295,14 @@ class PdfControllertulsi extends CommonController
 
             //for display only
             if ((int) $gst_structure_data[0]->igst === 0) {
-                $gst = (int) $gst_structure_data[0]->cgst + (int) $gst_structure_data[0]->sgst;
-                $cgst = (int) $gst_structure_data[0]->cgst;
-                $sgst = (int) $gst_structure_data[0]->sgst;
+                $gst = (float) $gst_structure_data[0]->cgst + (float) $gst_structure_data[0]->sgst;
+                $cgst = (float) $gst_structure_data[0]->cgst;
+                $sgst = (float) $gst_structure_data[0]->sgst;
                 $tcs = (float) $gst_structure_data[0]->tcs;
                 $igst = 0;
                 $total_gst_percentage = $cgst + $sgst;
             } else {
-                $gst = (int) $gst_structure_data[0]->igst;
+                $gst = (float) $gst_structure_data[0]->igst;
                 $tcs = (float) $gst_structure_data[0]->tcs;
                 $cgst = 0;
                 $sgst = 0;
@@ -982,6 +982,15 @@ class PdfControllertulsi extends CommonController
 
     public function print_sales_invoice()
     {
+        $configuration = $this->Crud->get_data_by_id_multiple_condition("global_configuration",$criteria);
+        $configuration = array_column($configuration, "config_value","config_name");
+        $digitalSignature = "No";
+        if(isset($configuration['digitalSignature'])){
+            if($configuration['digitalSignature'] == "Yes"){
+               $digitalSignature = "Yes"; 
+            }
+
+        }
         $new_sales_id = $this->uri->segment('2');
         if (isset($_POST['interests']) && is_array($_POST['interests'])) {
             $selectedInterests = $_POST['interests'];
@@ -989,8 +998,9 @@ class PdfControllertulsi extends CommonController
                 echo "No options selected.";
             } else {
                 $html_content_header = '
-        <!DOCTYPE html>
-          <style>
+        <html>
+        <head>
+    <style>
               html { margin: 15px }
               th, td {
                 border: 1px solid black;
@@ -999,19 +1009,56 @@ class PdfControllertulsi extends CommonController
                 padding-bottom: 1px;
                 padding-left: 5px;
                 //padding-right: 4px;
-                font-family: Poppins, sans-serif;
-                line-height: 1.5
+                font-family: Poppins, sans-serif; 
+                line-height: 1 
+            }
+            tr.part-box th,tr.part-box td {
+                padding: 2px;
             }
           </style>
           <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" >
-          </head><body>';
-                $html_content_full = $html_content_header;
 
-                foreach ($selectedInterests as $interest) {
-                    $html_content_full .= '<div style="page-break-after: always;"><p>' . $this->for_print_download_generate_sales_invoice($interest, $new_sales_id) . '</p></div>';
-                }
-                $html_content_full .= $this->getFooter();
-                echo $html_content_full;
+</head>
+          <body>
+          ';
+                $html_content_full = $html_content_header;
+                    $isEinvoicePresent = false;
+                    $einvoice_data = $this->Crud->get_data_by_id("einvoice_res", $new_sales_id, "new_sales_id");
+                    if (!empty($einvoice_data[0]->Irn)) {
+                        $isEinvoicePresent = true;
+                    }
+                    foreach ($selectedInterests as $interest) {
+                        $html_content_full .= '<div style="page-break-after: always;">' . $this->for_print_download_generate_sales_invoice($interest, $new_sales_id,$configuration) . '</div>';
+                    }
+                    $html_content_full .= $this->getFooter();
+                    //Aarbaj
+                    // echo $html_content_full;
+                    // exit();
+                    $this->pdf->loadHtml($html_content_full);
+                    $this->pdf->render();
+                    $copy = "salesInvoicePrint";
+                    $output = $this->pdf->output();
+                    $fileName = "dist/uploads/sales_invoice_print/".$copy.".pdf";
+                    $fileAbsolutePath = FCPATH.$fileName;
+
+                    // upload pdf
+                    file_put_contents($fileAbsolutePath, $output);
+
+                    // generate digital signature
+                    $signer = $configuration['signer'];
+                    $certpwd = $configuration['certpwd'];
+                    $certid = $configuration['certid'];
+                    $customerPrefix = $configuration['customerPrefix'];
+                    $digital_signature_url = $configuration['digital_signature_url'];
+                    if($digitalSignature == "Yes"){
+                        $sign_position = "[440:95]";
+                        if($isEinvoicePresent){
+                            $sign_position = "[440:60]";
+                        }
+                        digitalSignature($fileName,$sign_position,$signer,$certpwd,$certid,$customerPrefix,$digital_signature_url);
+                    }
+                    $fileDownloadPath = base_url().$fileName;
+                    header("Location: ".$fileDownloadPath);
             }
         } else {
             echo "No Options Selected.";
@@ -1046,7 +1093,7 @@ class PdfControllertulsi extends CommonController
     //$dompdf->clear();
     } */
 
-    public function for_print_download_generate_sales_invoice($copy = null, $new_sales_id = null)
+    public function for_print_download_generate_sales_invoice($copy = null, $new_sales_id = null,$configuration = [])
     {
         $downloadPDF = false;
 
@@ -1089,14 +1136,14 @@ class PdfControllertulsi extends CommonController
             $packSize = $this->Common_admin_model->calculateAllFactorsForSticker($p->qty, $packaging_qty);
 
             if ((int) $gst_structure_data[0]->igst === 0) {
-                $gst = (int) $gst_structure_data[0]->cgst + (int) $gst_structure_data[0]->sgst;
-                $cgst = (int) $gst_structure_data[0]->cgst;
-                $sgst = (int) $gst_structure_data[0]->sgst;
+                $gst = (float) $gst_structure_data[0]->cgst + (float) $gst_structure_data[0]->sgst;
+                $cgst = (float) $gst_structure_data[0]->cgst;
+                $sgst = (float) $gst_structure_data[0]->sgst;
                 $tcs = (float) $gst_structure_data[0]->tcs;
                 $igst = 0;
                 $total_gst_percentage = $cgst + $sgst;
             } else {
-                $gst = (int) $gst_structure_data[0]->igst;
+                $gst = (float) $gst_structure_data[0]->igst;
                 $tcs = (float) $gst_structure_data[0]->tcs;
                 $cgst = 0;
                 $sgst = 0;
@@ -1133,7 +1180,7 @@ class PdfControllertulsi extends CommonController
             }
 
             $parts_html .= '
-        <tr style="font-size:11px;">
+        <tr style="font-size:11px;" class="part-box">
          <td style="text-align:center;">' . $i . '</td>
          <td colspan="4" style="max-width:28px;word-wrap: break-word;text-align:left;">' . substr($child_part_data[0]->part_description, 0, 50) . '<br><b>' . wordwrap($child_part_data[0]->part_number, 12, "\n", true) . '</b></td>
          <td style="text-align:center;">' . $hsn_code . '</td>
@@ -1148,19 +1195,22 @@ class PdfControllertulsi extends CommonController
         }
 
         if ($i == 2) {
-            $height = "260px";
+            $height = 260;
         } elseif ($i == 3) {
-            $height = "220px";
+            $height = 220;
         } elseif ($i == 4) {
-            $height = "200px";
+            $height = 200;
         } elseif ($i == 5) {
-            $height = "140px";
+            $height = 140;
         } elseif ($i == 6) {
-            $height = "100px";
+            $height = 100;
         } elseif ($i == 7) {
-            $height = "80px";
+            $height = 80;
         } elseif ($i == 8) {
-            $height = "50px";
+            $height = 30;
+        }
+         elseif ($i == 9) {
+            $height = 30;
         }
 
        // $final_final_amount = $final_total + $cgst_amount + $sgst_amount + $igst_amount + $tcs_amount;
@@ -1179,7 +1229,29 @@ class PdfControllertulsi extends CommonController
         $isEinvoicePresent = false;
         if (!empty($einvoice_data[0]->Irn)) {
             $isEinvoicePresent = true;
+        }else{
+            // pr($i,1);
+            if ($i == 2) {
+                $height += 30;
+            } elseif ($i == 3) {
+               $height += 30;
+            } elseif ($i == 4) {
+                $height += 30;
+            } elseif ($i == 5) {
+                $height += 50;
+            } elseif ($i == 6) {
+                 $height += 50;
+            } elseif ($i == 7) {
+                 $height += 40;
+            } elseif ($i == 8) {
+                 $height += 60;
+            }
+            elseif ($i == 9) {
+                $height = 30;
+            }
         }
+        $height = $height."px";
+        // pr($height,1);
         if ($isEinvoicePresent == true) {
             $file_nm = uniqid() . ".png";
             $file_qr = './documents/qrcode/sales/' . $file_nm;
@@ -1195,22 +1267,43 @@ class PdfControllertulsi extends CommonController
             // End and clean the buffer
             ob_end_clean();
         }
+        $company_logo = "";
+        $company_logo_enable = "No";
+        $row_col_span = '12';
+        if(isset($configuration['companyLogoEnable']) && isset($configuration['companyLogo'])){
+            if($configuration['companyLogoEnable'] == 'Yes' && $configuration['companyLogo'] != ''){
+                 $company_logo = $configuration['companyLogo'];
+                $company_logo_enable = "Yes";
+                $company_logo = '<td width="10%" colspan="2" style="text-align:center;"><img src="'.base_url('').'/dist/img/company_logo/'.$company_logo.'"  style="width: 60px;padding: 0px;"></td>';
+                $row_col_span = '10';
+            }
+        }
 
         $html_content =
-        '<table cellspacing="0" border="1px">
-        <tr>
-          <th colspan="12" style="text-align:right;padding-right:2em;font-size:9px">' . $copy . '</td>
-        </tr>
-        <tr>
-            <th colspan="12" style="text-align:center; font-size:13px">TAX INVOICE</th>
-         </tr>
-         <tr style="font-size:9px;text-align:center">
-                    <td colspan="12">
-                         <b style="margin-top:-100px;font-size:20px">' . $client_data[0]->client_name . '
-                        </b><br>
-                        <span>' . $client_data[0]->billing_address . '</span>
-                    </td>
-         </tr>';
+        '<table cellspacing="0" border="1px" style="    margin-right: 10px;">
+        
+        <tr style="font-size:11px" style="border-right-style:none;">
+                '.$company_logo.'
+                <td colspan="'.$row_col_span.'" style="    padding: 0px;">
+                  <table cellspacing="0" border="0px" width="100%">
+                    <tr>
+                        <th style="border: 0px;text-align:right;font-size:9px;border-bottom: 2px solid black;padding:2px">
+                        ' . $copy . '
+                        </th>
+                    </tr>
+                    <tr>
+                    <th style="border: 0px;text-align:center; font-size:13px;border-bottom: 2px solid black;padding:6px">TAX INVOICE</th>
+                    </tr>
+                    <tr>
+                        <th style="border: 0px;font-size:9px;text-align:center;padding:5px">
+                            <b style="margin-top:-100px;font-size:20px">' . $client_data[0]->client_name . '
+                           </b><br>
+                           <span>' . $client_data[0]->billing_address . '</span>
+                        </th>
+                    </tr>
+                </table>
+                </td>
+        </tr>';
 
         if ($isEinvoicePresent == true) {
             $html_invoice_details = '
@@ -1235,7 +1328,7 @@ class PdfControllertulsi extends CommonController
               </td>
             </tr>
             <tr>
-              <td colspan="12" style="font-size:11px;">
+              <td colspan="12" style="font-size:11px;padding-top: 4px;">
                 <span><b>&nbsp;IRN No:</b> ' . $einvoice_data[0]->Irn . '<br>  </span>
                 <span><b>&nbsp;ACK No:</b> ' . $einvoice_data[0]->AckNo . '</span>
                 <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b> &nbsp;ACK Date/Time :</b> ' . $einvoice_data[0]->AckDt . '</span>
@@ -1263,8 +1356,8 @@ class PdfControllertulsi extends CommonController
         }
 
         $html_content = $html_content . $html_invoice_details .
-        '<tr style="font-size:12px">
-            <td colspan="5" >
+        '<tr style="font-size:11px" >
+            <td colspan="5" style="padding-top: 4px;">
                 <b>&nbsp;Details of Receiver (Billed To)</b><br>
                 &nbsp;<b>' . $customer_data[0]->customer_name . '</b><br>
                 &nbsp;' . $customer_data[0]->billing_address . '<br>
@@ -1272,7 +1365,7 @@ class PdfControllertulsi extends CommonController
                 <b> &nbsp;PAN NO : </b>' . $customer_data[0]->pan_no . '<br>
                 <b> &nbsp;GST NO :</b> ' . $customer_data[0]->gst_number . '
             </td>
-            <td colspan="7">
+            <td colspan="7" style="padding-top: 4px;">
                 <b>&nbsp;Details of Consignee (Shipped to)</b><br>
                 &nbsp;<b>' . $shipping_data['shipping_name'] . '</b><br>
                 &nbsp;' . $shipping_data['ship_address'] . '<br>
@@ -1281,7 +1374,7 @@ class PdfControllertulsi extends CommonController
                 <b> &nbsp;GST NO : </b>' . $shipping_data['gst_number'] . '
             </td>
          </tr>
-         <tr style="font-size:11px;text-align:center;">
+         <tr style="font-size:11px;text-align:center;" class="part-box">
           <th style="width:20px;">Sr No</th>
           <th colspan="4" style="width:350px;text-align:left;">Part Description <br><i> Part Number</i></th>
           <th>HSN / SAC </th>
@@ -1294,48 +1387,60 @@ class PdfControllertulsi extends CommonController
            ' . $parts_html . '
         <tr>
           <td colspan="12" VALIGN="BOTTOM" style="font-size:10px;height:' . $height . '">Remark: ' . $new_sales_data[0]->remark . '</td>
-         </tr>
+        </tr>
            <tr style="font-size:10px">
-           <td rowspan="2" colspan="5">
+           <td rowspan="2" colspan="7">
             <b>&nbsp;Mode Of Transport : </b>' . $md . '&nbsp;&nbsp;&nbsp;&nbsp;<b>&nbsp;Vehicle No : </b>' . $new_sales_data[0]->vehicle_number . '&nbsp;&nbsp;&nbsp;&nbsp;<b>&nbsp;L.R No : </b>' . $new_sales_data[0]->lr_number . '
             <br><b>&nbsp;Transporter : </b>' . $transporter_data[0]->transporter_id . '<br>
            </td>
-           <td colspan="3" style="text-align:center;margin-left:10px;">SUB TOTAL </td>
-           <td colspan="4" style="text-align:center">' . number_format((float) $final_total, 2, '.', '') . '</td>
+           <td colspan="2" style="text-align:center;margin-left:10px;">SUB TOTAL </td>
+           <td colspan="3" style="text-align:center">' . number_format((float) $final_total, 2, '.', '') . '</td>
            </tr>
            <tr style="font-size:10px">
-            <td colspan="3" style="text-align:center">IGST ' . $igst . '%</td>
-            <td colspan="4" style="text-align:center">' . number_format((float) $igst_amount, 2, '.', '') . '</td>
+            <td colspan="2" style="text-align:center">IGST ' . $igst . '%</td>
+            <td colspan="3" style="text-align:center">' . number_format((float) $igst_amount, 2, '.', '') . '</td>
            </tr>
            <tr style="font-size:10px">
-          <td rowspan="5" colspan="5">
+          <td rowspan="5" colspan="7">
             <b> &nbsp;Payment Terms : ' . $customer_data[0]->payment_terms . '</b> <br>
             <span><b> &nbsp;Bank Details : </b> ' . $client_data[0]->bank_details . '</span><br>
             <b> &nbsp;Electronic Reference No.</b> <br>
             <span> <b> &nbsp;GST Value (In Words) : </b> ' . $this->numberToWords(number_format((float) $final_gst_value, 2, '.', '')) . '</span><br>
             <span> <b> &nbsp;Invoice Value (In Words) : </b> ' . $this->numberToWords(number_format((float) $final_po_amount, 2, '.', '')) . '</span>
             </td>
-            <td colspan="3" style="text-align:center;margin-left:10px;">CGST ' . $cgst . '%</td>
-            <td colspan="4" style="text-align:center">' . number_format((float) $cgst_amount, 2, '.', '') . '</td>
+            <td colspan="2" style="text-align:center;margin-left:10px;">CGST ' . $cgst . '%</td>
+            <td colspan="3" style="text-align:center">' . number_format((float) $cgst_amount, 2, '.', '') . '</td>
           </tr>
           <tr style="font-size:10px">
-            <td colspan="3" style="text-align:center;margin-left:10px;">SGST  ' . $sgst . '%</td>
-            <td colspan="4" style="text-align:center">' . number_format((float) $sgst_amount, 2, '.', '') . '</td>
+            <td colspan="2" style="text-align:center;margin-left:10px;">SGST  ' . $sgst . '%</td>
+            <td colspan="3" style="text-align:center">' . number_format((float) $sgst_amount, 2, '.', '') . '</td>
           </tr>
           <tr style="font-size:10px">
-            <td colspan="3" style="text-align:center">TCS ' . $tcs . '%</td>
-            <td colspan="4" style="text-align:center">' . number_format((float) $tcs_amount, 2, '.', '') . '</td>
+            <td colspan="2" style="text-align:center">TCS ' . $tcs . '%</td>
+            <td colspan="3" style="text-align:center">' . number_format((float) $tcs_amount, 2, '.', '') . '</td>
           </tr>
           <tr style="font-size:10px">
-            <td colspan="3" style="text-align:center;margin-left:10px;">Freight Charges</td>
-            <td colspan="4" style="text-align:center">' . '0.00' . '</td>
+            <td colspan="2" style="text-align:center;margin-left:10px;">Freight Charges</td>
+            <td colspan="3" style="text-align:center">' . '0.00' . '</td>
           </tr>
           <tr style="font-size:10px">
-            <th colspan="3" style="text-align:center">GRAND TOTAL (Rs) </th>
-            <th colspan="4" style="text-align:center">' . number_format((float) $final_po_amount, 2, '.', '') . '</th>
+            <th colspan="2" style="text-align:center">GRAND TOTAL(Rs) </th>
+            <th colspan="3" style="text-align:center;font-size:10px">' . number_format((float) $final_po_amount, 2, '.', '') . '</th>
           </tr>';
-        $html_content .= $this->getFooterWithSignatureForSales();
+        $digitalSignature = "No";
+        $signatureImageEnable = "No";
+        $signatureImageUrl= "";
+        if(isset($configuration['digitalSignature']) && $configuration['digitalSignature'] == "Yes"){
+               $digitalSignature = "Yes"; 
+        }else if(isset($configuration['SignatureImageEnable'])){
+            if($configuration['SignatureImageEnable'] == "Yes" && $configuration['SignatureImage'] != ""){
+               $signatureImageEnable = "Yes"; 
+               $signatureImageUrl = base_url("dist/img/signature_image/").$configuration['SignatureImage'];
+            }
+        }
+        $html_content .= $this->getFooterWithSignatureForSales($digitalSignature,$signatureImageEnable,$signatureImageUrl);
         return $html_content;
+        
     }
 
     /**
@@ -1397,6 +1502,7 @@ class PdfControllertulsi extends CommonController
         $criteria = []; //get only those fields which can be edited by Customers
         $configuration = $this->Crud->get_data_by_id_multiple_condition("global_configuration",$criteria);
         $configuration = array_column($configuration, "config_value","config_name");
+        // pr($configuration,1);
         $company_logo = "";
         $company_logo_enable = "No";
         $row_col_span = '12';
@@ -1404,7 +1510,7 @@ class PdfControllertulsi extends CommonController
             if($configuration['companyLogoEnable'] == 'Yes' && $configuration['companyLogo'] != ''){
                  $company_logo = $configuration['companyLogo'];
                 $company_logo_enable = "Yes";
-                $company_logo = '<td width="15%" colspan="2" style="text-align:center;"><img src="'.base_url('').'/dist/img/company_logo/'.$company_logo.'"  style="width: 50px;padding: 8px;"></td>';
+                $company_logo = '<td width="10%" colspan="2" style="text-align:center;"><img src="'.base_url('').'/dist/img/company_logo/'.$company_logo.'"  style="width: 60px;padding: 0px;"></td>';
                 $row_col_span = '10';
             }
         }
@@ -1439,14 +1545,14 @@ class PdfControllertulsi extends CommonController
             $packSize = $this->Common_admin_model->calculateAllFactorsForSticker($p->qty, $packaging_qty);
 
             if ((int) $gst_structure_data[0]->igst === 0) {
-                $gst = (int) $gst_structure_data[0]->cgst + (int) $gst_structure_data[0]->sgst;
-                $cgst = (int) $gst_structure_data[0]->cgst;
-                $sgst = (int) $gst_structure_data[0]->sgst;
+                $gst = (float) $gst_structure_data[0]->cgst + (float) $gst_structure_data[0]->sgst;
+                $cgst = (float) $gst_structure_data[0]->cgst;
+                $sgst = (float) $gst_structure_data[0]->sgst;
                 $tcs = (float) $gst_structure_data[0]->tcs;
                 $igst = 0;
                 $total_gst_percentage = $cgst + $sgst;
             } else {
-                $gst = (int) $gst_structure_data[0]->igst;
+                $gst = (float) $gst_structure_data[0]->igst;
                 $tcs = (float) $gst_structure_data[0]->tcs;
                 $cgst = 0;
                 $sgst = 0;
@@ -1483,7 +1589,7 @@ class PdfControllertulsi extends CommonController
             }
 
             $parts_html .= '
-       <tr style="font-size:11px;">
+       <tr style="font-size:10px;">
         <td style="text-align:center;">' . $i . '</td>
         <td colspan="4" style="max-width:28px;word-wrap: break-word;text-align:left;">' . substr($child_part_data[0]->part_description, 0, 50) . '<br><b>' . wordwrap($child_part_data[0]->part_number, 12, "\n", true) . '</b></td>
         <td style="text-align:center;">' . $hsn_code . '</td>
@@ -1564,36 +1670,40 @@ class PdfControllertulsi extends CommonController
 
         //generate_sales_invoice
         //manojs
+        $pdf_margin = "margin-right:10px;";
+        if($isEinvoicePresent){
+            $pdf_margin = 'margin-right:14px;';
+        }
         $html_content = '
       <!DOCTYPE html>
         <style>
             html { margin: 15px}
             @media print
              {
-            	html, body {
-            	height:100%;
-            	margin:20px !important;
-            	padding:5px !important;
-            	overflow: hidden;
+                html, body {
+                height:100%;
+                margin:20px !important;
+                padding:5px !important;
+                overflow: hidden;
           }
-		}
+        }
 
-    	th, td {
-    			  border: 1px solid black;
-    			  border-collapse: collapse;
-    			  padding-top: 1px;
-    			  padding-bottom: 1px;
-    			  padding-left: 5px;
-    			  //padding-right: 4px;
+        th, td {
+                  border: 1px solid black;
+                  border-collapse: collapse;
+                  padding-top: 1px;
+                  padding-bottom: 1px;
+                  padding-left: 5px;
+                  //padding-right: 4px;
             font-family: "Poppins", sans-serif;
             line-height: 1.1
-    	}
+        }
        </style>
 
        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap">
        </head>
        <body>
-       <table cellspacing="0" border="1px">
+       <table cellspacing="0" border="1px" style="'.$pdf_margin.'">
         
         <tr style="font-size:11px" style="border-right-style:none;">
                 '.$company_logo.'
@@ -1706,58 +1816,63 @@ class PdfControllertulsi extends CommonController
          <td colspan="12" VALIGN="BOTTOM" style="font-size:10px;height:' . $height . '">Remark: ' . $new_sales_data[0]->remark . '</td>
         </tr>
           <tr style="font-size:10px">
-            <td rowspan="2" colspan="5">
+            <td rowspan="2" colspan="7">
               <b>&nbsp;Mode Of Transport : </b>' . $md . '&nbsp;&nbsp;&nbsp;&nbsp;<b>&nbsp;Vehicle No : </b>' . $new_sales_data[0]->vehicle_number . '&nbsp;&nbsp;&nbsp;&nbsp;<b>&nbsp;L.R No : </b>' . $new_sales_data[0]->lr_number . '
               <br><b>&nbsp;Transporter : </b>' . $transporter_data[0]->transporter_id . '<br>
             </td>
-            <td colspan="3" style="text-align:center;margin-left:10px;">SUB TOTAL </td>
-            <td colspan="4" style="text-align:center">' . number_format((float) $final_total, 2, '.', '') . '</td>
+            <td colspan="2" style="text-align:center;margin-left:10px;">SUB TOTAL </td>
+            <td colspan="3" style="text-align:center">' . number_format((float) $final_total, 2, '.', '') . '</td>
           </tr>
           <tr style="font-size:10px">
-            <td colspan="3" style="text-align:center">IGST ' . $igst . '%</td>
-            <td colspan="4" style="text-align:center">' . number_format((float) $igst_amount, 2, '.', '') . '</td>
+            <td colspan="2" style="text-align:center">IGST ' . $igst . '%</td>
+            <td colspan="3" style="text-align:center">' . number_format((float) $igst_amount, 2, '.', '') . '</td>
          </tr>
           <tr style="font-size:10px">
-          <td rowspan="5" colspan="5">
+          <td rowspan="5" colspan="7">
             <b> &nbsp;Payment Terms : ' . $customer_data[0]->payment_terms . '</b> <br>
             <span><b> &nbsp;Bank Details : </b> ' . $client_data[0]->bank_details . '</span><br>
             <b> &nbsp;Electronic Reference No.</b> <br>
             <span> <b> &nbsp;GST Value (In Words) : </b> ' . $this->numberToWords(number_format((float) $final_gst_value, 2, '.', '')) . '</span><br>
             <span> <b> &nbsp;Invoice Value (In Words) : </b> ' . $this->numberToWords(number_format((float) $final_po_amount, 2, '.', '')) . '</span>
             </td>
-            <td colspan="3" style="text-align:center;margin-left:10px;">CGST ' . $cgst . '%</td>
-            <td colspan="4" style="text-align:center">' . number_format((float) $cgst_amount, 2, '.', '') . '</td>
+            <td colspan="2" style="text-align:center;margin-left:10px;">CGST ' . $cgst . '%</td>
+            <td colspan="3" style="text-align:center">' . number_format((float) $cgst_amount, 2, '.', '') . '</td>
         </tr>
           <tr style="font-size:10px">
-            <td colspan="3" style="text-align:center;margin-left:10px;">SGST  ' . $sgst . '%</td>
-            <td colspan="4" style="text-align:center">' . number_format((float) $sgst_amount, 2, '.', '') . '</td>
+            <td colspan="2" style="text-align:center;margin-left:10px;">SGST  ' . $sgst . '%</td>
+            <td colspan="3" style="text-align:center">' . number_format((float) $sgst_amount, 2, '.', '') . '</td>
           </tr>
           <tr style="font-size:10px">
-            <td colspan="3" style="text-align:center">TCS ' . $tcs . '%</td>
-            <td colspan="4" style="text-align:center">' . number_format((float) $tcs_amount, 2, '.', '') . '</td>
+            <td colspan="2" style="text-align:center">TCS ' . $tcs . '%</td>
+            <td colspan="3" style="text-align:center">' . number_format((float) $tcs_amount, 2, '.', '') . '</td>
           </tr>
           <tr style="font-size:10px">
-            <td colspan="3" style="text-align:center;margin-left:10px;">Freight Charges</td>
-            <td colspan="4" style="text-align:center">' . '0.00' . '</td>
+            <td colspan="2 style="text-align:center;margin-left:10px;">Freight Charges</td>
+            <td colspan="3" style="text-align:center">' . '0.00' . '</td>
           </tr>
           <tr style="font-size:10px">
-            <th colspan="3" style="text-align:center">GRAND TOTAL (Rs) </th>
-            <th colspan="4" style="text-align:center">' . number_format((float) $final_po_amount, 2, '.', '') . '</th>
+            <th colspan="2" style="text-align:center">GRAND TOTAL (Rs) </th>
+            <th colspan="3" style="text-align:center">' . number_format((float) $final_po_amount, 2, '.', '') . '</th>
           </tr>';
         $digitalSignature = "No";
-        if(isset($configuration['digitalSignature'])){
-            if($configuration['digitalSignature'] == "Yes"){
+        $signatureImageEnable = "No";
+        $signatureImageUrl= "";
+        if(isset($configuration['digitalSignature']) && $configuration['digitalSignature'] == "Yes"){
                $digitalSignature = "Yes"; 
+        }else if(isset($configuration['SignatureImageEnable'])){
+            if($configuration['SignatureImageEnable'] == "Yes" && $configuration['SignatureImage'] != ""){
+               $signatureImageEnable = "Yes"; 
+               $signatureImageUrl = base_url("dist/img/signature_image/").$configuration['SignatureImage'];
             }
-
         }
-        $html_content = $html_content . $this->getFooterWithSignatureForSales($digitalSignature);
+        
+        $html_content = $html_content . $this->getFooterWithSignatureForSales($digitalSignature,$signatureImageEnable,$signatureImageUrl);
 
+        // pr($html_content,1);
         $pdfName = 'Sales-Invoice-' . $new_sales_data[0]->sales_number . '-' . $copy . '.pdf';
-        //manoj
-        //echo $html_content;
-        // print_r($html_content);
-        // exit();
+
+        //Aarbaj
+        // pr($html_content,1);
         $this->pdf->loadHtml($html_content);
         $this->pdf->render();
         if($digitalSignature== "Yes"){
@@ -1774,7 +1889,11 @@ class PdfControllertulsi extends CommonController
                 $certid = $configuration['certid'];
                 $customerPrefix = $configuration['customerPrefix'];
                 $digital_signature_url = $configuration['digital_signature_url'];
-                digitalSignature($fileName,'[440:50]',$signer,$certpwd,$certid,$customerPrefix,$digital_signature_url);
+                $SignaturePostion = '[440:72]';
+                if($isEinvoicePresent){
+                    $SignaturePostion = '[440:55]';
+                }
+                digitalSignature($fileName,$SignaturePostion,$signer,$certpwd,$certid,$customerPrefix,$digital_signature_url);
                 
                 $fileDownloadPath = base_url().$fileName;
                 $pdf_content = file_get_contents($fileDownloadPath);
@@ -2532,10 +2651,13 @@ class PdfControllertulsi extends CommonController
     /*
     Footer details with Signature etc.
      */
-    public function getFooterWithSignatureForSales($digitalSignature =  'No')
+    public function getFooterWithSignatureForSales($digitalSignature =  'No',$signatureImageEnable='No',$signatureImageUrl = '')
     {
+        $rowspan = "2";
+        
+        
         $footerDetails =
-        '<tr style="font-size:7px">
+        '<tr style="font-size:8px">
             <td colspan="5">
                 <span style="padding-left:5px"><p>We hereby certify that my/our registration certificate under the Goods and Service Tax
                 Act, 2017 is in force on the date on which the sale of the goods specified in this Tax
@@ -2543,20 +2665,24 @@ class PdfControllertulsi extends CommonController
                 been effected by me/us and it shall be accounted for in the turnover of sales while filling
                 of return and the due tax. If any, payable on the sale has been paid or shall be paid
                 <br>
-                Certified that the particulars given above are true and correct and the amount indicated
-                represents the price actully charged and that there is no flow of additional consideration
-                directly or indirectly from byuer.
-                Interest @24% P.A. will be charged on all overdue invoices.<br>
+                Certified that the particulars given above are true.Interest @24% P.A. will be charged on all overdue invoices.<br>
                 Subject To Pune Jurisdiction
-                </p><p><br>
+                </p><p>
                 <b>This is computer generated document. No signature required.</b></p></span>
             </td>
-            <td colspan="2" style="text-align:center;vertical-align: bottom;">
+            <td colspan="'.$rowspan.'" style="text-align:center;vertical-align: bottom;">
              <h4 style="font-size:11px"> Receiver Signature </h4>
             </td>';
 
         if($digitalSignature == 'Yes'){
             $footerDetails .= '<td colspan="5" style="text-align:center;font-size:11px;min-width:100px;"></td>';
+        }else if($signatureImageEnable == 'Yes' && $signatureImageUrl != ''){
+            $footerDetails .= '<td colspan="5" style="text-align:center;font-size:11px;min-width:100px;background: white;">
+                <h4> For, ' . $this->getCustomerNameDetails() . ' </h4>
+                <br>
+                <img src="'.$signatureImageUrl.'" height="100" width="170" style="background: white;">
+                <h4 style="white-space:nowrap;"> Authorized Signatory</h4>
+            </td>';
         }else{
             $footerDetails .= '<td colspan="5" style="text-align:center;font-size:11px;min-width:100px;">
                 <h4> For, ' . $this->getCustomerNameDetails() . ' </h4>
@@ -2566,7 +2692,9 @@ class PdfControllertulsi extends CommonController
         }
             
         $footerDetails.='</tr>
-            </table>' . $this->getFooter();
+            </table>' ;
+
+            // . $this->getFooter()
         return $footerDetails;
     }
 

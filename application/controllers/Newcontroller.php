@@ -983,7 +983,10 @@ public function rejected_po()
 		);
 		$success = 0;
         $messages = "Something went wrong.";
+        $deliveryUnit = $inwarding_data[0]->delivery_unit;
+		$client_data = $this->Crud->get_data_by_id("client", $deliveryUnit, "client_unit");
 		$grn_details_data = $this->Crud->get_data_by_id_multiple("grn_details", $arr2);
+
 		if ($grn_details_data) {
 			if (true) {
 				$data_update_inwarding = array(
@@ -992,6 +995,26 @@ public function rejected_po()
 
 				$result2 = $this->Crud->update_data("inwarding", $data_update_inwarding, $inwarding_id);
 				if ($result2) {
+					$part_ids = array_column($grn_details_data,"part_id");
+					$part_wise_qty = array_column($grn_details_data,"accept_qty","part_id");
+					$child_part_master_data_new = $this->SupplierParts->getSupplierPartByIds($part_ids,$client_data[0]->id);
+					$stockColName = $this->Crud->getStockColNmForClientUnit($client_data[0]->id);
+					$update_arr = [];
+					foreach ($child_part_master_data_new as $key => $value) {
+						$grn_qty = $part_wise_qty[$value->id] > 0 ? $part_wise_qty[$value->id] : 0;
+						if($grn_qty > 0){
+							$update_arr[] = [
+								"childPartStockId" => $value->childPartStockId,
+								$stockColName => $value->$stockColName + $grn_qty
+							];
+						}
+						
+					}
+
+					if(is_array($update_arr) && count($update_arr) > 0){
+						$affected_row = $this->SupplierParts->updateBatchSupplierPartByIds($update_arr);
+					}
+
 					$messages = "Updated Sucessfully";
 					$success = 1;
 					// echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
@@ -2180,6 +2203,7 @@ public function update_grn_qty_accept_reject()
 	$prev_stock = $child_part_master_data_new[0]->$stockColName;
 	$new_stock = (float)$prev_stock + (float)$accept_qty;
 
+	// pr($new_stock,1);
 	$data = array(
 		"accept_qty" => $accept_qty,
 		"reject_qty" => $reject_qty,
@@ -2193,15 +2217,15 @@ public function update_grn_qty_accept_reject()
 			$stockColName => $new_stock,
 		);
 
-		$result22 = $this->SupplierParts->updateStockById($data22, $part_id);
-		if ($result22) {
+		// $result22 = $this->SupplierParts->updateStockById($data22, $part_id);
+		// if ($result22) {
 			$success = 1;
 			$messages = "Successfully Added";
 			// echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-		} else {
+		// } else {
 			$messages = "Unable to Add2";
 			// echo "<script>alert('Unable to Add2');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-		}
+		// }
 	} else {
 		$messages = "Unable to Add";
 		// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";

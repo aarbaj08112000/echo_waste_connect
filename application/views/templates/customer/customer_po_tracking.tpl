@@ -10,12 +10,15 @@
         Planning & Sales
         <a hijacked="yes" class="backlisting-link" title="Back to Issue Request Listing" >
           <i class="ti ti-chevrons-right" ></i>
-          <em >Customer PO QTY Tracking</em></a>
+          <em >Add Sales Order</em></a>
       </h1>
       <br>
-      <span >Create PO QTY Tracking</span>
+      <span >Add Sales Order</span>
     </div>
   </nav>
+  <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
+      <a class="btn btn-seconday" href="<%base_url('customer_po_tracking_all')%>" title="Back To Sales Order"><i class="ti ti-arrow-left"></i></a>
+    </div>
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         

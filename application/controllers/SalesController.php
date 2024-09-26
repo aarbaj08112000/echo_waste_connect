@@ -295,7 +295,7 @@ class SalesController extends CommonController
 		// $data['child_part'] = $child_part_list->result();
 		$data['e_invoice_status'] = $this->Crud->get_data_by_id("einvoice_res", $this->uri->segment('2'), "new_sales_id");
 		
-//		pr($data['po_parts'],1);
+		
 		foreach ($data['po_parts']  as $p) {
 			$data['child_part_data'][$p->part_id] = $this->Crud->get_data_by_id("customer_part", $p->part_id, "id");
 			$data['gst_structure2'][$p->part_id] = $this->Crud->get_data_by_id("gst_structure", $p->tax_id, "id");

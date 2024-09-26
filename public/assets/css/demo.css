@@ -414,6 +414,29 @@
     .chart-box {
           margin-bottom: 15px;
     }
+    .pdf-btn-block .view-original,.pdf-btn-block .original,.pdf-btn-block .acknowledge,.pdf-btn-block .extra-copy,.pdf-btn-block .triplicate,.pdf-btn-block .duplicate{
+        padding: 0px;
+        width: 30%;
+        margin-bottom: 10px;
+        padding-left: 10px;
+    }
+    .pdf-btn-block .packaging-sticker{
+        width: 34%;
+         padding: 0px;
+        padding-left: 10px;
+    }
+    .pdf-btn-block .original-check,.pdf-btn-block .duplicate-check,.pdf-btn-block .triplicate-check,.pdf-btn-block .acknowledge-check,.pdf-btn-block .extra-copy-check{
+        width: 33%;
+        padding: 0px;
+                padding-left: 13px;
+        font-size: 14px;
+      
+    }
+    .pdf-btn-block .print-btn {
+        margin-top: 10px;
+        padding: 0px;
+                padding-left: 14px;
+    }
 }
 @media (min-width: 992px) {
     .navbar-classic .container-fluid {
