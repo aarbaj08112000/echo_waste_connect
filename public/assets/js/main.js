@@ -3,7 +3,7 @@ $( document ).ready(function() {
 });
 
 if($("body .dashboard-block").length == 0){
-  console.log("k")
+  // console.log("k")
 $(document).ajaxStart(function() {
   if($("body").hasClass("modal-open")){
      setTimeout(function(){
@@ -147,7 +147,7 @@ const app = {
   },
   initResponsive: function(){
     var viewportWidth = $(window).width();
-    console.log(viewportWidth)
+    // console.log(viewportWidth)
     // if(viewportWidth > 400 && viewportWidth < 500){
     //     var $element = $('.paginate_button.last');
             
@@ -183,7 +183,7 @@ const app = {
     }
   }, 
   initiateDataTableRes: function(calss_val =""){
-    console.log(calss_val)
+    // console.log(calss_val)
       var $targetElement = $('.table.scrollable');
       $($targetElement).addClass("w-100")
       var $previousElement = $targetElement.parent("div");

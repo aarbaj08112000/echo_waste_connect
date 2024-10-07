@@ -241,8 +241,8 @@ class ChallanController extends CommonController {
 			} else {
 				$inser_query = $this->Crud->insert_data("challan_parts", $data);
 				if ($inser_query) {
-					$updateResult = $this->db->query("update child_part set stock = stock - ".$qty.", sub_con_stock = sub_con_stock + ".$qty."
-					where child_part.id =".$part_id);
+					$updateResult = $this->db->query("update child_part_stock set stock = stock - ".$qty.", sub_con_stock = sub_con_stock + ".$qty."
+					where childPartId =".$part_id);
 					if($updateResult){
 						$messages = "Part added.";
 						$success = 1;
@@ -306,8 +306,8 @@ class ChallanController extends CommonController {
 		if ($result) {
 			//select stock,sub_con_stock from child_part where id = 1
 			//97,1003
-			$updateResult = $this->db->query("update child_part set stock = stock + ".$partQty.", sub_con_stock = sub_con_stock - ".$partQty."
-			where child_part.id =".$part_id);
+			$updateResult = $this->db->query("update child_part_stock set stock = stock + ".$partQty.", sub_con_stock = sub_con_stock - ".$partQty."
+			where childPartId =".$part_id);
 			if($updateResult){
 				$success = 1;
 				$messages = "Part successfully deleted.";

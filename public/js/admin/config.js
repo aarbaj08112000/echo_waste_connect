@@ -133,7 +133,10 @@ $(document).ready(function() {
                     maxlength: "Note can't exceed 255 characters"
                 }
             },
-            submitHandler: function(form) {
+            submitHandler: function(form,e) {
+
+                 e.preventDefault();
+                 
                 // Perform AJAX form submission
                 $.ajax({
                     url: $(form).attr('action'),

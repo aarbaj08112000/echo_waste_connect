@@ -333,9 +333,11 @@ class SupplierPartsController extends CommonController
         );
 
 		foreach ($data as $key => $value) {
-			$edit_data = base64_encode(json_encode($value)); 
-			$data[$key]['action'] = "<i class='ti ti-edit edit-part' title='Edit' data-value='$edit_data'></i>
-			<a href=".base_url('raw_material_inspection/').$value['part_id']."><i class='ti ti-eye ' title='View Inward Inspection' ></i></a>
+			$edit_data = base64_encode(json_encode($value));
+			if(checkGroupAccess("child_part_view","update",false)){
+				$data[$key]['action'] = "<i class='ti ti-edit edit-part' title='Edit' data-value='$edit_data'></i>";
+			} 
+			$data[$key]['action'] .= "<a href=".base_url('raw_material_inspection/').$value['part_id']."><i class='ti ti-eye ' title='View Inward Inspection' ></i></a>
 			";
 			
 		}
@@ -487,6 +489,7 @@ class SupplierPartsController extends CommonController
 		);
 		$data['client_list'] = $this->Crud->read_data_acc("client");
 		$data['clintUnitId'] = $this->Unit->getSessionClientId();
+		$data['role'] = $this->session->userdata("role");
 		$this->loadView('store/stock_down', $data);
 	}
 

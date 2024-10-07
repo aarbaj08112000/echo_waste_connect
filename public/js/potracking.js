@@ -127,9 +127,12 @@ const page = {
         $('#serarch-filter-input').on('keyup', function() {
             table.search(this.value).draw();
         });
-        $(".dataTables_length select").select2({
-            minimumResultsForSearch: Infinity
+        table.on('init.dt', function() {
+            $(".dataTables_length select").select2({
+                minimumResultsForSearch: Infinity
+            });
         });
+       
     },
     formValidation: function(){
         let that = this;

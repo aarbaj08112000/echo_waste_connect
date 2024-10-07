@@ -46,7 +46,7 @@
                         <p class="tgdp-rgt-tp-ttl">Status</p>
                         <p class="tgdp-rgt-tp-txt">
                             <%$group_details['status']%>
-                        </p>
+                        group_menu</p>
                     </div>
                 </div>
             </div>
@@ -55,14 +55,16 @@
       <div class="row mt-4">
 		   <div class="col-xl">
 		      <div class="card mb-4 ">
-		         <div class="card-body">
+		         <div class="card-body menu-list-block">
 		            <form id="updateGroupMenuRight" class="mb-3" action="javascript:void(0)" method="POST" enctype="multipart/form-data" novalidate="novalidate">
 		               <div class="row">
 		               	<input type="hidden" name="group_id" value="<%$group_id%>">
 		               	<%foreach from=$groups_menu key='key' item='menu'%>
 		                  <div class="col-lg-12 ">
 		                    <div class="menu-form-row">
-		                    	<input type="hidden" name="menu[access<%$key%>][group_right_id]" value="<%$menu['group_rights_id']%>">
+		                    	<input type="hidden" name="menu[access<%$key%>][group_master_id]" value="<%$menu['group_master_id']%>">
+		                    	<input type="hidden" name="menu[access<%$key%>][menu_master_id]" value="<%$menu['menu_master_id']%>">
+
 			            		<label class="form-label ">
 			                        <lable for="iAdminMenuId_" class="right-label-inline"><%$menu['diaplay_name']%></lable>
 			            		</label> 
@@ -146,6 +148,11 @@
 		width: 17px;
     	height: 15px;
     	cursor: pointer;
+	}
+	.menu-list-block{
+		    max-height: 506px !important;
+    overflow-y: scroll;
+    overflow-x: clip;
 	}
 
 </style>

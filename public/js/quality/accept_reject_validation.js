@@ -10,6 +10,7 @@ var pdf_title = "accept_reject_validation";
 const page = {
     init: function() {
         this.dataTable();
+        this.filter();
     },
     dataTable: function() {
         var data = {};
@@ -76,11 +77,33 @@ const page = {
                 minimumResultsForSearch: Infinity
             });
         },1000)
-
+        this.serachParams();
         // global searching for datable 
         $('#serarch-filter-input').on('keyup', function() {
             table.search(this.value).draw();
         });
             // table = $('#example1').DataTable();
-      },
+    },
+    filter: function(){
+        let that = this;
+        $(".search-filter").on("click",function(){
+            that.serachParams();
+            $(".close-filter-btn").trigger( "click" )
+        })
+        $(".reset-filter").on("click",function(){
+            that.resetFilter();
+        })
+    },
+    serachParams: function(){
+        let status= $('#status_search').val();
+        // Ensure that the table and column exist before applying the search
+        if (table && status) {
+            table.column(6).search(status).draw();
+        }
+    },
+    resetFilter: function(){
+        $('#status_search').val('');
+        table.column(6).search('').draw();
+        $('.close-filter-btn').trigger('click');
+    }
 };

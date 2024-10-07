@@ -78,7 +78,6 @@ class LogonDashboard extends CommonController
 		$email = $this->input->post('email');
 		$password = $this->input->post('password');
 		$clientUnit = $this->input->post('clientUnit');
-
 		$arr = array(
 			'user_email' => $email,
 			'user_password' => $password
@@ -88,33 +87,23 @@ class LogonDashboard extends CommonController
 			$success = 0;
 			$messages = "Email and Password Invalid.";
 		} else {
-			//clear the session values
-			$user_data = array(
-				'user_id' => '',
-				'user_email' => '',
-				'user_login' => '',
-				'user_name' => '',
-				'AROMCustomerType' => '',
-				'entitlements' => '',
-				'type' => '',
-				'role' => '',
-				'isMultipleClientUnits' => '',
-				'noOfClients' => ''
-					//	'businessType' => ''
-			);
-			$this->session->set_userdata($user_data);
+			$goups = explode(",",$result[0]->unit_ids);
 			//End clear the session values
-
-			if ($result) {
+			$session_keys = array('user_id', 'user_email', 'user_login','user_name','AROMCustomerType','entitlements','type','role','isMultipleClientUnits','noOfClients','groups');
+			$this->session->unset_userdata($user_data);
+			if(!in_array($clientUnit, $goups)){
+				$success = 0;
+				$messages = "You are not authorized to access this unit.";
+			}else if ($result) {
 				$entitlements = $this->getEntitlements();
-
 				$user_data = array(
 					'user_id' => $result[0]->id,
 					'user_email' => $result[0]->user_email,
 					'user_login' => true,
 					'user_name' => $result[0]->user_name,
 					'type' => $result[0]->type,
-					'role' => $result[0]->user_role
+					'role' => $result[0]->user_role,
+					'groups' => $result[0]->groups
 					//	'businessType' => 'SMALL'
 				);
 				$this->session->set_userdata($user_data);

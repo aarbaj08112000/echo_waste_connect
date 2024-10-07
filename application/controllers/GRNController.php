@@ -11,6 +11,7 @@ class GRNController extends CommonController
 	function __construct()
 	{
 		parent::__construct();
+		$this->load->model('SupplierParts');
 	}
 
 	private function getPath()
@@ -36,29 +37,108 @@ class GRNController extends CommonController
 			$data['po_parts'][$key]->child_part_data = $child_part_data[0];
 
 		}
-		// pr($data['po_parts'],1);
+		
 		$data['client_list'] = $this->Crud->read_data_acc("client");
 		$flag = 0;
 		if ($data['po_parts']) {
 			$final_po_amount = 0;
 			$i = 1;
 			foreach($data['po_parts'] as $p) {
-				$child_part_data = $this -> Crud -> get_data_by_id(
+				$child_part_data = $this->Crud->get_data_by_id(
 					"child_part_master",
-					$p -> part_id,
+					$p->part_id,
 					"child_part_id"
 				);
 				$qty = 0;
-				$qty = $p -> pending_qty;;
+				$qty = $p->pending_qty;;
 				if (true) {
 					$flag = $flag + $qty;
 				}
 			}
 		}
 		$data['flag'] = $flag;
-
+		// pr($data,1);
 		// $this->getPage('inwarding_invoice', $data);
 		$this->loadView('store/inwarding_invoice', $data);
+	}
+	public function delete_invoice(){
+		$invoice_id = $this->input->post('invoice_id');
+		$new_po_id = $this->input->post('new_po_id');
+		$table_name = 'inwarding';
+		$data = array(
+			"id" => $invoice_id
+		);
+		$success = 0;
+		$messages = "Something went wrong.";
+		$result = $this->Crud->delete_data($table_name, $data);
+		if ($result) {
+			$success  = 1;
+			$messages = "Invoice deleted successfully.";
+			$po_parts = $this->Crud->customQuery("SELECT pp.* FROM po_parts pp WHERE pp.po_id = '".$new_po_id."'");
+			$grn_details= $this->Crud->customQuery("SELECT g.* FROM grn_details g WHERE g.inwarding_id = '".$invoice_id."'");
+			$po_parts  =array_column($po_parts, "pending_qty","id");
+			$po_part_update_arr = [];
+			foreach ($grn_details as $key => $value) {
+				$po_part_update_arr[] = [
+					"id" => $value->po_part_id,
+					"pending_qty" => $po_parts[$value->po_part_id]+$value->qty
+				];
+			}
+			if(is_valid_array($po_part_update_arr)){
+			$this->SupplierParts->updateBatchPoPartQtyByIds($po_part_update_arr);
+			}
+			// echo "<script>alert('Record deleted successfully.');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			// $this->addSuccessMessage('Record deleted successfully.');
+		} else {
+			$messages = "Unable to delete. Please try again.";
+			// echo "<script>alert('Unable to delete. Please try again.');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		}
+		$return_arr['success']=$success;
+		$return_arr['messages']=$messages;
+		echo json_encode($return_arr);
+		exit;
+	}
+	public function update_inwarding_details()
+	{
+		$invoice_number =trim($this->input->post('invoice_number'));
+		$invoice_date = $this->input->post('invoice_date');
+		$invoice_id = $this->input->post('invoice_id');
+		$po_id = $this->input->post('new_po_id');
+		// pr($this->input->post(),1);
+		//check whether invoice exists and check for supplier id
+		$po1 = $this->Crud->customQuery("SELECT po.supplier_id FROM inwarding inward, new_po po 
+		WHERE inward.invoice_number = '".$invoice_number."' 
+		AND inward.po_id = po.id AND inward.id != ".$invoice_id);
+
+		// check the supplier id for selected po
+		$po2 = $this->Crud->customQuery("SELECT supplier_id FROM new_po 
+		WHERE id = ".$po_id);
+
+		$dataExist = false;
+		foreach($po1 as $podata){
+			if($podata->supplier_id == $po2[0]->supplier_id) {
+				$dataExist=true;
+			}
+		}
+		$success = 0;
+		$messages = "Something went wrong.";
+		if($dataExist==true) {
+			$messages = "Invoice Number already exists for this supplier. Enter different Invoice Number."; 
+			// echo "<script>alert('Invoice Number already exists for this supplier. Enter different Invoice Number. ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		} else {
+			$data = [
+				"invoice_number" => $invoice_number,
+				"invoice_date" => $invoice_date
+			];
+           $result = $this->Crud->update_data("inwarding", $data, $invoice_id);
+           $messages = "Invoice updated successfully.";
+           // echo "<script>alert('Invoice updated successfully. ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+           $success = 1;
+		}
+		$return_arr['success']=$success;
+		$return_arr['messages']=$messages;
+		echo json_encode($return_arr);
+		exit;
 	}
 
 	public function add_invoice_number()

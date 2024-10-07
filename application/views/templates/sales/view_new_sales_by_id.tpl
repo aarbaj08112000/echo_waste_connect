@@ -254,13 +254,67 @@
                               </div>
                           </div>
                         <%/if%>
+                         <%if empty($einvoice_res_data[0]->EwbStatus) || $einvoice_res_data[0]->EwbStatus=="CANCELLED" %>
+                              <div class="col-lg-1 extra-copy">
+                                 <div class="form-group ">
+                                    <button type="button" style="width: 90%;" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#createEBill<%$uri_segment_2%>" target="_blank">Eway Bill</button>
+                                 </div>
+                              </div>
+                              <!-- Modal for create way bill -->
+                                 <div class="modal fade" id="createEBill<%$uri_segment_2%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                       <div class="modal-content">
+                                          <div class="modal-header">
+                                             <h5 class="modal-title" id="exampleModalLabel">Create Eway Bill</h5>
+                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                             </button>
+                                          </div>
+                                           <form action="<%$base_url%>generate_EwayBill" method="post" id="generate_EwayBill">
+                                          <div class="modal-body">
+                                             
+                                                <input type="hidden" name="page_type" value="sales_invoice">
+                                                <input value="<%$uri_segment_2%>" type="hidden" name="new_sales_id" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Customer Name">
+                                                <div class="form-group">
+                                                   <label for="">Mode Of Transport<span class="text-danger">*</label>
+                                                   <select name="transMode" class="form-control select2" >
+                                                      <!--<option value="">Select</option>-->
+                                                      <option value="1" <%if $new_sales[0]->mode == '1'%>selected<%/if%>>Road</option>
+                                                     <option value="2" <%if $new_sales[0]->mode == '2'%>selected<%/if%>>Rail</option>
+                                                     <option value="3" <%if $new_sales[0]->mode == '3'%>selected<%/if%>>Air</option>
+                                                     <option value="4" <%if $new_sales[0]->mode == '4'%>selected<%/if%>>Ship</option>
+                                                   </select>
+                                                </div>
+                                                <div class="form-group">
+                                                   <label for="">Transporter<span class="text-danger">*</label>
+                                                   <select name="transporterId"  id="transporter" class="form-control select2">
+                                                      <option value="">Select Transporter</option>
+                                                      
+                                                         <%foreach from=$transporter item=tr%>
+                                                         <option value="<%$tr->id%>" <%if $new_sales[0]->transporter_id == $tr->id%>selected<%/if%>><%$tr->name%> - <%$tr->transporter_id%></option>
+                                                         <%/foreach%>
+                                                   </select>
+                                                </div>
+                                                <div class="form-group">
+                                                   <label for="">Enter Vehicle No. <span class="text-danger">*</label>
+                                                   <input type="text" placeholder="Enter Vehicle No" name="vehicleNo" value="<%$new_sales[0]->vehicle_number %>"   class="form-control">
+                                                </div>
+                                                <div class="form-group">
+                                                   <label for="">Distance of Transportation<span class="text-danger">*</label>
+                                                   <input type="text" placeholder="Enter Distance of Transportation" name="distance" value="<%$new_sales[0]->distance %>"   class="form-control">
+                                                </div>
+                                          </div>
+                                          <div class="modal-footer">
+                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                          <button type="submit" class="btn btn-primary">Create Eway-Bill</button>
+                                          </form>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                        <%/if%>
                     <%/if%>
-                    <?php
-                              $new_sales_id = $this->uri->segment('2');
-                              $status = $einvoice_res_data[0]->Status;
-                              $irnNo = $einvoice_res_data[0]->Irn;
-                              if (empty($status)) {
-                                  
+
+                  
                     <div class="col-lg-1 packaging-sticker" >
                         <div class="form-group">
                             <button type="button" class="btn btn-info" data-bs-toggle="modal"
@@ -813,6 +867,70 @@
                                }, 1000);
                            }else{
                                toastr.error(res['msg']);
+                           }
+                      }
+                   },
+                   error: function(xhr, status, error) {
+                       // Handle the error response here
+                       alert("An error occurred: " + xhr.responseText);
+                   }
+               });
+           }
+       });
+        $("#generate_EwayBill").validate({
+           ignore: [],
+           rules: {
+               transMode: {
+                   required: true
+               },
+               transporterId: {
+                   required: true
+               },
+               vehicleNo: {
+                   required: true,
+                   // pattern: /^[A-Za-z0-9]{4,20}$/,
+               },
+               distance:{
+                  required: true,
+               }
+           },
+           messages: {
+               transMode: {
+                   required: "Please enter mode of transporter."
+               },
+               transporterId: {
+                   required: "Please enter Transporter."
+               },
+               vehicleNo: {
+                   required: "Please enter vehicle no.",
+                   pattern: "Please enter a valid vehicle number in the format XX00XX0000"
+               },
+               distance:{
+                  required: "Please enter distance of transportation",
+               }
+           },
+           errorPlacement: function(error, element) {
+               error.addClass('error');
+               element.closest('.form-group').append(error);
+           },
+           submitHandler: function(form) {
+               event.preventDefault(); // Prevent default form submission
+                
+               $.ajax({
+                   url: form.action,
+                   type: form.method,
+                   data: $(form).serialize(),
+                   success: function(response) {
+                       // Handle the successful response here
+                      if(response != '' && response != null && typeof response != 'undefined'){
+                           let res = JSON.parse(response);
+                           if(res['success'] == 1){
+                               toastr.success(res['messages']);
+                               setTimeout(() => {
+                                   window.location.reload();
+                               }, 1000);
+                           }else{
+                               toastr.error(res['messages']);
                            }
                       }
                    },

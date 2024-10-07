@@ -17,7 +17,7 @@ class NewEwayBill extends NewGSTCommon
 		Commom Code for API execution with appropriate data
 	*/
     function execute($url,$data,$action,$Authorization,$XConnectorAuthToken=null) {
-        $this->echoToTriage('<br>----- Called execute Method -----');
+        // $this->echoToTriage('<br>----- Called execute Method -----');
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL,$url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -25,7 +25,7 @@ class NewEwayBill extends NewGSTCommon
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 		$current_timestamp = time();
 		$requestid = date("dmyHis", $current_timestamp);
-		echo "<br>requestid - " . $requestid;
+		// echo "<br>requestid - " . $requestid;
 
 	     curl_setopt($ch, CURLOPT_HTTPHEADER, 
 			array( 'Content-Type:application/json',

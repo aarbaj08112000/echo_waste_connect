@@ -1,5 +1,24 @@
 $( document ).ready(function() {
   page.init();
+  if(flag == 0){
+      toastr.options = {
+        'closeButton': true,
+        'debug': false,
+        'newestOnTop': false,
+        'progressBar': false,
+        'positionClass': 'toast-top-right',
+        'preventDuplicates': false,
+        'showDuration': '1000',
+        'hideDuration': '1000',
+        'timeOut': '7000',
+        'extendedTimeOut': '1000',
+        'showEasing': 'swing',
+        'hideEasing': 'linear',
+        'showMethod': 'fadeIn',
+        'hideMethod': 'fadeOut',
+      }
+      toastr.warning('Can not add invoice number as all parts balance qty is zero.');
+  }
 });
 var table = '';
 var file_name = "inwarding_invoice";
@@ -116,6 +135,46 @@ const page = {
         },
       });
     });
+    $(".update_inwarding_details,.delete_invoice").submit(function(e){
+        e.preventDefault();
+       
+        var href = $(this).attr("action");
+        var id = $(this).attr("id");
+        let flag = that.formValidate(id);
+
+        if(flag){
+          return;
+        }
+
+
+        var formData = new FormData($('.'+id)[0]);
+
+        $.ajax({
+          type: "POST",
+          url: href,
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function (response) {
+            var responseObject = JSON.parse(response);
+            var msg = responseObject.messages;
+            var success = responseObject.success;
+            if (success == 1) {
+              toastr.success(msg);
+              $(this).parents(".modal").modal("hide")
+              setTimeout(function(){
+                window.location.reload();
+              },1000);
+
+            } else {
+              toastr.error(msg);
+            }
+          },
+          error: function (error) {
+            console.error("Error:", error);
+          },
+        });
+      });
     
 
   },

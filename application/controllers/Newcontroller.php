@@ -404,7 +404,7 @@ class Newcontroller extends CommonController
 			$data['po_parts'][$key]->gst_structure = $gst_structure;
 
 		}
-		// pr($data,1);
+		// pr($data['child_part'],1);
 		// $this->load->view('header');
 		// $this->load->view('view_new_po_by_id',$data);
 		$this->loadView('purchase/view_new_po_by_id', $data);
@@ -2196,39 +2196,46 @@ public function update_grn_qty_accept_reject()
 	$part_id = $this->input->post('part_id');
 	$deliveryUnit = $this->input->post('deliveryUnit');
 	$client_data = $this->Crud->get_data_by_id("client", $deliveryUnit, "client_unit");
-	$reject_qty = $verified_qty - $accept_qty;
+	// $reject_qty = $verified_qty - $accept_qty;
+	$reject_qty = $this->input->post('reject_qty') != "" && $this->input->post('reject_qty') != null ? $this->input->post('reject_qty') : 0;
 	//$child_part_master_data = $this->Crud->get_data_by_id("child_part_master", $part_id, "id");
 	$child_part_master_data_new = $this->SupplierParts->getSupplierPartById($part_id);
 	$stockColName = $this->Crud->getStockColNmForClientUnit($client_data[0]->id);
 	$prev_stock = $child_part_master_data_new[0]->$stockColName;
 	$new_stock = (float)$prev_stock + (float)$accept_qty;
+	$total_qty = $accept_qty+ $reject_qty;
+	if($total_qty == $verified_qty){
+			// pr($new_stock,1);
+			$data = array(
+				"accept_qty" => $accept_qty,
+				"reject_qty" => $reject_qty,
+				"remark" => $remark,
+			);
 
-	// pr($new_stock,1);
-	$data = array(
-		"accept_qty" => $accept_qty,
-		"reject_qty" => $reject_qty,
-		"remark" => $remark,
-	);
+			// pr($data,1);
 
-	$result = $this->Crud->update_data("grn_details", $data, $grn_details_id);
+			$result = $this->Crud->update_data("grn_details", $data, $grn_details_id);
 
-	if ($result) {
-		$data22 = array(
-			$stockColName => $new_stock,
-		);
+			if ($result) {
+				$data22 = array(
+					$stockColName => $new_stock,
+				);
 
-		// $result22 = $this->SupplierParts->updateStockById($data22, $part_id);
-		// if ($result22) {
-			$success = 1;
-			$messages = "Successfully Added";
-			// echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-		// } else {
-			$messages = "Unable to Add2";
-			// echo "<script>alert('Unable to Add2');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-		// }
-	} else {
-		$messages = "Unable to Add";
-		// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				// $result22 = $this->SupplierParts->updateStockById($data22, $part_id);
+				// if ($result22) {
+					$success = 1;
+					$messages = "Successfully Added";
+					// echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				// } else {
+					// $messages = "Unable to Add2";
+					// echo "<script>alert('Unable to Add2');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				// }
+			} else {
+				$messages = "Unable to Add";
+				// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			}
+	}else{
+		$messages = "The sum of Accept Qty. and Reject Qty must be equal to GRN Validation Qty";
 	}
 	$result = [];
 	$result['messages'] = $messages;

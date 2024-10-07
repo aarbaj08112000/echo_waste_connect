@@ -18,64 +18,20 @@
             <!-- Dashboard -->
             <div class="filter-row">
               <li class="nav-small-cap">
-                <span class="hide-menu">Part Number</span>
+                <span class="hide-menu">Status</span>
                 <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
               </li>
               <li class="sidebar-item">
                 <div class="input-group">
-                  <select name="child_part_id" class="form-control select2" id="part_number_search">
-                    <option value="">Select Part Number</option>
-                    <%foreach from=$supplier_part_list item=parts%>
-                    <option value="<%$parts->id%>"><%$parts->part_number %></option>
-                    <%/foreach%>
+                  <select name="child_part_id" class="form-control select2" id="status_search">
+                    <option value="">Select Status</option>
+                    <option value="validate_grn" selected>validate_grn</option>
+                    <option value="accept">accept</option>
                   </select>
                 </div>
               </li>
             </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Part Description</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="part_description_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
-            <div class="filter-row">
-              <li class="nav-small-cap">
-                <span class="hide-menu">Name</span>
-                <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
-              </li>
-              <li class="sidebar-item">
-                <div class="input-group">
-                  <input type="text" id="employee_name_search" class="form-control" placeholder="Name">
-                </div>
-              </li>
-            </div>
+            
 
           </ul>
         </div>

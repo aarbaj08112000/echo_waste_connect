@@ -85,7 +85,7 @@
 
               </button>
             </div>
-            <form action="<%base_url('add_mold_maintenance') %>" method="POST" enctype="multipart/form-data" id>
+            <form action="<%base_url('add_mold_maintenance') %>" method="POST" enctype="multipart/form-data" id="add_mold_maintenance_form">
             <div class="modal-body">
               <div class="form-group">
                 </div>

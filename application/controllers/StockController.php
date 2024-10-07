@@ -71,7 +71,7 @@ class StockController extends CommonController
 			'orderable' => false
         ];
         $column[] = [
-            "data" => "safty_buffer_stk",
+            "data" => "safty_buffer_stk_val",
             "title" => "Safety Buffer Stock",
             "width" => "17%",
             "className" => "dt-center",
@@ -105,7 +105,7 @@ class StockController extends CommonController
         ];
        
         $column[] = [
-            "data" => "rejection_stock",
+            "data" => "rejection_stock_val",
             "title" => "Store Rejection Stock",
             "width" => "7%",
             "className" => "dt-center",
@@ -147,28 +147,31 @@ class StockController extends CommonController
             "width" => "7%",
             "className" => "dt-center",
         ];
-
+        $column[] = [
+            "data" => "stock_value",
+            "title" => "Store Stock Value",
+            "width" => "17%",
+            "className" => "dt-center",
+            'orderable' => false
+			
+        ];
+        
 		$column[] = [
-            "data" => "production_stocksss",
+            "data" => $sheet_prod_column_name,
             "title" => "Production Stock",
             "width" => "17%",
             "className" => "dt-center",
 			
         ];
         
-        $column[] = [
-            "data" => "stock_value",
-            "title" => "Store Stock Value",
-            "width" => "17%",
-            "className" => "dt-center",
-			
-        ];
+        
        
         $column[] = [
             "data" => "$sharingQtyColName",
             "title" => "Sharing Stock",
             "width" => "7%",
             "className" => "dt-center",
+            'orderable' => false
         ];
 		$column[] = [
             "data" => "$plastic_prod_column_name",
@@ -216,6 +219,9 @@ class StockController extends CommonController
         $data["is_paging_enable"] = true;
         $data["is_serverSide"] = true;
         $data["is_ordering"] = true;
+        $data["sheet_prod_column_name"] = $sheet_prod_column_name;
+        $data["stock_column_name"] = $stock_column_name;
+        $data["plastic_prod_column_name"] = $plastic_prod_column_name;
         $data["is_heading_color"] = "#a18f72";
         $data["no_data_message"] =
             '<div class="p-3 no-data-found-block"><img class="p-2" src="' .
@@ -270,7 +276,9 @@ class StockController extends CommonController
 		$stock_column_name = $this->Unit->getStockColNmForClientUnit();
 		$sheet_prod_column_name = $this->Unit->getProdColNmForClientUnit();
 		$plastic_prod_column_name = $this->Unit->getPlasticProdColNmForClientUnit();
+		$sharingQtyColName = $this->Unit->getSharingQtyColNmForClientUnit();
 		$role = $this->session->userdata('type');
+		// pr($data,1);
 		foreach ($data as $key => $value) {
 			// pr($value,1);
 			// $edit_data = base64_encode(json_encode($value)); 
@@ -285,6 +293,8 @@ class StockController extends CommonController
 				$stock_temp_html = '<button type="button" class="btn btn-primary edit-fg" data-bs-toggle="modal"  data-value='.$stock_temp.' data-bs-target="#storeToStore">
 											'.$value['stock'].'
 											</button>';
+			}else{
+				$stock_temp_html = 0;
 			}
 			if($value[$stock_column_name] > 0 && ($role == "Admin" || $role=="stores")){
 				$fg_data = base64_encode(json_encode($value)); 
@@ -304,7 +314,7 @@ class StockController extends CommonController
 										'.$value[$plastic_prod_column_name].'
 										</button>';
 			}
-			$data[$key]['production_stocksss'] = $production_stocks;
+			$data[$key][$sheet_prod_column_name] = $production_stocks;
 			$data[$key]['stock_html'] = $stock_temp_html;
 			$data[$key]['transfer_fg'] = $transfer_fg;
 			$data[$key]['stock_value'] = $stock_val;
@@ -332,7 +342,7 @@ class StockController extends CommonController
 
 		$child_part = $this->SupplierParts->getSupplierPartById($child_part_id);
 		$customer_part_data = $this->CustomerPart->getCustomerPartByPartNumber($customer_part_number);
-
+		$customer_part_id = $customer_part_data[0]->part_id;
 		$FGStockColName = $this->Unit->getFGStockColNmForClientUnit();
 		$old_fg_stock = (float)$customer_part_data[0]->$FGStockColName;
 		$new_stock_customer_part = $old_fg_stock + $stock;
@@ -345,21 +355,31 @@ class StockController extends CommonController
 			$stockColName => $new_stock,
 		);
 
+
 		$data_update_new_stock_customer_part = array(
 			$FGStockColName => $new_stock_customer_part
 		);
 
 		$query = $this->SupplierParts->updateStockById($data_update_child_part, $child_part[0]->id);
-		$customerPartDetails = $this->CustomerPart->getCustomerPartOnlyById($customer_part_number);
+		$customerPartDetails = $this->CustomerPart->getCustomerPartOnlyById($customer_part_id);
 		$query = $this->CustomerPart->updateStockById($data_update_new_stock_customer_part, $customerPartDetails[0]->id);
-
+		$success = 0;
+        $messages = "Something went wrong.";
 		if ($query) {
 			$this->Crud->stock_report($child_part[0]->part_number, $customer_part_number, "child_part", "customer_parts_master", $old_stock, $stock);
-			$this->addSuccessMessage('Stock transferred successfully.');
+			$messages = "Stock transferred successfully.";
+			$success = 1;
+			// $this->addSuccessMessage('Stock transferred successfully.');
 		} else {
-			$this->addErrorMessage('Unable to transfer to FG stock');
+			$messages = "Unable to transfer to FG stock";
+			// $this->addErrorMessage('Unable to transfer to FG stock');
 		}
-		$this->_part_stocks($child_part_id, null);
+		// $this->_part_stocks($child_part_id, null);
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 
 	}
 
@@ -389,6 +409,7 @@ class StockController extends CommonController
 			$stock_column_name => $new_stock_part_to_data
 		);
 
+		// pr($data_update_child_part_to,1);
 		$query = $this->SupplierParts->updateStockById($data_update_child_part, $child_part_id);
 		$query = $this->SupplierParts->updateStockById($data_update_child_part_to, $child_part_to);
 		$success = 0;
@@ -436,13 +457,22 @@ class StockController extends CommonController
 			$prodColName => $new_machine_mold_issue_stock
 		);
 		$query = $this->SupplierParts->updateStockById($data_update_child_part, $child_part[0]->id);
+		$success = 0;
+        $messages = "Something went wrong.";
 		if ($query) {
 			$this->Crud->stock_report($child_part[0]->part_number, $child_part[0]->part_number, "machine_mold_issue_stock", "store_stock", $old_stock, $production_qty);
-			$this->addSuccessMessage('Stock transferred successfully.');
+			// $this->addSuccessMessage('Stock transferred successfully.');
+			$messages = "Stock transferred successfully.";
+			$success =1;
 		} else {
-			$this->addErrorMessage('Unable to transfer the Production stock to Store stock');
+			$messages = "Unable to transfer the Production stock to Store stock";
+			// $this->addErrorMessage('Unable to transfer the Production stock to Store stock');
 		}
-		$this->_part_stocks($child_part_id, null);
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 

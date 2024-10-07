@@ -97,7 +97,7 @@
                                              <th>Operations BOM</th>
                                              <%/if%> 
                                              <%if $entitlements.isPlastic neq null%>
-                                            <!-- <th>Deflashing BOM</th> -->
+                                            <th>Deflashing BOM</th>
                                             <%/if%>
                                             <th>Customer Subcon bom </th>
                                         </tr>
@@ -117,7 +117,7 @@
                                                             <td><a href="<%$base_url%>operations_bom/<%$c->id%>" class="btn btn-danger">Operations BOM</a></td>
                                                         <%/if%> 
                                                         <%if $entitlements.isPlastic neq null%>
-                                                        <!-- <td><a href="<%$base_url%>deflashing_bom/<%$c->id%>" class="btn btn-success">Operations BOM</a></td> -->
+                                                        <td><a href="<%$base_url%>deflashing_bom/<%$c->id%>" class="btn btn-success">Operations BOM</a></td>
                                                         <%/if%>
                                                         <td><a href="<%$base_url%>subcon_bom/<%$c->id%>" class="btn btn-warning">Subcon BOM</a></td>
                                                     </tr>

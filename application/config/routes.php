@@ -112,6 +112,9 @@ $route['report_prod_rejection'] = 'P_Molding/report_prod_rejection';
 $route['reports_inspection'] = 'Welcome/reports_inspection';
 $route['pei_chart_sales_values_in_rs'] = 'Welcome/pei_chart_sales_values_in_rs';
 $route['reports_incoming_quality'] = 'Welcome/reports_incoming_quality';
+// erp improvement
+$route['downtime_report'] = 'P_Molding/downtime_report';
+$route['filter_downtime_report'] = 'P_Molding/filter_downtime_report';
 
 //new controller
 $route['generate_new_po'] = 'Newcontroller/generate_new_po';
@@ -445,6 +448,7 @@ $route['process'] = 'welcome/process';
 $route['customer_parts_master'] = 'welcome/customer_parts_master';
 $route['update_customer_parts_master'] = 'welcome/update_customer_parts_master';
 $route['add_users_data'] = 'welcome/add_users_data';
+$route['update_users_data'] = 'welcome/update_users_data';
 $route['update_p_q'] = 'welcome/update_p_q';
 $route['update_accept_parts_rejection_sales_invoice'] = 'welcome/update_parts_rejection_sales_invoice';
 $route['update_p_q_qty'] = 'welcome/update_p_q_qty';
@@ -608,6 +612,10 @@ $route['update_status_grn_inwarding'] = 'GRNController/update_status_grn_inwardi
 $route['add_raw_material_inspection_report'] = 'GRNController/add_raw_material_inspection_report';
 $route['update_raw_material_inspection_master_new'] = 'GRNController/update_raw_material_inspection_master_new';
 
+# ------------- added by Aarbaj -----------
+$route['update_inwarding_details'] = 'GRNController/update_inwarding_details';
+$route['delete_invoice'] = 'GRNController/delete_invoice';
+
 # ------------ Api Test ---------------------------------
 $route['generateIRN'] = 'generateIRN';
 $route['getEInvoice'] = 'getEInvoice';
@@ -759,8 +767,11 @@ $route['cancel_eWayBill'] = 'NewEWayBillController/cancel_eWayBill';
 
 #========================== Adaequare ENDS ===========================================
 // $route['test_tpl'] = 'welcome/test_tpl';
-// $route['group_master'] = 'GlobalConfigController/groupMaster';
-// $route['group_menu'] = 'GlobalConfigController/groupMenu';
-// $route['forbidden_page'] = 'welcome/forbidden_page';
+$route['group_master'] = 'GlobalConfigController/groupMaster';
+$route['group_menu'] = 'GlobalConfigController/groupMenu';
+$route['forbidden_page'] = 'welcome/forbidden_page';
 
 
+
+#======================== Mail Notification =======================================
+$route['yesterdays_sales_for_mail'] = 'MagrationScript_Controller/yesterdays_sales_for_mail';

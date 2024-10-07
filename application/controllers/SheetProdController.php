@@ -38,15 +38,24 @@ class SheetProdController extends ProductionController
 		);
 	
 		$query = $this->SupplierParts->updateStockById($data_update_child_part, $child_part[0]->id);
-		
+		$success = 0;
+        $messages = "Something went wrong.";
 		if ($query) {
 			$this->Crud->stock_report($child_part[0]->part_number, $child_part[0]->part_number, "production_stock", "store_stock", $old_stock, $production_qty);
-			$this->addSuccessMessage('Stock transferred successfully.');
+			$messages = "Stock transferred successfully.";
+			$success = 1;
+			// $this->addSuccessMessage('Stock transferred successfully.');
 		} else {
-			$this->addErrorMessage('Unable to transfer the Production stock to Store stock');
+			$messages = "Unable to transfer the Production stock to Store stock";
+			// $this->addErrorMessage('Unable to transfer the Production stock to Store stock');
 		}
 
-		$this->_part_stocks($child_part_id,null);
+		// $this->_part_stocks($child_part_id,null);
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 
@@ -74,8 +83,8 @@ class SheetProdController extends ProductionController
 				WHERE 
 					m.clientId = '.$clientId.'
 				ORDER BY 
-					p.id DESC 
-				LIMIT 10');
+					p.date DESC 
+				');
 		
 		$data['reject_remark'] = $this->Crud->read_data("reject_remark");
 		$CI =& get_instance();
@@ -90,6 +99,8 @@ class SheetProdController extends ProductionController
             $data['p_q'][$key]->output_part_data = $output_part_data;
 
 		}
+		$data['inhouse_parts'] = $this->InhouseParts->readInhousePartsOnly();
+		$data['machine_data'] = $this->Crud->read_data("machine", true);
 		$this->loadView('store/p_q', $data);
 	}
 
@@ -284,13 +295,8 @@ class SheetProdController extends ProductionController
 	public function view_p_q()
 	{
 
-		$machine_id = $this->input->post("machine_id");
-		$data['machine_id'] = $machine_id;
-		$inhouse_part_id = $this->input->post("inhouse_part_id");
-		$data['inhouse_part_id'] = $inhouse_part_id;
-
-		$clientId = $this->Unit->getSessionClientId();	
-		$p_q_view_query = "WITH distinct_p_q AS ( SELECT 
+		$clientId = $this->Unit->getSessionClientId();
+		$data['p_q'] = $this->Crud->customQuery('SELECT 
 					p.*, 
 					o.name AS op_name, 
 					m.name AS machine_name, 
@@ -305,44 +311,27 @@ class SheetProdController extends ProductionController
 				JOIN 
 					shifts s ON p.shift_id = s.id
 				WHERE 
-					m.clientId = ".$clientId ;
-
-		if ($inhouse_part_id) {
-			if (!empty($machine_id) && $inhouse_part_id == 0) {
-				$p_q_view_query .=' AND p.machine_id = ' . $machine_id;
-			} else if (!empty($machine_id)) {
-				$p_q_view_query .=' AND p.output_part_id = ' . $inhouse_part_id . ' AND p.machine_id = ' . $machine_id ;
-			} else if ($inhouse_part_id != 0) {		
-				$p_q_view_query .= ' AND p.output_part_id = ' . $inhouse_part_id;
-			}
-
-			$p_q_view_query .= ") SELECT 
-					pq.*,
-					COALESCE(ip.part_number, cp.part_number) AS part_number,
-					COALESCE(ip.part_description, cp.part_description) AS part_description
-				FROM 
-					distinct_p_q pq
-				LEFT JOIN 
-					inhouse_parts ip
-					ON pq.output_part_table_name = 'inhouse_parts' 
-					AND pq.output_part_id = ip.id
-				LEFT JOIN 
-					customer_part cp
-					ON pq.output_part_table_name = 'customer_part' 
-					AND pq.op_q_view_queryutput_part_id = cp.id 
+					m.clientId = '.$clientId.'
 				ORDER BY 
-					pq.id DESC ";
+					p.date DESC 
+				');
+		
+		$data['reject_remark'] = $this->Crud->read_data("reject_remark");
+		$CI =& get_instance();
+	   	// Load the model
+	    $CI->load->model('InhouseParts');
+		foreach ($data['p_q'] as $key => $u) {
+			if ($u->output_part_table_name == "inhouse_parts") {
+				$output_part_data = $this->InhouseParts->getInhousePartOnlyById($u->output_part_id);
+            } else {
+            	$output_part_data = $this->Crud->get_data_by_id("customer_part", $u->output_part_id, "id");
+            }
+            $data['p_q'][$key]->output_part_data = $output_part_data;
 
-			$data['p_q'] = $this->Crud->customQuery($p_q_view_query);
-		} else {
-			$data['p_q'] = "";
 		}
-
 		$data['inhouse_parts'] = $this->InhouseParts->readInhousePartsOnly();
 		$data['machine_data'] = $this->Crud->read_data("machine", true);
-		$data['reject_remark'] = $this->Crud->read_data("reject_remark");
-
-		$this->loadView('store/view_p_q', $data);
+		$this->loadView('store/p_q', $data);
 	}
 
 
@@ -374,7 +363,7 @@ class SheetProdController extends ProductionController
 		// print_r($routing_data);
 		$success = 0;
         $messages = "Something went wrong.";
-		if ($routing_data > 0) {
+		if ($routing_data == 0) {
 			$messages = "already present"; 
 			// echo "<script>alert('already present');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
@@ -455,11 +444,11 @@ class SheetProdController extends ProductionController
 							"month" => $this->month,
 							"year" => $this->year,
 						);
-
+						
 						$inser_query = $this->Crud->insert_data("p_q", $data_insert);
-
-						if ($inser_query) {
-							$$messages = "successfully added";
+						// pr($inser_query,1);
+						if ((int) $inser_query > 0) {
+							$messages = "successfully added";
 							$success = 1;
 							// echo "<script>alert('successfully added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 						} else {

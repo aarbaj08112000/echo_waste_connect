@@ -427,31 +427,47 @@
                   <!-- <li class="nav-item">
                      <a class="nav-link" href="<%base_url('home_2')%>">Charts</a>
                   </li> -->
-                  <%if ($role == "Purchase" || $role == "Admin") %>
+                  <%* <%if ($role == "Purchase" || $role == "Admin") %> *%>
                   <li class="nav-item dropdown">
                      <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="navbarDropdownMenuLinkPurchase" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                      Purchase
                      </a>
                      <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkPurchaseSubmenu">
-                        <li >
-                           <a href="<%base_url('new_po')%>" class="dropdown-item">Purchase PO</a>
-                        </li>
+                        <%if checkGroupAccess("new_po","list",false)%>
+                           <li >
+                              <a href="<%base_url('new_po')%>" class="dropdown-item">Purchase PO</a>
+                           </li>
+                        <%/if%>
+                        <%if checkGroupAccess("new_po_sub","list",false)%>
                         <li><a href="<%base_url('new_po_sub')%>" class="dropdown-item">Subcon PO</a></li>
+                        <%/if%>
+                        <%if checkGroupAccess("new_po_list_supplier","list",false)%>
                         <li><a href="<%base_url('new_po_list_supplier')%>" class="dropdown-item">Supplierwise PO List</a></li>
+                        <%/if%>
+                        <%if checkGroupAccess("child_part_view","list",false)%>
                         <li >
                            <a href="<%base_url('child_part_view')%>" class="dropdown-item">Item Master</a>
                         </li>
+                        <%/if%>
+                        <%if checkGroupAccess("child_part_supplier_view","list",false)%>
                         <li >
                            <a href="<%base_url('child_part_supplier_view')%>" class="dropdown-item">Purchase Parts Price</a>
                         </li>
+                        <%/if%>
+                        <%if checkGroupAccess("approved_supplier","list",false)%>
                         <li >
                            <a href="<%base_url('approved_supplier')%>" class="dropdown-item">Supplier</a>
                         </li>
+                        <%/if%>
+                        <%if checkGroupAccess("routing","list",false)%>
                         <li><a href="<%base_url('routing')%>" class="dropdown-item">Subcon routing</a></li>
+                        <%/if%>
+                        <%if checkGroupAccess("routing_customer","list",false)%>
                         <li><a href="<%base_url('routing_customer')%>" class="dropdown-item">customer subcon routing</a></li>
+                        <%/if%>
                      </ul>
                   </li>
-                  <%/if%>
+                  <%* <%/if%> *%>
                   <%if ($role == "stores" || $role == "Admin") %>
                   <li class="nav-item dropdown">
                      <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="navbarDropdownMenuLinkStore" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -524,18 +540,10 @@
                            </li>
                         <%/if%>
                         <%if ($entitlements['isSheetMetal']!=null) %>
-                           <li class="dropdown-submenu ">
-                              <a href="javascript:void(0)" role="button" data-toggle="dropdown"
-                                aria-expanded="false"
-                                 class="dropdown-item dropdown-toggle">Production QTY</a>
-                              <ul class="dropdown-menu">
-                                 <li><a href="<%base_url('p_q')%>" class="dropdown-item">
-                                    Add</a>
-                                 </li>
-                                 <li><a href="<%base_url('view_p_q')%>" class="dropdown-item">View</a>
-                                 </li>
-                              </ul>
-                           </li>
+                           <li><a href="<%base_url('view_p_q')%>"
+                              class="dropdown-item">Production QTY
+                              </a>
+                           
                         <%/if%>
                         <%if ($entitlements['isPlastic']!=null) %>
                            <li><a href="<%base_url('p_q_molding_production')%>" class="dropdown-item">Molding Production</a></li>

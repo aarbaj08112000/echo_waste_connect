@@ -116,10 +116,26 @@
 			                              <td><%$config->updated_user %></td>
 			                              <td>
 			                                 <%if ($config->canModify) %>
-			                                 <button type="button" class="btn " title="Update" data-bs-toggle="modal" data-bs-target="#exampleModal<%$i%>" data-value='<%base64_encode(json_encode($config))%>'>
+			                                 <button type="button" class="btn edit-part" title="Update" data-bs-toggle="modal" data-bs-target="#exampleModal" data-value='<%base64_encode(json_encode($config))%>'>
 			                                 <i class="ti ti-edit"></i>
 			                                 </button>
-                                          <div class="modal fade" id="exampleModal<%$i%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        
+			                                 <%/if%>
+			                                
+			                              </td>
+			                           </tr>
+	                           	<%assign var='i' value=$i+1 %>
+	                            <%/foreach%>
+                            <%/if%>
+                        </tbody>
+                     </table>
+                  </div>
+                  <!-- /.card-body -->
+               </div>
+               <!-- ./col -->
+            </div>
+         </div>
+           <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 <div class="modal-dialog modal-dialog-centered" role="document">
    <div class="modal-content">
       <div class="modal-header">
@@ -179,21 +195,6 @@
    </div>
 </div>
 </div>
-			                                 <%/if%>
-			                                
-			                              </td>
-			                           </tr>
-	                           	<%assign var='i' value=$i+1 %>
-	                            <%/foreach%>
-                            <%/if%>
-                        </tbody>
-                     </table>
-                  </div>
-                  <!-- /.card-body -->
-               </div>
-               <!-- ./col -->
-            </div>
-         </div>
          <!-- /.row -->
          <!-- Main row -->
          <!-- /.row (main row) -->

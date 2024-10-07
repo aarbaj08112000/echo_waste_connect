@@ -164,12 +164,11 @@ function formateFormDate($date =''){
     }
 }
 
-function checkGroupAccess($page_url = "",$type = ""){
-	return true;
+function checkGroupAccess($page_url = "",$type = "",$redirect ="Yes"){
 	$CI = &get_instance();
 	$CI->load->model('GlobalConfigModel');
 	$acces = $CI->GlobalConfigModel->check_group_access($page_url,$type);
-	if(!$acces){
+	if(!$acces && $redirect == "Yes"){
 		$forbidden_page = base_url('forbidden_page');
 		header("Location: $forbidden_page");
 		die();
