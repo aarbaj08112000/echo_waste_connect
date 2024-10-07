@@ -13,6 +13,7 @@ class P_Molding extends CommonController
 		parent::__construct();
 		$this->load->model('SupplierParts');
 		$this->load->model('CustomerPart');
+		$this->load->model('P_molding_model');
 	}
 
 	private function getPath()
@@ -1013,8 +1014,8 @@ class P_Molding extends CommonController
 
 	public function mold_maintenance($filter_part=null)
 	{
-		$this->db->group_by('customer_part_id');
-	    $this->db->group_by('mold_name');
+		// $this->db->group_by('customer_part_id');
+	 //    $this->db->group_by('mold_name');
 		$data['filter_child_part_id'] = $filter_part;
 		$data['part_selection'] = $this->Crud->customQuery("SELECT DISTINCT part.id, part.part_number, part.part_description, cust.customer_name FROM
 		customer_part part, customer cust, mold_maintenance mold
@@ -1049,7 +1050,7 @@ class P_Molding extends CommonController
 		customer_part part, customer cust WHERE cust.id = part.customer_id");
 		$data['filter_child_part_id'] = $filter_part; 
 
-		$this->loadView('admin/molding//mold_maintenance', $data);
+		$this->loadView('admin/molding/mold_maintenance', $data);
 	}
 
 
@@ -2000,6 +2001,99 @@ class P_Molding extends CommonController
 		// $this->load->view('header');
 		$this->loadview('molding/mold_maintenance_history', $data);
 		// $this->load->view('footer');\
+	}
+
+	/* erp improvement points */
+	public function downtime_report(){
+		$current_year = date("Y");
+		$date_filter = [
+			"start_date" => $current_year."-04-01",
+			"end_date" =>($current_year+1)."-3-31"
+		];
+		$down_time_data = $this->P_molding_model->get_down_time_data($date_filter);
+		$data = $this->get_filter_data($down_time_data);
+		$date_filter = [
+			"start_date" => "01/04/".$current_year,
+			"end_date" =>"31/03/".($current_year+1)
+		];
+		$data['date_filter'] = $date_filter;
+		$this->loadView('reports/down_time_report', $data);
+		// pr($data,1);
+	}
+	public function filter_downtime_report(){
+		$post_data = $this->input->post();
+		$date_arr = explode("-",$post_data['date_range']);
+		$start_date = explode("/",trim($date_arr[0]));
+		$end_date = explode("/",trim($date_arr[1]));
+		$start_date = $start_date[2]."/".$start_date[1]."/".$start_date[0];
+		$end_date =  $end_date[2]."/".$end_date[1]."/".$end_date[0];
+		$date_filter = [
+			"start_date" => $start_date,
+			"end_date" =>$end_date
+		];
+		$down_time_data = $this->P_molding_model->get_down_time_data($date_filter);
+		$data = $this->get_filter_data($down_time_data);
+
+		$top_5_down_time_html = '';
+		if(count($data['top_5_down_time']) > 0){
+			foreach ($data['top_5_down_time'] as $key => $value) {
+				$top_5_down_time_html .= "<tr><td>".$value['reason']."</td><td>".$value['down_time']."</td></tr>";
+			}
+		}
+		$return_arr['top_5_down_time_html'] = $top_5_down_time_html;
+		$down_time_data_html = '';
+		if(count($data['down_time_data']) > 0){
+			foreach ($data['down_time_data'] as $key => $value) {
+				$reason  = $value['reason'] != "" ? $value['reason'] : 'N/A';
+				$down_time_data_html .= "<tr>
+				<td class='text-center'>".$value['date']."</td>
+				<td class='text-center'>".$value['shift_type']."/".$value['name']."</td>
+				<td >".$value['machine_name']."</td>
+				<td class='text-center'>".$value['downtime']."</td>
+				<td >".$reason."</td>
+				 </tr>";
+			}
+		}
+		$return_arr['down_time_data_html'] = $down_time_data_html;
+		$return_arr['total_down_time'] = $data['total_down_time'] > 0 ? $data['total_down_time'] : 0; 
+		$return_arr['max_down_time_machine'] = $data['max_down_time_machine'] !='' && $data['max_down_time_machine'] != null ? $data['max_down_time_machine'] : "N/A"; 
+		$return_arr['max_down_time_reason'] = $data['max_down_time_reason'] != '' && $data['max_down_time_reason'] != null ? $data['max_down_time_reason']: "N/A"; 
+		echo json_encode($return_arr);
+		exit();
+	}
+	public function get_filter_data($data_arr = []){
+		$down_time_data = $data_arr;
+		$data['down_time_data'] =$down_time_data;
+		$data['total_down_time'] = array_sum(array_column($down_time_data, 'downtime'));
+
+		// get max downtime machine
+		$machine_data = array_column($down_time_data, 'machine_name','machine_id');
+		$machine_wise_down_time = [];
+		foreach ($down_time_data as $key => $value) {
+			$machine_wise_down_time[$value['machine_id']] += $value['downtime'];
+		}
+		$max_value = max($machine_wise_down_time);
+		$max_key = array_search($max_value, $machine_wise_down_time);
+		$data['max_down_time_machine'] = $machine_data[$max_key];
+
+		// get max downtime reason
+		$reason_data = array_column($down_time_data, 'reason','downtime_reasonKy');
+		$reason_wise_down_time = [];
+		foreach ($down_time_data as $key => $value) {
+			$reason_wise_down_time[$value['downtime_reasonKy']] += $value['downtime'];
+		}
+		$max_value = max($reason_wise_down_time);
+		$max_key = array_search($max_value, $reason_wise_down_time);
+		$data['max_down_time_reason'] = $reason_data[$max_key] != "" ? $reason_data[$max_key] : "N/A";
+
+		// get top 5 down time 
+		$top_5_down_time = [];
+		foreach ($reason_wise_down_time as $key => $value) {
+			$reason = $reason_data[$key] != '' ? $reason_data[$key] : "N/A";
+			array_push($top_5_down_time, ["reason"=>$reason,"down_time" => $value]);
+		}
+		$data['top_5_down_time'] = $top_5_down_time;
+		return $data;
 	}
 	
 }

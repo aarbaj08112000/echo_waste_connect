@@ -13,7 +13,7 @@ class Dashboard extends CommonController
         
     }
     public function dashboard(){
-       // checkGroupAccess("dashboard","list");
+       checkGroupAccess("dashboard","list");
        $data['selected_unit'] = $this->session->userdata('clientUnit');
        $data['unit_data'] = $this->dashboard_model->get_unit();
        $current_year = date("Y");

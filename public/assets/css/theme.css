@@ -23,6 +23,10 @@ P/* custom css */
     margin-left: -3px !important;
     margin-right: 8px !important;
 }
+.dataTables_length .select2-container--default .select2-selection.select2-selection--single {
+    height: 39px !important;
+    width: 57px;
+}
 table.dataTable thead .sorting, table.dataTable thead .sorting_asc, table.dataTable thead .sorting_desc, table.dataTable thead .sorting_asc_disabled, table.dataTable thead .sorting_desc_disabled {
     cursor: pointer;
     background-repeat: no-repeat !important;
@@ -194,6 +198,8 @@ table.dataTable thead .sorting, table.dataTable thead .sorting_asc, table.dataTa
 .select2-container--default .select2-selection.select2-selection--single{
 	    height: 39px !important;
 }
+
+
 .select2-container--default .select2-selection.select2-selection--single .select2-selection__rendered{
 	    line-height: 35px !important;
 }
@@ -296,6 +302,9 @@ table.dataTable tbody td {
 }
 .modal-body .form-group label:first-child{
     margin-bottom: 5px;
+}
+.modal.show .modal-dialog {
+    text-align: left !important;
 }
 
 

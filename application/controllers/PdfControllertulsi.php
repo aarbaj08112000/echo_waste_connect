@@ -20,6 +20,7 @@ class PdfControllertulsi extends CommonController
         $this->month = $d["month"];
         $this->year = $d["year"];
         $this->load->model('SupplierParts');
+        require_once APPPATH . 'libraries/Pdf1.php';
     }
 
     public function view_challan_invoice()
@@ -850,16 +851,56 @@ class PdfControllertulsi extends CommonController
         $rejected_qty = $this->uri->segment('7');
         $child_part_id_table = $this->uri->segment('8');
 
-        $child_part = $this->SupplierParts->getSupplierPartOnlyById($child_part_id);
+        $child_part_query =  $this->db->query("
+            SELECT c.*,cp.grade as grade
+            FROM child_part_master as c
+            LEFT JOIN child_part as cp ON cp.id = c.child_part_id
+            WHERE c.id = '$child_part_id'
+            AND c.admin_approve = 'accept'
+            ORDER BY c.id DESC
+        ");
+        $data['child_part'] = $child_part_query->result();
         $inwarding_data = $this->Crud->get_data_by_id("inwarding", $inwarding_id, "id");
+        $data['inwarding_data'] = $inwarding_data;
 
-        $raw_material_inspection_master = $this->Crud->get_data_by_id("raw_material_inspection_master", $child_part_id_table, "child_part_id");
-        $client_data = $this->Unit->getClientUnitDetails();
+        $invoice_number = $inwarding_data[0]->invoice_number;
+        $raw_material_inspection_master_query = $this->db->query("
+            SELECT rmi.*,rmir.*
+            FROM raw_material_inspection_master as rmi
+            JOIN raw_material_inspection_report as rmir ON rmir.raw_material_inspection_master_id = rmi.id AND rmir.invoice_number = '$invoice_number'
+            WHERE rmi.child_part_id = '$child_part_id_table'
+            ORDER BY rmi.`id` DESC 
+        ");
+        $data['raw_material_inspection_master'] = $raw_material_inspection_master_query->result();
+
+        // pr($data['raw_material_inspection_master'],1);
+        
+        
+        // $data['raw_material_inspection_master'][9] = $data['raw_material_inspection_master'][0];
+        // $data['raw_material_inspection_master'][10] = $data['raw_material_inspection_master'][0];
+        // $data['raw_material_inspection_master'][11] = $data['raw_material_inspection_master'][0];
+
+        $arr = array(
+            'inwarding_id' => $inwarding_id,
+            'part_id' => $child_part_id_table,
+            'po_number' => $po_id,
+            'invoice_number' => $inwarding_data[0]->invoice_number,
+        );
+        $grn_details_data = $this->Crud->get_data_by_id_multiple("grn_details", $arr);
+        $data['lot_qty'] = $grn_details_data[0]->verified_qty;
+        // $raw_material_inspection_master = $this->Crud->get_data_by_id("raw_material_inspection_master", $child_part_id_table, "child_part_id");
+        // pr($this->db->last_query());
+        $data['client_data'] = $this->Unit->getClientUnitDetails();
+        
 
         $new_po_data = $this->Crud->get_data_by_id("new_po", $po_id, "id");
         // print_r($new_po_data);
         // echo "<br>";
-        $supplier_data = $this->Crud->get_data_by_id("supplier", $supplier_id, "id");
+        $data['supplier_data'] = $this->Crud->get_data_by_id("supplier", $supplier_id, "id");
+        $data['inwardDocNumber'] = $this->inwardDocNumber();
+        $data['inwardDocDate'] = $this->inwardDocDate();
+        $data['inwardDocRevision'] = $this->inwardDocRevision();
+       
         // print_r($supplier_data);
         // echo "<br>";
         // $po_parts_data = $this->Crud->get_data_by_id("po_parts", $new_po_data[0]->id, "po_id");
@@ -897,87 +938,134 @@ class PdfControllertulsi extends CommonController
             $sgst_amount = $sgst_amount + $freight_sgst_cgst;
             $igst_amount = $igst_amount + $freight_igst_cgst;
         }
+       
+        ob_start();
+        $header_html =  '
 
-        $i = 1;
-        foreach ($raw_material_inspection_master as $u) {
-            $data_old_po_number = array(
-                'child_part_id' => $child_part_id,
-                'raw_material_inspection_master_id' => $u->id,
-                'invoice_number' => $inwarding_data[0]->invoice_number,
+        <table cellspacing="0" cellpadding="4" border="1">
+                    <tr>
+                        <td width="20%" style="text-align:center;font-size:14.8px;vertical-align:middle" rowspan="3">&nbsp;&nbsp;<br><b>'.$data["client_data"][0]->client_name.'</b></td>
+                        <td width="60%" style="text-align:center;font-size:14.8px;" rowspan="3">&nbsp;&nbsp;<br><b>INWARD INSPECTION REPORT</b></td>
+                        <td width="20%" style="text-align:left;font-size:14.8px;" ><b>&nbsp;&nbsp;Format No : '.$data["inwardDocNumber"].'</b></td>
+                    </tr>
+                    <tr>
+                        <td width="20%" style="text-align:left;font-size:14.8px;" ><b>&nbsp;&nbsp;Rev No : '.$data["inwardDocRevision"].'</b></td>
+                    </tr>
+                    <tr>
+                        <td width="20%" style="text-align:left;font-size:14.8px;" ><b>&nbsp;&nbsp;Rev Dt. : '.$data["inwardDocDate"].'</b></td>
+                    </tr>
+                    
+                  </table>
+                 <table cellspacing="0" cellpadding="6" border="1">
+                    <tr>
+                        <td width="20%" style="text-align:center;padding:20px;font-size:15px;" >Supplier Name</td>
+                        <td width="26%" style="text-align:center;font-size:15px;height:50px;">'.$data["supplier_data"][0]->supplier_name.'</td>
+                        <td width="18%" style="text-align:center;font-size:15px;">Part No & Description</td>
+                        <td width="36%" style="text-align:center;font-size:15px;padding:20px;height:50px;" colspan="3">'.$data["child_part"][0]->part_number." / ".$data["child_part"][0]->part_description .'</td>
+                        
+                    </tr>
+                    <tr>
+                        <td width="20%" style="text-align:center;padding:20px;font-size:15px;" >Invoice No </td>
+                        <td width="26%" style="text-align:center;font-size:15px;">'.$data["inwarding_data"][0]->invoice_number.'</td>
+                        <td width="18%" style="text-align:center;font-size:15px;">Invoice Date</td>
+                        <td width="18%" style="text-align:center;padding:20px;font-size:15px;" colspan="2">'.$data["inwarding_data"][0]->invoice_date.'</td>
+                        <td width="9%" style="text-align:center;padding:20px;font-size:15px;" colspan="2">Lot Qty</td>
+                        <td width="9%" style="text-align:center;padding:20px;font-size:15px;" colspan="2">'.$data["lot_qty"].'</td>
+                        
+                    </tr>
+                    <tr>
+                        <td width="20%" style="text-align:center;padding:20px;font-size:15px;" >Material Garde  </td>
+                        <td width="26%" style="text-align:center;font-size:15px;">'.$data["child_part"][0]->grade.'</td>
+                        <td width="18%" style="text-align:center;font-size:15px;">Inspection Date</td>
+                        <td width="18%" style="text-align:center;padding:20px;font-size:15px;" colspan="2"></td>
+                        <td width="9%" style="text-align:center;padding:20px;font-size:15px;" colspan="2">Rej Qty</td>
+                        <td width="9%" style="text-align:center;padding:20px;font-size:15px;" colspan="2"></td>
+                        
+                    </tr>   
+                    
+                  </table>
+                  <table cellspacing="0" cellpadding="6" border="1">
+                    
+                    <tr>
+                        <td width="7%" style="text-align:center;padding:20px;font-size:15px;" >SR NO </td>
+                        <td width="13%" style="text-align:center;padding:20px;font-size:15px;" >PARAMETER </td>
+                        <td width="13%" style="text-align:center;font-size:15px;">SPECIFICATION</td>
+                        <td width="13%" style="text-align:center;font-size:15px;">MEASUREMENT
+TECHNIQUE </td>
+                        <td width="9%" style="text-align:center;font-size:15px;">OBV-1</td>
+                        <td width="9%" style="text-align:center;font-size:15px;">OBV-2</td>
+                        <td width="9%" style="text-align:center;padding:20px;font-size:15px;" colspan="2">OBV-3</td>
+                        <td width="9%" style="text-align:center;padding:20px;font-size:15px;" colspan="2">OBV-4</td>
+                        <td width="9%" style="text-align:center;padding:20px;font-size:15px;" colspan="2">OBV-5</td>
+                        <td width="9%" style="text-align:center;padding:20px;font-size:15px;" colspan="2">REMARKS</td>
+                        
+                    </tr>
+                      
+                    
+                  </table>';
+        $footer_html  = '
 
-            );
-            // $grn_details_data = $this  ->Crud->get_data_by_id("grn_details", $part_id, "id");
-            $raw_material_inspection_report_data = $this->Common_admin_model->get_data_by_id_multiple_condition("raw_material_inspection_report", $data_old_po_number);
+        <table cellspacing="0" cellpadding="9" border="1">
+                    <tr>
+                        <td width="40%" style="text-align:left;font-size:14.8px;" >Sampling Plan : As per IS0 2500</td>
+                       <td width="60%" style="text-align:left;font-size:14.8px;" >Sampling Qty :</td>
+                    </tr>
+                    <tr>
+                        <td width="100%" style="text-align:left;font-size:14.8px;" ><b>&nbsp;&nbsp;Inspected By :</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Verified By :</b></td>
 
-            $parts_html .= '
-        <tr>
-            <td>' . $i . '</td>
-            <td colspan="2">' . $u->parameter . '</td>
-            <td colspan="2">' . $u->specification . '</td>
-            <td colspan="3">' . $u->evalution_mesaurement_technique . '</td>
-            <td colspan="2">' . $raw_material_inspection_report_data[0]->observation . '</td>
-            <td colspan="">' . $raw_material_inspection_report_data[0]->remark . '</td>
+                    </tr>
+                    
+                  </table>';
 
-       </tr>
-        ';
+        $html_content = $this->smarty->fetch('quality/inward_inspection_pdf.tpl', $data, TRUE);
+        
+        // $pdf = new Pdf1(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+    $pdf = new Pdf1('L', 'mm', 'A4', true, 'UTF-8', false,'',$header_html,$footer_html,2.3,-24.8);
 
-            $i++;
-        }
+        $pdf->SetMargins(5, 70, 5, 5);
 
-        $html_content = '
-    <html>
-    <head>
-    <style>
-    html { margin: 0px}
-    </style></head>
-    <body>
-    <table style="width:100%" border="1px">
-        <tr>
-            <th colspan="10" style="text-align:center;font-size:20px">Inward Inspection</th>
-            <th colspan="1" style="text-align:center;font-size:10px;text-align:left;">
-               Doc.No. : ' . $this->inwardDocNumber() . ' <br>
-               Date: ' . $this->inwardDocDate() . '<br>
-               Rev No: ' . $this->inwardDocRevision() . '
-            </th>
-        </tr>
-        <tr>
-            <th colspan="5" style="text-align:left">Material Name :</th>
-            <th colspan="3" style="text-align:left;">Grade : ' . $child_part[0]->grade . '</th>
-            <th colspan="3" style="text-align:left">Invoice Date :  ' . $inwarding_data[0]->invoice_date . '  </th>
-        </tr>
-        <tr>
-            <th colspan="5" style="text-align:left">Supplier Name : ' . $supplier_data[0]->supplier_name . '</th>
-            <th colspan="3" style="text-align:left;">Lot Qty :' . $raw_material_inspection_report_data[0]->accepted_qty . '</th>
-            <th colspan="3" style="text-align:left">Rec Date :  ' . $inwarding_data[0]->invoice_date . '  </th>
-        </tr>
-        <tr>
-            <th colspan="5" style="text-align:left">Rej Qty: ' . $raw_material_inspection_report_data[0]->rej_qty . '</th>
-            <th colspan="6" style="text-align:left;">Invoice Number: ' . $inwarding_data[0]->invoice_number . ' </th>
-        </tr>
-    <tr>
-          <th>Sr No</th>
-          <th colspan="2">Parameter </th>
-          <th colspan="2">Specification </th>
-          <th colspan="3">Evalution Mesaurement Technique </th>
-          <th colspan="2">Observation </th>
-          <th colspan="">Remark </th>
-    </tr>
-      ' . $parts_html . '
-      </table>
-      <footer style="">
-      <table style="width:100%" border="1px">
-      <tr>
-          <td colspan="5"><b>Inspected By :</b>
-          <td colspan="6"><b>Verified By :</b>
-      </tr>
-      </footer>
-      </table>
-      </body>
-      </html>';
-        //echo $html_content;
-        $this->pdf->loadHtml($html_content);
-        $this->pdf->render();
-        $this->pdf->stream("inspection-report.pdf", array("Attachment" => 1));
+    // set document information
+
+    $pdf->SetCreator(PDF_CREATOR);
+
+    // set default header data
+    $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE.' 006', PDF_HEADER_STRING);
+
+    // set header and footer fonts
+    $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+    $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+    // set default monospaced font
+    $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+    // set margins
+    // $pdf->SetMargins(PDF_MARGIN_LEFT, 15, PDF_MARGIN_RIGHT,0);
+    $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+    $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+    // set auto page breaks
+    $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+    // set image scale factor
+    $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+    // add a page
+    $pdf->AddPage();
+
+    // set some text to print
+    $html = file_get_contents('path_to_html_file.html'); // Load your HTML content
+
+    // output the HTML content
+    $pdf->writeHTML($html_content, true, false, true, false, '');
+
+    //Close and output PDF document
+    $pdf->Output('inspection_report.pdf', 'D');
+        ob_end_flush();
+        // // pr($html_content,1);
+        // $this->pdf->set_paper('A4', 'landscape');
+        // $this->pdf->loadHtml($html_content);
+        // $this->pdf->render();
+        // $this->pdf->stream("inspection-report.pdf", array("Attachment" => 1));
     }
 
     public function print_sales_invoice()

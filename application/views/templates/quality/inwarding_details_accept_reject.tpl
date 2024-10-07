@@ -81,9 +81,10 @@
                <button type="button" disabled class="btn btn-success mt-4" data-bs-toggle="modal"
                   data-bs-target="#exampleModalgenerate">
                Inwarding Already Accepted </button>
+             
                <%else if ($is_accept_inwarding eq 'Yes') %>
-               <button type="button" class="btn btn-primary mt-4" data-bs-toggle="modal"
-                  data-bs-target="#exampleModal">
+               <button type="button" class="btn btn-primary mt-4 " data-bs-toggle="modal"
+                  data-bs-target="#exampleModal" id="accept_inwarding_btn">
                Accept Inwarding </button>
                <%/if%>
             </div>
@@ -251,6 +252,7 @@
                   </tr>
                </thead>
                <tbody>
+                  <%assign var='accept_inwarding_btn' value=true%>
                   <%if ($po_parts) %>
                   <%assign var='final_po_amount' value=0 %>
                   <%assign var='i' value=1 %>
@@ -269,8 +271,10 @@
                   <%else %>
                   <%assign var='data_present' value="no" %>
                   <%/if%>
-
+                  <%if $p->grn_qty > 0%>
+                  
                   <tr>
+                     
                      <!--<td><%$i %></td>-->
                      <td style="width: 9%;"><%$p->child_part_data->part_number %></td>
                      <td style="width: 9%;"><%$p->child_part_data->part_description %></td>
@@ -278,14 +282,14 @@
                      <td style="width: 6%;"><%$part_rate_new %></td>
                      <td style="width: 8%;"><%$p->grn_qty %></td>
                      <td style="width: 6%;"><%$p->verified_qty %></td>
-                     <%if (empty($p->accept_qty)) %>
+                     <%if ((empty($p->accept_qty) && $p->accept_qty != 0 && ($p->reject_qty) > 0) || ($p->accept_qty == 0 && $p->reject_qty == 0)) %>
 
                      <td style="width: 6%;">
                         <form action="<%base_url('update_grn_qty_accept_reject') %>"
                            method="post" class="update_grn_qty_accept_reject update_grn_qty_accept_reject<%$p->part_id %> custom-form" id="update_grn_qty_accept_reject<%$p->part_id %>">
                            <div class="form-group">
                             <label class="form-label" style="display: none;">Accept Qty</label>
-                           <input type="text"  min="0" value="" id="searchTxt"
+                           <input type="text"  data-min="0" value="" id="searchTxt"
                               step="any"  data-max="<%$p->verified_qty %>"
                               placeholder="Accept Qty" name="accept_qty" class="form-control onlyNumericInput required-input">
                            <input type="hidden"
@@ -312,31 +316,39 @@
                            <input type="hidden" name="deliveryUnit"
                               value="<%$inwarding_data[0]->delivery_unit %>" class="form-control">
                               </div>
+                           <%assign var='accept_inwarding_btn' value=false%>
                            <%else %>
                      <td style="width: 6%;">
                      <%$p->accept_qty %>
                      <%/if%>
                      </td>
                      <td style="width: 6%;">
-                     <%if (empty($p->reject_qty)) %>
-                     <%$p->reject_qty %>
+                     <%if (empty($p->reject_qty) && empty($p->accept_qty)) %>
+                     <%assign var='accept_inwarding_btn' value=false%>
+                     <div class="form-group">
+                     <label class="form-label" style="display: none;">Required Qty</label>
+                     <input type="text"  data-min="0" value="" 
+                                                        step="any"  
+                                                        placeholder="Reject Qty" name="reject_qty" class=" required-input form-control onlyNumericInput">
+                     </div>
                      <%else %>
                      <%$p->reject_qty %>
                      <%/if%>
                      </td>
                      <td style="width: 6%;">
-                     <%if (empty($p->accept_qty)) %>
+                     <%if ((empty($p->accept_qty) && $p->accept_qty != 0 && ($p->reject_qty) > 0) || ($p->accept_qty == 0 && $p->reject_qty == 0)) %>
                      <input type="text" name="remark" placeholder="Remark"
                         class="form-control">
                      <%else %>
-                     <%display_no_character()%>
-                     <%$p->remark %>
+                     <%display_no_character($p->remark)%>
                      <%/if%>
                      </td>
                      <td style="width: 6%;">
-                     <%if (empty($p->accept_qty)) %>
+                     <%if (empty($p->accept_qty) && $p->accept_qty != 0 && ($p->reject_qty) > 0) || ($p->accept_qty == 0 && $p->reject_qty == 0) %>
                      <button type="submit" class="btn btn-info">Submit</button>
                      </form>
+                     <%else%>
+                        <%display_no_character()%>
                      <%/if%>
                      </td>
                      <td style="width: 6%;">
@@ -520,6 +532,7 @@
                         </div>
                      </td>
                   </tr>
+                  <%/if%>
                   <%assign var='i' value=$i+1 %>
                   <%/if%>
                   <%/foreach%>
@@ -541,7 +554,8 @@
 
 </style>
 <script type="text/javascript">
-   var base_url = <%$base_url|@json_encode%>
+   var base_url = <%$base_url|@json_encode%>;
+   var accept_inwarding_btn = <%$accept_inwarding_btn|@json_encode%>;
 </script>
 
 <script src="<%$base_url%>public/js/quality/inwarding_details_accept_reject.js"></script>

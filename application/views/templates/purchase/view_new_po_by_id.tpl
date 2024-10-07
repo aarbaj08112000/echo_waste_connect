@@ -82,27 +82,37 @@
                         Tax Structure // Max Qty<span class="text-danger">*</span> </label>
                         <select name="part_id"  class="form-control select2" placeholder="Select Part Number">
                            <%if ($child_part) %>
+
                            <%foreach from=$child_part item=$c %>
-                           <%if ($c->c != '') %>
-                           <%if (empty($new_po[0]->process_id)) %>
-                           <%assign var='type' value='normal' %>
-                           <%else %>
-                           <%assign var='type' value='Subcon grn' %>
-                           <%/if%>
-                           <%if ($type == "normal") %>
-                           <%if ($c->c2[0]->sub_type != "Subcon grn") %>
-                           <option value="<%$c->c2[0]->id %>">
-                              <%$c->c2[0]->part_number %> // <%$c->c2[0]->part_description %> // <%$supplier[0]->supplier_name %>// <%$c->c[0]->part_rate %> // <%$c->gst_structure[0]->code %>//<%$c->c2[0]->max_uom %>
-                           </option>
-                           <%else %>
-                           <%if ($c->c2[0]->sub_type == "Subcon grn" || $c->c2[0]->sub_type == "Subcon Regular") %>
-                           <option value="<%$c->c2[0]->id %>">
-                              <%$c->c2[0]->part_number %> //
-                              <%$c->c2[0]->part_description %> //  <%$supplier[0]->supplier_name %>//<%$c->c[0]->part_rate %> // 
-                           </option>
-                           <%/if%>
-                           <%/if%>
-                           <%/if%>
+                           <%pr($c->c2[0]->sub_type)%>
+                           <%if ($c->c) %>
+
+                              <%if (empty($new_po[0]->process_id)) %>
+                              <%assign var='type' value='normal' %>
+                              <%else %>
+                              <%assign var='type' value='Subcon grn' %>
+                              <%/if%>
+
+                              <%if ($type == "normal") %>
+
+                                 <%if ($c->c2[0]->sub_type != "Subcon grn") %>   
+
+                                 <option value="<%$c->c2[0]->id %>">
+
+                                    <%$c->c2[0]->part_number %> // <%$c->c2[0]->part_description %> // <%$supplier[0]->supplier_name %>// <%$c->c[0]->part_rate %> // <%$c->gst_structure[0]->code %>//<%$c->c2[0]->max_uom %>
+                                 </option>
+                                 <%/if%>  
+                              <%else %>
+
+                                    <%if ($c->c2[0]->sub_type == "Subcon grn" || $c->c2[0]->sub_type == "Subcon Regular") %>
+                                   
+                                    <option value="<%$c->c2[0]->id %>">
+                                       <%$c->c2[0]->part_number %> //
+                                       <%$c->c2[0]->part_description %> //  <%$supplier[0]->supplier_name %>//<%$c->c[0]->part_rate %> // 
+                                    </option>
+                                    <%/if%>
+                                 <%/if%>
+                              
                            <%/if%>
                            <%/foreach%>
                            <%/if%>
@@ -489,7 +499,7 @@
                <tfoot>
                   <%if ($po_parts) %>
                   <tr>
-                     <th colspan="11">Total</th>
+                     <th colspan="12">Total</th>
                      <th><%$final_po_amount %></th>
                   </tr>
                   <%/if%>

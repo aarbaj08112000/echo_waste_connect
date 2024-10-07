@@ -293,7 +293,7 @@
                                      <%assign var="data_present" value='no'%>
                                <%/if%>
                                <%assign var="subcon_po_inwarding_master" value=$p->subcon_po_inwarding_master%>
-                               <%if (empty($new_po[0]->process_id)) %>
+                               <%if (empty($new_po[0]->process_id)) && $p->pending_qty > 0%>
                     <tr>
                       <!-- <td><%$p->id %></td> -->
                        <td><%$child_part_data[0]->part_number %></td>
@@ -423,7 +423,7 @@
                        <%/if%>
                        </td>
                     </tr>
-                    <%else %>
+                    <%else if ($p->pending_qty > 0)%>
                      
                     <tr>
                        <!-- <td><%$i %></td> -->

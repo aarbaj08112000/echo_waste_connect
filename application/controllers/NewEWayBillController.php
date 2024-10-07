@@ -30,13 +30,15 @@ class NewEWayBillController extends CommonController {
 	
 	function echoToTriage($str){
 		 $this->load->model('NewGSTCommon');
-		 $this->NewGSTCommon->echoToTriage($str);
+		 // $this->NewGSTCommon->echoToTriage($str);
 	 }
 
 	/**
    * Generate Eway Bill
    */
   public function generate_EwayBill()	{
+  		$success = 0;
+        $messages = "Something went wrong.";
 		$this->echoToTriage("<br> Generate Eway Bill Request");
 		$new_sales_id = $this->input->post('new_sales_id');
 		$new_sales=array(
@@ -67,7 +69,7 @@ class NewEWayBillController extends CommonController {
 		
 		$this->echoToTriage("<br>TransMode : ". $transMode. " <br>vehicleNo: ".$vehicleNo."<br>distance : ". $distance. " <br>transDocNo: ".$transDocNo.'<br>Transporter ID: '.$transporter[0]->transporter_id);
 		
-		$this -> load->model('NewGSTCommon');
+		$this->load->model('NewGSTCommon');
 		$token = $this->NewGSTCommon->authentication($new_sales_id);
 		
 		if($token) {
@@ -183,7 +185,7 @@ class NewEWayBillController extends CommonController {
 						$i++;
 				}
 				
-			$this -> load->model('NewGSTCommon');
+			$this->load->model('NewGSTCommon');
 			$ewayGst = $this->NewGSTCommon->getBaseEwayBillClientGSTNo();
 
 			$dynamicData=
@@ -240,7 +242,7 @@ class NewEWayBillController extends CommonController {
 							
 				$requestData = json_encode($dynamicData);
 				$this->echoToTriage("<br><br><b>Dynamic Request For GENEWAYBILL :</b><br>" .$requestData . "<br>");
-				
+			
 			$this->load->model('NewEwayBill');
 			$result=$this->NewEwayBill->execute($url,$requestData,$action,$Authorization); 
 			if($hardCoded) {
@@ -268,11 +270,12 @@ class NewEWayBillController extends CommonController {
 				$this->echoToTriage( "<br><br><u>GST Errors for GENEWAYBILL Request:</u><br>");
 				$errorMsg = "GST Error Response: ";
 				$this->echoToTriage("\n GST Error Response for Cancel Request:\n ErrorMsg: " . $errorDet);
+				$messages = "\n GST Error Response for Cancel Request:\n ErrorMsg: " . $errorDet;
 				//$alertCode = "<script>alert('\\n GST Error Response: \\n ErrorMsg: " . $errorDet . "');</script>";
 				//echo $alertCode;
 				$this->addErrorMessage($errorDet);
 				$this->load->model('NewEwayBill');
-				$this->NewEwayBill->redirect($new_sales_id);
+				// $this->NewEwayBill->redirect($new_sales_id);
 
 			} else if(isset($result['success']) && $result['success'] == true) {
 				$this->echoToTriage( "Eway Bill Created sucessfully");
@@ -291,6 +294,7 @@ class NewEWayBillController extends CommonController {
 					'EwbValidTill' => $gstResponse['validUpto']
 				);
 				
+
 				//Store the status in our DB...
 				$this->echoToTriage( "response_data: ".json_decode($response_data));
 				$hasEinvoice = $einvoice_res_data[0]->Status;
@@ -300,6 +304,7 @@ class NewEWayBillController extends CommonController {
 				}else{
 					$dbresult = $this->Common_admin_model->insert('einvoice_res', $response_data);
 				}
+
 				if ($dbresult) {
 					$new_sales_update = array(
 							'id' => $new_sales_id,
@@ -309,14 +314,22 @@ class NewEWayBillController extends CommonController {
 							'transporter_id' => $transporter_data[0]->id
 						);
 					$dbresult = $this->Common_admin_model->update("new_sales", $new_sales_update, "id", $new_sales_id);
-					$this->addSuccessMessage('EWAY Bill created successfully.');
-					$this->redirectMessage();
+					// $this->addSuccessMessage('EWAY Bill created successfully.');
+					$messages = "EWAY Bill created successfully.";
+					$success = 1;
+					// $this->redirectMessage();
 				} else {
-					$this->addErrorMessage('EWAY Bill DB Not Updated for EwayBill generate..');
-					$this->redirectMessage();
+					$messages = "EWAY Bill DB Not Updated for EwayBill generate.";
+					// $this->addErrorMessage('EWAY Bill DB Not Updated for EwayBill generate..');
+					// $this->redirectMessage();
 				}
 			}			
-        }      
+        }  
+        $result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();    
 	}
 	
  /**

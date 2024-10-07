@@ -35,7 +35,7 @@ class EWayBillController extends CommonController {
 
 	function echoToTriage($str){
 		 $this->load->model('GSTCommon');
-		 $this->GSTCommon->echoToTriage($str);
+		 // $this->GSTCommon->echoToTriage($str);
 	 }
 
 	/**

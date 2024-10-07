@@ -103,6 +103,7 @@
     <!-- <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Tables /</span> Basic Tables</h4> -->
 
     <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5 listing-btn">
+      <%if checkGroupAccess("child_part_view","add",false)%>
       <div class="btn-group">
         <a type="button" class="btn btn-seconday" href="<%base_url('child_part/direct')%>">Add Direct Regular Item</a>
         <button type="button" class="btn btn btn-seconday dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false"  data-bs-reference="parent">
@@ -115,6 +116,7 @@
           <li><a class="dropdown-item" href="<%base_url('child_part/customer_bom')%>"> Add Customer Bom Asset</a></li>
         </ul>
       </div>
+      <%/if%>
       <button class="btn btn-seconday" type="button" id="downloadCSVBtn" title="Download CSV"><i class="ti ti-file-type-csv"></i></button>
       <button class="btn btn-seconday" type="button" id="downloadPDFBtn" title="Download PDF"><i class="ti ti-file-type-pdf"></i></button>
       <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>

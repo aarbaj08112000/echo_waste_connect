@@ -4511,12 +4511,22 @@ class Welcome extends CommonController
 		$data_update_child_part_inhouse = array(
 			"production_qty" => $new_stock_inhouse,
 		);
+        $success = 0;
+        $messages = "Something went wrong.";
 		$query = $this->InhouseParts->updateStockById($data_update_child_part_inhouse, $inhouse_parts_data[0]->id);
 		if ($query) {
-			echo "<script>alert('Updated Successfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+            $messages = "Updated Successfully";
+            $success = 1;
+			// echo "<script>alert('Updated Successfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-			echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
+            $messages = "Error IN User  Adding ,try again";
+			// echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
 		}
+        $result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 
@@ -4605,12 +4615,16 @@ class Welcome extends CommonController
 
 	public function erp_users()
 	{
-
+        checkGroupAccess("erp_users","list","Yes");
 		$criteria = array('AROM_ADMIN');
+        $data['client'] = $this->Crud->read_data("client");
+        $groups = $this->db->query('SELECT *  FROM `group_master` ');
+        $data['groups'] = $groups->result();
 		$data['user_info'] = $this->Crud->where_not_condition("userinfo", "type", $criteria);
 		//earlier code --> $data['user_info'] = $this->Crud->get_data_by_id_multiple_condition("userinfo",$criteria);
 		//working earlier - $data['user_info'] = $this->Crud->read_data("userinfo");
 		// $this->load->view('header');
+        // pr($data,1);
 		$this->loadView('admin/erp_users', $data);
 		// $this->load->view('footer');
 	}
@@ -4829,38 +4843,159 @@ class Welcome extends CommonController
 		$this->load->view('view_challan', $data);
 		$this->load->view('footer');
 	}
+    public function get_access_page()
+    {
+        $groups  = $this->input->post("groups");
+        $access_list = $this->getGroupAccessList($groups,""); 
+        $access_html = '';
+        foreach ($access_list as $key => $value) {
+            $is_list = $value['list'] == "Yes" ? "checked='true'" : "";
+            $is_add = $value['add'] == "Yes" ? "checked='true'" : "";
+            $is_update = $value['update'] == "Yes" ? "checked='true'" : "";
+            $is_delete = $value['delete'] == "Yes" ? "checked='true'" : "";
+            $label_name = $value['diaplay_name'];
+            $access_html .= "
+                <div class='col-lg-12 '>
+                   <div class='menu-form-row'>
+                      <label class='form-label ''>
+                         <lable  class='right-label-inline'>$label_name</lable>
+                      </label>
+                      <div class='form-right-div'>
+                         <div class='margin-equilize'>
+                            <input type='checkbox'  class='regular-checkbox pointer-none'  $is_list>
+                            <label class='right-label-inline' >List</label>
+                         </div>
+                         <div class='margin-equilize'>
+                            <input type='checkbox'  class='regular-checkbox pointer-none'  $is_add>
+                            <label class='right-label-inline' >Add</label>
+                         </div>
+                         <div class='margin-equilize'>
+                            <input type='checkbox'  class='regular-checkbox pointer-none'  $is_update>
+                            <label class='right-label-inline' >Update</label>
+                         </div>
+                         <div class='margin-equilize'>
+                            <input type='checkbox'  class='regular-checkbox pointer-none'  $is_delete>
+                            <label class='right-label-inline' >Delete</label>
+                         </div>
+                      </div>
+                   </div>
+                </div>";
+        }
+        if($access_html == ""){
+            $access_html = "<div>Access page not found!.</div>";
+        }
+
+        $return['access_html'] = $access_html;
+
+        echo json_encode($return);
+        exit();    
+    }
+    public function getGroupAccessList($groups=[],$menu_url = ""){
+        $group_rights = $this->welcome_model->getGroupRightsData($groups,$menu_url);
+        $group_rights_arr = [];
+        foreach ($group_rights as $key => $value) {
+            if(!isset($group_rights_arr[$value['menu_master_id']]) ){
+                $group_rights_arr[$value['menu_master_id']]['diaplay_name'] = $value['diaplay_name'];
+                $group_rights_arr[$value['menu_master_id']]['url'] = $value['url'];
+            }
+            if(!isset($group_rights_arr[$value['menu_master_id']]['list']) || (isset($group_rights_arr[$value['menu_master_id']]['list']) && $group_rights_arr[$value['menu_master_id']]['list'] == "No")){
+                $group_rights_arr[$value['menu_master_id']]['list'] = $value['list'];
+            }
+            if(!isset($group_rights_arr[$value['menu_master_id']]['add']) || (isset($group_rights_arr[$value['menu_master_id']]['add']) && $group_rights_arr[$value['menu_master_id']]['add'] == "No")){
+                $group_rights_arr[$value['menu_master_id']]['add'] = $value['add'];
+            }
+            if(!isset($group_rights_arr[$value['menu_master_id']]['update']) || (isset($group_rights_arr[$value['menu_master_id']]['update']) && $group_rights_arr[$value['menu_master_id']]['update'] == "No")){
+                $group_rights_arr[$value['menu_master_id']]['update'] = $value['update'];
+            }
+            if(!isset($group_rights_arr[$value['menu_master_id']]['delete'])  || (isset($group_rights_arr[$value['menu_master_id']]['delete']) && $group_rights_arr[$value['menu_master_id']]['delete'] == "No")){
+                $group_rights_arr[$value['menu_master_id']]['delete'] = $value['delete'];
+            }
+        }
+        return $group_rights_arr;
+    }
 	public function add_users_data()
 	{
 			
 		$ret_arr = [];
 		$msg ='';
 		$success = 1;
-		$data = array(
-			'user_name' => $this->input->post('user_name'),
-			'user_email' => $this->input->post('user_email'),
-			'user_password' => $this->input->post('user_password'),
-			'type' => $this->input->post('user_role'),
-		);
+        $client_arr  = $this->input->post("client");
+        $groups  = $this->input->post("groups");
+        if(is_valid_array($client_arr) && is_valid_array($groups)){
+    		$data = array(
+    			'user_name' => $this->input->post('user_name'),
+    			'user_email' => $this->input->post('user_email'),
+    			'user_password' => $this->input->post('user_password'),
+    			'type' => $this->input->post('user_role'),
+                'unit_ids' => implode(",", $client_arr),
+                'groups' => implode(",", $groups),
+    		);
 
-		$inser_query = $this->Crud->insert_data("userinfo", $data);
-		if ($inser_query) {
-			if ($inser_query) {
-				// echo "<script>alert('User  Added Successfully');document.location='erp_users'</script>";
-				$msg = 'User  Added Successfully.';
-			} else {
-				// echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
-				$msg = 'Error IN User  Adding ,try again.';
-				$success = 0;
-			}
-		} else {
-			
-			$msg = 'Error occer while inserting data.';
-			$success = 0;
-		}
+    		$inser_query = $this->Crud->insert_data("userinfo", $data);
+    		if ($inser_query) {
+    			if ($inser_query) {
+    				// echo "<script>alert('User  Added Successfully');document.location='erp_users'</script>";
+    				$msg = 'User Added Successfully.';
+    			} else {
+    				// echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
+    				$msg = 'Error IN User Adding ,try again.';
+    				$success = 0;
+    			}
+    		} else {
+    			
+    			$msg = 'Error occer while inserting data.';
+    			$success = 0;
+    		}
+        }else if(!is_valid_array($client_arr)){
+            $msg = 'Please select unit.';
+            $success = 0;
+        }else if(!is_valid_array($groups)){
+            $msg = 'Please select groups.';
+            $success = 0;
+        }
 		$ret_arr['msg'] = $msg;
 		$ret_arr['success'] = $success;
 		echo json_encode($ret_arr);
 	}
+    public function update_users_data()
+    {
+        $ret_arr = [];
+        $msg ='';
+        $success = 1;
+        $client_arr  = $this->input->post("client");
+        $groups  = $this->input->post("groups");
+        if(is_valid_array($client_arr) && is_valid_array($groups)){
+            $data = array(
+                'user_name' => $this->input->post('user_name'),
+                'unit_ids' => implode(",", $client_arr),
+                'groups' => implode(",", $groups),
+            );
+            $id = $this->input->post("user_id");
+            $result = $this->Crud->update_data("userinfo", $data, $id);
+            if ($result) {
+                if ($result) {
+                    // echo "<script>alert('User  Added Successfully');document.location='erp_users'</script>";
+                    $msg = 'User Updated Successfully.';
+                } else {
+                    // echo "<script>alert('Error IN User  Adding ,try again');document.location='erp_users'</script>";
+                    $msg = 'Error IN User Updating ,try again.';
+                    $success = 0;
+                }
+            } else {
+                $msg = 'Error occer while updateing data.';
+                $success = 0;
+            }
+        }else if(!is_valid_array($client_arr)){
+            $msg = 'Please select unit.';
+            $success = 0;
+        }else if(!is_valid_array($groups)){
+            $msg = 'Please select groups.';
+            $success = 0;
+        }
+        $ret_arr['messages'] = $msg;
+        $ret_arr['success'] = $success;
+        echo json_encode($ret_arr);
+    }
 
 
 
@@ -5045,7 +5180,8 @@ class Welcome extends CommonController
 		$onhold_qty = (int)$this->input->post('onhold_qty');
 		$scrap_factor = (int)$this->input->post('scrap_factor');
 
-
+        $success = 0;
+        $messages = "Something went wrong.";
 		if ($sum <= $qty) {
 
 			$operations_bom = $this->Crud->get_data_by_id("operations_bom", $p_q_main_data[0]->created_by, "id");
@@ -5137,7 +5273,9 @@ class Welcome extends CommonController
 						);
 						$new_production_rejection = $old_production_rejection + ((float)$output_part_data[0]->weight * (float)$rejected_qty);
 						$update = $this->InhouseParts->updateStockById($update_data, $output_part_data[0]->id);
-						echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+						// echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                        $messages = 'Updated Successfully';
+                        $success = 1;
 					} else {
 
 						$output_part_data = $this->Crud->get_data_by_id("customer_part", $output_part_id, "id");
@@ -5150,17 +5288,24 @@ class Welcome extends CommonController
 						);
 						$new_production_rejection = $old_production_rejection + ((float)$output_part_data[0]->weight * (float)$rejected_qty);
 						$update = $this->CustomerPart->updateStockById($update_data_2, $customer_parts_master_data[0]->part_id);
-						echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                        $messages = "Updated Successfully ";
+                        $success = 1;
+						// echo "<script>alert('Updated Successfully ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 					}
 				} else {
-					echo "error while updating";
+					$messages ="error while updating";
 				}
 			} else {
-				echo "Operations BOM Not Found";
+				$messages = "Operations BOM Not Found";
 			}
 		} else {
-			echo "mismatvhe";
+			$messages = "mismatvhe";
 		}
+        $result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 	public function update_parts_rejection_sales_invoice()
 	{
@@ -9391,7 +9536,8 @@ class Welcome extends CommonController
 		// $this->load->view('header');
 		// $this->load->view('bom', $data);
 		// $this->load->view('footer');
-		$entitlements = $this->session->userdata('entitlements');
+        $data['entitlements'] = $this->session->userdata['entitlements'];
+		
 		$this->loadView('customer/bom',$data);
 	}
 	public function customer_part_main()
@@ -9534,10 +9680,29 @@ class Welcome extends CommonController
 		);
 		$data['operations_bom'] = $this->Crud->get_data_by_id_multiple_condition("operations_bom", $data_old);
 		$data['bom_list'] = $this->Crud->get_data_by_id("bom", $data['customer_part_id'], "customer_part_id");
-
-		$this->load->view('header');
-		$this->load->view('operations_bom', $data);
-		$this->load->view('footer');
+        $operations_bom = $data['operations_bom'];
+        foreach ($operations_bom as $key => $po) {
+            $current_stock = "";
+            if ($po->output_part_table_name == "inhouse_parts") {
+                $output_part_data = $this->InhouseParts->getInhousePartById($po->output_part_id);
+                $operations_bom[$key]->output_part_data = $output_part_data;
+                $operations_bom[$key]->current_stock = $output_part_data[0]->stock;
+                $uom_data = $this->Crud->get_data_by_id("uom", $output_part_data[0]->uom_id, "id");
+                $operations_bom[$key]->uom = $uom_data[0]->uom_name;
+                $operations_bom[$key]->part_type = "Inhouse Part";
+            } else {
+                $output_part_data  = $this->Crud->get_data_by_id("customer_part", $po->output_part_id, "id");
+                $operations_bom[$key]->output_part_data = $output_part_data;
+                $customer_parts_master_data = $this->CustomerPart->getCustomerPartByPartNumber($output_part_data[0]->part_number);
+                $operations_bom[$key]->current_stock = $customer_parts_master_data[0]->fg_stock;
+                $operations_bom[$key]->uom = $output_part_data[0]->uom;
+                $operations_bom[$key]->part_type = "Customer Part";
+            }
+        }
+        // pr($operations_bom,1);
+		// $this->load->view('header');
+		$this->loadView('sales/operations_bom', $data);
+		// $this->load->view('footer');
 	}
 	public function customer_part_wip_stock_report()
 	{
@@ -9759,9 +9924,29 @@ class Welcome extends CommonController
 		$data['child_parts_data'] = $child_part_list->result();
 		$data['child_part_list'] = $this->InhouseParts->readInhouseParts();
 
-		$this->load->view('header');
-		$this->load->view('operations_bom_inputs', $data);
-		$this->load->view('footer');
+        $operations_bom_inputs = $data['operations_bom_inputs'];
+        $is_data = false;
+        foreach ($operations_bom_inputs as $key=>$po) {
+            if ($po->input_part_table_name == "inhouse_parts") {
+                $is_data = true;
+                $output_part_data = $this->InhouseParts->getInhousePartOnlyById($po->input_part_id);
+                $operations_bom_inputs[$key]->output_part_data = $output_part_data;
+                $uom_data = $this->Crud->get_data_by_id("uom", $output_part_data[0]->uom_id, "id");
+                $operations_bom_inputs[$key]->uom = $uom_data[0]->uom_name;
+            } else {
+                $is_data = true;
+                $output_part_data = $this->Crud->get_data_by_id("child_part", $po->input_part_id, "id");
+                $operations_bom_inputs[$key]->output_part_data = $output_part_data;
+                $uom_data = $this->Crud->get_data_by_id("uom", $output_part_data[0]->uom_id, "id");
+                $operations_bom_inputs[$key]->uom = $uom_data[0]->uom_name;
+            }
+        }
+        $data['is_data'] = $is_data;
+        $data['operations_bom_inputs'] = $operations_bom_inputs;
+        
+		// $this->load->view('header');
+		$this->loadView('sales/operations_bom_inputs', $data);
+		// $this->load->view('footer');
 	}
 	public function new_po()
 	{
@@ -10025,9 +10210,11 @@ class Welcome extends CommonController
 		// print_r($data);
 		$check = $this->Crud->read_data_where("operations_bom", $data);
 		// print_r($check);
-
+        $success = 0;
+        $messages = "Something went wrong.";
 		if ($check != 0) {
-			echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+            $messages = "Already Exists";
+			// echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 			$data = array(
 				"customer_part_number" => $customer_part_number,
@@ -10045,11 +10232,19 @@ class Welcome extends CommonController
 			);
 			$result = $this->Crud->insert_data("operations_bom", $data);
 			if ($result) {
-				echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $messages = "Added Sucessfully";
+                $success =1;
+				// echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $messages = "Unable to Add";
+				// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
+        $result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 	public function add_operations_bom_inputs()
 	{
@@ -10065,9 +10260,12 @@ class Welcome extends CommonController
 			"input_part_id" => $input_part_id,
 			"input_part_table_name" => $input_part_table_name,
 		);
+        $success = 0;
+        $messages = "Something went wrong.";
 		$check = $this->Crud->read_data_where("operations_bom_inputs", $data);
 		if ($check != 0) {
-			echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+            $messages = "Already Exists";
+			// echo "<script>alert('Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 			$data = array(
 				"operations_bom_id" => $operations_bom_id,
@@ -10086,11 +10284,20 @@ class Welcome extends CommonController
 			);
 			$result = $this->Crud->insert_data("operations_bom_inputs", $data);
 			if ($result) {
-				echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $messages = "Added Sucessfully";
+                $success = 1;
+				// echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $messages = "Unable to Add";
+				// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
+        $result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
+
 	}
 
 	public function update_operations_bom_output()
@@ -10109,14 +10316,17 @@ class Welcome extends CommonController
 			"output_part_id" => $output_part_id,
 			"output_part_table_name" => $output_part_table_name,
 		);
+        $success = 0;
+        $messages = "Something went wrong.";
 		//if we are trying to update the same record then don't look for existing check.
 		$isRecordExists = false;
 		if ($orig_output_part_id != $output_part_id) {
 			$check = $this->Crud->read_data_where("operations_bom", $data);
 			if ($check != 0) {
 				$isRecordExists = true;
-				$this->addErrorMessage('Record already exist.');
-				$this->redirectMessage();
+				// $this->addErrorMessage('Record already exist.');
+				// $this->redirectMessage();
+                $messages = "Record already exist.";
 			}
 		}
 		if (!$isRecordExists) {
@@ -10136,12 +10346,20 @@ class Welcome extends CommonController
 
 			$result = $this->Crud->update_data("operations_bom", $data, $record_id);
 			if ($result) {
-				$this->addSuccessMessage('Record updated sucessfully.');
+                $messages ="Record updated sucessfully.";
+                $success = 1;
+				// $this->addSuccessMessage('Record updated sucessfully.');
 			} else {
-				$this->addErrorMessage('Failed to update.');
+                $messages = "Failed to update.";
+				// $this->addErrorMessage('Failed to update.');
 			}
-			$this->redirectMessage();
+			
 		}
+        $result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 	public function update_operations_bom_inputs()
@@ -10158,12 +10376,22 @@ class Welcome extends CommonController
 			"operation_description" => $operation_description,
 
 		);
+        $success = 0;
+        $messages = "Something went wrong.";
 		$result = $this->Crud->update_data("operations_bom_inputs", $data, $id);
 		if ($result) {
-			echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+            $messages = "Updated Sucessfully";
+            $success = 1;
+			// echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-			echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+            $messages = "Unable to Add";
+			// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
+        $result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 	public function updatebom()
 	{
@@ -10471,9 +10699,12 @@ class Welcome extends CommonController
 		$data = array(
 			"code" => $code,
 		);
+        $success = 0;
+        $messages = "Something went wrong.";
 		$check = $this->Crud->read_data_where("gst_structure", $data);
 		if ($check != 0) {
-			echo "<script>alert('TAX Code Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+            $messages = "TAX Code Already Exists";
+			// echo "<script>alert('TAX Code Already Exists');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 			$data = array(
 				"code" => $code,
@@ -10489,11 +10720,19 @@ class Welcome extends CommonController
 
 			$result = $this->Crud->insert_data("gst_structure", $data);
 			if ($result) {
-				echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $success = 1;
+                $messages = "'Added Sucessfully";
+				// echo "<script>alert('Added Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                $messages = "Unable to Add";
+				// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
+        $result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 
 	public function update_customer_parts_master()

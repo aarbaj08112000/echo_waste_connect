@@ -731,6 +731,19 @@ class Welcome_model extends CI_Model
         return $ret_data;
     }
 
+    /* user group management  */
+    public function getGroupRightsData($group_id = [],$menu_url = ''){
+        $this->db->select('g.*,m.diaplay_name,m.url');
+        $this->db->from('group_rights as g');
+        $this->db->join("menu_master as m","m.menu_master_id = g.menu_master_id");
+        $this->db->where_in("g.group_master_id",$group_id);
+        if($menu_url != ""){
+            $this->db->where("m.url",$menu_url);
+        }
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+        return $ret_data;
+    }
 
 
 

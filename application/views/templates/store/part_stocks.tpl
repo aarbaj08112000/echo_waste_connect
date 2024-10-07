@@ -131,7 +131,7 @@
             <div class="col-lg-12">
               <div class="form-group">
                 <label for="">Stock Qty <span class="text-danger">*</span></label>
-                <input type="text" step="any" class="form-control required-input" value="" max="<%$po->$stock_column_name %>" name="stock"  placeholder="Transfer Qty">
+                <input type="text" step="any" class="form-control required-input" value="" data-max="<%$po->$stock_column_name %>" name="stock"  placeholder="Transfer Qty">
                 <input type="hidden" class="form-control" value="<%$po->part_number%>" name="part_number" id="part_number">
                 <input type="hidden" class="form-control" value="<%$po->childPartId%>" name="child_part_id" id="part_id">
               </div>
@@ -174,13 +174,13 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form action="<%base_url('update_production_qty_child_part_production_qty')%>" method="POST" enctype="multipart/form-data">
+        <form action="<%base_url('update_production_qty_child_part_production_qty')%>" method="POST" enctype="multipart/form-data" id="update_production_qty_child_part_production_qty" class="update_production_qty_child_part_production_qty custom-form">
         <div class="modal-body">
           <div class="row">
             <div class="col-lg-12">
               <div class="form-group">
                 <label for="">Production Qty <span class="text-danger">*</span></label>
-                <input type="number" step="any" class="form-control" value="" max="<%$po->$sheet_prod_column_name%>" name="production_qty" min="1" required placeholder="Enter Transfer Qty">
+                <input type="text" step="any" class="form-control onlyNumericInput required-input" value="" data-max="<%$po->$sheet_prod_column_name%>" name="production_qty" data-min="1"  placeholder="Enter Transfer Qty">
                 <input type="hidden" class="form-control" value="<%$po->part_number%>" name="part_number" required>
                 <input type="hidden" class="form-control" value="<%$po->childPartId%>" name="child_part_id" required>
               </div>
@@ -208,11 +208,14 @@
         <div class="modal-body">
           <div class="row">
             <div class="col-lg-12">
-              <form action="<%base_url('update_production_qty_child_part')%>" method="POST" enctype="multipart/form-data">
+              <form action="<%base_url('update_production_qty_child_part')%>" id="update_production_qty_child_part" class="update_production_qty_child_part custom-form" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
                 <label for="">Machine Mold Stock Qty <span class="text-danger">*</span></label>
-                <input type="number" step="any" class="form-control" value="" max="<%$po->$plastic_prod_column_name %>" name="machine_mold_issue_stock" min="1" required placeholder="Enter Transfer Qty">
+                <input type="text" step="any" class="form-control onlyNumericInput required-input" value="" data-max="<%$po->$plastic_prod_column_name %>" name="machine_mold_issue_stock" min="1"  placeholder="Enter Transfer Qty">
                 <input type="hidden" class="form-control" value="<%$po->part_number%>" name="part_number" required>
                 <input type="hidden" class="form-control" value="<%$po->childPartId%>" name="child_part_id" required>
+              </div>
+              
             </div>
           </div>
           <div class="modal-footer">
@@ -280,6 +283,10 @@
             var api_name = <%$api_name|json_encode%> ;
             var base_url = <%$base_url|json_encode%> ;
             var supplier_part_select_list = <%$supplier_part_select_list|json_encode%>;
+            var sheet_prod_column_name = <%$sheet_prod_column_name|json_encode%>;
+            var stock_column_name = <%$stock_column_name|json_encode%>;
+            var plastic_prod_column_name = <%$plastic_prod_column_name|json_encode%>;
+            
            
           </script>
 <script src="<%$base_url%>/public/js/reports/supplier_part_stock_report.js"></script>

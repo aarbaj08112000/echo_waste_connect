@@ -21,9 +21,10 @@
 
       <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
        
-       
+        <%if $flag != 0%>
         <button type="button" class="btn btn-seconday" title="Add Invoice Number" data-bs-toggle="modal" data-bs-target="#exampleModal">
           <i class="ti ti-plus"></i></button>
+        <%/if%>
           <a class="btn btn-seconday" type="button" href="<%base_url('inwarding') %>"><i class="ti ti-arrow-left" title="Back To Item Part List"></i></a>
           <!-- <a class="btn btn-dark" href="<%base_url('inwarding') %>">Back</a> -->
         <!-- <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button> -->
@@ -68,8 +69,8 @@
                       class="form-control">
                     </div>
                     <div class="form-group">
-                      <label for="tool_number">Transporter ID </label><span class="text-danger">*</span>
-                      <input type="text" name="transporter" value="" class="form-control required-input"  placeholder="Enter transporter">
+                      <label for="tool_number">Transporter ID </label>
+                      <input type="text" name="transporter" value="" class="form-control "  placeholder="Enter transporter">
                     </div>
                     <!-- <php if($isMultiClient == "true") { ?>
                     <div class="form-group">
@@ -120,6 +121,8 @@
                     <th>Delivery Location</th>
                   <?php } ?>
                   <th class="text-center">View Details</th>
+                  <th class="text-center">Action</th>
+
                 </tr>
               </thead>
               <tbody style="max-height: 20em;">
@@ -148,6 +151,146 @@
                   <%/if%>
                   <td class="text-center">
                     <a href="<%base_url('inwarding_details/') %><%$t->id %>/<%$new_po_id %>" class="btn btn-primary" href="">Inwarding Details</a>
+                  </td>
+                  <td class="text-center">
+                    <%if ($t->grn_number == '') %>
+                          <a
+                              type="button"
+                              class=""
+                              data-bs-toggle="modal"
+                              data-bs-target="#exampleModal123<%$t->id %>"
+                              title="Edit">
+                              <i class="ti ti-edit"></i>
+                          </a>
+                          <a
+                              type="button"
+                              class=""
+                              data-bs-toggle="modal"
+                              data-bs-target="#exampleModaldelete<%$t->id %>"
+                              title="Delete">
+                              <i class="ti ti-trash"></i>
+                          </a>
+                    <%/if%>
+                          <div
+                              class="modal fade"
+                              id="exampleModal123<%$t->id %>"
+                              tabindex="-1"
+                              role="dialog"
+                              aria-labelledby="exampleModalLabel"
+                              aria-hidden="true">
+                              <div class="modal-dialog  modal-dialog-centered" role="document">
+                                  <div class="modal-content">
+                                      <div class="modal-header">
+                                          <h5 class="modal-title" id="exampleModalLabel">Update
+                                          </h5>
+                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                          </button>
+                                      </div>
+                                      <form
+                                              action="<%base_url('update_inwarding_details') %>"
+                                              method="POST"
+                                              enctype='multipart/form-data' class="update_inwarding_details update_inwarding_details<%$t->id %> custom-form" id="update_inwarding_details<%$t->id %>">
+                                      <div class="modal-body">
+                                          
+                                              <input
+                                                  type="hidden"
+                                                  value="<%$t->id %>"
+                                                  name="invoice_id"
+                                                  readonly="readonly"
+                                                  required="required">
+                                              <input
+                                                  type="hidden"
+                                                  value="<%$new_po_id %>"
+                                                  name="new_po_id"
+                                                  readonly="readonly"
+                                                  required="required">
+
+                                              <div class="row">
+                                                  <div class="col-lg-12">
+                                                      <div class="form-group">
+                                                          <label for="po_num">Invoice Number
+                                                          </label>
+                                                          <span class="text-danger">*</span>
+                                                          <input
+                                                              type="text"
+                                                              class="form-control required-input"
+                                                              value="<%$t->invoice_number %>"
+                                                              name="invoice_number"
+                                                              >
+
+                                                      </div>
+                                                  </div>
+                                                  <div class="col-lg-12">
+                                                      <div class="form-group">
+                                                          <label for="po_num">Invoice Date</label>
+                                                          <span class="text-danger">*</span>
+                                                          <input
+                                                              type="date"
+                                                              class="form-control required-input"
+                                                              value="<%$t->invoice_date %>"
+                                                              name="invoice_date"
+                                                              required="required">
+                                                      </div>
+                                                  </div>
+                                              </div>
+
+                                          </div>
+                                          <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                              <button type="submit" class="btn btn-primary">Save Changes</button>
+                                          </div>
+                                      </form>
+
+                                  </div>
+
+                              </div>
+                          </div>
+                          <div
+                              class="modal fade"
+                              id="exampleModaldelete<%$t->id %>"
+                              tabindex="-1"
+                              role="dialog"
+                              aria-labelledby="exampleModalLabel"
+                              aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
+                                  <div class="modal-content">
+                                      <div class="modal-header">
+                                          <h5 class="modal-title" id="exampleModalLabel">Update
+                                          </h5>
+                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                          
+                                          </button>
+                                      </div>
+                                      <div class="modal-body">
+                                          <form
+                                              action="<%base_url('delete_invoice') %>"
+                                              method="POST"
+                                              enctype='multipart/form-data' class="delete_invoice delete_invoice<%$t->id %> custom-form" id="delete_invoice<%$t->id %>">
+                                              <input
+                                                  type="hidden"
+                                                  value="<%$t->id %>"
+                                                  name="invoice_id"
+                                                  readonly="readonly"
+                                                  required="required">
+                                              <input
+                                                  type="hidden"
+                                                  value="<%$new_po_id %>"
+                                                  name="new_po_id"
+                                                  readonly="readonly"
+                                                  required="required">
+                                              <strong>Are you sure want to delete this invoice?</strong>
+                                          </div>
+                                          <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                                              <button type="submit" class="btn btn-primary">Yes</button>
+                                          </div>
+                                      </form>
+
+                                  </div>
+
+                              </div>
+                          </div>
+
                   </td>
                 </tr>
                 <%assign var='i' value=$i+1%>
@@ -224,6 +367,7 @@
 
 
   <script type="text/javascript">
-    var base_url = <%$base_url|@json_encode%>
+    var base_url = <%$base_url|@json_encode%>;
+    var flag = <%$flag|@json_encode%>
   </script>
   <script src="<%$base_url%>public/js/store/inwarding_invoice.js"></script>

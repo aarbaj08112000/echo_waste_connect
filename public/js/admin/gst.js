@@ -291,12 +291,12 @@ $(document).ready(function() {
                     if(response != '' && response != null && typeof response != 'undefined'){
                         let res = JSON.parse(response);
                         if(res['success'] == 1){
-                            toastr.success(res['msg']);
+                            toastr.success(res['messages']);
                             setTimeout(() => {
                                 window.location.reload();
                             }, 1000);
                         }else{
-                            toastr.error(res['msg']);
+                            toastr.error(res['messages']);
                         }
                     }
                     // Optionally, close the modal

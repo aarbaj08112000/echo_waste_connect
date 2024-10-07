@@ -154,7 +154,7 @@ class NewGSTCommon extends CI_Model
 	//Generate authentication token - Second Call
  	public function authentication($new_sales_id) {
 		//Start: This should be replaced with appropriate values for production
-		$this->echoToTriage("<br><u><b>Authentication</b></u>");
+		// $this->echoToTriage("<br><u><b>Authentication</b></u>");
 		$isProd = $this->isProduction();
 		if($isProd==true){
 			$tokenURL='https://gsp.adaequare.com/gsp/authenticate?grant_type=token';
@@ -199,7 +199,7 @@ class NewGSTCommon extends CI_Model
 						"time" => time(),
 						"expires_in" => $restoken['expires_in']);
 				$_SESSION["sessionOauthToken"] = $oauthTokenSessionData;
-				$this->echoToTriage("<br>Session OauthToken is set now: " .$oauthTokenSessionData['access_token']); 
+				// $this->echoToTriage("<br>Session OauthToken is set now: " .$oauthTokenSessionData['access_token']); 
 				return $oauthToken;
          } else{
 			  echo "<script>

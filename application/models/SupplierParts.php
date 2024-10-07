@@ -1067,7 +1067,7 @@ class SupplierParts extends CI_Model {
         SUM(IFNULL(grn_details.reject_qty, 0)) AS scrap_stock, 
         SUM( CASE WHEN grn_details.accept_qty = 0 && inw.status = "validate_grn"  THEN IFNULL(grn_details.verified_qty, 0)ELSE 0 END) AS underinspection_stock, 
         SUM(IFNULL(job_card_details.store_reject_qty, 0)) AS store_scrap, 
-        (SUM(IFNULL(stock.stock, 0)) * parts.store_stock_rate) AS total_value');
+        (SUM(IFNULL(stock.stock, 0)) * parts.store_stock_rate) AS total_value,stock.safty_buffer_stk as safty_buffer_stk_val,stock.rejection_stock as rejection_stock_val');
         $this->db->from('child_part parts');
         $this->db->join('child_part_stock stock', 'parts.id = stock.childPartId AND stock.clientId = '.$this->Unit->getSessionClientId(), 'left');
         $this->db->join('uom uom_data', 'parts.uom_id = uom_data.id', 'left');
@@ -1373,6 +1373,12 @@ class SupplierParts extends CI_Model {
      */
     public function updateBatchSupplierPartByIds($update_data = array()) {
         $affected_rows = $this->db->update_batch("child_part_stock", $update_data, "childPartStockId");
+        $affected_rows = $affected_rows == 0 ? 1 : $affected_rows;
+        return $affected_rows;
+    }
+
+    public function updateBatchPoPartQtyByIds($update_data = array()) {
+        $affected_rows = $this->db->update_batch("po_parts", $update_data, "id");
         $affected_rows = $affected_rows == 0 ? 1 : $affected_rows;
         return $affected_rows;
     }

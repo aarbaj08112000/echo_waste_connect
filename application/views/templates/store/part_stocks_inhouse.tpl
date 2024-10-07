@@ -234,7 +234,7 @@
                                     </label>
                                     <input type="text" step="any"
                                        class="form-control onlyNumericInput required-input" value=""
-                                       max="<%$po->$prodQtyColName %>"
+                                       data-max="<%$po->$prodQtyColName %>"
                                        name="stock" 
                                        placeholder="Enter Transfer Qty">
                                     <input type="hidden" class="form-control"

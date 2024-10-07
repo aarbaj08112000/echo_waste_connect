@@ -48,25 +48,25 @@
                         <div class="col-lg-6">
                            <div class="form-group">
                               <label for="contractorName">Enter SGST </label><span class="text-danger">*</span>
-                              <input type="number" step="any" min="0" max="100" name="sgst" required class="form-control" placeholder="Enter S-GST Value">
+                              <input type="text" step="any" min="0" max="100" name="sgst" required class="form-control only onlyNumericInput" placeholder="Enter S-GST Value">
                            </div>
                         </div>
                         <div class="col-lg-6">
                            <div class="form-group">
                               <label for="contractorName">Enter CGST </label><span class="text-danger">*</span>
-                              <input type="number" step="any" min="0" max="100" name="cgst" required class="form-control" placeholder="Enter C-GST Value">
+                              <input type="text" step="any" min="0" max="100" name="cgst" required class="onlyNumericInput form-control" placeholder="Enter C-GST Value">
                            </div>
                         </div>
                         <div class="col-lg-6">
                            <div class="form-group">
                               <label for="contractorName">Enter IGST </label><span class="text-danger">*</span>
-                              <input type="number" step="any" min="0" max="100" name="igst" required class="form-control" placeholder="Enter I-GST Value">
+                              <input type="text" step="any" min="0" max="100" name="igst" required class="form-control onlyNumericInput" placeholder="Enter I-GST Value">
                            </div>
                         </div>
                         <div class="col-lg-6">
                            <div class="form-group">
                               <label for="contractorName">Enter TCS </label><span class="text-danger">*</span>
-                              <input type="number" step="any" min="0" max="100" name="tcs" required class="form-control" placeholder="Enter TCS Value">
+                              <input type="text" step="any" min="0" max="100" name="tcs" required class="form-control onlyNumericInput" placeholder="Enter TCS Value">
                            </div>
                         </div>
                         <div class="col-lg-6">
@@ -195,25 +195,25 @@
                   <div class="col-lg-6">
                         <div class="form-group">
                            <label for="contractorName">Enter SGST </label><span class="text-danger">*</span>
-                           <input type="number" step="any" value="<%$t->sgst %>" min="0" max="100" name="sgst" required class="form-control" placeholder="Enter S-GST Value">
+                           <input type="text" step="any" value="<%$t->sgst %>" min="0" max="100" name="sgst" required class="form-control onlyNumericInput" placeholder="Enter S-GST Value">
                         </div>
                   </div>
                   <div class="col-lg-6">
                   <div class="form-group">
                   <label for="contractorName">Enter CGST </label><span class="text-danger">*</span>
-                  <input type="number" step="any" value="<%$t->cgst %>" min="0" max="100" name="cgst" required class="form-control" placeholder="Enter C-GST Value">
+                  <input type="text" step="any" value="<%$t->cgst %>" min="0" max="100" name="cgst" required class="form-control onlyNumericInput" placeholder="Enter C-GST Value">
                   </div>
                   </div>
                   <div class="col-lg-6">
                   <div class="form-group">
                   <label for="contractorName">Enter IGST </label><span class="text-danger">*</span>
-                  <input type="number" step="any" min="0" value="<%$t->igst %>" max="100" name="igst" required class="form-control" placeholder="Enter I-GST Value">
+                  <input type="text" step="any" min="0" value="<%$t->igst %>" max="100" name="igst" required class="form-control onlyNumericInput" placeholder="Enter I-GST Value">
                   </div>
                   </div>
                   <div class="col-lg-6">
                   <div class="form-group">
                   <label for="contractorName">Enter TCS </label><span class="text-danger">*</span>
-                  <input type="number" step="any" min="0" value="<%$t->tcs %>" max="100" name="tcs" required class="form-control" placeholder="Enter TCS Value">
+                  <input type="text" step="any" min="0" value="<%$t->tcs %>" max="100" name="tcs" required class="form-control onlyNumericInput" placeholder="Enter TCS Value">
                   <input type="hidden" value="<%$t->id %>" max="100" name="id" required class="form-control" placeholder="Enter TCS Value">
                   </div>
                   </div>

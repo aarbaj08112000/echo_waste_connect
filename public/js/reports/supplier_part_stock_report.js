@@ -9,6 +9,7 @@ const page = {
         this.filter();
         this.formValidation();
         $(document).on("click",".edit-fg",function(){
+            $("label.error").remove();
             var data = $(this).attr("data-value");
             data = JSON.parse(atob(data)); 
             console.log(data);
@@ -25,9 +26,67 @@ const page = {
                 option = '<option sub_type value="asset" >Asset</option>';
             }
            
-            $("#part_id").val(data.childPartId);
-            $("#part_number").val(data.part_number);
+            $("#storeToStore #part_id").val(data.childPartId);
+            $("#storeToStore #part_number").val(data.part_number);
+            $("#storeToStore [name='stock']").attr("data-max",data[stock_column_name]);
             
+            // myModal.show();
+        })
+        $(document).on("click",".fg_data_edit",function(){
+            $("label.error").remove();
+            var data = $(this).attr("data-value");
+            data = JSON.parse(atob(data)); 
+            var option = '';
+            if(data.sub_type == 'Regular grn' || data.sub_type == 'RM' ){
+                option = '<option  value="Regular grn">Regular GRN</option><option  value="RM">RM</option>';
+            }else if(data.sub_type == 'Subcon grn' || data.sub_type == 'Subcon Regular'){
+                option = '<option  value="Subcon grn">Subcon GRN</option> <option value="Subcon Regular">Subcon Regular</option>';
+            }else if(data.sub_type == 'consumable'){
+                option = '<option sub_type value="consumable" >Consumable</option>';
+            }else if(data.sub_type == 'customer_bom'){
+                option = '<option sub_type value="customer_bom">Customer BOM</option>';
+            }else if(data.sub_type == 'asset'){
+                option = '<option sub_type value="asset" >Asset</option>';
+            }
+           
+            $("#fgtransfer [name='child_part_id']").val(data.childPartId);
+            $("#fgtransfer [name='part_number']").val(data.part_number);
+            $("#fgtransfer [name='stock']").attr("data-max",data[stock_column_name]);
+            
+            // myModal.show();
+        })
+        $(document).on("click",".product-store",function(){
+            $("label.error").remove();
+            var data = $(this).attr("data-value");
+            data = JSON.parse(atob(data)); 
+            var option = '';
+            if(data.sub_type == 'Regular grn' || data.sub_type == 'RM' ){
+                option = '<option  value="Regular grn">Regular GRN</option><option  value="RM">RM</option>';
+            }else if(data.sub_type == 'Subcon grn' || data.sub_type == 'Subcon Regular'){
+                option = '<option  value="Subcon grn">Subcon GRN</option> <option value="Subcon Regular">Subcon Regular</option>';
+            }else if(data.sub_type == 'consumable'){
+                option = '<option sub_type value="consumable" >Consumable</option>';
+            }else if(data.sub_type == 'customer_bom'){
+                option = '<option sub_type value="customer_bom">Customer BOM</option>';
+            }else if(data.sub_type == 'asset'){
+                option = '<option sub_type value="asset" >Asset</option>';
+            }
+           
+            $("#update_production_qty_child_part_production_qty [name='child_part_id']").val(data.childPartId);
+            $("#update_production_qty_child_part_production_qty [name='part_number']").val(data.part_number);
+            $("#update_production_qty_child_part_production_qty [name='production_qty']").attr("data-max",data[sheet_prod_column_name]);
+            // sheet_prod_column_name
+            // myModal.show();
+        })
+        $(document).on("click",".product-store-plas",function(){
+            $("label.error").remove();
+            var data = $(this).attr("data-value");
+            data = JSON.parse(atob(data)); 
+           
+            $("#prodToStorePlastic [name='child_part_id']").val(data.childPartId);
+            $("#prodToStorePlastic [name='part_number']").val(data.part_number);
+            $("#prodToStorePlastic [name='machine_mold_issue_stock']").attr("data-max",data[plastic_prod_column_name]);
+            // sheet_prod_column_name
             // myModal.show();
         })
 
@@ -172,7 +231,7 @@ const page = {
         //        });
             
         // });
-        $(".transfer_child_store_to_store_stock,.transfer_child_part_to_fg_stock,.update_rm_batch_mtc_report").submit(function(e){
+        $(".transfer_child_store_to_store_stock,.transfer_child_part_to_fg_stock,.update_rm_batch_mtc_report,.update_production_qty_child_part_production_qty,.update_production_qty_child_part").submit(function(e){
             e.preventDefault();
            
             var href = $(this).attr("action");
@@ -182,7 +241,8 @@ const page = {
             if(flag){
               return;
             }
-
+            // console.log(flag);
+            // return;
             var formData = new FormData($('.'+id)[0]);
 
             $.ajax({

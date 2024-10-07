@@ -163,6 +163,7 @@ class GlobalConfigController extends CommonController
 		$ret_arr['success'] = $success;
 		// $this->redirectMessage();
 		echo json_encode($ret_arr);
+		exit();
 	}
 	
 	public function groupMaster(){
@@ -178,6 +179,30 @@ class GlobalConfigController extends CommonController
 		$group_details = $this->GlobalConfigModel->getGroupData($group_id);
 		$data['group_details'] = $group_details[0];
 		$data['groups_menu'] = $this->GlobalConfigModel->getGroupRightsData($group_id);
+		$exist_menu_access_arr = [];
+		foreach ($data['groups_menu'] as $key => $value) {
+			$exist_menu_access_arr[$value['menu_master_id']] = $value;
+		}
+		$menu_data = $this->GlobalConfigModel->getAllMenuData();
+		$data['groups_menu'] = [];
+		foreach ($menu_data as $key => $value) {
+			if(array_key_exists($value['menu_master_id'], $exist_menu_access_arr)){
+				$groups_menu[] = $exist_menu_access_arr[$value['menu_master_id']];
+			}else{
+				$groups_menu[] = [
+					"group_rights_id" => 0,
+					"group_master_id" => $group_id,
+					"menu_master_id" => $value['menu_master_id'],
+					"list" => "No",
+					"add" => "No",
+					"update" => "No",
+					"delete" => "No",
+					"export" => "No",
+					"diaplay_name" => $value['diaplay_name']
+				];
+			}
+		}
+		$data['groups_menu'] = $groups_menu;
 		$this->loadView('admin/group_master_menu', $data);
 	}
 	public function updateGroupMenuRight(){
@@ -187,27 +212,36 @@ class GlobalConfigController extends CommonController
 		$access_data = ["list","add","update","export","delete"];
 		$group_menu_right = [];
 		foreach ($menu_data as $key => $value) {
-			$group_right_id = $value['group_right_id'];
+			$group_master_id = $value['group_master_id'];
+			$menu_master_id = $value['menu_master_id'];
 			$access_arr = array_keys($value['access']);
 			$missing_access = (isset($value['access'])) ? array_diff($access_data, $access_arr) : $access_data;
 			$update_arr = [];
-			$update_arr['group_rights_id'] = $group_right_id;
-			foreach ($value['access'] as $key_val => $val) {
-				$update_arr[$key_val] = $val;
+			if(is_valid_array($value['access'])){
+				$update_arr['group_master_id'] = $group_master_id;
+				$update_arr['menu_master_id'] = $menu_master_id;
+				foreach ($value['access'] as $key_val => $val) {
+					$update_arr[$key_val] = $val;
+				}
+				foreach ($missing_access as $key_val => $val) {
+					$update_arr[$val] = "No";
+				}
+				$group_menu_right[] = $update_arr;
 			}
-			foreach ($missing_access as $key_val => $val) {
-				$update_arr[$val] = "No";
-			}
-			$group_menu_right[] = $update_arr;
+			
 		}
+		
 		$success = 0;
         $messages = "Something went wrong.";
 		if(is_array($group_menu_right) && count($group_menu_right)){
-			$affected_rows = $this->GlobalConfigModel->updateGroupRightsData($group_menu_right);
+			$this->GlobalConfigModel->deleteGroupRights($group_id);
+			$affected_rows = $this->GlobalConfigModel->insertGroupRights($group_menu_right);
 			if($affected_rows > 0){
 				$success = 1;
 				$messages = "Group Right updated successfully.";
 			}
+		}else{
+			$messages = "Please select group rights.";
 		}
         $result['message'] = $messages;
         $result['success'] = $success;
@@ -278,23 +312,23 @@ class GlobalConfigController extends CommonController
 			];
 			$insert_id = $this->GlobalConfigModel->insertGroup($insert_date);
 			if($insert_id > 0){
-				$menu_data = $this->GlobalConfigModel->getAllMenuData();
-				$group_rights_arr = [];
-				foreach ($menu_data as $key => $value) {
-					$group_rights_arr[] = [
-						"group_master_id" => $insert_id,
-						"menu_master_id" => $value['menu_master_id'],
-						"list" => "No",
-						"add" => "No",
-						"update" => "No",
-						"delete" => "No",
-						"export" => "No"
+				// $menu_data = $this->GlobalConfigModel->getAllMenuData();
+				// $group_rights_arr = [];
+				// foreach ($menu_data as $key => $value) {
+				// 	$group_rights_arr[] = [
+				// 		"group_master_id" => $insert_id,
+				// 		"menu_master_id" => $value['menu_master_id'],
+				// 		"list" => "No",
+				// 		"add" => "No",
+				// 		"update" => "No",
+				// 		"delete" => "No",
+				// 		"export" => "No"
 
-					];
-				}
-				if(count($group_rights_arr) > 0){
-					$this->GlobalConfigModel->insertGroupRights($group_rights_arr);
-				}
+				// 	];
+				// }
+				// if(count($group_rights_arr) > 0){
+				// 	$this->GlobalConfigModel->insertGroupRights($group_rights_arr);
+				// }
 				$messages = "Group added successfully.";
 				$success = 1;
 			}

@@ -57,30 +57,46 @@
             </div>
          </div>
          <ul class="nav nav-tabs dashboard-nav-tab" id="myTab" role="tablist">
+            <%if checkGroupAccess("dashboard_ba","list",false)%>
             <li class="nav-item" role="presentation">
                <a class="nav-link active" id="business-analytics-tab" data-bs-toggle="tab" data-tab="BusinessAnalytics" data-bs-target="#business-analytics" type="button" role="tab" aria-controls="business-analytics" aria-selected="true">Business Analytics</a>
             </li>
+            <%/if%>
+            <%if checkGroupAccess("dashboard_sales","list",false)%>
             <li class="nav-item" role="presentation">
                <a class="nav-link " id="sales-tab" data-bs-toggle="tab" data-tab="Sales" data-bs-target="#sales" type="button" role="tab" aria-controls="sales" aria-selected="true">Sales</a>
             </li>
+            <%/if%>
+            <%if checkGroupAccess("dashboard_account","list",false)%>
             <li class="nav-item" role="presentation">
                <a class="nav-link " id="account-tab" data-bs-toggle="tab" data-tab="Account" data-bs-target="#account" type="button" role="tab" aria-controls="account" aria-selected="false">Accounts</a>
             </li>
+            <%/if%>
+            <%if checkGroupAccess("dashboard_purchase_grn","list",false)%>
             <li class="nav-item" role="presentation">
                <a class="nav-link " id="purchase-grn-tab" data-bs-toggle="tab" data-tab="PurchaseGRN" data-bs-target="#purchase-grn" type="button" role="tab" aria-controls="purchase-grn" aria-selected="false">Purchase Grn </a>
             </li>
+            <%/if%>
+            <%if checkGroupAccess("dashboard_store","list",false)%>
             <li class="nav-item" role="presentation">
                <a class="nav-link " id="stotes-tab" data-bs-toggle="tab" data-tab="Stores" data-bs-target="#stotes" type="button" role="tab" aria-controls="stotes" aria-selected="false">Stores </a>
             </li>
+            <%/if%>
+            <%if checkGroupAccess("dashboard_subcon","list",false)%>
             <li class="nav-item" role="presentation">
                <a class="nav-link " id="subcon-tab" data-bs-toggle="tab" data-tab="Subcon" data-bs-target="#subcon" type="button" role="tab" aria-controls="subcon" aria-selected="false">Subcon </a>
             </li>
+            <%/if%>
+            <%if checkGroupAccess("dashboard_production","list",false)%>
             <li class="nav-item" role="presentation">
                <a class="nav-link " id="production-tab" data-bs-toggle="tab" data-tab="Production" data-bs-target="#production-grn" type="button" role="tab" aria-controls="production" aria-selected="false">Production </a>
             </li>
+            <%/if%>
+            <%if checkGroupAccess("dashboard_quality","list",false)%>
             <li class="nav-item" role="presentation">
                <a class="nav-link " id="quality-tab" data-bs-toggle="tab" data-tab="Quality" data-bs-target="#quality" type="button" role="tab" aria-controls="quality" aria-selected="false">Quality </a>
             </li>
+            <%/if%>
          </ul>
       </div>
    </div>
