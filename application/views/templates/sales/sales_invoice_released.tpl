@@ -219,6 +219,11 @@
                                                                     </form>
                                                                 </div>
                                                             </div>
+                                                            <%if ($c->rejection_invoice_id == '' && $c->status =='lock') %>
+                                                                <a type="button" href="<%base_url("rejection_invoices/")%><%$c->id%>" class="" title="Generate Credit Note"><i class="ti ti-credit-card-refund"></i></a>
+                                                            <%else if ($c->rejection_invoice_id > 0) %>
+                                                                <a type="button" href="<%base_url("view_rejection_sales_invoice_by_id/")%><%$c->rejection_invoice_id%>" class="" title="View Credit Note"><i class="ti ti-eye"></i></a>
+                                                            <%/if%>
                                                         </td>
                                                     </tr>
                                                     <%assign var="srNo" value=$srNo + 1%>

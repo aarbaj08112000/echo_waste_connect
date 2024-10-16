@@ -14,13 +14,16 @@ $route['home_2'] = 'LogonDashboard/home_2';
 $route['downtime_master'] = 'welcome/downtime_master';
 
 #--------------- Rejection ---------------------
+$route['rejection_invoices/(:any)'] = 'SalesController/rejection_invoices';
 $route['rejection_invoices'] = 'SalesController/rejection_invoices';
 $route['generate_new_sales_rejection_Test'] = 'SalesController/generate_new_sales_rejection_Test';
 $route['generate_rejection_sales_invoice'] = 'SalesController/generate_rejection_sales_invoice';
 $route['view_rejection_sales_invoice_by_id/(:any)'] = 'SalesController/view_rejection_sales_invoice_by_id';
 $route['update_rejection_sales_invoice'] = 'SalesController/update_rejection_sales_invoice';
 $route['generate_rejection_flow'] = 'welcome/generate_rejection_flow';
-
+#-------------- Added by Aarbaj
+$route['generate_credit_note/(:any)/(:any)'] = 'SalesController/generate_credit_note';
+$route['generate_credit_note_multiple/(:any)'] = 'SalesController/generate_credit_note_multiple';
 #--------------- Production --------------------
 $route['update_production_qty'] = 'Welcome/update_production_qty';
 $route['transfer_child_part_to_store_stock'] = 'Welcome/transfer_child_part_to_store_stock';
@@ -136,6 +139,7 @@ $route['inwarding_details_validation/(:any)/(:any)'] = 'Welcome/inwarding_detail
 $route['inwarding_details_accept_reject/(:any)/(:any)'] = 'Welcome/inwarding_details_accept_reject';
 $route['update_rm_batch_mtc_report'] = 'Welcome/update_rm_batch_mtc_report';
 $route['add_po_parts'] = 'Newcontroller/add_po_parts';
+$route['edit_grn_qty_val'] = 'Newcontroller/edit_grn_qty';
 
 $route['add_challan_parts_history'] = 'Newcontroller/add_challan_parts_history';
 $route['add_challan_parts_history_subcon'] = 'Newcontroller/add_challan_parts_history_subcon';
@@ -154,7 +158,7 @@ $route['update_po_parts'] = 'Newcontroller/update_po_parts';
 $route['update_parts_customer_trackings'] = 'Newcontroller/update_parts_customer_trackings';
 $route['update_schedule_qty'] = 'Newcontroller/update_schedule_qty';
 $route['update_sales_parts_subcon'] = 'Newcontroller/update_sales_parts_subcon';
-$route['update_parts_rejection_sales_invoice'] = 'Newcontroller/update_parts_rejection_sales_invoice';
+$route['update_parts_rejection_sales_invoice_qty'] = 'Newcontroller/update_parts_rejection_sales_invoice';
 $route['update_challan_parts'] = 'Newcontroller/update_challan_parts';
 $route['update_challan_parts_subcon'] = 'Newcontroller/update_challan_parts_subcon';
 $route['accept_po'] = 'Newcontroller/accept_po';
@@ -720,6 +724,16 @@ $route['xml_extension'] = 'SalesController/xml_extension';
 $route['grn_export'] = 'ExportController/grn_export';
 $route['grn_excel_export'] = 'ExportController/grn_excel_export';
 
+
+
+
+/* =============================== Extra Report ================================== */
+$route['global_formate_config'] = 'GlobalConfigController/globalFormateConfig';
+$route['edit_formate_config'] = 'GlobalConfigController/edit_formate_config';
+$route['add_formate_config'] = 'GlobalConfigController/add_formate_config';
+$route['payable_report'] = 'ReportsController/payable_report';
+$route['sales_summary_report'] = 'ReportsController/sales_summary_report';
+$route['grn_summary_report'] = 'ReportsController/grn_summary_report';
 /*
 #========================== GSTHERO  ===========================================
 $route['generate_E_invoice/(:any)/(:any)'] = 'EInvoiceController/generate_E_invoice';
@@ -771,7 +785,34 @@ $route['group_master'] = 'GlobalConfigController/groupMaster';
 $route['group_menu'] = 'GlobalConfigController/groupMenu';
 $route['forbidden_page'] = 'welcome/forbidden_page';
 
+#=========================== added by Aarbaj Mulla ==================================
 
+$route['daily_stock'] = 'ReportsController/get_daily_stock';
+
+#=========================== customer challan inward And return =======================
+$route['lock_challan_return'] = 'ChallanController/lock_challan_return';
+$route['update_parts_customer_challan_return'] = 'ChallanController/update_parts_customer_challan_return';
+$route['add_parts_customer_challan_return'] = 'ChallanController/add_parts_customer_challan_return';
+$route['challan_inward'] = 'ChallanController/customerChallanRN';
+$route['view_challan_return/(:any)'] = 'ChallanController/view_challan_return';
+$route['generate_customer_challan_return'] = 'ChallanController/generate_customer_challan_return';
+$route['update_customer_challan_return'] = 'ChallanController/update_customer_challan_return';
+$route['delete_customer_challan_inward'] = 'ChallanController/delete_customer_challan_inward';
+$route['challan_part_return'] = 'ChallanController/challan_part_return';
+$route['generate_customer_challan_return_part'] = 'ChallanController/generate_customer_challan_return_part';
+$route['challan_part_return_details/(:any)'] = 'ChallanController/challan_part_return_details';
+$route['update_customer_challan_part_return'] = 'ChallanController/update_customer_challan_part_return';
+$route['lock_customer_challan_return_part'] = 'ChallanController/lock_customer_challan_return_part';
+$route['generate_customer_challan_part_return_pdf/(:any)/(:any)'] = 'ChallanController/generate_customer_challan_part_return_pdf';
+$route['generate_customer_challan_part_return_multiple_pdf/(:any)'] = 'ChallanController/generate_customer_challan_part_return_multiple_pdf';
+$route['customer_challan_report'] = 'ChallanController/customer_challan_report';
+#========================== Migration Script ===========================================
+
+// for credit note (parts_rejection_sales_invoice table)
+
+$route['credit_note_migration_script'] = 'MagrationScript_Controller/credit_note_migration_script';
+$route['store_stock'] = 'MagrationScript_Controller/store_stock';
+$route['payment_days_dump_script'] = 'MagrationScript_Controller/payment_days_dump_script';
 
 #======================== Mail Notification =======================================
 $route['yesterdays_sales_for_mail'] = 'MagrationScript_Controller/yesterdays_sales_for_mail';

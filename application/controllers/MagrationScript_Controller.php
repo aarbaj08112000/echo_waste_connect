@@ -100,6 +100,121 @@ class MagrationScript_Controller extends CommonController
 		echo $message;	
 
   }
+  public function credit_note_migration_script(){
+        $sql = "
+            SELECT prsi.*,cpm.fg_rate as fg_rate,gs.cgst as cgst,gs.sgst as sgst,gs.igst as igst,gs.tcs as tcs
+            FROM parts_rejection_sales_invoice as prsi
+            LEFT JOIN customer_part as cp On cp.id = prsi.part_id
+            LEFT JOIN customer_parts_master as cpm On cpm.id = cp.customer_parts_master_id
+            LEFT JOIN gst_structure as gs On gs.id = cp.gst_id
+            WHERE prsi.part_price = 0.00 || prsi.basic_total = 0.00 || prsi.cgst_amount = 0.00";
+        $part_data = $this->Crud->customQuery($sql);    
+        if(count($part_data) > 0){
+            $update_arr = [];
+            foreach ($part_data as $key => $value) {
+                $basic_total = $value->qty * $value->fg_rate;
+                if ((int) $value->igst === 0) {
+                        $gst = (int) $value->cgst + (int) $value->sgst;
+                        $cgst = (int) $value->cgst;
+                        $sgst = (int) $value->sgst;
+                        $tcs = (float) $value->tcs;
+                        $igst = 0;
+                        $total_gst_percentage = $cgst + $sgst;
+                } else {
+                            $gst = (int) $value->igst;
+                            $tcs = (float) $value->tcs;
+                            $cgst = 0;
+                            $sgst = 0;
+                            $igst = $gst;
+                            $total_gst_percentage = $igst;
+                }
+                $gst_amount = ($gst * $basic_total) / 100;
+                $total_amount = $basic_total;
+                $cgst_amount = ($total_amount * $cgst) / 100;
+                $sgst_amount = ($total_amount * $sgst) / 100;
+                $igst_amount = ($total_amount * $igst) / 100;
+                if ($gst_structure2[0]->tcs_on_tax == "no") {
+                    $tcs_amount =   (($total_amount * $tcs) / 100);
+                } else {
+                    $tcs_amount =  ((($cgst_amount + $sgst_amount + $igst_amount + $total_amount) * $tcs) / 100);   
+                }
+                $total_rate = $total_amount + $gst_amount;  
+                $update_arr[] =[
+                    "id" => $value->id,
+                    "part_price" => $value->fg_rate,
+                    "basic_total" => $basic_total,
+                    "total_rate" => $total_rate,
+                    "cgst_amount" => $gst_amount,
+                    "sgst_amount" => $sgst_amount,
+                    "igst_amount" => $igst_amount,
+                    "tcs_amount" => $tcs_amount
+
+                ];
+            }
+        }
+
+        if(count($update_arr) > 0){
+            $this->db->update_batch('parts_rejection_sales_invoice',$update_arr, 'id'); 
+            $afftectedRows=$this->db->affected_rows();
+            echo "<pre>";
+            echo "Afftected Rows :".$afftectedRows;
+        }
+    }
+    public function store_stock(){
+        
+        $entitlements = $this->session->userdata['entitlements'];
+        $current_date = date("Y-m-d");
+        $stock_entry = $this->MagrationScript_Model->checkStockEntry($current_date);
+        if(count($stock_entry) == 0){
+            $data = $this->MagrationScript_Model->getCurrentStockData();
+            // pr($data,1);
+            $isSheetMetal = $entitlements['isSheetMetal']!=null && $entitlements['isSheetMetal'] == 1 ? "Yes" : "No";
+            $isPlastic = $entitlements['isPlastic']!=null && $entitlements['isPlastic'] == 1 ? "Yes" : "No";
+
+            foreach ($data as $key => $value) {
+                if($isSheetMetal == "Yes"){
+                    $data[$key]['production_stock'] = $value['production_qty'];
+                }else if($isPlastic == "Yes"){
+                    $data[$key]['production_stock'] = $value['machine_mold_issue_stock'];
+                }
+                unset($data[$key]['production_qty'],$data[$key]['machine_mold_issue_stock']);
+            }
+            // pr($data,1);
+            $stock_data = json_encode($data,TRUE);
+            $daily_stock_arr = [
+                "stock_date" => $current_date,
+                "stock_json" => $stock_data
+            ];
+            // pr($daily_stock_arr,1);
+            $data = $this->MagrationScript_Model->insertDailyStock($daily_stock_arr );
+            echo "Daily stock added successfully.";
+        }else{
+            echo "Daily stock already exist for ".$current_date;
+        }
+        
+    }
+    public function payment_days_dump_script(){
+         $supplier_data = $this->MagrationScript_Model->getSupplierPaymetTermsData();
+         $magration_data = [];
+         foreach ($supplier_data as $key => $value) {
+            if($value['payment_days'] == '' || $value['payment_days'] == null){
+                // $value['payment_terms'] = 
+
+                $magration_data[] = [
+                    "id" => $value['id'],
+                    "payment_days" => (int) $value['payment_terms']
+                ];
+            }
+         }
+
+         if(count($magration_data) > 0){
+            $supplier_data = $this->MagrationScript_Model->UpdateSupplierPaymetDaysData($magration_data);
+            echo "payment days updated successfully.";
+         }else{
+            echo "No changes found to update.";
+         }
+         
+  }
  
   
 

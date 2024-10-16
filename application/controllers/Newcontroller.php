@@ -853,13 +853,56 @@ public function rejected_po()
 	}
 	public function update_parts_rejection_sales_invoice()
 	{
+
 		$id = $this->input->post('id');
 		$qty = $this->input->post('qty');
+		$messages = "Something went wrong.";
+		$success = 0;
+		$sql = "SELECT cp.*,t.*,cpr.* FROM parts_rejection_sales_invoice as rp 
+		LEFT JOIN customer_part as cp ON cp.id = rp.part_id
+		LEFT JOIN customer_part_rate as cpr ON cpr.customer_master_id = cp.id
+		LEFT JOIN gst_structure as t ON t.id = cp.gst_id 
+		WHERE rp.id = ".$id."
+		ORDER BY cpr.revision_no DESC";
+		$customer_parts = $this->Crud->customQuery($sql);	
+		$value = $customer_parts[0];
+		$basic_total = $qty *  $value->rate;
+			if ((float) $value->igst == 0) {
+		                $gst = (float) $value->cgst + (float) $value->sgst;
+		                $cgst = (float) $value->cgst;
+		                $sgst = (float) $value->sgst;
+		                $tcs = (float) $value->tcs;
+		                $igst = 0;
+		                $total_gst_percentage = $cgst + $sgst;
+		    } else {
+		                $gst = (float) $value->igst;
+		                $tcs = (float) $value->tcs;
+		                $cgst = 0;
+		                $sgst = 0;
+		                $igst = $gst;
+		                $total_gst_percentage = $igst;
+		    }
+		    $gst_amount = ($gst * $basic_total) / 100;
+		    $total_amount = $basic_total;
+		    $cgst_amount = ($total_amount * $cgst) / 100;
+			$sgst_amount = ($total_amount * $sgst) / 100;
+			$igst_amount = ($total_amount * $igst) / 100;
+			if ($gst_structure2[0]->tcs_on_tax == "no") {
+				$tcs_amount =   (($total_amount * $tcs) / 100);
+			} else {
+				$tcs_amount =  ((($cgst_amount + $sgst_amount + $igst_amount + $total_amount) * $tcs) / 100);	
+			}
+			$total_rate = $total_amount + $gst_amount;		
 		$data = array(
 			"qty" => $qty,
+			"basic_total" => $basic_total,
+			'total_rate' =>$total_rate,
+			'cgst_amount' =>$cgst_amount,
+			'sgst_amount' =>$sgst_amount ,
+			'igst_amount' => $igst_amount,
+			'tcs_amount' =>$tcs_amount,
+			'gst_amount'=>$gst_amount
 		);
-		$messages = "";
-		$success = 0;
 		$result = $this->Crud->update_data("parts_rejection_sales_invoice", $data, $id);
 		if ($result) {
 			$messages = "Updated Sucessfully";
@@ -1177,20 +1220,28 @@ public function rejected_po()
 	}
 	public function lock_parts_rejection_sales_invoice()
 	{
-		echo $id = $this->input->post('id');
-
+		$id = $this->input->post('id');
 		$data = array(
 			"status" => "completed",
 
 		);
+		$success = 0;
+        $messages = "Something went wrong.";
 		$result = $this->Crud->update_data("rejection_sales_invoice", $data, $id);
 		if ($result) {
 
-
-			echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$messages = "Updated Sucessfully";
+			$success = 1;
+			// echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-			echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$messages = "Error 410 :  Not Updated";
+			// echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
 	}
 	public function lock_invoice_rejection_new()
 	{
@@ -1786,23 +1837,59 @@ public function rejected_po()
 		$part_id = $this->input->post('part_id');
 		$sales_id = $this->input->post('sales_id');
 		$qty = $this->input->post('qty');
-
+		// pr($this->input->post());
 		$data_check = array(
-			"customer_id" => $customer_id,
-			"part_id" => $part_id,
-			"rejection_sales_id" => $sales_id,
-		);
-		$messages = "";
+				"customer_id" => $customer_id,
+				"part_id" => $part_id,
+				"rejection_sales_id" => $sales_id,
+			);	
+		$messages = "Something went wrong.";
         $success = 0;
 		$parts_rejection_sales_invoice_data = $this->Crud->get_data_by_id_multiple("parts_rejection_sales_invoice", $data_check);
 		if($parts_rejection_sales_invoice_data)
 		{
-			$messages ="data Already Present, please try again";
+			$messages = "data Already Present, please try again";
 			// echo "<script>alert('Error : data Already Present, please try again ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 
 		}
 		else
-		{
+		{	
+			$sql = "SELECT cp.*,t.*,cpr.* FROM customer_part as cp 
+			LEFT JOIN customer_part_rate as cpr ON cpr.customer_master_id = cp.id
+			LEFT JOIN gst_structure as t ON t.id = cp.gst_id 
+			WHERE cp.id = ".$part_id."
+			ORDER BY cpr.revision_no DESC";
+			$customer_parts = $this->Crud->customQuery($sql);	
+			$value = $customer_parts[0];
+			$value = $customer_parts[0];
+			$basic_total = $qty *  $value->rate;
+			// pr($customer_parts,1	);
+			if ((float) $value->igst == 0) {
+		                $gst = (float) $value->cgst + (float) $value->sgst;
+		                $cgst = (float) $value->cgst;
+		                $sgst = (float) $value->sgst;
+		                $tcs = (float) $value->tcs;
+		                $igst = 0;
+		                $total_gst_percentage = $cgst + $sgst;
+		    } else {
+		                $gst = (float) $value->igst;
+		                $tcs = (float) $value->tcs;
+		                $cgst = 0;
+		                $sgst = 0;
+		                $igst = $gst;
+		                $total_gst_percentage = $igst;
+		    }
+		    $gst_amount = ($gst * $basic_total) / 100;
+		    $total_amount = $basic_total;
+		    $cgst_amount = ($total_amount * $cgst) / 100;
+			$sgst_amount = ($total_amount * $sgst) / 100;
+			$igst_amount = ($total_amount * $igst) / 100;
+			if ($gst_structure2[0]->tcs_on_tax == "no") {
+				$tcs_amount =   (($total_amount * $tcs) / 100);
+			} else {
+				$tcs_amount =  ((($cgst_amount + $sgst_amount + $igst_amount + $total_amount) * $tcs) / 100);	
+			}
+			$total_rate = $total_amount + $gst_amount;	
 
 			$data = array(
 				"customer_id" => $customer_id,
@@ -1815,17 +1902,24 @@ public function rejected_po()
 				"created_day" => $this->date,
 				"created_month" => $this->month,
 				"created_year" => $this->year,
-
+				'part_price' => $value->rate,
+				"basic_total" => $basic_total,
+				'total_rate' =>$total_rate,
+				'cgst_amount' =>$cgst_amount,
+				'sgst_amount' =>$sgst_amount ,
+				'igst_amount' => $igst_amount,
+				'tcs_amount' =>$tcs_amount,
+				'gst_amount'=>$gst_amount
+		
 			);
-
-
+			// pr($data,1);
 			$result = $this->Crud->insert_data("parts_rejection_sales_invoice", $data);
 			if ($result) {
+				$messages = "Successfully Added";
 				$success = 1;
-				$messages ="Successfully Added";
 				// echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				$messages ="Unab le to Add";
+				$messages = "Unab le to Add";
 				// echo "<script>alert('Unab le to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
@@ -2176,6 +2270,29 @@ public function update_grn_qty()
 	} else {
 		$messages = "Unable to Add";
 		// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+	}
+	$return_arr = [];
+	$return_arr['success'] = $success;
+	$return_arr['messages'] = $messages;
+	echo json_encode($return_arr);
+	exit();
+}
+public function edit_grn_qty(){
+	$verified_qty = $this->input->post('grn_details_validate_qty');
+	$grn_details_id = $this->input->post('grn_details_id');
+	$data = array(
+		"verified_qty" => $verified_qty
+	);
+	$success = 0;
+	$messages = "Something went wrong";
+	$result = $this->Crud->update_data("grn_details", $data, $grn_details_id);
+	if ($result) {
+		$messages = "Successfully updated";
+		$success = 1;
+		// echo "<script>alert('Successfully updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+	} else {
+		$messages = "Unable to update";
+		// echo "<script>alert('Unable to update');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 	}
 	$return_arr = [];
 	$return_arr['success'] = $success;

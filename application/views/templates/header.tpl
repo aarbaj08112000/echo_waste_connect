@@ -377,9 +377,9 @@
          </ul>
       </aside>
 
-      <div class="main-wrap main-wrap--white main-loader-box" style="display: none;">
+     <!--  <div class="main-wrap main-wrap--white main-loader-box" style="display: none;">
          <div class="loader-div"></div>
-      </div>
+      </div> -->
 
       <!-- / Menu -->
       <!-- Layout container -->
@@ -483,6 +483,8 @@
                               <li><a href="<%base_url('view_supplier_challan')%>" class="dropdown-item">Supplierwise challan list</a></li>
                               <li><a href="<%base_url('view_add_challan_subcon')%>" class="dropdown-item">Create challan subcon</a></li>
                               <li><a href="<%base_url('view_supplier_challan_subcon')%>" class="dropdown-item">Customerwise Challan List</a></li>
+                              <li><a href="<%base_url('challan_inward')%>" class="dropdown-item">Customer Challan Inward</a></li>
+                              <li><a href="<%base_url('challan_part_return')%>" class="dropdown-item">Customer Parts Return</a></li>
                            </ul>
                         </li>
                         <li><a href="<%base_url('part_stocks')%>" class="dropdown-item">Purchase Stock Transfer</a></li>
@@ -580,8 +582,7 @@
                            
                           
                            <li><a href="<%base_url('rejection_invoices')%>"
-                              class="dropdown-item">Rejection
-                              Invoices</a>
+                              class="dropdown-item">CN-DN-PI</a>
                            </li>
                      </ul>
                   </li>
@@ -639,7 +640,9 @@
                      </a>
                      <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkReportSubmenu">
                         <li><a href="<%base_url('sales_report')%>" class="dropdown-item">Sales Report </a></li>
+                        <li><a href="<%base_url('sales_summary_report')%>" class="dropdown-item">Sales Summary report </a></li>
                            <li><a href="<%base_url('receivable_report')%>" class="dropdown-item">Receivable Report </a></li>
+                           <li><a href="<%base_url('payable_report')%>" class="dropdown-item">Payable Report </a></li>
                            <%if ($entitlements['isSheetMetal']!=null) %>
                            <li><a href="<%base_url('report_stock_transfer')%>" class="dropdown-item">Stock Transfer</a></li>
                            <%/if%>
@@ -654,6 +657,7 @@
                               class="dropdown-item">Supplier Parts Stock</a></li>
                            <li><a href="<%base_url('reports_po_balance_qty')%>" class="dropdown-item">PO Summary Report</a></li>
                            <li><a href="<%base_url('reports_grn')%>" class="dropdown-item">GRN Report</a>
+                              <li><a href="<%base_url('grn_summary_report')%>" class="dropdown-item">GRN Summary Report</a>
                            </li>
                            <%if ($entitlements['isPlastic']!=null) %>
                            <li><a href="<%base_url('report_prod_rejection')%>" class="dropdown-item">Production Rejection Reason</a></li>
@@ -694,6 +698,7 @@
                            <%if ($entitlements['isPlastic']!=null) %>
                               <li><a href="<%base_url('molding_stock_transfer ')%>" class="dropdown-item">Molding Stock Transfer </a></li>
                            <%/if%>
+                           <li><a href="<%base_url('downtime_report ')%>" class="dropdown-item">Downtime Report</a></li>
                      </ul>
                            </li>
                            <%if ($role == "Admin") %>

@@ -1,11 +1,12 @@
 var table = '';
 var file_name = "receivable_reports";
 var pdf_title = "Receivable Reports";
-var myModal = new bootstrap.Modal(document.getElementById('update_report_data'))
+var myModal = new bootstrap.Modal(document.getElementById('update_report_data'));
+var dateRangePicker;
 const page = {
     init: function(){
-        this.dataTable();
         this.filter();
+        this.dataTable();
         this.formValidation();
         let that = this;
         $(document).on("click",".edit-part",function(){
@@ -15,6 +16,9 @@ const page = {
             $("#payment_date_modal").val(data.payment_receipt_date);
             $("#receivable_amount_modal").val(data.amount_received);
             $("#transection_detail_modal").val(data.transaction_details);
+            $("#tds_val").val(data.tds_amount);
+            $("#remark").val(data.remark_val);
+            console.log(data)
             myModal.show();
         })
         $('#updateReceivableForm').on('submit', function(e){
@@ -165,6 +169,20 @@ const page = {
                 data: {'search':data},    
                 url: "SalesController/getReceivableReportData",
                 type: "POST",
+                dataSrc: function(json) {
+                    // Log the entire response to see what extra data is included
+                    console.log('Full Response:', json);
+                    $(".total_amount_with_gst").html(json.total_with_gst_val)
+                    $(".total_tds_amount").html(json.total_tds_amount)
+                    $(".total_amount_paid").html(json.total_paid_amount)
+                    $(".total_balance_amount_to_pay").html(json.total_balance_amount_to_pay)
+                    return json.data; // This is what populates the DataTable
+                }
+            },
+            "createdRow": function(row, data, dataIndex) {
+                if (data.due_days_status === "danger") {
+                    $(row).addClass('danger-row'); // Add class for active rows
+                } 
             },
         });
         $('.dataTables_length').find('label').contents().filter(function() {
@@ -182,7 +200,18 @@ const page = {
     },
     filter: function(){
         let that = this;
-        $('#part_number_search').select2();
+        $('#part_number_search,#status_search').select2();
+        $('#date_range_filter').daterangepicker({
+            singleDatePicker: false,
+            showDropdowns: true,
+            autoApply: true,
+            locale: {
+                format: 'YYYY/MM/DD' // Change this format as per your requirement
+            }
+        });
+        dateRangePicker = $('#date_range_filter').data('daterangepicker');
+        dateRangePicker.setStartDate(start_date);
+        dateRangePicker.setEndDate(end_date);
         $(".search-filter").on("click",function(){
             table.destroy(); 
             that.dataTable();
@@ -194,12 +223,17 @@ const page = {
     },
     serachParams: function(){
         var customer_part_id = $("#customer_part_id").val();
-        var params = {customer_part_id:customer_part_id};
+        var date_range = $("#date_range_filter").val();
+        var status = $("#status_search").val();
+        var params = {customer_part_id:customer_part_id,date_range:date_range,status:status};
         return params;
     },
     resetFilter: function(){
         $("#part_number_search").val('').trigger('change');
+         $("#status_search").val('').trigger('change');
         $("#part_description_search").val('');
+        dateRangePicker.setStartDate(start_date);
+        dateRangePicker.setEndDate(end_date);
         table.destroy(); 
         this.dataTable();
     }

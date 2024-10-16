@@ -339,5 +339,79 @@ class GlobalConfigController extends CommonController
         exit();
 	}
 
+	/* Global Formate */
+	public function globalFormateConfig(){
+		// pr("ok",1);
+		$data['configurations'] = $this->Crud->read_data("global_formate_configuration");
+		$data['isAromAdmin'] = $this->isAromAdmin;
+		// pr($data,1);
+		$this->loadView('admin/global_formate_configuration', $data);
+	}
+	public function edit_formate_config(){
+		$success = 0;
+        $messages = "Something went wrong.";
+		$post_data = $this->input->post();
+		$update_arr = [
+			"display_label"=>$post_data['display_label'],
+			"is_year_enable" => $post_data['is_year_enable'],
+			"count_start_from" => $post_data['count_start_from'],
+			"formate"=>$post_data['formate'],
+			"formate_structure" => $post_data['formate_structure'],
+			"status"=> $post_data['status'],
+			"updated_by" => $this->user_id ,
+			"updated_date" => date("Y-m-d H:i:s")
+		];
+		$update_id = $post_data['configID'];
+		$result = $this->Crud->update_data_column("global_formate_configuration", $update_arr, $update_id, "id");
+		if ($result) {
+			$success = 1;
+			$messages = "Formate Configuration updated successfully.";
+			// $this->addSuccessMessage('Formate Configuration updated successfully.');
+		} else {
+			$messages = "Unable to update configuration. Please try again.";
+			// $this->addErrorMessage('Unable to update configuration. Please try again.');
+		}
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
+	}
+	public function add_formate_config(){
+		$success = 0;
+        $messages = "Something went wrong.";
+		$post_data = $this->input->post();
+		$insert_arr = [
+			"display_label"=>$post_data['display_label'],
+			"config_name" => $post_data['config_name'],
+			"is_year_enable" => $post_data['is_year_enable'],
+			"count_start_from" => $post_data['count_start_from'],
+			"formate"=>$post_data['formate'],
+			"formate_structure" => $post_data['formate_structure'],
+			"status"=> $post_data['status'],
+			"arom_user_only"=>$post_data['forAromOnly'] == "on" ? 1 : 0 ,
+			"acces_to_modify"=> $post_data['canCustomerModify'] == "on" ? 1 : 0,
+			"added_by" => $this->user_id ,
+			"added_date" => date("Y-m-d H:i:s")
+		];
+		// pr($insert_arr,1);
+		$result = $this->Crud->insert_data("global_formate_configuration", $insert_arr);
+		if ($result) {
+			$messages = "Formate Configuration added successfully.";
+			$success =1;
+			// $this->addSuccessMessage('Formate Configuration added successfully.');
+		} else {
+			$messages = "Unable to update configuration. Please try again.";
+			// $this->addErrorMessage('Unable to update configuration. Please try again.');
+		}
+		
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
+
+	}
+
 
 }

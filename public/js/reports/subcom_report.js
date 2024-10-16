@@ -4,8 +4,8 @@ var pdf_title = "Subcom Report";
 
 const page = {
     init: function(){
-        this.dataTable();
         this.filter();
+        this.dataTable();
         this.formValidation();
         $(document).on("click",".edit-part",function(){
             var data = $(this).attr("data-value");
@@ -151,7 +151,17 @@ const page = {
         let that = this;
         $('#part_number').select2();
         $('#suppler').select2();
-        
+        $('#date_range_filter').daterangepicker({
+            singleDatePicker: false,
+            showDropdowns: true,
+            autoApply: true,
+            locale: {
+                format: 'YYYY/MM/DD' // Change this format as per your requirement
+            }
+        });
+        dateRangePicker = $('#date_range_filter').data('daterangepicker');
+        dateRangePicker.setStartDate(start_date);
+        dateRangePicker.setEndDate(end_date);
         $(".search-filter").on("click",function(){
             table.destroy(); 
             that.dataTable();
@@ -164,12 +174,15 @@ const page = {
     serachParams: function(){
         var part_number = $("#part_number").val();
         var suppler = $("#suppler").val();
-        var params = {part_number:part_number,suppler:suppler};
+        var date_range = $("#date_range_filter").val();
+        var params = {part_number:part_number,suppler:suppler,date_range:date_range};
         return params;
     },
     resetFilter: function(){
-        $("#part_number_search").val('').trigger('change');
-        $("#part_description_search").val('');
+        $("#part_number").val('').trigger('change');
+        $("#suppler").val('').trigger('change');
+        dateRangePicker.setStartDate(start_date);
+        dateRangePicker.setEndDate(end_date);
         table.destroy(); 
         this.dataTable();
     }

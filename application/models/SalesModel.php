@@ -127,14 +127,32 @@ class SalesModel extends CI_Model {
     
 
     public function getReceivableReportView($condition_arr = [],$search_params = ""){
-        $this->db->select('s.*, SUM(s.gst_amount) as gst, SUM(s.total_rate) as ttlrt, SUM(s.gst_amount) as gstamnt, 
-                  SUM(s.tcs_amount) as tcsamnt, cus.customer_name, cus.payment_terms, rrp.payment_receipt_date,
-                  rrp.amount_received, rrp.transaction_details, ns.created_date');
+        $this->db->select('s.*, 
+            SUM(s.gst_amount) as gst, 
+            SUM(s.total_rate) as ttlrt, 
+            SUM(s.gst_amount) as gstamnt, 
+            SUM(s.tcs_amount) as tcsamnt, 
+            cus.customer_name, 
+            cus.payment_terms, 
+            rrp.payment_receipt_date,
+            SUM(rrp.amount_received) as amount_received, 
+            rrp.transaction_details, 
+            ns.created_date,
+           SUM(rrp.tds_amount) as tds_amount,
+            rrp.remark as remark_val,
+            SUM(ROUND(
+                IF(s.total_rate > 0,s.total_rate,0) + 
+                IF(s.tcs_amount > 0,s.tcs_amount,0) -
+                IF(rrp.amount_received > 0,rrp.amount_received,0) - 
+                IF(rrp.tds_amount > 0,rrp.tds_amount,0), 
+                2)) AS bal_amnt');
+        
         $this->db->from('sales_parts s');
-        $this->db->join('new_sales n', 's.sales_id = n.id AND n.clientId = '.$this->Unit->getSessionClientId());
+        
+        $this->db->join('new_sales n', 's.sales_id = n.id AND n.clientId = ' . $this->Unit->getSessionClientId(), 'inner');
+        $this->db->join('new_sales ns', 'ns.id = s.sales_id', 'left');
+        $this->db->join('receivable_report rrp', 'rrp.sales_number = s.sales_number', 'left');
         $this->db->join('customer cus', 's.customer_id = cus.id', 'left');
-        $this->db->join('receivable_report rrp', 's.sales_number = rrp.sales_number', 'left');
-        $this->db->join('new_sales ns', 's.sales_id = ns.id', 'left');
         if(is_valid_array($search_params) && $search_params['customer_part_id'] > 0){
             $this->db->where('s.customer_id', $search_params['customer_part_id']);
         }
@@ -149,6 +167,19 @@ class SalesModel extends CI_Model {
             if ($condition_arr["order_by"] != "") {
                 $this->db->order_by($condition_arr["order_by"]);
             }
+        }
+        if (is_valid_array($search_params) && $search_params["status"] != "") {
+                if($search_params["status"] == "Pending"){
+                    $this->db->having('bal_amnt >', 0);
+                }else{
+                    $this->db->having('bal_amnt <=', 0);
+                }
+        }
+        if ($search_params["date_range"] != "") {
+                $date_filter =  explode((" - "),$search_params["date_range"]);
+                $data['start_date'] = $date_filter[0];
+                $data['end_date'] = $date_filter[1];
+               $this->db->where("STR_TO_DATE(n.created_date, '%d/%m/%Y') BETWEEN '".$date_filter[0]."' AND '".$date_filter[1]."'");
         }
 
         if (is_valid_array($search_params) && isset($search_params["value"]) && $search_params["value"] != "") {
@@ -181,17 +212,49 @@ class SalesModel extends CI_Model {
     }
 
     public function getReceivableReportCount( $condition_arr = [],$search_params = ""){
-        $this->db->select('count(s.id) as total_record');
+         $this->db->select('s.*, 
+            SUM(s.gst_amount) as gst, 
+            SUM(s.total_rate) as ttlrt, 
+            SUM(s.gst_amount) as gstamnt, 
+            SUM(s.tcs_amount) as tcsamnt, 
+            cus.customer_name, 
+            cus.payment_terms, 
+            rrp.payment_receipt_date,
+            SUM(rrp.amount_received) as amount_received, 
+            rrp.transaction_details, 
+            ns.created_date,
+           SUM(rrp.tds_amount) as tds_amount,
+            rrp.remark as remark_val,
+            SUM(ROUND(
+                IF(s.total_rate > 0,s.total_rate,0) + 
+                IF(s.tcs_amount > 0,s.tcs_amount,0) -
+                IF(rrp.amount_received > 0,rrp.amount_received,0) - 
+                IF(rrp.tds_amount > 0,rrp.tds_amount,0), 
+                2)) AS bal_amnt');
+        
         $this->db->from('sales_parts s');
-        $this->db->join('new_sales n', 's.sales_id = n.id AND n.clientId = '.$this->Unit->getSessionClientId());
+        
+        $this->db->join('new_sales n', 's.sales_id = n.id AND n.clientId = ' . $this->Unit->getSessionClientId(), 'inner');
+        $this->db->join('new_sales ns', 'ns.id = s.sales_id', 'left');
+        $this->db->join('receivable_report rrp', 'rrp.sales_number = s.sales_number', 'left');
         $this->db->join('customer cus', 's.customer_id = cus.id', 'left');
-        $this->db->join('receivable_report rrp', 's.sales_number = rrp.sales_number', 'left');
-        $this->db->join('new_sales ns', 's.sales_id = ns.id', 'left');
         if(is_valid_array($search_params) && $search_params['customer_part_id'] > 0){
             $this->db->where('s.customer_id', $search_params['customer_part_id']);
         }
         $this->db->group_by('s.sales_number');
-        // $this->db->order_by('s.id', 'DESC');
+        if (is_valid_array($search_params) && $search_params["status"] != "") {
+                if($search_params["status"] == "Pending"){
+                    $this->db->having('bal_amnt >', 0);
+                }else{
+                    $this->db->having('bal_amnt <=', 0);
+                }
+        }
+        if ($search_params["date_range"] != "") {
+                $date_filter =  explode((" - "),$search_params["date_range"]);
+                $data['start_date'] = $date_filter[0];
+                $data['end_date'] = $date_filter[1];
+               $this->db->where("STR_TO_DATE(n.created_date, '%d/%m/%Y') BETWEEN '".$date_filter[0]."' AND '".$date_filter[1]."'");
+        }
 
         if (is_valid_array($search_params) && isset($search_params["value"]) && $search_params["value"] != "") {
             $keyword = $search_params["value"];
@@ -214,10 +277,11 @@ class SalesModel extends CI_Model {
             $this->db->group_end(); // End the group of OR conditions
         }
 
+       
+
         $result_obj = $this->db->get();
         $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
-
-        
+        // pr($this->db->last_query(),1);
         return $ret_data;
     }
 }

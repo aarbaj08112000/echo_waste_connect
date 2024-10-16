@@ -395,4 +395,772 @@ class ChallanController extends CommonController {
 			echo json_encode($return_arr);
 			exit;
 	}
+	public function customerChallanRN()  
+	{
+
+		$data['customer'] = $this->Crud->read_data("customer");
+		// $data['rejection_sales_invoice'] = $this->Crud->read_data("rejection_sales_invoice");
+		$sql = "
+			SELECT ch.*,c.customer_name as customer_name
+			FROM customer_challan_return as ch
+			LEFT JOIN customer as c On c.id = ch.customer_id";
+		$data['customer_challan_return'] = $this->Crud->customQuery($sql);
+		// pr($data['customer_challan_return'],1);
+		// $this->load->view('header');
+		$this->loadView('store/customer_return_challana', $data);
+		// $this->load->view('footer');	
+	}
+	public function generate_customer_challan_return(){
+		$post_data =  $this->input->post();
+		$customer_return_challan_count = $this->SupplierParts->checkCustomerChallanReturn();
+		$count = count($customer_return_challan_count);
+		$current_year = date('y');
+		$next_year = date('y')+1;
+		$count_number = (int) $count+1;
+		$grn_code = "CCN/".$current_year."-".$next_year."/".$count_number;
+		$success = 0;
+        $messages = "Something went wrong.";
+		$insert_arr = [
+			"customer_id" => $post_data['customer_id'],
+			"grn_code" => $grn_code,
+			"client_id" =>$this->Unit->getSessionClientId(),
+			"customer_challan_no" => $post_data['customer_challan_no'],
+			"customer_challan_data" => $post_data['customer_date'],
+			"type" => $post_data['type'],
+			"status"=>"Pending",
+			"created_date" => date("Y-m-d H:i:s"),
+			"created_by" => $this->session->userdata('user_id')
+		];
+		$insert_id = $this->SupplierParts->saveCustomerChallanReturn($insert_arr);
+		if ($insert_id > 0) {
+			$messages = "Successfully Added";
+			$success = 1;
+			// echo "<script>alert('Successfully Added');document.location='" . base_url('view_challan_return/') . $insert_id . "'</script>";
+		} else {
+			$messages = "Unable to Add";
+			// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		}
+			
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
+	}
+	public function view_challan_return()  
+	{
+
+		$customer_challan_return_id = $this->uri->segment(2);
+		$sql = "
+			SELECT ch.*,c.customer_name as customer_name
+			FROM customer_challan_return as ch
+			LEFT JOIN customer as c On c.id = ch.customer_id
+			WHERE ch.customer_challan_return_id = ".$customer_challan_return_id;
+		$data['customer_challan_return_details'] = $this->Crud->customQuery($sql);
+		$child_part_list = $this->db->query('SELECT DISTINCT part_number,part_description,id FROM `customer_part` where customer_id = ' . $data['customer_challan_return_details'][0]->customer_id . '');
+		$data['customer_part'] = $child_part_list->result();
+		$data['customer'] = $this->Crud->read_data("customer");
+
+		$sql = "
+			SELECT chp.*,cp.uom as uom,gs.code as gst_code
+			FROM customer_challan_return_part as chp
+			LEFT JOIN customer_part as cp ON cp.id = chp.part_id
+			LEFT JOIN gst_structure as gs ON gs.id = cp.gst_id
+			WHERE chp.customer_challan_return_id = ".$customer_challan_return_id;
+		$data['customer_challan_return_part_details'] = $this->Crud->customQuery($sql);
+		foreach ($data['customer_challan_return_part_details'] as $key => $p) {
+			$child_part_data = $this->Crud->get_data_by_id("customer_part", $p->part_id, "id");
+			$data['customer_challan_return_part_details'][$key]->part_number = $child_part_data[0]->part_number;
+			$data['customer_challan_return_part_details'][$key]->part_description = $child_part_data[0]->part_description;
+		}
+		$this->loadView('store/customer_return_challana_view', $data);
+	}
+	public function add_parts_customer_challan_return()
+	{
+		// pr($this->input->post(),1);
+		$customer_id = $this->input->post('customer_id');
+		$part_id = $this->input->post('part_id');
+		$customer_challan_return_id = $this->input->post('customer_challan_return_id');
+		$qty = $this->input->post('qty');
+		$data_check = array(
+				"customer_id" => $customer_id,
+				"part_id" => $part_id,
+				"customer_challan_return_id" => $customer_challan_return_id,
+			);	
+		$customer_challan_return_part = $this->Crud->get_data_by_id_multiple("customer_challan_return_part", $data_check);
+		$success = 0;
+        $messages = "Something went wrong.";
+		if(count($customer_challan_return_part) > 0)
+		{
+			$messages = "Error : Part Already Present, please try again "; 
+			// echo "<script>alert('Error : Part Already Present, please try again ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+
+		}
+		else
+		{	
+			// pr($customer_challan_return_part,1);
+			$sql = "SELECT cp.*,t.*,cpr.* FROM customer_part as cp 
+			LEFT JOIN customer_part_rate as cpr ON cpr.customer_master_id = cp.id
+			LEFT JOIN gst_structure as t ON t.id = cp.gst_id 
+			WHERE cp.id = ".$part_id."
+			ORDER BY cpr.revision_no DESC";
+			$customer_parts = $this->Crud->customQuery($sql);	
+			$value = $customer_parts[0];
+			$basic_total = $qty *  $value->rate;
+			if ((float) $value->igst == 0) {
+		                $gst = (float) $value->cgst + (float) $value->sgst;
+		                $cgst = (float) $value->cgst;
+		                $sgst = (float) $value->sgst;
+		                $tcs = (float) $value->tcs;
+		                $igst = 0;
+		                $total_gst_percentage = $cgst + $sgst;
+		    } else {
+		                $gst = (float) $value->igst;
+		                $tcs = (float) $value->tcs;
+		                $cgst = 0;
+		                $sgst = 0;
+		                $igst = $gst;
+		                $total_gst_percentage = $igst;
+		    }
+		    $gst_amount = ($gst * $basic_total) / 100;
+		    $total_amount = $basic_total;
+		    $cgst_amount = ($total_amount * $cgst) / 100;
+			$sgst_amount = ($total_amount * $sgst) / 100;
+			$igst_amount = ($total_amount * $igst) / 100;
+			if ($gst_structure2[0]->tcs_on_tax == "no") {
+				$tcs_amount =   (($total_amount * $tcs) / 100);
+			} else {
+				$tcs_amount =  ((($cgst_amount + $sgst_amount + $igst_amount + $total_amount) * $tcs) / 100);	
+			}
+			$total_rate = $total_amount + $gst_amount;	
+
+			$data = array(
+				"customer_id" => $customer_id,
+				"customer_challan_return_id" => $customer_challan_return_id,
+				"part_id" => $part_id,
+				"qty" => $qty,
+				"created_by" => $this->user_id,
+				"created_date" => date("Y-m-d H:i:s"),
+				'part_price' => $value->rate,
+				"basic_total" => $basic_total,
+				'total_rate' =>$total_rate,
+				'cgst_amount' =>$cgst_amount,
+				'sgst_amount' =>$sgst_amount ,
+				'igst_amount' => $igst_amount,
+				'tcs_amount' =>$tcs_amount,
+				'gst_amount'=>$gst_amount
+		
+			);
+
+			$result = $this->Crud->insert_data("customer_challan_return_part", $data);
+			if ($result) {
+				$messages = "Successfully Part Added";
+				$success =1;
+				// echo "<script>alert('Successfully Part Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			} else {
+				$messages = "Unab le to Add";
+				// echo "<script>alert('Unab le to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			}
+		}
+
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
+
+
+
+	}
+	public function update_customer_challan_return(){
+		// pr($this->input->post(),1);
+		$post_data = $this->input->post();
+		$customer_challan_return_id = $post_data['customer_challan_return_id'];
+		$update_arr = [
+			"customer_challan_no" => $post_data['customer_challan_no'],
+			"customer_challan_data" => $post_data['customer_date'],
+			"type" => $post_data['type'],
+			"updated_date" => date("Y-m-d H:i:s"),
+			"updated_by" => $this->session->userdata('user_id')
+		];
+		$afftected_row = $this->SupplierParts->updateCustomerChallanReturn($update_arr,$customer_challan_return_id);
+		$success = 0;
+        $messages = "Something went wrong.";
+		if ($afftected_row > 0) {
+			$messages = "Successfully Updated";
+			$success = 1;
+			// echo "<script>alert('Successfully Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		} else {
+			$messages = "Unab le to Add";
+			// echo "<script>alert('Unab le to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		}
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
+	}
+	public function update_parts_customer_challan_return(){
+		$customer_challan_return_part_id = $this->input->post("customer_challan_return_part_id");
+		$part_id = $this->input->post("part_id");
+		$qty = $this->input->post("qty");
+		$success = 0;
+        $messages = "Something went wrong.";
+		$sql = "SELECT cp.*,t.*,cpr.* FROM customer_part as cp 
+			LEFT JOIN customer_part_rate as cpr ON cpr.customer_master_id = cp.id
+			LEFT JOIN gst_structure as t ON t.id = cp.gst_id 
+			WHERE cp.id = ".$part_id."
+			ORDER BY cpr.revision_no DESC";
+			$customer_parts = $this->Crud->customQuery($sql);	
+			$value = $customer_parts[0];
+			$basic_total = $qty *  $value->rate;
+			if ((float) $value->igst == 0) {
+		                $gst = (float) $value->cgst + (float) $value->sgst;
+		                $cgst = (float) $value->cgst;
+		                $sgst = (float) $value->sgst;
+		                $tcs = (float) $value->tcs;
+		                $igst = 0;
+		                $total_gst_percentage = $cgst + $sgst;
+		    } else {
+		                $gst = (float) $value->igst;
+		                $tcs = (float) $value->tcs;
+		                $cgst = 0;
+		                $sgst = 0;
+		                $igst = $gst;
+		                $total_gst_percentage = $igst;
+		    }
+		    $gst_amount = ($gst * $basic_total) / 100;
+		    $total_amount = $basic_total;
+		    $cgst_amount = ($total_amount * $cgst) / 100;
+			$sgst_amount = ($total_amount * $sgst) / 100;
+			$igst_amount = ($total_amount * $igst) / 100;
+			if ($gst_structure2[0]->tcs_on_tax == "no") {
+				$tcs_amount =   (($total_amount * $tcs) / 100);
+			} else {
+				$tcs_amount =  ((($cgst_amount + $sgst_amount + $igst_amount + $total_amount) * $tcs) / 100);	
+			}
+			$total_rate = $total_amount + $gst_amount;	
+
+			$data = array(
+				"part_id" => $part_id,
+				"qty" => $qty,
+				"updated_by" => $this->user_id,
+				"updated_date" => date("Y-m-d H:i:s"),
+				'part_price' => $value->rate,
+				"basic_total" => $basic_total,
+				'total_rate' =>$total_rate,
+				'cgst_amount' =>$cgst_amount,
+				'sgst_amount' =>$sgst_amount ,
+				'igst_amount' => $igst_amount,
+				'tcs_amount' =>$tcs_amount,
+				'gst_amount'=>$gst_amount
+			);
+			// pr($data,1);
+
+			$afftected_row = $this->SupplierParts->updateCustomerChallanReturnPart($data,$customer_challan_return_part_id);
+			if ($afftected_row > 0) {
+				$messages = "Successfully Part Updated";
+				$success =1 ;
+				// echo "<script>alert('Successfully Part Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			} else {
+				$messages = "Unab le to Add";
+				// echo "<script>alert('Unab le to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			}
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
+	}
+	public function delete_customer_challan_inward(){
+		$customer_challan_return_part_id = $this->input->post('customer_challan_return_part_id');
+		$this->SupplierParts->deleteCustomerChallanInwardPart($customer_challan_return_part_id);
+		// echo "<script>alert('Successfully Delete Part');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		$result = [];
+        $result['messages'] = "Successfully Delete Part";
+        $result['success'] = 1;
+        echo json_encode($result);
+        exit();
+	}
+	public function lock_challan_return(){
+		$customer_challan_return_id = $this->input->post("id");
+		$update_arr = [
+			"status" => "Lock"
+		];
+		$success = 0;
+        $messages = "Something went wrong.";
+		$afftected_row = $this->SupplierParts->updateCustomerChallanReturn($update_arr,$customer_challan_return_id);
+		if ($afftected_row > 0) {
+			$success =1;
+			$messages = "Lock Successfully";
+		// echo "<script>alert('Lock Successfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		}else {
+			$messages = "Unab le to Add";
+		// echo "<script>alert('Unab le to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		}
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
+	}
+
+	public function challan_part_return(){
+		$data['customer'] = $this->Crud->read_data("customer");
+		// $data['rejection_sales_invoice'] = $this->Crud->read_data("rejection_sales_invoice");
+		$sql = "
+			SELECT ch.*,c.customer_name as customer_name
+			FROM customer_challan_part_return as ch
+			LEFT JOIN customer as c On c.id = ch.customer_id ORDER BY ch.created_date DESC ";
+		$data['customer_challan_part_return'] = $this->Crud->customQuery($sql);
+		// pr($data['customer_challan_return'],1);
+		$data['transporter'] = $this->Crud->read_data("transporter");
+		// pr($data,1);
+		// $this->load->view('header');
+		$this->loadView('store/customer_return_challan_part', $data);
+		// $this->load->view('footer');
+	}
+	public function get_customer_challan_part(){
+		$customer_id = $this->input->post("customer_id");
+		$already_exit_data = $this->SupplierParts->getCustomerChallanPartReturnPart($customer_id);
+		$already_exit_data = array_column($already_exit_data, "qty","part_id");
+		$part_data = $this->SupplierParts->getCustomerChallanReturnPartQty($customer_id);
+		if(count($part_data) > 0){
+			$html = "";
+			foreach ($part_data as $key => $value) {
+				$exit_qty = isset($already_exit_data[$value['part_id']]) ? $already_exit_data[$value['part_id']] : 0 ;
+				$qty = $value['qty'] - $exit_qty;
+				if($qty > 0){
+					$html .= "
+					<tr>
+						<td >".$value['part_number']."/".$value['part_description']."</td>
+						<td class='text-center'>".number_format($qty)."</td>
+						<td class='text-center'>
+						<input type='hidden'  value='".$value['part_id']."' name='part_id[]' />
+						<input type='text' class='part_qty_input form-control w-50 m-auto onlyNumericInput' value='".$qty."' data-value='".$qty."' name='part_qty[]' />
+						</td>
+					</tr>";
+				}
+			}
+			if($html === ""){
+
+				$html = '<tr class="text-center"><td colspan="3">No Part Found</td></tr>';
+			}
+		}else{
+			$html = '<tr class="text-center"><td colspan="3">No Part Found</td></tr>';
+		}
+		
+		
+		$return_arr['html'] = $html;
+		echo json_encode($return_arr);
+	}
+
+	public function generate_customer_challan_return_part(){
+		$post_data = $this->input->post();
+		// 
+		$part_id_arr = $this->input->post("part_id");
+		$customer_id = $this->input->post("customer_id");
+		$success = 0;
+        $messages = "Something went wrong.";
+        $part_qty_arr = $this->input->post("part_qty");
+        $falg = 0;
+        foreach ($part_qty_arr as $key => $value) {
+        	if($value > 0){
+        		$falg = 1;
+        	}
+        }
+		if(isset($post_data["part_id"]) && isset($post_data["part_qty"]) && count($part_id_arr) <= 8 && $falg == 1){
+			$customer_return_challan_count = $this->SupplierParts->checkCustomerChallanPartReturn();
+			$count = count($customer_return_challan_count);
+			$current_year = date('y');
+			$next_year = date('y')+1;
+			$count_number = (int) $count+1;
+			$grn_code = $this->getCustomerReturnPartNUmber().$count_number;
+			$insert_arr = [
+				"customer_id" => $customer_id,
+				"grn_code" => $grn_code,
+				"client_id" =>$this->Unit->getSessionClientId(),
+				"customer_challan_no"=>$post_data['customer_challan_no'],
+				"transportor_id"=>$post_data['transportor_id'],
+				"vehicle_number"=>$post_data['vehicle_number'],
+				"status"=>"Pending",
+				"created_date" => date("Y-m-d H:i:s"),
+				"created_by" => $this->session->userdata('user_id')
+			];
+			$insert_id = $this->SupplierParts->saveCustomerChallanPartReturn($insert_arr);
+
+			if($insert_id > 0){
+				$return_part_data = [];
+				foreach ($part_id_arr as $key => $value) {
+					$customer_part_data = $this->SupplierParts->getCustomerPartDetails($value);
+					$part_id = $value;
+					$qty = $part_qty_arr[$key];
+					$value = $customer_part_data[0];
+					$basic_total = $qty *  $value['rate'];
+					if ((int) $value['igst'] === 0) {
+				                $gst = (int) $value['cgst'] + (int) $value['sgst'];
+				                $cgst = (int) $value['cgst'];
+				                $sgst = (int) $value['sgst'];
+				                $tcs = (float) $value['tcs'];
+				                $igst = 0;
+				                $total_gst_percentage = $cgst + $sgst;
+				    } else {
+				                $gst = (int) $value['igst'];
+				                $tcs = (float) $value['tcs'];
+				                $cgst = 0;
+				                $sgst = 0;
+				                $igst = $gst;
+				                $total_gst_percentage = $igst;
+				    }
+				    $gst_amount = ($gst * $basic_total) / 100;
+				    $total_amount = $basic_total;
+				    $cgst_amount = ($total_amount * $cgst) / 100;
+					$sgst_amount = ($total_amount * $sgst) / 100;
+					$igst_amount = ($total_amount * $igst) / 100;
+					if ($value['tcs_on_tax'] == "no") {
+						$tcs_amount =   (($total_amount * $tcs) / 100);
+					} else {
+						$tcs_amount =  ((($cgst_amount + $sgst_amount + $igst_amount + $total_amount) * $tcs) / 100);	
+					}
+					$total_rate = $total_amount + $gst_amount;	
+
+					$return_part_data[] = array(
+						"customer_id" => $customer_id,
+						"customer_challan_part_return_id" => $insert_id,
+						"part_id" => $part_id,
+						"qty" => $qty,
+						"created_by" => $this->user_id,
+						"created_date" => date("Y-m-d H:i:s"),
+						'part_price' => $value['rate'],
+						"basic_total" => $basic_total,
+						'total_rate' =>$total_rate,
+						'cgst_amount' =>$cgst_amount,
+						'sgst_amount' =>$sgst_amount ,
+						'igst_amount' => $igst_amount,
+						'tcs_amount' =>$tcs_amount,
+						'gst_amount'=>$gst_amount
+				
+					);
+				}
+				$part_insert_id = $this->SupplierParts->saveCustomerChallanPartReturnPart($return_part_data);
+				if($part_insert_id > 0){
+					$messages = "Successfully Added";
+					$success =1;
+					// echo "<script>alert('Successfully Added');document.location='" . base_url('challan_part_return_details/').$insert_id."'</script>";
+				} else {
+					$messages = "Unable to Add";
+					// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				}
+			}
+		}else{
+			if(count($part_id_arr) > 0 && $falg == 1){
+				$messages = "Please add part less than or equals to 8";
+				// echo "<script>alert('Please add part less than or equals to 8');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			}else if(count($part_id_arr) == 0){
+				$messages = "Please add part";
+				// echo "<script>alert('Please add part');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			}else if($falg == 0){
+				$messages = "Please add part qty";
+			}
+		}
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
+	}
+
+	public function challan_part_return_details(){
+		$customer_challan_return_part_id = $this->uri->segment(2);
+		$challan_part_return_details = $this->SupplierParts->getCustomerChallanPartReturn($customer_challan_return_part_id);
+		$date = new DateTime($challan_part_return_details['created_date']);
+        $formattedDate = $date->format('d-m-Y');
+		$challan_part_return_details['created_date'] = $formattedDate;
+		$challan_part_return_part_details = $this->SupplierParts->getCustomerChallanPartReturnPartDetails($customer_challan_return_part_id);
+		// pr($challan_part_return_details,1);
+		$data['challan_part_return_details'] = $challan_part_return_details;
+		$data['challan_part_return_part_details'] = $challan_part_return_part_details;
+		$data['user_type'] = $this->session->userdata['type'];
+		$this->loadView('store/customer_challan_part_return_view', $data);
+		// pr($data,1);
+	}
+	public function update_customer_challan_part_return(){
+		$post_data = $this->input->post();
+		$qty = $post_data['qty'];
+		$part_id = $post_data['part_id'];
+		$customer_id = $post_data['customer_id'];
+		$customer_challan_part_return_part_id = $post_data['customer_challan_part_return_part_id'];
+		$total_customer_qty = $this->SupplierParts->getCustomerChallanPartReturnData($customer_id,$part_id);
+		$total_customer_qty = $total_customer_qty['qty'] != "" ? $total_customer_qty['qty'] : 0;
+		$existing_qty = $this->SupplierParts->getCustomerChallanPartReturnPartData($customer_id,$part_id,$customer_challan_part_return_part_id);
+		$existing_qty = isset($existing_qty['qty']) != "" ? $existing_qty['qty'] : 0;
+		$pending_qty = $total_customer_qty - $existing_qty;
+		$success = 0;
+        $messages = "Something went wrong.";
+		if($qty <= $pending_qty){
+
+		$qty = $this->input->post("qty");
+		$sql = "SELECT cp.*,t.*,cpr.* FROM customer_part as cp 
+			LEFT JOIN customer_part_rate as cpr ON cpr.customer_master_id = cp.id
+			LEFT JOIN gst_structure as t ON t.id = cp.gst_id 
+			WHERE cp.id = ".$part_id."
+			ORDER BY cpr.revision_no DESC";
+			$customer_parts = $this->Crud->customQuery($sql);	
+			$value = $customer_parts[0];
+			$basic_total = $qty *  $value->rate;
+			if ((int) $value->igst === 0) {
+		                $gst = (int) $value->cgst + (int) $value->sgst;
+		                $cgst = (int) $value->cgst;
+		                $sgst = (int) $value->sgst;
+		                $tcs = (float) $value->tcs;
+		                $igst = 0;
+		                $total_gst_percentage = $cgst + $sgst;
+		    } else {
+		                $gst = (int) $value->igst;
+		                $tcs = (float) $value->tcs;
+		                $cgst = 0;
+		                $sgst = 0;
+		                $igst = $gst;
+		                $total_gst_percentage = $igst;
+		    }
+		    $gst_amount = ($gst * $basic_total) / 100;
+		    $total_amount = $basic_total;
+		    $cgst_amount = ($total_amount * $cgst) / 100;
+			$sgst_amount = ($total_amount * $sgst) / 100;
+			$igst_amount = ($total_amount * $igst) / 100;
+			if ($gst_structure2[0]->tcs_on_tax == "no") {
+				$tcs_amount =   (($total_amount * $tcs) / 100);
+			} else {
+				$tcs_amount =  ((($cgst_amount + $sgst_amount + $igst_amount + $total_amount) * $tcs) / 100);	
+			}
+			$total_rate = $total_amount + $gst_amount;	
+
+			$update_arr = array(
+				"part_id" => $part_id,
+				"qty" => $qty,
+				"updated_by" => $this->user_id,
+				"updated_date" => date("Y-m-d H:i:s"),
+				'part_price' => $value->rate,
+				"basic_total" => $basic_total,
+				'total_rate' =>$total_rate,
+				'cgst_amount' =>$cgst_amount,
+				'sgst_amount' =>$sgst_amount ,
+				'igst_amount' => $igst_amount,
+				'tcs_amount' =>$tcs_amount,
+				'gst_amount'=>$gst_amount
+			);
+
+			$afftected_row = $this->SupplierParts->updateCustomerChallanPartReturn($update_arr,$customer_challan_part_return_part_id);
+			if ($afftected_row > 0) {
+				$messages = "Successfully Updated";
+				$success = 1;
+				// echo "<script>alert('Successfully Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			} else {
+				$messages = "Unab le to Add";
+				// echo "<script>alert('Unab le to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			}
+		}else{
+			$messages = "Please add part qty less then $pending_qty";
+			// echo "<script>alert('Please add part qty less then $pending_qty');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		}
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
+		
+		
+	}
+	public function lock_customer_challan_return_part(){
+		$customer_challan_return_id = $this->input->post("id");
+		$update_arr = [
+			"status" => "Lock"
+		];
+		$success = 0;
+        $messages = "Something went wrong.";
+		$afftected_row = $this->SupplierParts->lockCustomerChallanPartReturn($update_arr,$customer_challan_return_id);
+		if ($afftected_row > 0) {
+			$messages = "Lock Successfully";
+			$success =1 ;
+				// echo "<script>alert('Lock Successfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		}else {
+			$messages = "Unab le to Add";
+				// echo "<script>alert('Unab le to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		}
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
+		
+	}
+	public function customer_challan_report(){
+		// pr("ok",1);
+		$customer_wise_qty = $this->SupplierParts->getCustomerWiseChallanQty();
+		$customer_name_arr = array_unique(array_column($customer_wise_qty,"customer_name"));
+		if(count($customer_wise_qty) > 0){
+			$customer_wise_return_qty = $this->SupplierParts->getCustomerWiseReturnChallanQty();
+			$customer_wise_return_qty_arr =  array_column($customer_wise_return_qty,"qty","part_id");
+			$customer_wise_return_price_arr =  array_column($customer_wise_return_qty,"total_rate","part_id");
+			foreach ($customer_wise_qty as $key => $value) {
+				$return_qty = isset($customer_wise_return_qty_arr[$value['part_id']]) ? $customer_wise_return_qty_arr[$value['part_id']] : 0 ;
+				$qty = $value['qty'] - $return_qty;
+
+				$return_price = isset($customer_wise_return_price_arr[$value['part_id']]) ? $customer_wise_return_price_arr[$value['part_id']] : 0;
+				$price = $value['total_rate'] - $return_price;
+				$customer_wise_qty[$key]['qty'] = $qty > 0  ? $qty : 0;
+				$customer_wise_qty[$key]['total_rate'] = $price > 0  ? $price : 0;;
+				
+			}
+		}
+		$data['customer_name_arr'] = $customer_name_arr;
+		$data['customer_wise_qty'] = $customer_wise_qty;
+		$this->load->view('header');
+		$this->load->view('challan/customer_challan_report', $data);
+		$this->load->view('footer');
+		
+	}
+	public function generate_customer_challan_part_return_pdf(){
+		$customer_challan_part_return_id = $this->uri->segment(2);
+		$type = $this->uri->segment(3);
+		$customer_challan_return_part = $this->SupplierParts->getCustomerChallanPartReturn($customer_challan_part_return_id);
+		$client_data = $this->SupplierParts->getClientData($customer_challan_return_part['client_id']);
+		$customer_data = $this->SupplierParts->getCustomerDetails($customer_challan_return_part['customer_id']);
+		$customer_challan_return_part_details = $this->SupplierParts->getCustomerChallanPartReturnPartDetails($customer_challan_part_return_id);
+
+
+		$data['customer_challan_return_part'] = $customer_challan_return_part;
+		$data['client_data'] = $client_data;
+		$data['customer_data'] = $customer_data;
+		$data['customer_challan_return_part_details'] = $customer_challan_return_part_details;
+		$data['type'] = $type;
+		$configuration = $this->Crud->get_data_by_id_multiple_condition("global_configuration",$criteria);
+        $configuration = array_column($configuration, "config_value","config_name");
+		$digitalSignature = "No";
+        $signatureImageEnable = "No";
+        $signatureImageUrl= "";
+        if(isset($configuration['digitalSignature']) && $configuration['digitalSignature'] == "Yes"){
+               $digitalSignature = "Yes"; 
+        }else if(isset($configuration['SignatureImageEnable'])){
+            if($configuration['SignatureImageEnable'] == "Yes" && $configuration['SignatureImage'] != ""){
+               $signatureImageEnable = "Yes"; 
+               $signatureImageUrl = base_url("dist/img/signature_image/").$configuration['SignatureImage'];
+            }
+        }
+        $data['signatureImageEnable'] =$signatureImageEnable;
+        $data['signatureImageUrl'] =$signatureImageUrl;
+        $data['digitalSignature'] =$digitalSignature;
+        $date = new DateTime($customer_challan_return_part['created_date']);
+        $data['customer_challan_return_part']['created_date'] = $date->format('d-m-Y');
+        $data['customer_challan_return_part']['created_time'] = $date->format('H:i:s');
+		$html_content = $this->smarty->fetch('store/return_challan_pdf.tpl', $data, TRUE);
+		// pr($html_content,1);
+		$this->pdf->loadHtml($html_content);
+        $this->pdf->render();
+        $pdfName = $customer_challan_part_return_id.'-Delivery-Challan-'. $type . '.pdf';
+        if($digitalSignature== "Yes" ){
+        	   
+                $output = $this->pdf->output();
+                $fileName = "dist/uploads/challan_return_part_print/".$pdfName;
+                $fileAbsolutePath = FCPATH.$fileName;
+                // pr($pdfName,1);
+                // upload pdf
+                file_put_contents($fileAbsolutePath, $output);
+                // generate digital signature
+                $signer = $configuration['signer'];
+                $certpwd = $configuration['certpwd'];
+                $certid = $configuration['certid'];
+                $customerPrefix = $configuration['customerPrefix'];
+                $digital_signature_url = $configuration['digital_signature_url'];
+                $SignaturePostion = '[440:40]';
+                
+                // pr("ok",1);
+                digitalSignature($fileName,$SignaturePostion,$signer,$certpwd,$certid,$customerPrefix,$digital_signature_url);
+                $fileDownloadPath = base_url().$fileName;
+                $pdf_content = file_get_contents($fileDownloadPath);
+                header("Content-Type: application/pdf");
+                header("Content-Disposition: attachment; filename=".$pdfName);
+                header("Content-Length: " . strlen($pdf_content));
+                echo $pdf_content;
+                exit();
+        }else{
+            $this->pdf->stream($pdfName, array("Attachment" => 1));
+        }
+         
+
+	}
+
+	public function generate_customer_challan_part_return_multiple_pdf(){
+		// pr($this->input->post(),1);
+
+		$customer_challan_part_return_id = $this->uri->segment(2);
+		$post_data = $this->input->post();
+		$copies = array_values($post_data['interests']);
+		
+		$type = $this->uri->segment(3);
+		$customer_challan_return_part = $this->SupplierParts->getCustomerChallanPartReturn($customer_challan_part_return_id);
+		$client_data = $this->SupplierParts->getClientData($customer_challan_return_part['client_id']);
+		$customer_data = $this->SupplierParts->getCustomerDetails($customer_challan_return_part['customer_id']);
+		$customer_challan_return_part_details = $this->SupplierParts->getCustomerChallanPartReturnPartDetails($customer_challan_part_return_id);
+
+
+		$data['customer_challan_return_part'] = $customer_challan_return_part;
+		$data['client_data'] = $client_data;
+		$data['customer_data'] = $customer_data;
+		$data['customer_challan_return_part_details'] = $customer_challan_return_part_details;
+		$data['type'] = $type;
+		$configuration = $this->Crud->get_data_by_id_multiple_condition("global_configuration",$criteria);
+        $configuration = array_column($configuration, "config_value","config_name");
+		$digitalSignature = "No";
+        $signatureImageEnable = "No";
+        $signatureImageUrl= "";
+        if(isset($configuration['digitalSignature']) && $configuration['digitalSignature'] == "Yes"){
+               $digitalSignature = "Yes"; 
+        }else if(isset($configuration['SignatureImageEnable'])){
+            if($configuration['SignatureImageEnable'] == "Yes" && $configuration['SignatureImage'] != ""){
+               $signatureImageEnable = "Yes"; 
+               $signatureImageUrl = base_url("dist/img/signature_image/").$configuration['SignatureImage'];
+            }
+        }
+        $data['signatureImageEnable'] =$signatureImageEnable;
+        $data['signatureImageUrl'] =$signatureImageUrl;
+        $data['digitalSignature'] =$digitalSignature;
+        $data['copies'] = $copies;
+        
+		$html_content = $this->smarty->fetch('store/return_challan_miltiple_pdf.tpl', $data, TRUE);
+		// pr($html_content,1);
+		$this->pdf->loadHtml($html_content);
+        $this->pdf->render();
+        $pdfName = $customer_challan_part_return_id.'-Delivery-Challan-'. $type . '.pdf';
+        if($digitalSignature== "Yes" ){
+        	   
+                $output = $this->pdf->output();
+                $fileName = "dist/uploads/challan_return_part_print/".$pdfName;
+                $fileAbsolutePath = FCPATH.$fileName;
+                // pr($pdfName,1);
+                // upload pdf
+                file_put_contents($fileAbsolutePath, $output);
+                // generate digital signature
+                $signer = $configuration['signer'];
+                $certpwd = $configuration['certpwd'];
+                $certid = $configuration['certid'];
+                $customerPrefix = $configuration['customerPrefix'];
+                $digital_signature_url = $configuration['digital_signature_url'];
+                $SignaturePostion = '[440:40]';
+                if($isEinvoicePresent){
+                    $SignaturePostion = '[440:55]';
+                }
+                // pr("ok",1);
+                digitalSignature($fileName,$SignaturePostion,$signer,$certpwd,$certid,$customerPrefix,$digital_signature_url);
+                $fileDownloadPath = base_url().$fileName;
+                $pdf_content = file_get_contents($fileDownloadPath);
+                header("Content-Type: application/pdf");
+                header("Content-Disposition: attachment; filename=".$pdfName);
+                header("Content-Length: " . strlen($pdf_content));
+                echo $pdf_content;
+                exit();
+        }else{
+            $this->pdf->stream($pdfName, array("Attachment" => 1));
+        }
+	}
 }
