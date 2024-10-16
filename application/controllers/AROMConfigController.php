@@ -8,7 +8,7 @@ class AROMConfigController extends CI_Controller {
 		parent::__construct();
 		$current_method = $this->router->fetch_method();
 		$session_data = $this->session->userData();
-		$bypass_arr = ['login'];
+		$bypass_arr = ['login','credit_note_migration_script','store_stock','payment_days_dump_script','yesterdays_sales_for_mail'];
 		if(!is_valid_array($session_data) && isset($session_data['clientUnit']) && !in_array($current_method, $bypass_arr)){
 			redirect('login');
 		}

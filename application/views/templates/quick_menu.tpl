@@ -210,8 +210,8 @@
                            </a>
                         </li>
                         <li>
-                           <a hijacked="yes" aria-nav-code="shortcuts" href="<%base_url('rejection_invoices')%>" target="_self" title="Rejection Invoice" class="nav-active-link">
-                           Rejection Invoice
+                           <a hijacked="yes" aria-nav-code="shortcuts" href="<%base_url('rejection_invoices')%>" target="_self" title="CN-DN-PI" class="nav-active-link">
+                           CN-DN-PI
                            </a>
                         </li>
                         <li>

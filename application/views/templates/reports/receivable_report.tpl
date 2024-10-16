@@ -1,3 +1,6 @@
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <div class="wrapper container-xxl flex-grow-1 container-p-y">
 
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme filter-popup-block" style="width: 0px;">
@@ -30,6 +33,32 @@
                                 <%/foreach%>
                             <%/if%>
                         </select>
+            </div>
+          </li>
+        </div>
+        <div class="filter-row">
+          <li class="nav-small-cap">
+            <span class="hide-menu">Payment Status </span>
+            <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+          </li>
+          <li class="sidebar-item">
+            <div class="input-group">
+            <select name="status_search" id="status_search" class="form-control select2" required>
+                <option value="">Select Payment Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Received">Received</option>
+                        </select>
+            </div>
+          </li>
+        </div>
+        <div class="filter-row">
+          <li class="nav-small-cap">
+            <span class="hide-menu">Sales Invoice Date</span>
+            <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+          </li>
+          <li class="sidebar-item">
+            <div class="input-group">
+            <input type="text" name="datetimes" class="dates form-control" id="date_range_filter" />
             </div>
           </li>
         </div>
@@ -69,9 +98,30 @@
 
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-       
+        <div class=" p-0 ms-1">
+            <div class="card-header">
+                <div class="row">
+                    <div class="tgdp-rgt-tp-sect ms-2">
+                        <p class="tgdp-rgt-tp-ttl">Total Amount With GST</p>
+                        <p class="tgdp-rgt-tp-txt total_amount_with_gst">0.00</p>
+                    </div>
+                    <div class="tgdp-rgt-tp-sect">
+                        <p class="tgdp-rgt-tp-ttl">Total Amount Received</p>
+                        <p class="tgdp-rgt-tp-txt total_amount_paid">0.00</p>
+                    </div>
+                    <div class="tgdp-rgt-tp-sect">
+                        <p class="tgdp-rgt-tp-ttl">Total Balance Amount to Received</p>
+                        <p class="tgdp-rgt-tp-txt total_balance_amount_to_pay" title="12">0.00</p>
+                    </div>
+                    <div class="tgdp-rgt-tp-sect">
+                        <p class="tgdp-rgt-tp-ttl">Total TDS Amount</p>
+                        <p class="tgdp-rgt-tp-txt total_tds_amount" title="12">0.00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Main content -->
-        <section class="content">
+        <section class="content mt-4">
             <div class="">
                 <div class="row">
                     <div class="col-12">
@@ -151,6 +201,23 @@
                                                         aria-describedby="emailHelp"
                                                         placeholder="Transaction Details" value="">
                                                 </div>
+                                                <div class="form-group">
+                                                                                <label for="amount_received">TDS</label>
+                                                                                <input type="text"
+                                                                                    name="tds" id="tds_val" 
+                                                                                    class="form-control onlyNumericInput"
+                                                                                    aria-describedby="emailHelp"
+                                                                                    placeholder="TDS" value="" >
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label for="amount_received">Remark</label>
+                                                                                <input type="text"
+                                                                                    name="remark" 
+                                                                                     id="remark_val"
+                                                                                    class="form-control"
+                                                                                    placeholder="Remark"
+                                                                                    >
+                                                                            </div>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -179,6 +246,49 @@
     </div>
     <!-- /.content-wrapper -->
 </div>
+<style type="text/css">
+    tr.danger-row .due_days_block {
+    color: #000 !important;
+    background-color: red !important;
+    box-shadow: inset 0 0 0 9999px #e84343 !important;
+}
+.tgdp-rgt-tp-sect {
+    float: left;
+    width: 25%;
+    width: calc(25% - 19px);
+    border-radius: 10px;
+    background: #fff;
+    height: 105px;
+    margin-right: 17px;
+    padding: 20px;
+    display: inline-block;
+}
+.tgdp-rgt-tp-sect .tgdp-rgt-tp-ttl {
+
+    font-size: 16px !important;
+    margin-bottom: 0px;
+    color: #000;
+    font-size: 18px;
+    font-family: "gilroymedium" !important;
+    margin: 0;
+}
+.tgdp-rgt-tp-sect .tgdp-rgt-tp-txt {
+    font-weight: 500;
+    
+    color: #000 !important;
+    max-width: 95%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #000;
+    font-size: 26px !important;
+    font-family: 'gilroymedium';
+    margin: 0;
+    display: inline-block;
+    line-height: 48px;
+    cursor: pointer;
+}
+</style>
 <script>
     var column_details =  <%$data|json_encode%>;
     var page_length_arr = <%$page_length_arr|json_encode%>;
@@ -191,5 +301,7 @@
     var sorting_column = <%$sorting_column%>;
     var api_name =  <%$api_name|json_encode%>;
     var base_url = <%$base_url|json_encode%>;
+    var start_date = <%$start_date|json_encode%>;
+    var end_date = <%$end_date|json_encode%>;
 </script>
 <script src="<%$base_url%>/public/js/reports/receivable_report.js"></script>

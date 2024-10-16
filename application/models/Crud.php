@@ -675,4 +675,31 @@ class Crud extends CI_Model
 			$this->addErrorMessage('Failed to audit the stock transfer for stock report.');
 		} */
 	}
+	/**
+	 * Get overall amount with tax
+	 */
+	public function tax_calcuation($gst_structure, $subTotal, $discountAmt){
+		$final_basic_total = $subTotal;
+		$cgst_amount = number_format((($final_basic_total * $gst_structure->cgst) / 100), 2, '.', '');
+		$sgst_amount = number_format((($final_basic_total * $gst_structure->sgst) / 100), 2, '.', '');
+		$igst_amount = number_format((($final_basic_total * $gst_structure->igst) / 100), 2, '.', '');
+
+		if ($gst_structure->tcs_on_tax == "no") {
+			$tcs_amount = number_format((($final_basic_total * $gst_structure->tcs) / 100), 2, '.', '');
+		} else {
+			$tcs_amount = number_format(((($cgst_amount + $sgst_amount + $igst_amount + $final_basic_total) * $gst_structure->tcs) / 100), 2, '.', '');
+		}
+		$gst_amount = $cgst_amount + $sgst_amount + $igst_amount;
+		$sales_total["bfre_disc_sub_total"] = round($subTotal,2);
+		$sales_total["sales_sub_total"] = round($final_basic_total,2);
+		$sales_total["sales_total"] = round($final_basic_total + $cgst_amount + $sgst_amount + $igst_amount,2);
+		$sales_total["sales_gst"] = round($cgst_amount + $sgst_amount + $igst_amount,2);
+		$sales_total["sales_cgst"] = round($cgst_amount,2);
+		$sales_total["sales_sgst"] = round($sgst_amount,2);
+		$sales_total["sales_igst"] = round($igst_amount,2);
+		$sales_total["sales_tcs"] = round($tcs_amount,2);
+		$sales_total["sales_discount"] = round($discountAmt,2);
+
+		return $sales_total;
+	}
 }

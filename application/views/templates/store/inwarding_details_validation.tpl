@@ -308,6 +308,7 @@
             <th>GRN Validation Qty</th>
             <th>Submit </th>
             <th>MDR</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -557,6 +558,61 @@
                           </div>
                         </div>
                       </div>
+                    </td>
+                    <td>
+                       <%if ( !$rejection_flow_data && $grn_details_data[0]->verified_qty > 0 && $inwarding_data[0]->status == 'generate_grn') %>
+                       <a type="button" class=""
+                          data-bs-toggle="modal" data-bs-target="#exampleModaledit<%$i %>" title="Edit">
+                       <i class="ti ti-edit"></i>
+                       </a>
+                       <div class="modal fade" id="exampleModaledit<%$i %>"
+                          tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                          aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered" role="document">
+                             <div class="modal-content">
+                                <div class="modal-header">
+                                   <h5 class="modal-title" id="exampleModalLabel">Update </h5>
+                                   <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                      aria-label="Close">
+                                   </button>
+                                </div>
+                                <div class="modal-body">
+                                   <form
+                                      action="<%base_url('edit_grn_qty_val') %>"
+                                      method="POST" enctype='multipart/form-data' class="edit_grn_qty_val<%$i %> edit_grn_qty_val custom-form" id="edit_grn_qty_val<%$i %>">
+                                      <input type="hidden" value="<%$grn_details_data[0]->id %>" name="grn_details_id" readonly required="required" >
+                                      <div class="row">
+                                         <div class="col-lg-12">
+                                            <div class="form-group">
+                                               <label for="po_num">Part Number </label>
+                                               <input type="text" class="form-control"
+                                                  value="<%$child_part[0]->part_number%>"
+                                                  readonly name="part_number"  
+                                                  >
+                                            </div>
+                                         </div>
+                                         <div class="col-lg-12">
+                                            <div class="form-group">
+                                               <label for="po_num">GRN Validation Qty </label><span
+                                                  class="text-danger">*</span>
+                                               <input type="text" class="form-control onlyNumericInput required-input"
+                                                  value="<%$grn_details_data[0]->verified_qty%>"
+                                                  name="grn_details_validate_qty" data-min='1'
+                                                  >
+                                            </div>
+                                         </div>
+                                      </div>
+                                </div>
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                   data-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Update</button>
+                                </div>
+                                </form>
+                             </div>
+                          </div>
+                       </div>
+                       <%/if%>
                     </td>
                   </tr>
                   <%assign var='i' value=$i+1%>

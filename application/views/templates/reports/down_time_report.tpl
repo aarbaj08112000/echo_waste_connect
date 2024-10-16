@@ -84,10 +84,7 @@
                     <div class="tgdp-rgt-tp-sect">
                     </div>
                     <div class="tgdp-rgt-tp-sect">
-                        <p class="tgdp-rgt-tp-ttl">Display more details </p>
-                        <p class="tgdp-rgt-tp-txt" title="<%$supplier_data[0]->location %>">
-                           
-                        </p>
+                        
                         
 
                     </div>

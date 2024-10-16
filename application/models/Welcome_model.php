@@ -371,6 +371,12 @@ class Welcome_model extends CI_Model
         if(is_valid_array($search_params) && $search_params['suppler'] != ''){
             $this->db->where('chn.supplier_id', $search_params['suppler']);
         }
+        if(is_valid_array($search_params) && $search_params['date_range'] != ''){
+            $date_filter =  explode((" - "),$search_params["date_range"]);
+            $data['start_date'] = $date_filter[0];
+            $data['end_date'] = $date_filter[1];
+           $this->db->where("STR_TO_DATE(chn.created_date, '%d-%m-%Y') BETWEEN '".$date_filter[0]."' AND '".$date_filter[1]."'");
+        }
 
         if (!empty($search_params['value'])) {
             $keyword = $search_params['value'];
@@ -439,6 +445,12 @@ class Welcome_model extends CI_Model
         }
         if(is_valid_array($search_params) && $search_params['suppler'] != ''){
             $this->db->where('chn.supplier_id', $search_params['suppler']);
+        }
+        if(is_valid_array($search_params) && $search_params['date_range'] != ''){
+            $date_filter =  explode((" - "),$search_params["date_range"]);
+            $data['start_date'] = $date_filter[0];
+            $data['end_date'] = $date_filter[1];
+            $this->db->where("STR_TO_DATE(chn.created_date, '%d-%m-%Y') BETWEEN '".$date_filter[0]."' AND '".$date_filter[1]."'");
         }
 
         if (!empty($search_params['value'])) {

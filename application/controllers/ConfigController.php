@@ -327,4 +327,143 @@ class ConfigController extends AROMConfigController {
 		}
 		return $client;
 	}
+	
+	/* get credit note/debit note / performa invice code */
+	public function getFomrmateData($type = "",$prifix = "",$is_temp = "No") {
+
+		$data = $this->Crud->get_data_by_id("global_formate_configuration", $type, "config_name");
+		$cleanedString = str_replace(['{', '}'], '', $data[0]->formate_structure);
+		$formate_arr = explode("/", $cleanedString); 
+		if($data[0]->is_year_enable == "No"){
+			$arr_key = array_search('FY', $formate_arr);
+			if($arr_key > -1){
+				unset($formate_arr[$arr_key]);
+			}
+		}
+		if($is_temp != "Yes"){
+			if($data[0]->formate == "" || $data[0]->formate == " "){
+				$arr_key = array_search('PREFIX', $formate_arr);
+				if($arr_key > -1){
+					unset($formate_arr[$arr_key]);
+				}
+			}
+		}
+		
+		$formate_arr = array_values($formate_arr);
+		$prifix_num = 0;
+		foreach ($formate_arr as $key => $value) {
+			if($value == $prifix){
+				$prifix_num = $key;
+			}
+		}
+
+		$data_arr['prifix_num'] = $prifix_num;
+		$data_arr['formate_arr'] = $formate_arr;
+
+		return $data_arr;
+		
+	}
+	public function getCustomerTempSerialNUmber($type = "",$count=0) {
+		$structure_type = "";
+		if($type == "CreditNote"){
+			$structure_type = "credit_note";
+		}else if($type == "DebitNote"){
+			$structure_type = "debit_note";
+		}else if($type == "ProformaInvoice"){
+			$structure_type = "performa_invoice";
+		}
+		$data = $this->Crud->get_data_by_id("global_formate_configuration", $structure_type, "config_name");
+		$cleanedString = str_replace(['{', '}'], '', $data[0]->formate_structure);
+		$formate_arr = explode("/", $cleanedString); 
+		$formate_data["FY"] = $this->getFinancialYear();
+		$formate_data["PREFIX"] = $data[0]->formate;
+		$formate_data["start_count"] = $data[0]->count_start_from;
+		$formate_code = "";
+		if(!in_array("PREFIX", $formate_arr)){
+			$formate_code = "TEMP/";
+		}
+		
+		
+		foreach ($formate_arr as $key => $value) {
+			if($value == "FY" && $data[0]->is_year_enable == "Yes"){
+				$formate_code .= $formate_data["FY"];
+			}else if($value == "PREFIX" ){
+				$formate_code .= "TEMP";
+			}else if($value == "NUM"){
+				$formate_code .= $count;
+			}
+			if($key < count($formate_arr) -1 && $formate_code != ""){
+				$formate_code .= "/";
+			}
+		}
+
+		return $formate_code;
+	}
+	public function getCustomerReturnPartNUmber() {
+		return "CR/".$this->getFinancialYear()."/";
+	}
+
+	public function getCreditNoteCode($type = "",$count = 0){
+		$structure_type = "";
+		if($type == "CreditNote"){
+			$structure_type = "credit_note";
+		}else if($type == "DebitNote"){
+			$structure_type = "debit_note";
+		}else if($type == "ProformaInvoice"){
+			$structure_type = "performa_invoice";
+		}
+		$data = $this->Crud->get_data_by_id("global_formate_configuration", $structure_type, "config_name");
+		$cleanedString = str_replace(['{', '}'], '', $data[0]->formate_structure);
+		$formate_arr = explode("/", $cleanedString); 
+		$formate_data["FY"] = $this->getFinancialYear();
+		$formate_data["PREFIX"] = $data[0]->formate;
+		$formate_data["start_count"] = $data[0]->count_start_from;
+		$formate_code = "";
+		foreach ($formate_arr as $key => $value) {
+			if($value == "FY" && $data[0]->is_year_enable == "Yes"){
+				$formate_code .= $formate_data["FY"];
+			}else if($value == "PREFIX" && $data[0]->formate != "" && $data[0]->formate != ""){
+				$formate_code .= $formate_data["PREFIX"];
+			}else if($value == "NUM"){
+				$formate_code .= $count+(int) $formate_data["start_count"];
+			}
+
+			if($key < count($formate_arr) -1 && $formate_code != ""){	
+				$formate_code .= "/";
+			}
+		}
+		
+		return $formate_code;	
+	}
+
+	public function convertToFullYear($twoDigitYear) {
+	    // Get the current year
+	    $currentYear = date('Y');
+	    
+	    // Get the current century
+	    $currentCentury = (int)($currentYear / 100);
+	    
+	    // Determine if the two-digit year is in the current century or the previous one
+	    if ($twoDigitYear > (date('y') - 50)) {
+	        $fullYear = $currentCentury * 100 + $twoDigitYear;
+	    } else {
+	        $fullYear = ($currentCentury - 1) * 100 + $twoDigitYear;
+	    }
+	    
+	    return $fullYear;
+	}
+	public function createFinatialStartEndDate($type = "",$year = ''){
+		$date = "";
+
+		if($type == "start_date"){
+			$start_year = $this->convertToFullYear($year);
+			$date['start'] = $start_year."-"."04"."-01";
+			$date['end'] = $start_year."-"."12"."-31";
+		}else{
+			$end_year = $this->convertToFullYear($year);
+			$date['start'] = $end_year."-"."01"."-01";
+			$date['end'] = $end_year."-"."03"."-31";
+		}
+		return $date;
+	}
 }

@@ -1,3 +1,5 @@
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <div  class="wrapper container-xxl flex-grow-1 container-p-y">
 
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme filter-popup-block" style="width: 0px;">
@@ -15,16 +17,16 @@
         <!-- Dashboard -->
         <div class="filter-row">
           <li class="nav-small-cap">
-            <span class="hide-menu">Select Part Number / Description</span>
+            <span class="hide-menu">Part Number / Description</span>
             <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
           </li>
           <li class="sidebar-item">
             <div class="input-group">
             <select name="selected_customer_part_number"  id="part_number" class="form-control select2">
-                <option  value="0">NA</option>
-                <%if $box_data%>
-                    <%foreach from=$box_data item=c%>
-                        <option  value="<%$c['part_number']%>"><%$c['part_number']%> / <%$c['part_description']%></option>
+                <option  value="">NA</option>
+                <%if $customer_parts_data%>
+                    <%foreach from=$customer_parts_data item=c%>
+                        <option  value="<%$c->part_number%>"><%$c->part_number%> / <%$c->part_description%></option>
                     <%/foreach%>
                 <%/if%>
             </select>
@@ -33,22 +35,33 @@
         </div>
         <div class="filter-row">
           <li class="nav-small-cap">
-            <span class="hide-menu">Select Supplier</span>
+            <span class="hide-menu">Supplier</span>
             <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
           </li>
           <li class="sidebar-item">
           <div class="input-group">
           <select name="selected_supplier_id"  class="form-control select2" id="suppler">
-          <option value="0">NA</option>
-          <%if $box_data%>
-              <%foreach from=$box_data item=c%>
-                  <option value="<%$c['supplier_id']%>"><%$c['supplier_name']%></option>
+          <option value="">NA</option>
+          <%if $supplier%>
+              <%foreach from=$supplier item=c%>
+                  <option value="<%$c->id%>"><%$c->supplier_name%></option>
               <%/foreach%>
           <%/if%>
       </select>
           </div>
         </li>
         </div>  
+        <div class="filter-row">
+          <li class="nav-small-cap">
+            <span class="hide-menu">Challan Date</span>
+            <span class="search-show-hide float-right"><i class="ti ti-minus"></i></span>
+          </li>
+          <li class="sidebar-item">
+            <div class="input-group">
+            <input type="text" name="datetimes" class="dates form-control" id="date_range_filter" />
+            </div>
+          </li>
+        </div>
         
 
     </ul>
@@ -95,7 +108,7 @@
                 
                 <!-- /.card-header -->
                 <div class="">
-                    <table id="example1" class="table table-bordered table-striped">
+                    <table id="example1" class="table  table-striped">
                         <thead>
                             <tr>
                                 <%*<th>Sr.No.</th>*%>
@@ -171,5 +184,7 @@
     var sorting_column = <%$sorting_column%>;
     var api_name =  <%$api_name|json_encode%>;
     var base_url = <%$base_url|json_encode%>;
+    var start_date = <%$start_date|json_encode%>;
+    var end_date = <%$end_date|json_encode%>;
 </script>
 <script src="<%$base_url%>/public/js/reports/subcom_report.js"></script>

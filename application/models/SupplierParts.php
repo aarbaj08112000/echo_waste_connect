@@ -1383,6 +1383,190 @@ class SupplierParts extends CI_Model {
         return $affected_rows;
     }
 
+    /* for return/non-return challan */
+    public function checkCustomerChallanReturn(){
+        $this->db->select("ch.*");
+        $this->db->from("customer_challan_return as ch");
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+        return $ret_data;
+
+    }
+    public function saveCustomerChallanReturn($insert_data = array()){
+        $this->db->insert('customer_challan_return',$insert_data);
+        return $this->db->insert_id(); 
+    }
+    public function updateCustomerChallanReturn($update_data = array(),$customer_challan_return_id){
+        $this->db->where('customer_challan_return_id', $customer_challan_return_id);
+        $this->db->update('customer_challan_return', $update_data); 
+        $affected_rows = $this->db->affected_rows();
+        $affected_rows = $affected_rows == 0 ? 1: $affected_rows;
+        return $affected_rows; 
+    }
+    public function updateCustomerChallanReturnPart($update_data = array(),$customer_challan_return_part_id){
+        $this->db->where('customer_challan_return_part_id', $customer_challan_return_part_id);
+        $this->db->update('customer_challan_return_part', $update_data); 
+        $affected_rows = $this->db->affected_rows();
+        $affected_rows = $affected_rows == 0 ? 1: $affected_rows;
+        return $affected_rows; 
+    }
+    public function getCustomerChallanReturnPartQty($customer_id = ''){
+        $this->db->select("ch.part_id as part_id,SUM(ch.qty) as qty,cp.part_number as part_number,cp.part_description as part_description");
+        $this->db->from("customer_challan_return_part as ch");
+        $this->db->join("customer_part as cp","cp.id = ch.part_id");
+        $this->db->where("cp.customer_id",$customer_id);
+        $this->db->group_by("ch.part_id");
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+        return $ret_data;
+    }
+    public function deleteCustomerChallanInwardPart($customer_challan_return_part_id = ''){
+        $this->db->where('customer_challan_return_part_id', $customer_challan_return_part_id);
+        $this->db->delete('customer_challan_return_part');
+    }
+    public function getCustomerPartDetails($part_id = '')
+    {
+        $this->db->select("cp.*,t.*,cpr.*");
+        $this->db->from("customer_part as cp");
+        $this->db->join("customer_part_rate as cpr","cpr.customer_master_id = cp.id");
+        $this->db->join("gst_structure as t","t.id = cp.gst_id");
+        $this->db->where("cp.id",$part_id);
+        $this->db->order_by("cpr.revision_no","desc");
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+        return $ret_data;
+    }
+    public function checkCustomerChallanPartReturn(){
+        $this->db->select("ch.*");
+        $this->db->from("customer_challan_part_return as ch");
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+        return $ret_data;
+
+    }
+    public function getCustomerChallanReturnPartDetails($customer_challan_return_id = 0){
+        $this->db->select("chp.*");
+        $this->db->from("customer_challan_return_part as chp");
+        $this->db->where("chp.customer_challan_return_id",$customer_challan_return_id);
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+        return $ret_data;
+    }
+    public function saveCustomerChallanPartReturn($insert_data = array()){
+        $this->db->insert('customer_challan_part_return',$insert_data);
+        return $this->db->insert_id(); 
+    }
+    public function saveCustomerChallanPartReturnPart($insert_data = array()){
+        $this->db->insert_batch('customer_challan_part_return_part', $insert_data);
+        return $this->db->insert_id(); 
+    }
+    public function getCustomerChallanPartReturnPart($customer_id = ''){
+        $this->db->select("ch.part_id as part_id,SUM(ch.qty) as qty");
+        $this->db->from("customer_challan_part_return_part as ch");
+        $this->db->where("ch.customer_id",$customer_id);
+        $this->db->group_by("ch.part_id");
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+        return $ret_data;
+    }
+    public function getCustomerChallanPartReturn($customer_challan_return_part_id = 0){
+        $this->db->select("ch.*,c.customer_name as customer_name,t.name as transporter_name,t.transporter_id as transporter_id");
+        $this->db->from("customer_challan_part_return as ch");
+        $this->db->join("customer as c","c.id = ch.customer_id",'left');
+        $this->db->join("transporter as t","t.id = ch.transportor_id",'left');
+        $this->db->where("ch.customer_challan_part_return_id",$customer_challan_return_part_id);
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
+        return $ret_data;
+    }
+    public function getCustomerChallanPartReturnPartDetails($customer_challan_return_part_id = 0){
+        $this->db->select("chp.*,t.code as gst_structure,cp.part_number as part_number,cp.part_description as part_description,cp.uom as uom,cp.hsn_code as hsn_code");
+        $this->db->from("customer_challan_part_return_part as chp");
+        $this->db->join("customer_part as cp","chp.part_id = cp.id");
+        $this->db->join("gst_structure as t","t.id = cp.gst_id");
+        $this->db->where("chp.customer_challan_part_return_id",$customer_challan_return_part_id);
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+        return $ret_data;
+    }
+    public function getCustomerChallanPartReturnData($customer_id = '',$part_id = 0){
+        $this->db->select("ch.part_id as part_id,SUM(ch.qty) as qty");
+        $this->db->from("customer_challan_return_part as ch");
+        $this->db->where("ch.customer_id",$customer_id);
+        $this->db->where("ch.part_id",$part_id);
+        $this->db->group_by("ch.part_id");
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
+        return $ret_data;
+    }
+    public function getCustomerChallanPartReturnPartData($customer_id = '',$part_id = 0,$customer_challan_part_return_part_id = 0){
+        $this->db->select("ch.part_id as part_id,SUM(ch.qty) as qty");
+        $this->db->from("customer_challan_part_return_part as ch");
+        $this->db->where("ch.customer_id",$customer_id);
+        $this->db->where("ch.part_id",$part_id);
+        $this->db->where("ch.customer_challan_part_return_part_id !=",$customer_challan_part_return_part_id);
+        $this->db->group_by("ch.part_id");
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
+        return $ret_data;
+    }
+    public function updateCustomerChallanPartReturn($update_data = array(),$customer_challan_part_return_part_id = 0){
+        $this->db->where('customer_challan_part_return_part_id', $customer_challan_part_return_part_id);
+        $this->db->update('customer_challan_part_return_part', $update_data); 
+        $affected_rows = $this->db->affected_rows();
+        $affected_rows = $affected_rows == 0 ? 1: $affected_rows;
+        return $affected_rows; 
+    }
+    public function lockCustomerChallanPartReturn($update_data = array(),$customer_challan_part_return_id=''){
+        $this->db->where('customer_challan_part_return_id', $customer_challan_part_return_id);
+        $this->db->update('customer_challan_part_return', $update_data); 
+        $affected_rows = $this->db->affected_rows();
+        $affected_rows = $affected_rows == 0 ? 1: $affected_rows;
+        return $affected_rows; 
+    }
+
+    /* challan report */
+    public function getCustomerWiseChallanQty(){
+        $this->db->select("ch.part_id as part_id,SUM(ch.total_rate) as total_rate,SUM(ch.qty) as qty,cp.part_number as part_number,cp.part_description as part_description,c.customer_name as customer_name,cp.uom as uom,ch.customer_id");
+        $this->db->from("customer_challan_return_part as ch");
+        $this->db->join("customer_part as cp","cp.id = ch.part_id");
+        $this->db->join("customer as c","c.id = ch.customer_id");
+        $this->db->group_by("ch.part_id");
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+        return $ret_data;
+    } 
+
+    public function getCustomerWiseReturnChallanQty(){
+        $this->db->select("ch.part_id as part_id,SUM(ch.total_rate) as total_rate,SUM(ch.qty) as qty,cp.part_number as part_number,cp.part_description as part_description,c.customer_name as customer_name");
+        $this->db->from("customer_challan_part_return_part as ch");
+        $this->db->join("customer_part as cp","cp.id = ch.part_id");
+        $this->db->join("customer as c","c.id = ch.customer_id");
+        $this->db->group_by("ch.part_id");
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+        return $ret_data;
+    } 
+    public function getClientData($client_id = 0){
+        $this->db->select("c.*");
+        $this->db->from("client as c");
+        $this->db->where("c.id",$client_id);
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
+        return $ret_data;
+
+    }
+    public function getCustomerDetails($customer_id = 0){
+        $this->db->select("c.*");
+        $this->db->from("customer as c");
+        $this->db->where("c.id",$customer_id);
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
+        return $ret_data;
+
+    }
+    
+
 
     
 

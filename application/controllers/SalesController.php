@@ -56,10 +56,11 @@ class SalesController extends CommonController
 		$data['customer_part'] = $this->Crud->read_data("customer_part");
 		//$data['new_sales'] = $this->Crud->read_data("new_sales");
 
-		$sql = "SELECT new_sales.*,cus.customer_name,eres.Status,eres.EwbStatus FROM new_sales 
+		$sql = "SELECT cus.customer_name,eres.Status,eres.EwbStatus,rs.id as rejection_invoice_id,new_sales.*  FROM new_sales 
 		left join customer cus on new_sales.customer_id = cus.id
 		left join einvoice_res eres on new_sales.id = eres.new_sales_id 
-		WHERE clientId = ".$this->Unit->getSessionClientId()." AND created_month = " . $created_month . " AND created_year = " . $created_year . " order by id desc";
+		left join rejection_sales_invoice as rs ON rs.sales_invoice_number = new_sales.sales_number 
+		WHERE new_sales.clientId = ".$this->Unit->getSessionClientId()." AND new_sales.created_month = " . $created_month . " AND new_sales.created_year = " . $created_year . " order by new_sales.id desc";
 		$data['new_sales']  = $this->Crud->customQuery($sql);
 		$data['created_year'] = $created_year;
 		$data['created_month'] = $created_month;
@@ -938,6 +939,7 @@ class SalesController extends CommonController
         $condition_arr["length"] = $post_data["length"];
         $base_url = $this->config->item("base_url");
 		$data = $this->SalesModel->getSalesReportViewData($condition_arr,$post_data["search"]);
+		// pr($data,1);
 		foreach ($data as $key => $val) {
 			if ($val['basic_total'] > 0) {
 				$subtotal = $val['basic_total'];
@@ -977,23 +979,350 @@ class SalesController extends CommonController
 
 	public function rejection_invoices()  
 	{
+		$sales_id = $this->uri->segment('2');
+
+		$data['new_sales'] = $this->Crud->get_data_by_id("new_sales", $sales_id, "id");
+		if(isset($data['new_sales'][0]->created_date)){
+			$date = DateTime::createFromFormat('d/m/Y', $data['new_sales'][0]->created_date);
+			$data['new_sales'][0]->created_date = $date->format('Y-m-d');
+		}
+		$data['new_sales'] = $data['new_sales'][0];
 		$data['customer'] = $this->Crud->read_data("customer");
-		$data['rejection_sales_invoice'] = $this->Crud->customQuery("
-			SELECT r.*,c.customer_name as customer_name
-			FROM `rejection_sales_invoice` as r
-			LEFT JOIN customer as c On c.id = r.customer_id
-			WHERE r.clientId = '".$this->Unit->getSessionClientId()."'
-			ORDER BY r.id DESC
-		");
+		// $data['rejection_sales_invoice'] = $this->Crud->read_data("rejection_sales_invoice");
+		$sql = "
+			SELECT r.*,CONCAT(t.name,'-' ,t.transporter_id) as transporter
+			FROM rejection_sales_invoice as r
+			LEFT JOIN transporter as t On t.id = r.transporter_id 
+			LEFT JOIN customer as c On c.id = r.customer_id";
+		$data['rejection_sales_invoice'] = $this->Crud->customQuery($sql);
 		$data['reject_remark'] = $this->Crud->read_data_acc("reject_remark");
-		// $this->load->view('header');
+		$data['transporter'] = $this->Crud->read_data("transporter");
+		$data['mode'] = ["N/A","Road","Rail","Air","Ship"];
 		$this->loadView('quality/rejection_invoices', $data);
 		// $this->load->view('footer');	
 
 	}
 
+	public function generate_credit_note(){
+		$credit_note_id = $this->uri->segment('2');
+		$copy = $this->uri->segment('3');
+		$configuration = $this->Crud->get_data_by_id_multiple_condition("global_configuration",$criteria);
+        $configuration = array_column($configuration, "config_value","config_name");
+        $company_logo = "";
+        $company_logo_enable = "No";
+        $row_col_span = '12';
+        if(isset($configuration['companyLogoEnable']) && isset($configuration['companyLogo'])){
+            if($configuration['companyLogoEnable'] == 'Yes' && $configuration['companyLogo'] != ''){
+                 $company_logo = $configuration['companyLogo'];
+                $company_logo_enable = "Yes";
+                $company_logo = '<td width="10%" colspan="2" style="text-align:center;"><img src="'.base_url('').'/dist/img/company_logo/'.$company_logo.'"  style="width: 60px;padding: 0px;"></td>';
+                $row_col_span = '10';
+            }
+        }
+        $data['company_logo'] =$company_logo;
+        $sql = "
+			SELECT r.*,CONCAT(t.name,'-' ,t.transporter_id) as transporter,t.transporter_id as transporter_id
+			FROM rejection_sales_invoice as r
+			LEFT JOIN transporter as t On t.id = r.transporter_id
+			WHERE r.id =".$credit_note_id;
+		$rejection_sales_invoice = $this->Crud->customQuery($sql);
+		$data['rejection_sales_invoice'] = $rejection_sales_invoice[0];
+        $client_data = $this->Crud->get_data_by_id("client", $rejection_sales_invoice[0]->clientId, "id");
+        $data['client_data'] = $client_data[0];
+        $customer_data = $this->Crud->get_data_by_id("customer", $rejection_sales_invoice[0]->customer_id, "id");
+        $data['customer_data'] = $customer_data[0];
+        $credit_note[0]->shipping_addressType = "customer";
+        $data['shipping_data'] = $this->getShippingDetails($credit_note, $customer_data);
+		$sql = "
+			SELECT pr.*,cp.part_number as part_number,cp.part_number as part_number,cp.part_description as part_description,cp.hsn_code as hsn_code,cp.uom as uom,cp.packaging_qty as packaging_qty,cpm.fg_rate as rate,gs.cgst as cgst,gs.sgst as sgst,gs.igst as igst,gs.tcs as tcs,gs.tcs_on_tax as tcs_on_tax
+			FROM parts_rejection_sales_invoice as pr
+			LEFT JOIN customer_part as cp On cp.id = pr.part_id
+			LEFT JOIN gst_structure as gs On gs.id = cp.gst_id
+			LEFT JOIN customer_parts_master as cpm On cpm.id = cp.customer_parts_master_id
+			WHERE pr.rejection_sales_id = ".$credit_note_id;
+		$data['parts_rejection_sales_invoice'] = $this->Crud->customQuery($sql);
+		foreach ($data['parts_rejection_sales_invoice'] as $key => $value) {
+			$packSize = $this->Common_admin_model->calculateAllFactorsForSticker($value->accepted_qty, $value->packaging_qty);
+			$packagingQtyFactors = '';
+            if ($value->packaging_qty > 0) {
+                foreach ($packSize as $factor) {
+                    $packagingQtyFactorsTemp = $factor['factor'] . ' X ' . $factor['count'] . '<br>';
+                    $packagingQtyFactors = $packagingQtyFactors . $packagingQtyFactorsTemp;
+                }
+            }
+            $data['parts_rejection_sales_invoice'][$key]->packagingQtyFactors = $packagingQtyFactors;
+		}
+
+
+		$po_parts_data = $this->Crud->get_data_by_id("sales_parts", $data['rejection_sales_invoice']->sales_invoice_number, "sales_number");
+		$data['po_number'] =$po_parts_data[0]->po_number;
+		$data['po_date'] =$po_parts_data[0]->po_date;
+		$data['mode'] = ["N/A","Road","Rail","Air","Ship"];
+		$digitalSignature = "No";
+        $signatureImageEnable = "No";
+        $signatureImageUrl= "";
+        if(isset($configuration['digitalSignature']) && $configuration['digitalSignature'] == "Yes"){
+               $digitalSignature = "Yes"; 
+        }else if(isset($configuration['SignatureImageEnable'])){
+            if($configuration['SignatureImageEnable'] == "Yes" && $configuration['SignatureImage'] != ""){
+               $signatureImageEnable = "Yes"; 
+               $signatureImageUrl = base_url("dist/img/signature_image/").$configuration['SignatureImage'];
+            }
+        }
+        $i = count($data['parts_rejection_sales_invoice']);
+        $height = "280px";
+        if ($i == 2) {
+            $height = "250px";
+        } elseif ($i == 3) {
+            $height = "210px";
+        } elseif ($i == 4) {
+            $height = "180px";
+        } elseif ($i == 5) {
+            $height = "140px";
+        } elseif ($i == 6) {
+            $height = "100px";
+        } elseif ($i == 7) {
+            $height = "80px";
+        } elseif ($i == 8) {
+            $height = "50px";
+        }
+        $data['height'] = $height;
+        $data['footer_html'] = $this->getFooterWithSignatureForSales($digitalSignature,$signatureImageEnable,$signatureImageUrl);
+        if($data['rejection_sales_invoice']->type == "ProformaInvoice"){
+        	$data['pdf_title'] = "PROFORMA INVOICE";
+        	$pdfName = $credit_note_id.'-Proforma-Invoice-'. $copy . '.pdf';
+        }else if($data['rejection_sales_invoice']->type == "DebitNote"){
+        	$pdfName = $credit_note_id.'-Debit-Note-'. $copy . '.pdf';
+        	$data['pdf_title'] = "DEBIT NOTE";
+        }else{	
+        	$pdfName = $credit_note_id.'-Credit-Note-'. $copy . '.pdf';
+        	$data['pdf_title'] = "CREDIT NOTE";
+        }
+        $pdfName = $credit_note_id.'-Credit-Note-'. $copy . '.pdf';
+        $data['copies'] = ["ORIGINAL_FOR_RECIPIENT","DUPLICATE_FOR_TRANSPORTER","TRIPLICATE_FOR_SUPPLIER","ACKNOWLEDGEMENT_COPY","EXTRA_COPY"];
+        $data['copy'] = $copy;
+        // pr($data,1);
+		$html_content = $this->smarty->fetch('quality/credit_node_pdf.tpl', $data, TRUE);
+		// pr($html_content,1);
+		$this->pdf->loadHtml($html_content);
+        $this->pdf->render();
+		if($digitalSignature== "Yes" ){
+                $output = $this->pdf->output();
+                $fileName = "dist/uploads/credit_note_print/".$pdfName;
+                $fileAbsolutePath = FCPATH.$fileName;
+
+                // upload pdf
+                file_put_contents($fileAbsolutePath, $output);
+
+                // generate digital signature
+                $signer = $configuration['signer'];
+                $certpwd = $configuration['certpwd'];
+                $certid = $configuration['certid'];
+                $customerPrefix = $configuration['customerPrefix'];
+                $digital_signature_url = $configuration['digital_signature_url'];
+                $SignaturePostion = '[440:72]';
+                if($isEinvoicePresent){
+                    $SignaturePostion = '[440:55]';
+                }
+                digitalSignature($fileName,$SignaturePostion,$signer,$certpwd,$certid,$customerPrefix,$digital_signature_url);
+                
+                $fileDownloadPath = base_url().$fileName;
+                $pdf_content = file_get_contents($fileDownloadPath);
+                header("Content-Type: application/pdf");
+                header("Content-Disposition: attachment; filename=".$pdfName);
+                header("Content-Length: " . strlen($pdf_content));
+                echo $pdf_content;
+                exit();
+        }else{
+            $this->pdf->stream($pdfName, array("Attachment" => 1));
+        }
+	}
+	public function generate_credit_note_multiple(){
+		
+		$copies_arr = $this->input->post("interests");
+		$credit_note_id = $this->uri->segment('2');
+		$configuration = $this->Crud->get_data_by_id_multiple_condition("global_configuration",$criteria);
+        $configuration = array_column($configuration, "config_value","config_name");
+        $company_logo = "";
+        $company_logo_enable = "No";
+        $row_col_span = '12';
+        if(isset($configuration['companyLogoEnable']) && isset($configuration['companyLogo'])){
+            if($configuration['companyLogoEnable'] == 'Yes' && $configuration['companyLogo'] != ''){
+                 $company_logo = $configuration['companyLogo'];
+                $company_logo_enable = "Yes";
+                $company_logo = '<td width="10%" colspan="2" style="text-align:center;"><img src="'.base_url('').'/dist/img/company_logo/'.$company_logo.'"  style="width: 60px;padding: 0px;"></td>';
+                $row_col_span = '10';
+            }
+        }
+        $data['company_logo'] =$company_logo;
+        $sql = "
+			SELECT r.*,CONCAT(t.name,'-' ,t.transporter_id) as transporter,t.transporter_id as transporter_id
+			FROM rejection_sales_invoice as r
+			LEFT JOIN transporter as t On t.id = r.transporter_id
+			WHERE r.id =".$credit_note_id;
+		$rejection_sales_invoice = $this->Crud->customQuery($sql);
+		$data['rejection_sales_invoice'] = $rejection_sales_invoice[0];
+        $client_data = $this->Crud->get_data_by_id("client", $rejection_sales_invoice[0]->clientId, "id");
+        $data['client_data'] = $client_data[0];
+        $customer_data = $this->Crud->get_data_by_id("customer", $rejection_sales_invoice[0]->customer_id, "id");
+        $data['customer_data'] = $customer_data[0];
+        $credit_note[0]->shipping_addressType = "customer";
+        $data['shipping_data'] = $this->getShippingDetails($credit_note, $customer_data);
+		$sql = "
+			SELECT pr.*,cp.part_number as part_number,cp.part_number as part_number,cp.part_description as part_description,cp.hsn_code as hsn_code,cp.uom as uom,cp.packaging_qty as packaging_qty,cpm.fg_rate as rate,gs.cgst as cgst,gs.sgst as sgst,gs.igst as igst,gs.tcs as tcs,gs.tcs_on_tax as tcs_on_tax
+			FROM parts_rejection_sales_invoice as pr
+			LEFT JOIN customer_part as cp On cp.id = pr.part_id
+			LEFT JOIN gst_structure as gs On gs.id = cp.gst_id
+			LEFT JOIN customer_parts_master as cpm On cpm.id = cp.customer_parts_master_id
+			WHERE pr.rejection_sales_id = ".$credit_note_id;
+		$data['parts_rejection_sales_invoice'] = $this->Crud->customQuery($sql);
+		foreach ($data['parts_rejection_sales_invoice'] as $key => $value) {
+			$packSize = $this->Common_admin_model->calculateAllFactorsForSticker($value->accepted_qty, $value->packaging_qty);
+			$packagingQtyFactors = '';
+            if ($value->packaging_qty > 0) {
+                foreach ($packSize as $factor) {
+                    $packagingQtyFactorsTemp = $factor['factor'] . ' X ' . $factor['count'] . '<br>';
+                    $packagingQtyFactors = $packagingQtyFactors . $packagingQtyFactorsTemp;
+                }
+            }
+            $data['parts_rejection_sales_invoice'][$key]->packagingQtyFactors = $packagingQtyFactors;
+		}
+		$po_parts_data = $this->Crud->get_data_by_id("sales_parts", $data['rejection_sales_invoice']->sales_invoice_number, "sales_number");
+		$data['po_number'] =$po_parts_data[0]->po_number;
+		$data['po_date'] =$po_parts_data[0]->po_date;
+		$data['mode'] = ["N/A","Road","Rail","Air","Ship"];
+		$digitalSignature = "No";
+        $signatureImageEnable = "No";
+        $signatureImageUrl= "";
+        if(isset($configuration['digitalSignature']) && $configuration['digitalSignature'] == "Yes"){
+               $digitalSignature = "Yes"; 
+        }else if(isset($configuration['SignatureImageEnable'])){
+            if($configuration['SignatureImageEnable'] == "Yes" && $configuration['SignatureImage'] != ""){
+               $signatureImageEnable = "Yes"; 
+               $signatureImageUrl = base_url("dist/img/signature_image/").$configuration['SignatureImage'];
+            }
+        }
+        $i = count($data['parts_rejection_sales_invoice']);
+        $height = "280px";
+        if ($i == 2) {
+            $height = "250px";
+        } elseif ($i == 3) {
+            $height = "210px";
+        } elseif ($i == 4) {
+            $height = "180px";
+        } elseif ($i == 5) {
+            $height = "140px";
+        } elseif ($i == 6) {
+            $height = "100px";
+        } elseif ($i == 7) {
+            $height = "80px";
+        } elseif ($i == 8) {
+            $height = "50px";
+        }
+        $data['height'] = $height;
+        $data['footer_html'] = $this->getFooterWithSignatureForSales($digitalSignature,$signatureImageEnable,$signatureImageUrl);
+        if($data['rejection_sales_invoice']->type == "ProformaInvoice"){
+        	$data['pdf_title'] = "PROFORMA INVOICE";
+        	$pdfName = $credit_note_id.'-Proforma-Invoice-.pdf';
+        }else if($data['rejection_sales_invoice']->type == "DebitNote"){
+        	$pdfName = $credit_note_id.'-Debit-Note-.pdf';
+        	$data['pdf_title'] = "DEBIT NOTE";
+        }else{	
+        	$pdfName = $credit_note_id.'-Credit-Note-.pdf';
+        	$data['pdf_title'] = "CREDIT NOTE";
+        }
+        $data['copies'] = $copies_arr;
+		$html_content = $this->smarty->fetch('quality/credit_node_pdf_mltiple.tpl', $data, TRUE);
+		// pr($html_content,1);
+		$this->pdf->loadHtml($html_content);
+        $this->pdf->render();
+		if($digitalSignature== "Yes" ){
+                $output = $this->pdf->output();
+                $fileName = "dist/uploads/credit_note_print/".$pdfName;
+                $fileAbsolutePath = FCPATH.$fileName;
+
+                // upload pdf
+                file_put_contents($fileAbsolutePath, $output);
+
+                // generate digital signature
+                $signer = $configuration['signer'];
+                $certpwd = $configuration['certpwd'];
+                $certid = $configuration['certid'];
+                $customerPrefix = $configuration['customerPrefix'];
+                $digital_signature_url = $configuration['digital_signature_url'];
+                $SignaturePostion = '[440:72]';
+                if($isEinvoicePresent){
+                    $SignaturePostion = '[440:55]';
+                }
+                digitalSignature($fileName,$SignaturePostion,$signer,$certpwd,$certid,$customerPrefix,$digital_signature_url);
+                
+                $fileDownloadPath = base_url().$fileName;
+                $pdf_content = file_get_contents($fileDownloadPath);
+                header("Content-Type: application/pdf");
+                header("Content-Disposition: attachment; filename=".$pdfName);
+                header("Content-Length: " . strlen($pdf_content));
+                echo $pdf_content;
+                exit();
+        }else{
+            $this->pdf->stream($pdfName, array("Attachment" => 1));
+        }
+	}
+
+	public function getFooterWithSignatureForSales($digitalSignature =  'No',$signatureImageEnable='No',$signatureImageUrl = '')
+    {
+        $rowspan = "2";
+        
+        
+        $footerDetails =
+        '<tr style="font-size:8px">
+            <td colspan="5">
+                <span style="padding-left:5px"><p>We hereby certify that my/our registration certificate under the Goods and Service Tax
+                Act, 2017 is in force on the date on which the sale of the goods specified in this Tax
+                invoice is made by me/us and that the transaction of sale covered by this taxinvoice has
+                been effected by me/us and it shall be accounted for in the turnover of sales while filling
+                of return and the due tax. If any, payable on the sale has been paid or shall be paid
+                <br>
+                Certified that the particulars given above are true.Interest @24% P.A. will be charged on all overdue invoices.<br>
+                Subject To Pune Jurisdiction
+                </p><p>
+                <b>This is computer generated document. No signature required.</b></p></span>
+            </td>
+            <td colspan="'.$rowspan.'" style="text-align:center;vertical-align: bottom;">
+             <h4 style="font-size:11px"> Receiver Signature </h4>
+            </td>';
+
+        if($digitalSignature == 'Yes'){
+            $footerDetails .= '<td colspan="5" style="text-align:center;font-size:11px;min-width:100px;"></td>';
+        }else if($signatureImageEnable == 'Yes' && $signatureImageUrl != ''){
+            $footerDetails .= '<td colspan="5" style="text-align:center;font-size:11px;min-width:100px;background: white;">
+                <h4> For, ' . $this->getCustomerNameDetails() . ' </h4>
+                <br>
+                <img src="'.$signatureImageUrl.'" height="100" width="170" style="background: white;">
+                <h4 style="white-space:nowrap;"> Authorized Signatory</h4>
+            </td>';
+        }else{
+            $footerDetails .= '<td colspan="5" style="text-align:center;font-size:11px;min-width:100px;">
+                <h4> For, ' . $this->getCustomerNameDetails() . ' </h4>
+                <br><br><br><br>
+                <h4 style="white-space:nowrap;"> Authorized Signatory</h4>
+            </td>';
+        }
+            
+        $footerDetails.='</tr>
+            ' ;
+
+            // . $this->getFooter()
+        return $footerDetails;
+    }
 	public function generate_rejection_sales_invoice()
 	{
+		$sales_id = $this->input->post("sales_id");
+		if($sales_id > 0){
+			$sales_parts = [];
+			$sql = "SELECT sp.*,t.* FROM sales_parts as sp LEFT JOIN gst_structure as t ON t.id = sp.tax_id WHERE sp.sales_id = ".$sales_id."";
+			$sales_parts = $this->Crud->customQuery($sql);
+		// pr($sales_parts,1);
+		}
 		$customer_id = $this->input->post('customer_id');
 		$customer_debit_note_no = $this->input->post('customer_debit_note_no');
 		$customer_debit_note_date = $this->input->post('customer_debit_note_date');
@@ -1004,44 +1333,214 @@ class SalesController extends CommonController
 		$rejection_reason = $this->input->post('rejection_reason');
 		$remark = $this->input->post('remark');
 
-		$sql = "SELECT rejection_invoice_no FROM rejection_sales_invoice WHERE rejection_invoice_no like '" . $this->getSalesRejectionSerialNo() . "%' order by id desc LIMIT 1";
+		$mode = $this->input->post('mode');
+		$transporter = $this->input->post('transporter');
+        $vehicle_number = $this->input->post('vehicle_number');
+        $lr_number = $this->input->post('lr_number');
+        $freight_charges = $this->input->post('freight_charges');
+        $current_year = $this->getFinancialYear();
+        $current_year_arr = explode("-", $current_year);
+        $start_data = $this->createFinatialStartEndDate("start_date",$current_year_arr[0]);
+		$end_data = $this->createFinatialStartEndDate("end_date",$current_year_arr[1]);
+		$sql = "
+			SELECT
+		    rejection_sales_invoice.*
+			FROM
+			    rejection_sales_invoice
+			WHERE
+			    rejection_invoice_no LIKE '%TEMP%' 
+			    AND (
+		        STR_TO_DATE(created_date, '%d-%m-%Y') BETWEEN '".$start_data['start']."' AND '".$start_data['end']."'
+		        OR
+		        STR_TO_DATE(created_date, '%d-%m-%Y') BETWEEN '".$end_data['start']."' AND '".$end_data['end']."'
+		    ) 
+			ORDER BY `rejection_sales_invoice`.`id`  DESC
+		";
 		$latestSeqFormat = $this->Crud->customQuery($sql);
+		
+		$sales_invoice_data = [];
+		if($client_sales_invoice_no != ""){
+		$sql = "SELECT count(rejection_invoice_no) as count FROM rejection_sales_invoice WHERE sales_invoice_number = '".$client_sales_invoice_no."'";
+		$sales_invoice_data = $this->Crud->customQuery($sql);
+		}
+		$success = 0;
+        $messages = "Something went wrong.";
+		if(strlen($remark) < 280)	
+			if($sales_invoice_data[0]->count == 0){
+				if($latestSeqFormat[0]->rejection_invoice_no != ""){
+					$structure_type = "";
+					// pr($this->input->post(),1);
+					if($this->input->post("form_type") == "CreditNote"){
+						$structure_type = "credit_note";
+					}else if($this->input->post("form_type") == "DebitNote"){
+						$structure_type = "debit_note";
+					}else if($this->input->post("form_type") == "ProformaInvoice"){
+						$structure_type = "performa_invoice";
+					}
+					$prifix_number = $this->getFomrmateData($structure_type,"NUM","Yes");
+					$formae_data_val = $prifix_number;
+					$Structure_arr['PREFIX'] = "TEMP";
+					$Structure_arr['FY'] = $current_year;
+					$code_key = '';
 
-		if(!empty($latestSeqFormat)) {
-			foreach ($latestSeqFormat as $p) {
-				$currentSaleNo = $p->rejection_invoice_no;
-				$rejectionNo = substr($currentSaleNo, strlen($this->getSalesRejectionSerialNo())) + 1;
+					foreach ($latestSeqFormat as $key => $value) {
+
+						$structure_sample = explode("/",$value->rejection_invoice_no);
+						// pr($structure_sample);
+						$flag = 0;
+						$needle_count = count($formae_data_val['formate_arr']);
+						// pr($formae_data_val);
+						if(count($formae_data_val['formate_arr']) == count($structure_sample)){
+							foreach ($formae_data_val['formate_arr'] as $key_val => $val) {
+								
+								if($Structure_arr[$val] == $structure_sample[$key_val] && $val == "PREFIX"){
+									// $flag = 0;
+								}else if($Structure_arr[$val] == $structure_sample[$key_val] && $val == "FY" ){
+									// $flag = 0;
+								}else if(stripos($structure_sample[$key_val],"-") == 0 && $val == "NUM" ){
+									// $flag = 0;
+								}else{
+									$flag = 1;
+								}
+
+							}
+							if($flag == 0 && $code_key == ''){
+								$code_key = $key;
+								// pr($value,1);
+								break;
+							}
+						}
+						
+					}
+
+					$last_count = explode("/",$latestSeqFormat[$code_key]->rejection_invoice_no);
+					$last_count = $last_count[$prifix_number['prifix_num']];
+				}else{
+					$last_count = 0;
+				}
+				$count_number = $last_count+1;
+				$rejection_invoice_no = $this->getCustomerTempSerialNUmber($this->input->post("form_type"),$count_number);
+				// pr($rejection_invoice_no,1);
+				if($rejection_invoice_no != ""){
+					$data = array(
+						"customer_id" => $customer_id,
+						"rejection_invoice_no" => $rejection_invoice_no,
+						"document_number" => $customer_debit_note_no,
+						"debit_note_date" => $customer_debit_note_date,
+						"sales_invoice_number" => $client_sales_invoice_no,
+						"client_invoice_date" => $client_invoice_date,
+						"debit_basic_amt" => $debit_basic_amt,
+						"debit_gst_amt" => $debit_gst_amt,
+						"rejection_reasonky" => $rejection_reason,
+						"remark" => $remark,
+						"mode"=>$mode,
+						"transporter_id"=>$transporter,
+						"vehicle_number"=>$vehicle_number,
+						"lr_number"=>$lr_number,
+						"freight_charges"=>$freight_charges,
+						"type" => $this->input->post("form_type"),
+						"created_by" => $this->user_id,
+						"created_date" => $this->current_date,
+						"created_time" => $this->current_time,
+					);
+					$result = $inserted_id = $this->Crud->insert_data("rejection_sales_invoice", $data);
+					if ($result) {
+						if(is_array($sales_parts) && count($sales_parts) > 0){
+						$data = [];
+						foreach ($sales_parts as $key => $value) {
+							if ((int) $value->igst === 0) {
+					                $gst = (int) $value->cgst + (int) $value->sgst;
+					                $cgst = (int) $value->cgst;
+					                $sgst = (int) $value->sgst;
+					                $tcs = (float) $value->tcs;
+					                $igst = 0;
+					                $total_gst_percentage = $cgst + $sgst;
+					        } else {
+					                $gst = (int) $value->igst;
+					                $tcs = (float) $value->tcs;
+					                $cgst = 0;
+					                $sgst = 0;
+					                $igst = $gst;
+					                $total_gst_percentage = $igst;
+					        }
+					        $gst_amount = ($gst * $value->basic_total) / 100;
+					        $total_amount = $value->basic_total;
+					        $cgst_amount = ($total_amount * $cgst) / 100;
+							$sgst_amount = ($total_amount * $sgst) / 100;
+							$igst_amount = ($total_amount * $igst) / 100;
+							if ($gst_structure2[0]->tcs_on_tax == "no") {
+								$tcs_amount =   (($total_amount * $tcs) / 100);
+							} else {
+								$tcs_amount =  ((($cgst_amount + $sgst_amount + $igst_amount + $total_amount) * $tcs) / 100);	
+							}
+							$total_rate = $total_amount + $gst_amount;
+							$data[] = array(
+								"customer_id" => $value->customer_id,
+								"rejection_sales_id" => $result,
+								"part_id" => $value->part_id,
+								"qty" => $value->qty,
+								"created_by" => $this->user_id,
+								"created_date" => $this->current_date,
+								"created_time" => $this->current_time,
+								"created_day" => $this->date,
+								"created_month" => $this->month,
+								"created_year" => $this->year,
+								"part_price" =>  $value->part_price,
+								"basic_total" => $value->basic_total,
+								"total_rate" =>  $total_rate,
+								"cgst_amount" =>  $value->cgst_amount,
+								"sgst_amount" => $value->sgst_amount,
+								"igst_amount" => $value->igst_amount,
+								"tcs_amount" =>  $value->tcs_amount,
+								"gst_amount" =>  $value->gst_amount,
+							);
+						}
+						if(is_array($data) && count($data) > 0){
+							$this->db->insert_batch('parts_rejection_sales_invoice', $data); 
+						}
+						}
+						if($this->input->post("form_type") == "DebitNote"){
+							$success = 1;
+							$messages = "Debit note successfully created.";
+							// $this->addSuccessMessage('Debit note successfully created.');
+						}else if($this->input->post("form_type") == "ProformaInvoice"){
+							$success = 1;
+							$messages = "Proforma Invoice successfully created.";
+							// $this->addSuccessMessage('Proforma Invoice successfully created.');
+						}else{
+							$success = 1;
+							$messages = "Credit note successfully created.";
+							// $this->addSuccessMessage('Credit note successfully created.');
+						}
+						
+						// $this->redirectMessage('view_rejection_sales_invoice_by_id/' . $result);
+					} else {
+						$messages  = "Failed to create credit note";
+						// $this->addErrorMessage('Failed to create credit note ');
+						// $this->redirectMessage('rejection_invoices');
+					}
+				}else{
+					$messages = "Formate generation issue.";
+					// $this->addErrorMessage('Formate generation issue.');
+					// $this->redirectMessage('sales_invoice_released');
+				}
+			}else{
+				$messages = "Credit note for this invoce already exist.";
+				// $this->addErrorMessage('Credit note for this invoce already exist.');
+				// $this->redirectMessage('sales_invoice_released');
 			}
-		}else{
-			$rejectionNo = 1;
-		}
-
-		$rejection_invoice_no = $this->getSalesRejectionSerialNo() . $rejectionNo;
-
-		$data = array(
-			"customer_id" => $customer_id,
-			"rejection_invoice_no" => $rejection_invoice_no,
-			"document_number" => $customer_debit_note_no,
-			"debit_note_date" => $customer_debit_note_date,
-			"sales_invoice_number" => $client_sales_invoice_no,
-			"client_invoice_date" => $client_invoice_date,
-			"debit_basic_amt" => $debit_basic_amt,
-			"debit_gst_amt" => $debit_gst_amt,
-			"rejection_reasonky" => $rejection_reason,
-			"remark" => $remark,
-			"created_by" => $this->user_id,
-			"created_date" => $this->current_date,
-			"created_time" => $this->current_time,
-		);
-
-		$result = $this->Crud->insert_data("rejection_sales_invoice", $data);
-		if ($result) {
-			$this->addSuccessMessage('Rejection invoice successfully created.');
-			$this->redirectMessage('view_rejection_sales_invoice_by_id/' . $result);
-		} else {
-			$this->addErrorMessage('Failed to create rejection invoice ');
-			$this->redirectMessage('rejection_invoices');
-		}
+		else {
+				$messages = "Please add remark less than 280 characters.";
+				// $this->addErrorMessage('Please add remark less than 280 characters.');
+				// $this->redirectMessage('rejection_invoices');
+		}	
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        $result['redirect_url'] = base_url("view_rejection_sales_invoice_by_id/").$inserted_id;
+        // pr($result,1);
+        echo json_encode($result);
+        exit();
 	}
 
 
@@ -1049,6 +1548,7 @@ class SalesController extends CommonController
 	public function view_rejection_sales_invoice_by_id()
 	{
 		$sales_id = $this->uri->segment('2');
+		$data['sales_id'] = $sales_id;
 		$data['reject_remark'] = $this->Crud->read_data("reject_remark");
 		$data['new_sales'] = $this->Crud->get_data_by_id("rejection_sales_invoice", $sales_id, "id");
 		$data['customer'] = $this->Crud->get_data_by_id("customer", $data['new_sales'][0]->customer_id, "id");
@@ -1056,19 +1556,23 @@ class SalesController extends CommonController
 		$data['uom'] = $this->Crud->read_data("uom");
 		$child_part_list = $this->db->query('SELECT DISTINCT part_number,part_description,id FROM `customer_part` where customer_id = ' . $data['customer'][0]->id . '');
 		$data['customer_part'] = $child_part_list->result();
-		$data['session_type'] = $this->session->userdata['type'];
+
 		$arr = array(
 			"rejection_sales_id" => $sales_id,
 		);
-
-		$data['parts_rejection_sales_invoice'] = $this->Crud->customQuery("
-			SELECT prs.*,c.part_number as part_number,c.part_description as part_description,c.id as customer_part_id
-			FROM parts_rejection_sales_invoice as prs
-			LEFT JOIN customer_part as c ON c.id = prs.part_id
-			WHERE prs.rejection_sales_id = '$sales_id'
-		");	
+		$parts_rejection_sales_invoice = $this->db->query('
+			SELECT prs.*,cp.uom as uom,gs.code as gst_code,cp.*,prs.id as id
+			FROM parts_rejection_sales_invoice as prs 
+			LEFT JOIN customer_part as cp ON cp.id = prs.part_id
+			LEFT JOIN gst_structure as gs ON gs.id = cp.gst_id
+			where prs.rejection_sales_id = ' . $sales_id . '');
+		$data['parts_rejection_sales_invoice'] = $parts_rejection_sales_invoice->result();
+		// $data['parts_rejection_sales_invoice'] = $this->Crud->get_data_by_id_multiple("parts_rejection_sales_invoice", $arr);
+		// pr($data['parts_rejection_sales_invoice']);
+		$data['transporter'] = $this->Crud->read_data("transporter");
+		$data['mode'] = ["N/A","Road","Rail","Air","Ship"];
 		$data['user_type'] = $this->session->userdata['type'];
-		// pr($data['parts_rejection_sales_invoice'],1);
+		
 		// $this->load->view('header');
 		$this->loadView('quality/view_rejection_sales_invoice_by_id', $data);
 	}
@@ -1077,7 +1581,7 @@ class SalesController extends CommonController
 	public function update_rejection_sales_invoice()
 	{
 		$id = $this->input->post('id');
-
+		$invoice_type = $this->input->post('invoice_type');
 		$rejection_invoice_no = $this->input->post('rejection_invoice_no');
 		$customer_debit_note_no = $this->input->post('customer_debit_note_no');
 		$customer_debit_note_date = $this->input->post('customer_debit_note_date');
@@ -1087,6 +1591,11 @@ class SalesController extends CommonController
 		$debit_gst_amt = $this->input->post('debit_gst_amt');
 		$rejection_reason = $this->input->post('rejection_reason');
 		$remark = $this->input->post('remark');
+		$mode = $this->input->post('mode');
+		$transporter = $this->input->post('transporter');
+        $vehicle_number = $this->input->post('vehicle_number');
+        $lr_number = $this->input->post('lr_number');
+        $freight_charges = $this->input->post('freight_charges');
 
 		$data = array(
 			"document_number" => $customer_debit_note_no,
@@ -1097,18 +1606,23 @@ class SalesController extends CommonController
 			"debit_gst_amt" => $debit_gst_amt,
 			"rejection_reasonky" => $rejection_reason,
 			"remark" => $remark,
+			"mode"=>$mode,
+			"transporter_id"=>$transporter,
+			"vehicle_number"=>$vehicle_number,
+			"lr_number"=>$lr_number,
+			"freight_charges"=>$freight_charges,
 			"created_by" => $this->user_id,
 		);
 		$messages = "";
         $success = 0;
 		$result = $this->Crud->update_data("rejection_sales_invoice", $data, $id);
 		if ($result) {
-			$messages = "Rejection invoice updated successfully.";
+			$messages = $invoice_type." updated successfully.";
 			$success = 1;
 			// $this->addSuccessMessage('Rejection invoice updated successfully.');
 			//$this->redirectMessage('view_rejection_sales_invoice_by_id/'. $result);
 		} else {
-			$messages = "Failed to create rejection invoice";
+			$messages = "Failed to update".$invoice_type;
 			// $this->addErrorMessage('Failed to create rejection invoice ');
 			//$this->redirectMessage('rejection_invoices');
 		}
@@ -1745,15 +2259,8 @@ class SalesController extends CommonController
             "data" => "due_days",
             "title" => "Due Days",
             "width" => "17%",
-            "className" => "dt-center",
+            "className" => "dt-center due_days_block",
 			
-        ];
-       
-        $column[] = [
-            "data" => "payment_receipt_date_formated",
-            "title" => "Payment Receipt Date",
-            "width" => "7%",
-            "className" => "dt-center",
         ];
         $column[] = [
             "data" => "amount_received",
@@ -1763,6 +2270,29 @@ class SalesController extends CommonController
 			'orderable' => false
         ];
         $column[] = [
+            "data" => "tds_amount",
+            "title" => "TDS",
+            "width" => "7%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+       
+       	$column[] = [
+            "data" => "bal_amnt",
+            "title" => "Balance Amount to Receive",
+            "width" => "7%",
+            "className" => "dt-center",
+			'orderable' => false
+        ];
+        $column[] = [
+            "data" => "payment_receipt_date_formated",
+            "title" => "Payment Receipt Date",
+            "width" => "7%",
+            "className" => "dt-center",
+        ];
+        
+        
+        $column[] = [
             "data" => "transaction_details",
             "title" => "Transaction Details",
             "width" => "7%",
@@ -1770,9 +2300,10 @@ class SalesController extends CommonController
 			'orderable' => false
         ];
         
+        
         $column[] = [
-            "data" => "bal_amnt",
-            "title" => "Balance Amount to Receive",
+            "data" => "remark_val",
+            "title" => "Remark",
             "width" => "7%",
             "className" => "dt-center",
 			'orderable' => false
@@ -1787,7 +2318,10 @@ class SalesController extends CommonController
         ];
        
 		
-		
+		$date_filter = date("Y/m/01") ." - ". date("Y/m/d");
+        $date_filter =  explode((" - "),$date_filter);
+        $data['start_date'] = $date_filter[0];
+        $data['end_date'] = $date_filter[1];
 		$data["data"] = $column;
         $data["is_searching_enable"] = true;
         $data["is_paging_enable"] = true;
@@ -1829,24 +2363,26 @@ class SalesController extends CommonController
         $base_url = $this->config->item("base_url");
 		
 		$data = $this->SalesModel->getReceivableReportView($condition_arr,$post_data["search"]);
-		
+		// pr($data,1);
 		foreach ($data as $key => $objs) {
 			$created_date_str = $objs['created_date'];
             
 			$payment_receipt_date_formated  = '';
 			$subtotal = round($objs['ttlrt'] - $objs['gstamnt'], 2);
-			$row_total = round($objs['ttlrt'], 2) + round($val['tcsamnt'], 2);
+			$row_total = round($objs['ttlrt'], 2) + round($objs['tcsamnt'], 2);
 			if (($objs['payment_receipt_date'] != '')) {
 				$payment_receipt_date_formated =  date("d/m/Y", strtotime($objs['payment_receipt_date']));
 			}
 			$data[$key]['subtotal'] = $subtotal;
 			$data[$key]['row_total'] = $row_total;
 			$data[$key]['payment_receipt_date_formated'] = $payment_receipt_date_formated;
-			$data[$key]['bal_amnt'] = $row_total - $val['amount_received'];
+			$tds_amount = $data[$key]['tds_amount'] = $objs['tds_amount'] > 0 ? $objs['tds_amount'] : 0;
+
+			// $data[$key]['bal_amnt'] = $row_total - $val['amount_received'] - $tds_amount;
 
 			// Create a DateTime object by specifying the format
 			$dateTime = DateTime::createFromFormat('d/m/Y', $created_date_str);
-		
+			$due_date = display_no_character("");
 			if ($dateTime && is_numeric($objs['payment_terms'])) {
 				// Convert payment_terms to an integer for days
 				$payment_terms_days = (int)$objs['payment_terms'];
@@ -1858,23 +2394,47 @@ class SalesController extends CommonController
 				$due_date = $dateTime->format('d/m/Y');
 		
 				
-			} else {
-				$due_date = '';
 			}
 
 			$today = new DateTime();
         
-			// Convert due date string to a DateTime object
-			$dueDateObject = DateTime::createFromFormat('d/m/Y', $due_date);
-			
-			// Calculate the interval between the due date and today's date
-			$interval = $today->diff($dueDateObject);
-			
-			// Get the difference in days
-			$due_days = $interval->format('%r%a');
+			$due_days = display_no_character("");
+            if($due_date != display_no_character("")){
+            	if(!empty($objs['payment_receipt_date']) && $objs['payment_receipt_date'] != "" && $objs['payment_receipt_date'] != NULL ){
+            		$sales_date = $objs['created_date'];
+            		$sales_date = DateTime::createFromFormat("d/m/Y", $sales_date);
+					// Format to the desired output
+					$sales_date = $sales_date->format("Y-m-d");
+            		$payment_receipt_date = $objs['payment_receipt_date'];
+            		$sales_date = new DateTime($sales_date);
+					$payment_receipt_date = new DateTime($payment_receipt_date);
+					// Calculate the difference
+					$interval = $sales_date->diff($payment_receipt_date);
+
+					// Get the difference in days
+					$due_days = $interval->days;
+
+                }else{
+                    $dueDateObject = DateTime::createFromFormat('d/m/Y', $due_date);
+                    // Calculate the interval between the due date and today's date
+					$interval = $today->diff($dueDateObject);
+					
+					// Get the difference in days
+					$due_days = $interval->format('%r%a');
+                }
+            	
+
+				$due_days_status = "normal";
+                if($due_days <= 0 && empty($objs['payment_receipt_date']))
+                {
+                    $due_days_status = "danger";
+                }
+
+			}
 
 			$data[$key]['due_date'] = $due_date;
 			$data[$key]['due_days'] = $due_days;
+			$data[$key]['due_days_status'] = $due_days_status;
 		}
 		
 		foreach ($data as $key => $value) {
@@ -1884,9 +2444,23 @@ class SalesController extends CommonController
 
 		$data["data"] = $data;
         $total_record = $this->SalesModel->getReceivableReportCount([], $post_data["search"]);
-		
+        $total_with_gst_val = 0;
+        $total_paid_amount = 0;
+        $total_balance_amount_to_pay = 0;
+        $total_tds_amount = 0;
+		foreach ($total_record as $key => $value) {
+			$row_total = round($value['ttlrt'],2) + round($value['tcsamnt'],2);
+			$total_with_gst_val += $row_total;
+			$total_paid_amount += $value['amount_received'];
+			$total_tds_amount += $value['tds_amount'];
+			$total_balance_amount_to_pay += $value['bal_amnt'];
+		}
         $data["recordsTotal"] = count($total_record);
         $data["recordsFiltered"] = count($total_record);
+        $data["total_with_gst_val"] = number_format($total_with_gst_val,2);
+        $data["total_paid_amount"] = number_format($total_paid_amount,2);
+        $data["total_balance_amount_to_pay"] = number_format($total_balance_amount_to_pay,2);
+        $data["total_tds_amount"] = number_format($total_tds_amount,2);
         echo json_encode($data);
 	}
 
@@ -1900,6 +2474,8 @@ class SalesController extends CommonController
 		$payment_receipt_date = $this->input->post('payment_receipt_date');
 		$amount_received = $this->input->post('amount_received');
 		$transaction_details = $this->input->post('transaction_details');
+		$tds = $this->input->post('tds');
+		$remark = $this->input->post('remark');
 		$check = $this->Common_admin_model->get_data_by_id_count("receivable_report", $this->input->post('sales_number'), "sales_number");
 		
 		if ($check == 0) 
@@ -1909,6 +2485,8 @@ class SalesController extends CommonController
 						"payment_receipt_date" => $payment_receipt_date,
 						"amount_received" => $amount_received,
 						"transaction_details" => $transaction_details,
+						"tds_amount" => $tds,
+						"remark" => $remark
 					);
 					$result = $this->Crud->insert_data("receivable_report", $data);
 			$message = "Updated Sucessfully";
@@ -1922,6 +2500,8 @@ class SalesController extends CommonController
 				"payment_receipt_date" => $payment_receipt_date,
 				"amount_received" => $amount_received,
 				"transaction_details" => $transaction_details,
+				"tds_amount" => $tds,
+				"remark" => $remark
 				
 			);
 			$result = $this->Crud->update_data_column("receivable_report", $data, $sales_number, "sales_number");

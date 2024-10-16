@@ -152,6 +152,44 @@ const page = {
         },
       });
     });
+    $(".edit_grn_qty_val").submit(function(e){
+        e.preventDefault();
+       
+        var href = $(this).attr("action");
+        var id = $(this).attr("id");
+        let flag = that.formValidate(id);
+
+        if(flag){
+          return;
+        }
+        var formData = new FormData($('.'+id)[0]);
+
+        $.ajax({
+          type: "POST",
+          url: href,
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function (response) {
+            var responseObject = JSON.parse(response);
+            var msg = responseObject.messages;
+            var success = responseObject.success;
+            if (success == 1) {
+              toastr.success(msg);
+              $(this).parents(".modal").modal("hide")
+              setTimeout(function(){
+                window.location.reload();
+              },1000);
+
+            } else {
+              toastr.error(msg);
+            }
+          },
+          error: function (error) {
+            console.error("Error:", error);
+          },
+        });
+      });
     $(document).on("click",".update_grn_qty_form",function(e){
      
       e.preventDefault();

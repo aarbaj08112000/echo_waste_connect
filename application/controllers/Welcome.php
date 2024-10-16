@@ -28,6 +28,7 @@ class Welcome extends CommonController
 		$this->load->model('SupplierParts');
 		$this->load->model('CustomerPart');
 		$this->load->model("welcome_model");
+        $this->load->model("crud");
 	}
 	public function test_tpl(){
 
@@ -9821,9 +9822,12 @@ class Welcome extends CommonController
             "className" => "dt-center",
         ];
 		
-		
-		
-		$data['box_data'] = $this->welcome_model->getSubConReportView();
+		  
+		$date_filter = date("Y/m/01") ." - ". date("Y/m/d");
+        $date_filter =  explode((" - "),$date_filter);
+        $data['start_date'] = $date_filter[0];
+        $data['end_date'] = $date_filter[1];
+		// $data['box_data'] = $this->welcome_model->getSubConReportView();
 		$data['display_arr'] = $display_arr;
 		$data['child_part_data'] = $child_part_data;
 		$data['customer_data'] = $customer_data;
@@ -9847,6 +9851,9 @@ class Welcome extends CommonController
         $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
         $data["admin_url"] = base_url();
         $data["base_url"] = base_url();
+        $data['customer_parts_data'] = $this->Crud->customQuery('SELECT id,part_number, part_description FROM `child_part`');
+        $data['supplier'] = $this->Crud->customQuery('SELECT * FROM `supplier`');
+        
 		// $this->load->view('header');
 		// $this->load->view('subcon_supplier_challan_part_report', $data);
 		// $this->load->view('footer');
@@ -9873,7 +9880,6 @@ class Welcome extends CommonController
         $base_url = $this->config->item("base_url");
 		
 		$data = $this->welcome_model->getSubConReportView($condition_arr,$post_data["search"]);
-		
 		foreach ($data as $key => $val) {
 			$data[$key]['value_qty'] = $val['qty'] * $val['part_rate'];
 			$data[$key]['value_qty_remaning'] = $val['remaning_qty'] * $val['part_rate'];
