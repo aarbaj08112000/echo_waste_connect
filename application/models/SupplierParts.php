@@ -78,7 +78,7 @@ class SupplierParts extends CI_Model {
             LEFT JOIN child_part_stock stock
             ON parts.id = stock.childPartId 
             AND stock.clientId = ".$this->Unit->getSessionClientId()." 
-            AND parts.sub_type not in ('Subcon grn', 'Subcon Regular') ORDER BY parts.id desc");
+            WHERE parts.sub_type not in ('Subcon grn') OR parts.sub_type in ('Subcon Regular') ORDER BY parts.id desc");
         return $part_details;
     }
 
@@ -244,6 +244,16 @@ class SupplierParts extends CI_Model {
                 );
             
             $result = $this->Crud->insert_data("child_part_stock", $stockData);
+            //add entries for this newly part for other clients too
+            $result = $this->Crud->customQueryUpdate("INSERT INTO child_part_stock (childPartId, clientId, created_id, date, time, timestamp)
+                    SELECT cp.childPartId, c.id, cp.created_id, cp.date, cp.time, cp.timestamp
+                    FROM (SELECT DISTINCT childPartId, created_id, date, time, timestamp FROM child_part_stock) cp
+                    CROSS JOIN client c
+                    LEFT JOIN child_part_stock stock
+                    ON cp.childPartId = stock.childPartId
+                    AND c.id = stock.clientId
+                    WHERE stock.childPartId IS NULL AND cp.childPartId = ".$supplierPartId);
+
             
         return $result;
     }
@@ -694,6 +704,7 @@ class SupplierParts extends CI_Model {
     }
 
     public function getGNRepotData($condition_arr = [],$search_params = []){
+        $clientId = $this->Unit->getSessionClientId();
         $this->db->select('
             grn.inwarding_id, 
             inward.grn_number, 
@@ -714,7 +725,7 @@ class SupplierParts extends CI_Model {
             po_parts.tax_id, 
             po_parts.part_id, 
             po_parts.rate, 
-            grn.accept_qty,
+            grn.accept_qty as total_accept_qty,
             tax.igst, 
             tax.sgst, 
             tax.cgst, 
@@ -739,12 +750,19 @@ class SupplierParts extends CI_Model {
         $this->db->join('gst_structure tax', 'tax.id = po_parts.tax_id', 'inner');
         $this->db->join('supplier s', 's.id = po.supplier_id', 'inner');
         // $this->db->order_by('grn.id', 'DESC');
+        $this->db->where('po.clientId', $clientId);
         
-        if(is_valid_array($search_params) && $search_params['month_number'] > 0){
-            $this->db->where('grn.created_month', $search_params['month_number']);
-        }
-        if(is_valid_array($search_params) && $search_params['year'] > 0){
-            $this->db->where('grn.created_year', $search_params['year']);
+        // if(is_valid_array($search_params) && $search_params['month_number'] > 0){
+        //     $this->db->where('grn.created_month', $search_params['month_number']);
+        // }
+        // if(is_valid_array($search_params) && $search_params['year'] > 0){
+        //     $this->db->where('grn.created_year', $search_params['year']);
+        // }
+        if ($search_params["date_range"] != "") {
+                $date_filter =  explode((" - "),$search_params["date_range"]);
+                $data['start_date'] = $date_filter[0];
+                $data['end_date'] = $date_filter[1];
+               $this->db->where("STR_TO_DATE(grn.created_date, '%d-%m-%Y') BETWEEN '".$date_filter[0]."' AND '".$date_filter[1]."'");
         }
 
         if (!empty($search_params['value'])) {
@@ -771,7 +789,6 @@ class SupplierParts extends CI_Model {
     
             $this->db->group_end(); // End the group of OR conditions
         }
-
         if (count($condition_arr) > 0) {
             $this->db->limit($condition_arr["length"], $condition_arr["start"]);
             if ($condition_arr["order_by"] != "") {
@@ -787,6 +804,7 @@ class SupplierParts extends CI_Model {
     }
 
     public function getGNRepotDataCount($condition_arr = [],$search_params = []){
+        $clientId = $this->Unit->getSessionClientId();
         $this->db->select('count(grn.id) as tot_record');
         $this->db->from('grn_details grn');
         $this->db->join('inwarding inward', 'inward.id = grn.inwarding_id', 'inner');
@@ -796,11 +814,18 @@ class SupplierParts extends CI_Model {
         $this->db->join('uom u', 'u.id = po_parts.uom_id', 'inner');
         $this->db->join('gst_structure tax', 'tax.id = po_parts.tax_id', 'inner');
         $this->db->join('supplier s', 's.id = po.supplier_id', 'inner');
-        if(is_valid_array($search_params) && $search_params['month_number'] > 0){
-            $this->db->where('grn.created_month', $search_params['month_number']);
-        }
-        if(is_valid_array($search_params) && $search_params['year'] > 0){
-            $this->db->where('grn.created_year', $search_params['year']);
+        $this->db->where('po.clientId', $clientId);
+        // if(is_valid_array($search_params) && $search_params['month_number'] > 0){
+        //     $this->db->where('grn.created_month', $search_params['month_number']);
+        // }
+        // if(is_valid_array($search_params) && $search_params['year'] > 0){
+        //     $this->db->where('grn.created_year', $search_params['year']);
+        // }
+        if ($search_params["date_range"] != "") {
+                $date_filter =  explode((" - "),$search_params["date_range"]);
+                $data['start_date'] = $date_filter[0];
+                $data['end_date'] = $date_filter[1];
+               $this->db->where("STR_TO_DATE(grn.created_date, '%d-%m-%Y') BETWEEN '".$date_filter[0]."' AND '".$date_filter[1]."'");
         }
 
         if (!empty($search_params['value'])) {
@@ -950,10 +975,11 @@ class SupplierParts extends CI_Model {
             po.*, 
             inward.*, 
             supplier.*, 
-            child_part.*
+            child_part.*,
+            inward.grn_number as grn_number_val
         ');
         $this->db->from('grn_details grn');
-        $this->db->join('new_po po', 'po.id = grn.po_number', 'left');
+        $this->db->join('new_po po', 'po.id = grn.po_number', 'inner');
         $this->db->join('inwarding inward', 'inward.id = grn.inwarding_id AND inward.status = "validate_grn"', 'left');
         $this->db->join('supplier supplier', 'supplier.id = po.supplier_id', 'left');
         $this->db->join('child_part child_part', 'child_part.id = grn.part_id', 'left');
@@ -1073,7 +1099,7 @@ class SupplierParts extends CI_Model {
         $this->db->join('uom uom_data', 'parts.uom_id = uom_data.id', 'left');
         $this->db->join('part_type child_part_type', 'parts.child_part_id = child_part_type.id', 'left');
         $this->db->join('grn_details', 'parts.id = grn_details.part_id', 'left');
-        $this->db->join('inwarding inw', 'inw.id = grn_details.inwarding_id', 'left');
+        $this->db->join('inwarding inw', "inw.id = grn_details.inwarding_id AND inw.delivery_unit = '".$this->Unit->getSessionClientUnitName()."'", 'left');
         $this->db->join('job_card_details', 'parts.part_number = job_card_details.item_number', 'left');
         $this->db->group_by('parts.id');
         // $this->db->order_by('parts.id', 'desc');
@@ -1137,11 +1163,15 @@ class SupplierParts extends CI_Model {
         $this->db->join('uom uom_data', 'parts.uom_id = uom_data.id', 'left');
         $this->db->join('part_type child_part_type', 'parts.child_part_id = child_part_type.id', 'left');
         $this->db->join('grn_details', 'parts.id = grn_details.part_id', 'left');
+        $this->db->join('inwarding inw', "inw.id = grn_details.inwarding_id AND inw.delivery_unit = '".$this->Unit->getSessionClientUnitName()."'", 'left');
         $this->db->join('job_card_details', 'parts.part_number = job_card_details.item_number', 'left');
         $this->db->group_by('parts.id');
         // if(is_valid_array($search_params) && $search_params['customer_part_id'] > 0){
         //     $this->db->where('s.customer_id', $search_params['customer_part_id']);
-        // }        
+        // }  
+        if(is_valid_array($search_params) && $search_params['part_id'] > 0){
+            $this->db->where('parts.id', $search_params['part_id']);
+        }      
 
         if (!empty($search_params['value'])) {
             $keyword = $search_params['value'];

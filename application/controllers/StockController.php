@@ -34,12 +34,9 @@ class StockController extends CommonController
 
 	public function part_stocks_view($filter_part_id = 0, $filter_client='') {
 
-		if ($filter_part_id !='ALL' && $filter_part_id != '') {
-			$data['child_part_list'] = $this->SupplierParts->getSupplierPartById($filter_part_id);
-		} else if ($filter_part_id == 'ALL') {
+		
 			$data['child_part_list'] = $this->SupplierParts->readSupplierParts();
-			$fetchedList = true;
-		} 
+			
 		$stock_column_name = $this->Unit->getStockColNmForClientUnit();
 
 		//FOR SHEET ONLY
@@ -237,16 +234,12 @@ class StockController extends CommonController
 
 		// pr($this->db->last_query(),1);
 		
-		if(!empty($filter_part_id)) {
-			$data['filter_part_id'] = $filter_part_id;
-		}
+		
 		
 		$data['customer_part_data_new_updated'] = $this->Crud->customQuery('SELECT DISTINCT part_number, id FROM `customer_parts_master` ');
-		if($fetchedList == true){
-			$data['supplier_part_select_list']  = $data['child_part_list'];
-		}else{
-			$data['supplier_part_select_list'] = $this->SupplierParts->readSupplierParts();
-		}
+		
+		$data['supplier_part_select_list']  = $data['child_part_list'];
+		
 
 		
 		$this->loadView('store/part_stocks', $data);
@@ -502,8 +495,8 @@ class StockController extends CommonController
 		);
 
 		$query = $this->InhouseParts->updateStockById($data_update_child_part, $child_part[0]->id);
-		// $customerPartDetails = $this->CustomerPart->getCustomerPartOnlyById($customer_part_number);
-		$query2 = $this->CustomerPart->updateStockById($data_update_new_stock_customer_partt, $customer_part_data[0]->id);
+		$customerPartDetails = $this->CustomerPart->getCustomerPartByPartNumber($customer_part_number);
+		$query2 = $this->CustomerPart->updateStockById($data_update_new_stock_customer_partt, $customerPartDetails[0]->id);
 		$success = 0;
         $messages = "Something went wrong.";
 		if ($query) {

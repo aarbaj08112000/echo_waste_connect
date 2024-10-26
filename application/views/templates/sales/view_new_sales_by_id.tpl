@@ -30,7 +30,7 @@
           <input type="hidden" value="<%$new_sales[0]->sales_number %>" id="invoice_no" class="form-control">
           <input type="hidden" value="<%$new_sales[0]->sales_number %>" id="sales_number" class="form-control">
             <!-- /.card -->
-            <%if empty($e_invoice_status) &&  $new_sales[0]->status == "pending"%>
+            <%if (empty($e_invoice_status) &&  $new_sales[0]->status == "pending" ) || $new_sales[0]->status == "unlocked"%>
             <div class="card p-0 mt-4">
                <div class="card-header">
                   <form action="<%$base_url%>generate_new_sales_update" method="POST">
@@ -41,8 +41,8 @@
                      </div>
                      <div class="row">
                         <div class="col-lg-4">
-                           <div class="form-group">
-                              <label for="">Transport Mode<span class="text-danger">*</span></label>
+                           <div class="form-group mb-3">
+                              <label for="" class="form-label">Transport Mode<span class="text-danger">*</span></label>
                               <select name="mode" class="form-control" required>
                                  <option value="">Select</option>
                                  <option value="1" <%if $new_sales[0]->mode == '1'%>selected<%/if%>>Road</option>
@@ -53,8 +53,8 @@
                            </div>
                         </div>
                         <div class="col-lg-4">
-                           <div class="form-group">
-                              <label for="">Transporter<span class="text-danger">*</span></label>
+                           <div class="form-group mb-3">
+                              <label for=""  class="form-label">Transporter<span class="text-danger">*</span></label>
                               <select name="transporter" required id="transporter" class="form-control select2">
                                  <option value="">Select</option>
                                  <%foreach from=$transporter item=tr%>
@@ -64,32 +64,64 @@
                            </div>
                         </div>
                         <div class="col-lg-4">
-                           <div class="form-group">
-                              <label for="">Vehicle No.<span class="text-danger">*</span></label>
+                           <div class="form-group mb-3">
+                              <label for=""  class="form-label">Vehicle No.<span class="text-danger">*</span></label>
                               <input type="text" placeholder="Enter Vehicle No" name="vehicle_number" value="<%$new_sales[0]->vehicle_number%>" class="form-control"/>
                            </div>
                         </div>
                         <div class="col-lg-4">
-                           <div class="form-group">
-                              <label for="">Distance<span class="text-danger">*</span></label>
+                           <div class="form-group mb-3">
+                              <label for=""  class="form-label">Distance<span class="text-danger">*</span></label>
                               <input type="text" placeholder="Enter Distance of Transportation" value="<%$new_sales[0]->distance%>" required name="distance" class="form-control">
                            </div>
                         </div>
                         <div class="col-lg-4">
-                           <div class="form-group">
-                              <label for="">L.R No</label>
+                           <div class="form-group mb-3">
+                              <label for=""  class="form-label">L.R No</label>
                               <input type="text" placeholder="Enter L.R No" name="lr_number" value="<%$new_sales[0]->lr_number%>" class="form-control">
                            </div>
                         </div>
                         <div class="col-lg-4">
-                           <div class="form-group">
-                              <label for="">PO Remark </label>
+                           <div class="form-group mb-3">
+                              <label for=""  class="form-label">PO Remark </label>
                               <input type="text" placeholder="Enter Remark" value="<%$new_sales[0]->remark%>" name="remark" class="form-control">
                               <input type="hidden" value="<%$uri_segment_2%>" name="id" class="form-control">
                            </div>
                         </div>
-                        <div class="col-lg-4">
-                           <div class="form-group">
+                        <div class="col-lg-4 mb-3">
+                            <div class="form-group mb-3 ">
+                               <label class="form-label">Apply Discount</label>
+                               <br>
+                               <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="isDiscount" <%if ($new_sales[0]->discountType !='NA')%>checked<%/if%> value="Yes" onchange="toggleDiscountSelection()" class="form-check-input">
+                                <label class="form-check-label" for="isDiscount">Yes</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="isDiscount" <%if ($new_sales[0]->discountType === 'NA') %>checked<%/if%> value="No" onchange="toggleDiscountSelection()">
+                                <label class="form-check-label" for="isDiscount">No</label>
+                              </div>
+                                
+                            </div>
+                        </div>
+                        <div class="col-lg-4" id="discountTypeSection">
+                          <div class="form-group mb-3">
+                             <label class="form-label">Discount Type</label><span class="text-danger"><br></span>
+                             <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="discountType" id="discountType2" <%if ($new_sales[0]->discountType === 'Percentage') %>checked<%/if%> value="Percentage">
+                                <label class="form-check-label" for="discountType">Percentage</label>
+                              </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-4" id="discountValueSection">
+                           <div class="form-group mb-3">
+                              <label class="form-label">Discount</label>
+                              <input type="text" step="any" name="discount" id="discountId" value="<%$new_sales[0]->discount %>" class="form-control onlyNumericInput" placeholder="Discount" >
+                              <input type="hidden" name="discount_amount" id="discountValueInput1" value="<%$discount_amount %>" />
+                              <input type="hidden" name="final_basic_total" id="final_basic_total" value="<%$final_basic_total %>" />
+                           </div>
+                        </div>
+                        <div class="col-lg-12">
+                           <div class="form-group mb-3">
                               <button type="submit" class="btn btn-danger mt-4">Update</button>
                            </div>
                         </div>
@@ -100,7 +132,7 @@
             </div>
             <%/if%>
             
-            <%if $new_sales[0]->status == "Cancelled" || (empty($e_invoice_status) &&  $new_sales[0]->status == "pending")%>
+            <%if $new_sales[0]->status == "Cancelled" || $new_sales[0]->status == "unlocked" || (empty($e_invoice_status) &&  $new_sales[0]->status == "pending")%>
             <div class="card p-0 mt-4">
                <div class="card-header">
                     <div class="row">
@@ -199,21 +231,130 @@
                         <p class="tgdp-rgt-tp-ttl">PO Remark</p>
                         <p class="tgdp-rgt-tp-txt"><%display_no_character($new_sales[0]->remark)%></p>
                      </div>
+                     <div class="tgdp-rgt-tp-sect">
+                        <p class="tgdp-rgt-tp-ttl">PO Remark</p>
+                        <p class="tgdp-rgt-tp-txt"><%display_no_character($new_sales[0]->remark)%></p>
+                     </div>
+                     <div class="tgdp-rgt-tp-sect">
+                        <p class="tgdp-rgt-tp-ttl">Apply Discount</p>
+                        <p class="tgdp-rgt-tp-txt">
+                          <%if ($new_sales[0]->discountType !='NA')%>
+                          Yes
+                          <%else%>
+                          No
+                          <%/if%>
+                        </p>
+                     </div>
+                     <%if ($new_sales[0]->discountType !='NA')%>
+                     <div class="tgdp-rgt-tp-sect">
+                        <p class="tgdp-rgt-tp-ttl">Discount Type</p>
+                        <p class="tgdp-rgt-tp-txt"><%display_no_character($new_sales[0]->discountType)%></p>
+                     </div>
+                     <div class="tgdp-rgt-tp-sect">
+                        <p class="tgdp-rgt-tp-ttl">Discount</p>
+                        <p class="tgdp-rgt-tp-txt"><%display_no_character($new_sales[0]->discount)%></p>
+                     </div>
+                     <%/if%>
                   </div>
                </div>
             </div>
             <%/if%>
-            <%if $new_sales[0]->status == "lock" || $new_sales[0]->status == "pending"%>
+            <%if $new_sales[0]->status == "lock" || $new_sales[0]->status == "pending" || $new_sales[0]->status == "unlocked"%>
             <div class="card mt-3">
                <div class="card-header pdf-btn-block">
                     <div class="row">
-                    <%if $new_sales[0]->status == "lock" || $new_sales[0]->status == "pending"%>
+                      <div class="col-lg-1 packaging-sticker" >
+                        <div class="form-group">
+                            <button type="button" class="btn btn-info" data-bs-toggle="modal"
+                                data-bs-target="#printForTally" id="printSticker">
+                            Packaging Sticker
+                            </button>
+
+                        </div>
+                        <!-- Modal -->
+                        <div class="modal fade" id="printForTally" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Packaging Stickers</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <section class="content" id="observationTableData">
+                                </section>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <%if $new_sales[0]->status == "lock" || $new_sales[0]->status == "pending" || $new_sales[0]->status == "unlocked"%>
                     <div class="col-lg-1 view-original" >
                         <div class="form-group ">
-                            <a class="btn btn-success" href="<%$base_url%>view_generate_sales_invoice/<%$uri_segment_2%>" target="_blank">View Original</a>
+                            <a class="btn btn-success" href="<%$base_url%>view_original_sales_invoice/<%$uri_segment_2%>" target="_blank">View Original</a>
                         </div>
                     </div>
                     <%/if%>
+                    <%if $new_sales[0]->status == "pending" || $new_sales[0]->status == "unlocked"%>
+                      <%if $po_parts%>
+                            <%if $session_type == 'admin' || $session_type == 'Admin' || $session_type == 'Sales'%>
+                                    <%assign var="flag" value=0%>
+                                    <%assign var="final_po_amount" value=0%>
+                                    <%assign var="i" value=1%>
+                                    <%foreach from=$po_parts item=p%>
+                                    <%if empty($p->tax_id)%>
+                                    <%assign var="flag" value=1%>
+                                    <%/if%>
+                                    <%/foreach%>
+                                    <%if $flag == 0%>
+                                    <div class="col-lg-1 view-original" >
+                                    <button type="button" class="btn btn-info ml-1 " data-bs-toggle="modal" data-bs-target="#lock">
+                                    Lock Invoice
+                                    </button>
+                                    </div>
+                                        <%if $new_sales[0]->status == "pending" %>
+                                        <div class="col-lg-1 view-original" >
+                                        <button type="button" class="btn btn-danger ml-1" data-bs-toggle="modal" data-bs-target="#deleteInvoice">
+                                        Delete Invoice
+                                        </button>
+                                      </div>
+                                        <%/if%>
+                                    <!-- delete model -->
+                                    <div class="modal fade" id="deleteInvoice" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Delete Invoice</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <form action="<%$base_url%>delete_sale_invoice" method="POST" id="delete_sale_invoice" class="delete_sale_invoice">
+                                                        <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <label for=""><b>Are you sure want to Delete this invoice ?</b> </label>
+                                                            <input type="hidden" name="sales_id" value="<%$new_sales[0]->id%>" required class="form-control">
+                                                            <input type="hidden" name="status" value="<%$new_sales[0]->status%>" required class="form-control">
+                                                        </div>
+                                                        </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary">Delete</button>
+                                            </div>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <%else%>
+                                    <div class='alert alert-danger' style='width:400px'>Error : Check GST Of All Parts, to lock this invoice</div>
+                                    <%/if%>
+                            <%/if%>
+                      <%/if%>
+                    <%/if%>
+                  
                     <%if $new_sales[0]->status == "lock"%>
                     <div class="col-lg-1 original" >
                         <div class="form-group">
@@ -315,30 +456,7 @@
                     <%/if%>
 
                   
-                    <div class="col-lg-1 packaging-sticker" >
-                        <div class="form-group">
-                            <button type="button" class="btn btn-info" data-bs-toggle="modal"
-                                data-bs-target="#printForTally" id="printSticker">
-                            Packaging Sticker
-                            </button>
-
-                        </div>
-                        <!-- Modal -->
-                        <div class="modal fade" id="printForTally" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                                <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Packaging Stickers</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <section class="content" id="observationTableData">
-                                </section>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    
                <div>
             </div>
             <!-- Print selection -->
@@ -386,10 +504,11 @@
             </div>
             </div>
             <%/if%>
-           
+          
             <div class="card mt-3">
                <div class="card-header">
-               <%if $new_sales[0]->status == "pending"%>
+
+               <%if $new_sales[0]->status == "pending" || $new_sales[0]->status == "unlocked"%>
                      <form action="<%$base_url%>add_sales_parts" method="post" id="salesForm">
                         <div class="row">
                            <div class="col-lg-4">
@@ -426,11 +545,13 @@
                                  <input type="hidden" name="sales_number" value="<%$new_sales[0]->sales_number%>" placeholder="Enter QTY " required class="form-control">
                                  <input type="hidden" name="sales_id" value="<%$new_sales[0]->id%>" placeholder="Enter QTY " required class="form-control">
                                  <input type="hidden" name="customer_id" value="<%$customer[0]->id%>" placeholder="Enter QTY " required class="form-control">
+                                 <input type="hidden" name="discountType" value="<%$new_sales[0]->discountType %>" />
+                           <input type="hidden" name="discount" value="<%$new_sales[0]->discount %>" />
                               </div>
                            </div>
                            <div class="col-lg-2">
                               <div class="form-group mt-2">
-                                 <%if $new_sales[0]->status == "pending"%>
+                                 <%if $new_sales[0]->status == "pending" || $new_sales[0]->status == "unlocked"%>
                                  <button type="submit" class="btn btn-info btn mt-3">Add</button>
                                  <%/if%>
                               </div>
@@ -438,79 +559,37 @@
                         </div>
                      </form>
                 <%/if%>
-                <%if $new_sales[0]->status == "pending"%>
-                  <div class="mt-3">
-                  <%if $po_parts%>
-                        <%if $session_type == 'admin' || $session_type == 'Admin' || $session_type == 'Sales'%>
-                                <%assign var="flag" value=0%>
-                                <%assign var="final_po_amount" value=0%>
-                                <%assign var="i" value=1%>
-                                <%foreach from=$po_parts item=p%>
-                                <%if empty($p->tax_id)%>
-                                <%assign var="flag" value=1%>
-                                <%/if%>
-                                <%/foreach%>
-                                <%if $flag == 0%>
-                                <button type="button" class="btn btn-danger ml-1" data-bs-toggle="modal" data-bs-target="#lock">
-                                Lock Invoice
-                                </button>
-                                    <%if $new_sales[0]->status == "pending"%>
-                                    <button type="button" class="btn btn-danger ml-1" data-bs-toggle="modal" data-bs-target="#deleteInvoice">
-                                    Delete Invoice
-                                    </button>
-                                    <%/if%>
-                                <!-- delete model -->
-                                <div class="modal fade" id="deleteInvoice" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Delete Invoice</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="row">
-                                                <form action="<%$base_url%>delete_sale_invoice" method="POST">
-                                                    <div class="col-lg-12">
-                                                    <div class="form-group">
-                                                        <label for=""><b>Are you sure want to Delete this invoice ?</b> </label>
-                                                        <input type="hidden" name="sales_id" value="<%$new_sales[0]->id%>" required class="form-control">
-                                                        <input type="hidden" name="status" value="<%$new_sales[0]->status%>" required class="form-control">
-                                                    </div>
-                                                    </div>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                        <button type="submit" class="btn btn-primary">Delete</button>
-                                        </div>
-                                        </div>
-                                        </form>
+                 <div class="row pdf-btn-block">
+                <%if ((empty($new_sales[0]->Status) && empty($new_sales[0]->EwbStatus))) %>
+                        <%if ( $new_sales[0]->status == "lock")  %>
+                                    <div class="col-lg-1 extra-copy">
+                                          <button type="button" class="btn btn-danger " data-bs-toggle="modal" data-bs-target="#unlock">Unlock</button>
                                     </div>
-                                </div>
-                                <%else%>
-                                <div class='alert alert-danger' style='width:400px'>Error : Check GST Of All Parts, to lock this invoice</div>
-                                <%/if%>
+                        <%else if ( $new_sales[0]->status == "unlocked") %>
+                                    <div class="col-lg-2  packaging-sticker">
+                                          <button type="button" title="Remove Sales Details for Reuse" class="btn btn-danger mt-4" data-bs-toggle="modal" data-bs-target="#reuseInvoice">Reuse Sales Invoice</button>
+                                      
+                                    </div>
                         <%/if%>
-                  <%/if%>
-                  <%/if%>
-                  <%if $new_sales[0]->status == "lock"%>
-                  <%if $session_type == 'admin' || $session_type == 'Admin'%>
-                  <button type="button" disabled class="btn btn-success ml-1" data-bs-toggle="modal">
-                  Invoice already released
-                  </button>
-                  <%/if%>
+                <%/if%>
+                <%if $new_sales[0]->status == "lock"%>
+                    <%if $session_type == 'admin' || $session_type == 'Admin'%>
+                    <div class="col-lg-2 packaging-sticker">
+                    <button type="button" disabled class="btn btn-success ml-1" data-bs-toggle="modal">
+                    Invoice already released
+                    </button>
+                  </div>
+                    <%/if%>
                   <%else%>
-                  <%if $new_sales[0]->status != "pending" && $new_sales[0]->status != "Cancelled"%>
-                  <button type="button" disabled class="btn btn-success ml-1" data-bs-toggle="modal">
-                  Invoice already released
-                  </button>
-                  <%elseif $new_sales[0]->status == "Cancelled"%>
-                  <button type="button" disabled class="btn btn-success ml-1" data-bs-toggle="modal">
-                  Invoice already Cancelled
-                  </button>
-                  <%/if%>
+                    <%if ($new_sales[0]->status != "pending" && $new_sales[0]->status != "Cancelled") && $new_sales[0]->status != "unlocked"%>
+                    <button type="button" disabled class="btn btn-success ml-1" data-bs-toggle="modal">
+                    Invoice already released
+                    </button>
+                    <%elseif $new_sales[0]->status == "Cancelled"%>
+                    <button type="button" disabled class="btn btn-success ml-1" data-bs-toggle="modal">
+                    Invoice already Cancelled
+                    </button>
+                    <%/if%>
                   <%/if%>
                   
                   <!-- Modal -->
@@ -555,13 +634,16 @@
                            </div>
                            <div class="modal-body">
                               <div class="row">
-                                 <form action="<%$base_url%>lock_invoice" method="POST">
+                                 <form action="<%$base_url%>lock_invoice" method="POST" id="lock_invoice" class="lock_invoice">
                                     <div class="col-lg-12">
                                        <div class="form-group">
                                           <label for=""><b>Are you sure you want to Lock this invoice?</b> </label>
                                           <input type="hidden" name="new_po_id" id="new_po_id" value="" required class="form-control">
                                           <input type="hidden" name="id" value="<%$new_sales[0]->id%>" required class="form-control">
                                           <input type="hidden" name="status" value="lock" required class="form-control">
+                                          <input type="hidden" name="discount_amount" id="discountValueInput" value="<%$discount_amount %>" />
+                                             <input type="hidden" name="sales_amount" id="sales_amount" value="<%$final_po_amount %>" />
+                                             <input type="hidden" name="sales_gst_amount" id="sales_gst_amount" value="<%$sales_gst_amount %>" />
                                        </div>
                                     </div>
                               </div>
@@ -574,6 +656,67 @@
                         </form>
                      </div>
                   </div>
+                  <!-- Lock Model -->
+                     <div class="modal fade" id="unlock" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                           <div class="modal-content">
+                              <div class="modal-header">
+                                 <h5 class="modal-title" id="exampleModalLabel">Unlock</h5>
+                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                 </button>
+                              </div>
+                              <div class="modal-body">
+                                 <div class="row">
+                                    <form action="<%base_url('invoice_unlock') %>" method="POST" id="invoice_unlock" class="invoice_unlock">
+                                       <div class="col-lg-12">
+                                          <div class="form-group">
+                                             <label for=""><b>Are you sure want to unlock this invoice?</b> </label>
+                                             <input type="hidden" name="sales_id" value="<%$new_sales[0]->id %>" required class="form-control"/>
+                                             <input type="hidden" name="sales_number" value="<%$new_sales[0]->sales_number%>" required class="form-control">
+                                             <input type="hidden" name="status" value="unlocked" required class="form-control"/>
+                                          </div>
+                                       </div>
+                                 </div>
+                              </div>
+                              <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                              <button type="submit" class="btn btn-primary">Unlock</button>
+                              </div>
+                           </div>
+                           </form>
+                        </div>
+                     </div>
+                     <!-- Reuse Model -->
+                     <div class="modal fade" id="reuseInvoice" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                           <div class="modal-content">
+                              <div class="modal-header">
+                                 <h5 class="modal-title" id="exampleModalLabel">Remove Sales Details</h5>
+                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">                                 </button>
+                              </div>
+                              <div class="modal-body">
+                                 <div class="row">
+                                    <form action="<%base_url('reuse_invoice')%>" method="POST" class="reuse_invoice" id="reuse_invoice">
+                                       <div class="col-lg-12">
+                                          <div class="form-group">
+                                             <label for=""><b>Are you sure to remove all the sales details and reuse this invoice ? 
+                                                <br><br>NOTE: This will remove all the sales details including customer, parts, address and other details from "<?php echo $new_sales[0]->sales_number; ?>".
+                                             </b> </label>
+                                             <input type="hidden" name="sales_id" value="<%$new_sales[0]->id %>" required class="form-control"/>
+                                             <input type="hidden" name="sales_number" value="<%$new_sales[0]->sales_number%>" required class="form-control">
+                                             <input type="hidden" name="status" value="reuseInvoice" required class="form-control"/>
+                                          </div>
+                                       </div>
+                                 </div>
+                              </div>
+                              <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                              <button type="submit" class="btn btn-primary">Reuse Invoice</button>
+                              </div>
+                           </div>
+                           </form>
+                        </div>
+                     </div>
                   <div class="modal fade" id="delete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                      <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
@@ -615,15 +758,18 @@
                      <table  width="100%" border="1" cellspacing="0" cellpadding="0" class="table table-striped scrollable" style="border-collapse: collapse;" border-color="#e1e1e1" id="part_data">
                         <thead>
                            <tr>
-                              <th>Sr No</th>
+                              <!-- <th>Sr No</th> -->
                               <th>Part Number</th>
                               <th>Part Description</th>
                               <th>Tax Structure</th>
                               <th>UOM</th>
                               <th>QTY</th>
                               <th>Price</th>
-                              <%if $new_sales[0]->status == "pending"%>
+                              <%if $new_sales[0]->status == "pending" || $new_sales[0]->status == "unlocked"%>
                               <th>Actions</th>
+                              <%/if%>
+                              <%if $new_sales[0]->discountType != "NA"%>
+                              <th>Discount</th>
                               <%/if%>
                               <th>CGST</th>
                               <th>SGST</th>
@@ -636,23 +782,29 @@
                         </thead>
                         <tbody>
                            <%if $po_parts%>
+                           <%assign var="sales_gst_amount" value=0%>
+                           <%assign var="discount_amount" value=0%>
+                           <%assign var="discountValue" value=0%>
                            <%foreach from=$po_parts item=p key=srNo%>
                            <%assign var="subtotal" value=$p->total_rate - $p->gst_amount%>
                            <%assign var="row_total" value=$p->total_rate + $p->tcs_amount%>
                            <%assign var="final_po_amount" value=$final_po_amount + $row_total%>
+                           <%assign var="sales_gst_amount" value=$sales_gst_amount + $p->gst_amount%>
+                           <%assign var="discountValue" value=$discountValue + $p->discounted_amount%>
+                           <%assign var="discount_amount" value=$discount_amount + $p->discounted_amount%>
                            <%assign var="rate" value=$subtotal / $p->qty%>
                            <%if $p->part_price > 0%>
                            <%assign var="rate" value=$p->part_price%>
                            <%/if%>
                            <tr>
-                              <td><%$srNo + 1%></td>
+                              <!-- <td><%$srNo + 1%></td> -->
                               <td><%$child_part_data[$p->part_id][0]->part_number%></td>
                               <td><%$child_part_data[$p->part_id][0]->part_description%></td>
                               <td><%$gst_structure2[$p->part_id][0]->code%></td>
                               <td><%$p->uom_id%></td>
                               <td><%$p->qty%></td>
                               <td><%number_format($rate, 2)%></td>
-                              <%if $new_sales[0]->status == "pending"%>
+                              <%if $new_sales[0]->status == "pending" || $new_sales[0]->status == "unlocked"%>
                               <td>
                                  <button type="button" class="btn btn-danger ml-1" data-bs-toggle="modal" data-bs-target="#exampleModaldelete<%$srNo%>">
                                  Delete
@@ -689,6 +841,11 @@
                                  </div>
                               </td>
                               <%/if%>
+                              <%if $new_sales[0]->discountType != "NA"%>
+                              <td><%number_format($new_sales[0]->discount,2) %> 
+                                       <%if ($new_sales[0]->discountType === 'Percentage')%> % <%/if%> 
+                                 </td>
+                              <%/if%>
                               <td><%number_format($p->cgst_amount, 2)%></td>
                               <td><%number_format($p->sgst_amount, 2)%></td>
                               <td><%number_format($p->igst_amount, 2)%></td>
@@ -707,7 +864,13 @@
                            <%/if%>
                            <%if $po_parts%>
                            <tr >
-                              <th colspan='<%$noOfColumns%>' style="width: 100%;">Total</th>
+                              <th colspan='<%$noOfColumns%>' style="width: 100%;" class="text-right ">Total
+                              <%if ($new_sales[0]->discountType!='NA') %>
+                                  After Discount of 
+                                  <%if ($new_sales[0]->discountType === 'Amount') %> 
+                                    In Rs.<%$new_sales[0]->discount%> <%else%><%$new_sales[0]->discount %>%<%/if%></th>
+                                    <%/if%>
+                              </th>
                               <th style="width: 7.5%;"><%number_format($final_po_amount, 2)%></th>
                            </tr>
                            <%/if%>
@@ -727,6 +890,13 @@
 <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+<style type="text/css">
+  .form-check-input{
+    border: 1px solid #e1d5d5 !important;
+    border-radius: 50%;
+    border: 0px solid #d9dee3;
+  }
+</style>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script>
    $(document).ready(function() {
@@ -970,6 +1140,67 @@
            }
        });
    });
+       $(".lock_invoice,.delete_sale_invoice,.invoice_unlock,.reuse_invoice").submit(function(e){
+        e.preventDefault();
+       
+        var href = $(this).attr("action");
+        var id = $(this).attr("id");
+        var formData = new FormData($('.'+id)[0]);
+        $.ajax({
+          type: "POST",
+          url: href,
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function (response) {
+            var responseObject = JSON.parse(response);
+            var msg = responseObject.messages;
+            var success = responseObject.success;
+            if (success == 1) {
+              toastr.success(msg);
+              $(this).parents(".modal").modal("hide")
+              setTimeout(function(){
+                if(responseObject.redirect_url != undefined){
+                  window.location.href = responseObject.redirect_url;
+                }else{
+                  window.location.reload();
+                }
+              },1000);
+
+            } else {
+              toastr.error(msg);
+            }
+          },
+          error: function (error) {
+            console.error("Error:", error);
+          },
+        });
+      });
+
+
    
    });
+function toggleDiscountSelection() {
+         var isDiscountChecked = document.querySelector('input[name="isDiscount"]:checked').value;
+         //var defaultDiscount = $('#discountId').val();
+         // Show/Hide discount type and value based on the selection
+         if (isDiscountChecked === "Yes") {
+            document.getElementById('discountTypeSection').style.display = 'block';
+            document.getElementById('discountValueSection').style.display = 'block';
+         } else {
+            document.getElementById('discountTypeSection').style.display = 'none';
+            document.getElementById('discountValueSection').style.display = 'none';
+         }
+      }
+
+      // Initial check to show or hide on page load (if Yes/No is pre-selected)
+      document.addEventListener('DOMContentLoaded', function() {
+         toggleDiscountSelection();
+      });
+      // assign calcualted or provided discount value
+     document.getElementById('discountValueInput').value = "<%$discountValue%>";
+     document.getElementById('discountValueInput1').value = "<%$discountValue %>";
+     document.getElementById('final_basic_total').value = "<%$final_basic_total%>";
+     document.getElementById('sales_amount').value = "<%$final_po_amount%>";
+     document.getElementById('sales_gst_amount').value = "<%$sales_gst_amount%>";
 </script>

@@ -125,6 +125,16 @@
                         </select>
                      </div>
                   </div>
+                  <div class="col-lg-4">
+                     <div class="form-group mb-3">
+                        <label for="" class="form-label">Discount Type<span class="text-danger">*</span> </label>
+                        <select name="discount_type" required id="" class="form-control select2">
+                           <option value="N/A">N/A</option>
+                           <option value="PO Level">PO Level</option>
+                           <option value="Part Level">Part Level</option>
+                        </select>
+                     </div>
+                  </div>
                   <div class="col-lg-9">
                      <div class="form-group mb-3">
                         <label class="form-label" for="">Notes </label>

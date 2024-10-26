@@ -258,6 +258,7 @@
                        <th>Part Number</th>
                        <th>Part Description</th>
                        <th>UOM</th>
+                       <th>Tax Structure</th>
                        <th>PO QTY</th>
                        <th>Balance QTY</th>
                        <th>Price</th>
@@ -293,12 +294,15 @@
                                      <%assign var="data_present" value='no'%>
                                <%/if%>
                                <%assign var="subcon_po_inwarding_master" value=$p->subcon_po_inwarding_master%>
-                               <%if (empty($new_po[0]->process_id)) && $p->pending_qty > 0%>
+
+                               <%if (empty($new_po[0]->process_id)) %>
                     <tr>
+
                       <!-- <td><%$p->id %></td> -->
                        <td><%$child_part_data[0]->part_number %></td>
                        <td><%$child_part_data[0]->part_description %></td>
                        <td><%$uom_data[0]->uom_name %></td>
+                       <td><%$p->gst_structure_data[0]->code %></td>
                        <td><%$p->qty %></td>
                        <td><%$p->pending_qty %></td>
                        <td><%$part_rate_new %></td>
@@ -353,9 +357,9 @@
                        </td>
                        <td  class="text-center">
                        <%if ($data_present == "yes" && $status != "verifed") %>
-                       <button type="button" class="btn btn-primary " title="Update" data-bs-toggle="modal" data-bs-target="#exampleModa<%$i %>l">
-                       <i class="fa fa-edit"></i>
-                       </button>
+                       <a type="button" class=" " title="Update" data-bs-toggle="modal" data-bs-target="#exampleModa<%$i %>l">
+                       <i class="ti ti-edit"></i>
+                       </a>
                        <div class="modal fade" id="exampleModa<%$i %>l" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                        <div class="modal-dialog modal-dialog-centered" role="document">
                        <div class="modal-content">
@@ -441,11 +445,13 @@
                        <%else %>
                        <%if (empty($subcon_po_inwarding_master[0]->inwarding_qty)) %>
                        <form action="<%base_url('add_grn_qty_subcon_view') %>"
-                          method="post">
-                       <input type="number" required step="any"
-                       data-max="<%$p->pending_qty %>"
+                          method="post" id="add_grn_qty_subcon_view<%$i %>" class="add_grn_qty_subcon_view<%$i %> add_grn_qty_subcon_view custom-form">
+                        <div class="form-group">
+                       <input type="text"  step="any"
+                       data-max="<%$p->pending_qty %>"  data-min="1"
                           placeholder="Inwarding Qty" name="qty"
-                          class="form-control">
+                          class="form-control onlyNumericInput required-input">
+                        </div>
                        <input type="hidden" name="inwarding_id"
                           value="<%$inwarding_id %>" class="form-control">
                        <input type="hidden" placeholder="Inwarding Qty"
@@ -484,8 +490,8 @@
                        </td>
                        <td class="text-center">
                        <%if ($subcon_po_inwarding_master) %>
-                       <a class="btn btn-info"
-                          href="<%base_url('grn_subcon_view/') %><%$p->part_id %>/<%$new_po_id %>/<%$inwarding_data[0]->id %>/<%$p->part_id %>"><i class="fas fa-eye"></i></a>
+                       <a class="" type="button"
+                          href="<%base_url('grn_subcon_view/') %><%$p->part_id %>/<%$new_po_id %>/<%$inwarding_data[0]->id %>/<%$p->part_id %>"><i class="ti ti-eye"></i></a>
                        <%else if ($data_present == "yes") %>
                            
                        <%else if ($status == "not-verifed") %>

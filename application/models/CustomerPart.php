@@ -203,6 +203,17 @@ class CustomerPart extends CI_Model {
             
             $result = $this->Crud->insert_data("customer_parts_master_stock", $stockData);
             
+            //add entries for this newly customer part for other clients too
+            $result = $this->Crud->customQueryUpdate("INSERT INTO customer_parts_master_stock (customer_parts_master_id, clientId, created_id, date, time, timestamp)
+                SELECT cp.customer_parts_master_id, c.id, cp.created_id, cp.date, cp.time, cp.timestamp
+                FROM (SELECT DISTINCT customer_parts_master_id, created_id, date, time, timestamp FROM customer_parts_master_stock) cp
+                CROSS JOIN client c
+                LEFT JOIN customer_parts_master_stock stock
+                ON cp.customer_parts_master_id = stock.customer_parts_master_id
+                AND c.id = stock.clientId
+                WHERE stock.customer_parts_master_id IS NULL AND cp.customer_parts_master_id = " . $partId);
+
+            
         return $result;
     }
 

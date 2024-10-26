@@ -32,6 +32,21 @@ class NewEWayBillController extends CommonController {
 		 $this->load->model('NewGSTCommon');
 		 // $this->NewGSTCommon->echoToTriage($str);
 	 }
+	  /**
+   * Check if the record exists for einvoice and if not then insert else just need to update the data.
+   */
+  function checkEinvoiceAndInsert($new_sales_id,$data) {
+	//this should be checked before inserting...
+	$einv_salesRecord = $this->Crud->get_data_by_id("einvoice_res", $new_sales_id, "new_sales_id");
+	if (isset($einv_salesRecord) && isset($einv_salesRecord[0]->new_sales_id)) {
+		$resultUpdate = $this->Common_admin_model->update("einvoice_res", $data, "new_sales_id", $new_sales_id);
+	} else {
+		$insert = $this->Common_admin_model->insert('einvoice_res', $data);
+	}
+
+  }
+
+
 
 	/**
    * Generate Eway Bill
@@ -240,8 +255,9 @@ class NewEWayBillController extends CommonController {
 					"itemList"=> $actualAllItemsArr,
 				);
 							
-				$requestData = json_encode($dynamicData);
-				$this->echoToTriage("<br><br><b>Dynamic Request For GENEWAYBILL :</b><br>" .$requestData . "<br>");
+				$requestData = json_encode($dynamicData,JSON_PRETTY_PRINT);
+				$this->echoToTriage("<br><br><b>Dynamic Request For GENEWAYBILL :</b><br><pre>" .$requestData . "</pre><br>");
+
 			
 			$this->load->model('NewEwayBill');
 			$result=$this->NewEwayBill->execute($url,$requestData,$action,$Authorization); 
@@ -262,7 +278,7 @@ class NewEWayBillController extends CommonController {
 				$result = $testArrayData;
 			}
 
-			$this->echoToTriage("<br><br><b>Response For GENEWAYBILL :</b><br>" .json_encode($result) . "<br>");
+			$this->echoToTriage("<br><br><b>Response For GENEWAYBILL :</b><br><pre>" .json_encode($result,JSON_PRETTY_PRINT) . "</pre><br>");
 
 			if(isset($result['success']) && $result['success'] == false) {
 				$this->echoToTriage("API error occured for GENEWAYBILL...");
@@ -299,11 +315,12 @@ class NewEWayBillController extends CommonController {
 				$this->echoToTriage( "response_data: ".json_decode($response_data));
 				$hasEinvoice = $einvoice_res_data[0]->Status;
 				$this->echoToTriage("hasEinvoice : ".$hasEinvoice);
-				if(isset($hasEinvoice)){
-					$dbresult = $this->Common_admin_model->update("einvoice_res", $response_data, "new_sales_id", $new_sales_id);
-				}else{
-					$dbresult = $this->Common_admin_model->insert('einvoice_res', $response_data);
-				}
+				$dbresult = $this->checkEinvoiceAndInsert($new_sales_id , $response_data);
+				// if(isset($hasEinvoice)){
+				// 	$dbresult = $this->Common_admin_model->update("einvoice_res", $response_data, "new_sales_id", $new_sales_id);
+				// }else{
+				// 	$dbresult = $this->Common_admin_model->insert('einvoice_res', $response_data);
+				// }
 
 				if ($dbresult) {
 					$new_sales_update = array(

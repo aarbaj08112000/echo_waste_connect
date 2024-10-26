@@ -16,7 +16,45 @@ const page = {
     },
     initiateForm: function(){
         let that = this;
-    
+        $(".add_grn_qty_subcon_view").submit(function(e){
+        e.preventDefault();
+       
+        var href = $(this).attr("action");
+        var id = $(this).attr("id");
+        let flag = that.formValidate(id);
+
+        if(flag){
+          return;
+        }
+
+        var formData = new FormData($('.'+id)[0]);
+
+        $.ajax({
+          type: "POST",
+          url: href,
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function (response) {
+            var responseObject = JSON.parse(response);
+            var msg = responseObject.messages;
+            var success = responseObject.success;
+            if (success == 1) {
+              toastr.success(msg);
+              $(this).parents(".modal").modal("hide")
+              setTimeout(function(){
+                window.location.reload();
+              },1000);
+
+            } else {
+              toastr.error(msg);
+            }
+          },
+          error: function (error) {
+            console.error("Error:", error);
+          },
+        });
+      });
         $(".add_grn_qty_form").submit(function(e){
           e.preventDefault();
           var data_id = $(this).attr("data-id");
@@ -158,10 +196,12 @@ const page = {
       },
       formValidate: function(form_class = ''){
         let flag = false;
+        
         $(".custom-form."+form_class+" .required-input").each(function( index ) {
           var value = $(this).val();
           var dataMax = parseFloat($(this).attr('data-max'));
           var dataMin = parseFloat($(this).attr('data-min'));
+          console.log(dataMin)
           if(value == ''){
             flag = true;
             var label = $(this).parents(".form-group").find("label").contents().filter(function() {

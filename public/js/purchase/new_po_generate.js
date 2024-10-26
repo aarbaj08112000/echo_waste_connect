@@ -37,6 +37,9 @@ const page = {
                 shipping_address: {
                     required: true
                 },
+                discount_type: {
+                    required:true
+                }
             },
             messages: {
                 supplier_id: "Please select Supplier / Number / GST",
@@ -52,6 +55,7 @@ const page = {
                 },
                 billing_address: "Please enter Billing Address",
                 shipping_address: "Please enter Shipping Address ",
+                discount_type: "Please select Discount Type",
             },
             errorPlacement: function(error, element)
             {

@@ -56,6 +56,7 @@
 </nav>
 <div class="dt-top-btn d-grid gap-2 d-md-flex justify-content-md-end mb-5">
     <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
+    <button class="btn btn-seconday filter-icon" type="button"><i class="ti ti-filter" ></i></i></button>
     <button class="btn btn-seconday" type="button"><i class="ti ti-refresh reset-filter"></i></button>
 </div>
 <div class="w-100">

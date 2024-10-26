@@ -204,6 +204,13 @@ class SupplierPartsController extends CommonController
 		$data['gst_structure'] = $this->Crud->read_data("gst_structure");
 		$session_data = $this->session->userdata('entitlements');
 		/* datatable */
+		$column[] = [
+            "data" => "part_id",
+            "title" => "Part Id",
+            "width" => "7%",
+            "className" => "dt-center",
+            "visible"=> false,
+        ];
         $column[] = [
             "data" => "part_number",
             "title" => "Part Number",
@@ -301,7 +308,7 @@ class SupplierPartsController extends CommonController
             base_url() .
             'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Employee data found..!</div>';
         $data["is_top_searching_enable"] = true;
-        $data["sorting_column"] = json_encode([]);
+        $data["sorting_column"] = json_encode([[0, 'desc']]);
         $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
         $data["admin_url"] = base_url();
         $data["base_url"] = base_url();

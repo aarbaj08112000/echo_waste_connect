@@ -32,6 +32,142 @@ class NewEInvoiceController extends CommonController {
 		 $this->load->model('NewGSTCommon');
 		 $this->NewGSTCommon->echoToTriage($str);
 	 }
+	 function calculateGST($gst_structure)
+		{
+			$gstData = [];
+			if ((int) $gst_structure->igst === 0) {
+				$gstData['cgst'] = (int) $gst_structure->cgst;
+				$gstData['sgst'] = (int) $gst_structure->sgst;
+				$gstData['igst'] = 0;
+				$gstData['total_gst_percentages'] = $gstData['cgst'] + $gstData['sgst'];
+				$gstData['isInterState'] = false;
+			} else {
+				$gstData['cgst'] = 0;
+				$gstData['sgst'] = 0;
+				$gstData['igst'] = (int) $gst_structure->igst;
+				$gstData['total_gst_percentages'] = $gstData['igst'];
+				$gstData['isInterState'] = true;
+			}
+			$gstData['tcs'] = (float) $gst_structure->tcs;
+			return $gstData;
+		}
+
+		function calculateSubtotal($ps)
+		{
+			if ($ps->basic_total > 0) {
+				return $ps->basic_total;
+			} else {
+				return $ps->total_rate - $ps->gst_amount;
+			}
+		}
+
+		function returnDiscount($subtotal,$itemDiscount,$discount)
+		{
+			if ($itemDiscount){
+				return round(($subtotal * $discount/100),2);
+			}
+			return $discount;
+
+		}
+
+		function calculateRate($ps, $subtotal)
+		{
+			if ($ps->part_price > 0) {
+				return $ps->part_price;
+			} else {
+				return round($subtotal / $ps->qty, 2);
+			}
+		}
+
+		function calculateAmounts($gstRate, $rate, $qty)
+		{
+			$gst_amount = ($gstRate * $rate) / 100;
+			$final_amount = $gst_amount + $rate;
+			$final_row_amount = $final_amount * $qty;
+			return [
+				'gst_amount' => $gst_amount,
+				'final_amount' => $final_amount,
+				'final_row_amount' => $final_row_amount,
+				'actual_indv_totalAmt' => $qty * $rate
+			];
+		}
+
+		function updateTotals(&$totals, $amounts)
+		{
+			$totals['final_basic_total'] += $amounts['subtotal'];
+			$totals['final_po_amount'] += (float) $amounts['row_total'];
+			$totals['all_final_totals'] += $amounts['actual_indv_totalAmt'];
+			$totals['all_cgst_amounts'] += $amounts['cgst_amount'];
+			$totals['all_sgst_amounts'] += $amounts['sgst_amount'];
+			$totals['all_igst_amounts'] += $amounts['igst_amount'];
+			$totals['all_tcs_amounts'] += $amounts['tcs_amount'];
+			return $totals;
+		}
+
+		function createPartArray($ps, $child_part_data, $rate, $gstData, $amounts, $isInterState, $i,$discountAmt)
+		{
+			$actualIemsArr = [];
+			$actualIemsArr['slNo'] = strval($i);
+			$actualIemsArr['prdDesc'] = $child_part_data->part_description;
+			$actualIemsArr['isServc'] = $child_part_data->isservice;
+			$actualIemsArr['hsnCd'] = $child_part_data->hsn_code;
+			$actualIemsArr['qty'] = $ps->qty;
+			$actualIemsArr['unit'] = $ps->uom_id;
+			$actualIemsArr['unitPrice'] = $rate;
+			$actualIemsArr['totAmt'] = round($amounts['actual_indv_totalAmt'], 2);
+			$actualIemsArr['discount'] = $discountAmt; // Not defined as of now
+			$actualIemsArr['preTaxVal'] = 0;
+			$actualIemsArr['assAmt'] = round($amounts['actual_indv_totalAmt'] - $discountAmt,2);
+			$actualIemsArr['gstRt'] = $gstData['total_gst_percentages'];
+			$actualIemsArr['igstAmt'] = round($ps->igst_amount, 2);
+			$actualIemsArr['cgstAmt'] = round($ps->cgst_amount, 2);
+			$actualIemsArr['sgstAmt'] = round($ps->sgst_amount, 2);
+			$actualIemsArr['totItemVal'] = round(($actualIemsArr['assAmt'] + $actualIemsArr['igstAmt'] + $actualIemsArr['cgstAmt'] + $actualIemsArr['sgstAmt']), 2);
+			$actualIemsArr['orgCntry'] = "IN";
+
+			return $actualIemsArr;
+		}
+
+	 function createHtmlRow($child_part_data, $hsn_codes, $ps, $rate, $actual_indv_totalAmt, $i, $isInterState, $igsts, $cgsts, $sgsts, $discount)
+		{
+			$parts_html = '
+				<tr style="font-size:14px;text-align:center;">
+					<td style="width:20px;">' . $i . '</td>
+					<td>'.$child_part_data->part_number.'</td>
+					<td colspan="3" style="width:200px;text-align:left">' . $child_part_data->part_description . '</td>
+					<td>'.$hsn_codes.'</td>
+					<td>'.$ps->uom_id.'</td>
+					<td>'.$ps->qty.'</td>
+					<td>'.$rate.'</td>
+					<td>'.$discount.'</td>
+					<td colspan="2" style="text-align:center;">'.number_format((float) $actual_indv_totalAmt, 2, '.', '') .'</td>
+				</tr>';
+
+			if ($isInterState) {
+				$eway_parts_html = '
+					<tr style="font-size:14px;text-align:center;">
+						<td>' . $hsn_codes . '</td>
+						<td>' . $child_part_data->part_number . '</td>
+						<td colspan="6" style="text-align:left;">' . $child_part_data->part_description . '</td>
+						<td>' . $ps->qty . ' ' . $ps->uom_id . '</td>
+						<td>' . number_format((float) $actual_indv_totalAmt, 2, '.', '') . '</td>
+						<td colspan="2"> IGST: ' . $igsts . '%</td>
+					</tr>';
+			} else {
+				$eway_parts_html = '
+					<tr style="font-size:14px;text-align:center;">
+						<td>'. $hsn_codes . '</td>
+						<td>'. $child_part_data->part_number . '</td>
+						<td colspan="6" style="text-align:left;">' . $child_part_data->part_description . '</td>
+						<td>'. $ps->qty . ' ' . $ps->uom_id . '</td>
+						<td>'. number_format((float) $actual_indv_totalAmt, 2, '.', '') . '</td>
+						<td colspan="2"> SGST: ' . $sgsts . '%<br> CGST: ' . $cgsts . '%</td>
+					</tr>';
+			}
+
+			return [$parts_html, $eway_parts_html];
+		}
+
 	  
 	/*
 	   LOOKS FINE WITH HARD CODED RESPONSE
@@ -41,6 +177,7 @@ class NewEInvoiceController extends CommonController {
 		$this->echoToTriage("<br><u><b>NEW Generate E_invoice</b></u>");
 		
 		$downloadPDF = false;
+		$hardCodedResp = false;
 		
 		$new_sales_id = $this->uri->segment('2');
 		$copy = $this->uri->segment('3');
@@ -76,173 +213,94 @@ class NewEInvoiceController extends CommonController {
 		$sortedHSNCodesIgstAmt = 0;
 		$sortedHSNCodesTCSAmt = 0;
 		$previousHSNCode;
-		$i = 1;
-		foreach ($po_parts_data as $ps) {
-					  $actualIemsArr = array();
-					 
-					  $child_part_datas = $this->Crud->get_data_by_id("customer_part", $ps->part_id, "id");
-					  $gst_structure_datas = $this->Crud->get_data_by_id("gst_structure", $ps->tax_id, "id");
-					  
-					  $unsortedHSN = array();
-					  $hsn_codes = $child_part_datas[0]->hsn_code;
-					  $isServc = $child_part_datas[0]->isservice;
-					  $isInterState = false; //means only IGST is applicable so show it accordingly
-					  
-					  if ((int)$gst_structure_datas[0]->igst === 0) {
-							$gsts = (int)$gst_structure_datas[0]->cgst + (int)$gst_structure_datas[0]->sgst;
-							$cgsts = (int)$gst_structure_datas[0]->cgst;
-							$sgsts = (int)$gst_structure_datas[0]->sgst;
-							$tcss = (float)$gst_structure_datas[0]->tcs;
-							$igsts = 0;
-							$total_gst_percentages = $cgsts + $sgsts;
-					  } else {
-							$gsts = (int)$gst_structure_datas[0]->igst;
-							$tcss = (float)$gst_structure_datas[0]->tcs;
-							$cgsts = 0; 
-							$sgsts = 0;
-							$igsts = $gsts;
-							$total_gst_percentages = $igsts;
-							$isInterState = true;
-					  }
-
-					  if($ps->basic_total > 0) {
-                           $subtotal = $ps->basic_total;
-                      }else{
-						   $subtotal = $ps->total_rate - $ps->gst_amount;
-					  }
-					 
-	                  if($ps->part_price > 0) {
-                           $rate = $ps->part_price;
-                      }else{
-						   $rate = round($subtotal / $ps->qty, 2);
-					  }
-
-					  $row_total =(float) $ps->total_rate+(float)$ps->tcs_amount;
-					  $final_po_amount = (float)$final_po_amount + (float)$row_total;
-
-					  $gst_amounts = ($gsts * $rate) / 100;
-					  $final_amounts = $gst_amounts + $rate;
-					  $final_row_amounts = $final_amounts * $ps->qty;
-
-					  // $final_total = $final_total + $final_row_amount;
-					  $actual_indv_totalAmt = $ps->qty * $rate;
-					  $all_final_totals = $all_final_totals + $actual_indv_totalAmt;
-					
-					  $all_cgst_amounts = $all_cgst_amounts + $ps->cgst_amount;
-					  $all_sgst_amounts = $all_sgst_amounts + $ps->sgst_amount;
-					  $all_igst_amounts = $all_igst_amounts + $ps->igst_amount;
-					  $all_tcs_amounts = $all_tcs_amounts + $ps->tcs_amount;
-					
-					    $discount = 0; //Not defined as of now
-						$totAmt = round((float)$actual_indv_totalAmt, 2);	
-						//AssAmt: Taxable Value (Total Amount -Discount)
-						$assAmt =  round((float)($actual_indv_totalAmt - $discount),2);
-						$igstAmt = round($ps->igst_amount,2); 	
-						$cgstAmt = round($ps->cgst_amount,2); 	
-						$sgstAmt = round($ps->sgst_amount,2);	
-						$tcsAmt =  round($ps->tcs_amount,2); 
-						
-						$total_assAmt = $total_assAmt + $assAmt;
-						$total_igstAmt = $total_igstAmt + $igstAmt;
-						$total_cgstAmt = $total_cgstAmt + $cgstAmt;
-						$total_sgstAmt = $total_sgstAmt + $sgstAmt;
-						$total_tcsAmt = $total_tcsAmt + $tcsAmt;
-						
-						$actualIemsArr['slNo'] = strval($i);
-						$actualIemsArr['prdDesc'] = $child_part_datas[0]->part_description;
-						$actualIemsArr['isServc'] = $isServc;
-						$actualIemsArr['hsnCd'] = $child_part_datas[0]->hsn_code; 		
-						$actualIemsArr['qty'] = $ps->qty;								
-						$actualIemsArr['unit'] = $ps->uom_id;							
-						$actualIemsArr['unitPrice'] = $rate;
-						$actualIemsArr['totAmt'] = $totAmt;
-						$actualIemsArr['discount'] = $discount;				
-						$actualIemsArr['preTaxVal'] = 0;
-						$actualIemsArr['assAmt'] = $assAmt;
-						$actualIemsArr['gstRt'] = $total_gst_percentages; 
-						//gstRt: The GST rate, represented as percentage that applies to the invoiced item. It will IGST rate only
-						
-						$actualIemsArr['igstAmt'] = $igstAmt;				
-						$actualIemsArr['cgstAmt'] = $cgstAmt;					
-						$actualIemsArr['sgstAmt'] = $sgstAmt;
-						//$actualIemsArr['othChrg'] = $tcsAmt;
-						
-						//NOTE: We don't need to pass individual other charges but that should be added to totalvalue 
-						
-						$totItemVal = round(($assAmt + $igstAmt + $cgstAmt + $sgstAmt), 2);
-						$total_totItemVal = $total_totItemVal + $totItemVal + $tcsAmt; //adding other charges(tcs) here to totalvalue
-						$actualIemsArr['totItemVal'] = $totItemVal; 
-						$actualIemsArr['orgCntry'] = "IN";
-						
-						//get this for HSN sorting
-						$unsortedHSN['hsn_code'] = $hsn_codes;
-						$unsortedHSN['assAmt'] = $assAmt;
-						$unsortedHSN['cgstRate'] = $cgsts;
-						$unsortedHSN['cgstAmt'] = $cgstAmt;
-						$unsortedHSN['sgstRate'] = $sgsts;
-						$unsortedHSN['sgstAmt'] = $sgstAmt;
-						$unsortedHSN['igstRate'] = $igsts;
-						$unsortedHSN['igstAmt'] = $igstAmt;
-						//$unsortedHSN['othChrg'] = $tcsAmt;
-						//$unsortedHSN['total'] = $totItemVal;
-						//echo var_dump($unsortedHSN);
-						$sortedHSNCodesAssAmt = $sortedHSNCodesAssAmt +  $assAmt;
-						$sortedHSNCodesCgstAmt = $sortedHSNCodesCgstAmt +  $cgstAmt;
-						$sortedHSNCodesSgstAmt = $sortedHSNCodesSgstAmt +  $sgstAmt;
-						$sortedHSNCodesIgstAmt = $sortedHSNCodesIgstAmt +  $igstAmt;
-						$sortedHSNCodesTCSAmt =  $sortedHSNCodesTCSAmt +  $tcsAmt;
-						$sortedHSNCodesTCSAmt = round((float)$sortedHSNCodesTCSAmt, 2);
-						
-						array_push($unsortedHSNCodes,$unsortedHSN);
-						array_push($actualAllItemsArr,$actualIemsArr);
-						
-			
-			$heights = "150px";
-			
-			$parts_html .= '
-				<tr style="font-size:14px;text-align:right;">
-				<td style="width:20px;">' . $i . '</td>
-				<td >' . $child_part_datas[0]->part_number .  '</td>
-				<td colspan="3" style="width:200px;text-align:left">' . $child_part_datas[0]->part_description . '</td>
-				<td>' .  $hsn_codes . '</td>
-				<td>' . $ps->uom_id . '</td>
-				<td>' . $ps->qty . '</td>
-				<td>' . $rate . '</td>
-				<td></td>
-				<td colspan="2" style="text-align:center;">' . number_format((float)$actual_indv_totalAmt, 2, '.', '') . '</td>
-			</tr>
-			';
-
-			if($isInterState==true) {
-				$eway_parts_html .= '
-				<tr style="font-size:14px;text-align:center;">
-				<td>' .  $hsn_codes . '</td>
-				<td>' .  $child_part_datas[0]->part_number.'</td>
-				<td colspan="6" style="text-align:left;" >'.$child_part_datas[0]->part_description.'</td>
-				<td>' . $ps->qty . ' '.$ps->uom_id.'</td>
-				<td>' . number_format((float)$actual_indv_totalAmt, 2, '.', '') . '</td>
-				<td colspan="2"> IGST: '.$igsts.'%</td>
-			</tr>';
-			}else{
-				$eway_parts_html .= '
-				<tr style="font-size:14px;text-align:center;">
-				<td>' .  $hsn_codes . '</td>
-				<td>' .  $child_part_datas[0]->part_number.'</td>
-				<td colspan="6" style="text-align:left;" >'.$child_part_datas[0]->part_description.'</td>
-				<td>' . $ps->qty . ' '.$ps->uom_id.'</td>
-				<td>' . number_format((float)$actual_indv_totalAmt, 2, '.', '') . '</td>
-				<td colspan="2"> SGST: '.$sgsts .'%<br> CGST: ' .$cgsts .'</td>
-			</tr>';
-			}
 		
-			$i++;
+		// Main processing loop
+		$i = 1;
+		$final_basic_total = 0;
+		$final_po_amount = 0;
+		$all_final_totals = 0;
+		$total_assAmt = 0;
+		$total_igstAmt = 0;
+		$total_cgstAmt = 0;
+		$total_sgstAmt = 0;
+		$total_tcsAmt = 0;
+
+		if($new_sales_data[0]->discountType == "Percentage") {
+			$itemDiscount = true;
 		}
-	
-	$final_final_amount = $all_final_totals + $all_cgst_amounts + $all_sgst_amounts + $all_igst_amounts + $all_tcs_amounts;
-	/* echo "Amount details : final_final_amount: ".$final_final_amount. "<br> all_final_totals: ".$all_final_totals."<br>all_cgst_amounts: ".$all_cgst_amounts."<br>all_sgst_amounts: ".$all_sgst_amounts."<br> all_igst_amounts: ".$all_igst_amounts."<br>all_tcs_amounts :".$all_tcs_amounts.'"'; */
-	//API details:
-	$this -> load->model('NewGSTCommon');
-	$token = $this->NewGSTCommon->authentication($new_sales_id);
+
+		$discount = $new_sales_data[0]->discount;
+
+		foreach ($po_parts_data as $ps) {
+				// Get necessary data
+				$child_part_data = $this->Crud->get_data_by_id("customer_part", $ps->part_id, "id")[0];
+				$gst_structure = $this->Crud->get_data_by_id("gst_structure", $ps->tax_id, "id")[0];
+
+				// GST calculations
+				$gstData = $this->calculateGST($gst_structure);
+
+				// Calculate subtotal and rate
+				$subtotal = $this->calculateSubtotal($ps);
+
+				$discountAmt =  $ps->discounted_amount;//$this->returnDiscount($subtotal,$itemDiscount,$new_sales_data[0]->discount);
+
+				$rate = $this->calculateRate($ps, $subtotal);
+
+				//$subTotal = $subTotal - $discountAmt;
+
+				// Calculate amounts
+				$amounts = $this->calculateAmounts($gstData['total_gst_percentages'], $rate, $ps->qty);
+
+				// Update totals
+				$totals = $this->updateTotals($totals, [
+					'subtotal' => $subtotal,
+					'row_total' => $ps->total_rate + $ps->tcs_amount,
+					'actual_indv_totalAmt' => $ps->qty * $rate,
+					'cgst_amount' => $ps->cgst_amount,
+					'sgst_amount' => $ps->sgst_amount,
+					'igst_amount' => $ps->igst_amount,
+					'tcs_amount' => $ps->tcs_amount,
+				]);
+
+				// Create part array for further processing
+				$actualIemsArr = $this->createPartArray($ps, $child_part_data, $rate, $gstData, $amounts, $gstData['isInterState'], $i,$discountAmt);
+				array_push($actualAllItemsArr, $actualIemsArr);
+
+
+						//get this for HSN sorting
+						$unsortedHSN['hsn_code'] = $actualIemsArr['hsnCd'];
+						$unsortedHSN['assAmt'] = $actualIemsArr['assAmt'] ;
+						$unsortedHSN['cgstRate'] = $gstData['cgst'];
+						$unsortedHSN['cgstAmt'] = $actualIemsArr['cgstAmt'];
+						$unsortedHSN['sgstRate'] = $gstData['sgst'];
+						$unsortedHSN['sgstAmt'] = $actualIemsArr['sgstAmt'];
+						$unsortedHSN['igstRate'] = $gstData['igst'];
+						$unsortedHSN['igstAmt'] = $actualIemsArr['igstAmt'];
+						$sortedHSNCodesAssAmt = $sortedHSNCodesAssAmt +  $actualIemsArr['assAmt'];
+						$sortedHSNCodesCgstAmt = $sortedHSNCodesCgstAmt +  $actualIemsArr['cgstAmt'];
+						$sortedHSNCodesSgstAmt = $sortedHSNCodesSgstAmt +  $actualIemsArr['sgstAmt'];
+						$sortedHSNCodesIgstAmt = $sortedHSNCodesIgstAmt +  $actualIemsArr['igstAmt'];
+						$sortedHSNCodesTCSAmt =  $sortedHSNCodesTCSAmt +  round($ps->tcs_amount, 2);
+						$sortedHSNCodesTCSAmt = round((float)$sortedHSNCodesTCSAmt, 2);
+						array_push($unsortedHSNCodes,$unsortedHSN);
+			
+				// Create HTML rows
+				[$parts_html, $eway_parts_html] = $this->createHtmlRow($child_part_data, $child_part_data->hsn_code, $ps, $rate, $ps->qty * $rate, $i, $gstData['isInterState'], $gstData['igst'], $gstData['cgst'], $gstData['sgst'], $discount);
+				$i++;
+		}
+
+		$final_basic_total = $totals['final_basic_total'];
+		$all_final_totals = $totals['all_final_totals'];
+		$all_cgst_amounts = $totals['all_cgst_amounts'];
+		$all_sgst_amounts = $totals['all_sgst_amounts'];
+		$all_igst_amounts = $totals['all_igst_amounts'];
+		$all_tcs_amounts = $totals['all_tcs_amounts'];
+
+		$final_final_amount = $all_final_totals + $all_cgst_amounts + $all_sgst_amounts + $all_igst_amounts + $all_tcs_amounts;
+		$sales_total = $this->Crud->tax_calcuation($gst_structure, $final_basic_total, $new_sales_data[0]->discount_amount);
+
+		$this->load->model('NewGSTCommon');
+		$token = $this->NewGSTCommon->authentication($new_sales_id);
 		
 	if($token){
 		$Authorization='Bearer '.$token;
@@ -317,14 +375,15 @@ class NewEInvoiceController extends CommonController {
 					"stcd"=> $shipping_data['state_no'],			// new_sales -> customer_id references to customer.state_no
 			  ),
 			"valDtls"=>array(								 	
-					"assVal"=> round((float)$total_assAmt, 2),					  	
-					"cgstVal"=> round((float)$total_cgstAmt, 2),				  	
-					"sgstVal"=> round((float)$total_sgstAmt, 2),
-					"igstVal"=> round((float)$total_igstAmt, 2), 
-					"OthChrg"=> round((float)$total_tcsAmt, 2), 
+					"assVal"=> $sales_total['bfre_disc_sub_total'],			  	
+					"cgstVal"=> $sales_total['sales_cgst'],				  	
+					"sgstVal"=> $sales_total['sales_sgst'],
+					"igstVal"=> $sales_total['sales_igst'], 
+					"OthChrg"=> $sales_total['sales_tcs'], 
+					"Discount" => 0, //$sales_total['sales_discount'],
 				    // "cesVal"=> 0,								 
 				    // "stCesVal"=> 0,							
-					"totInvVal"=> round((float)$total_totItemVal, 2),					
+					"totInvVal"=> $sales_total['sales_total'],					
 					//$tcs_amount,
 				    // "rndOffAmt"=> 0,
 				    // "totInvValFc"=> 0
@@ -332,24 +391,23 @@ class NewEInvoiceController extends CommonController {
 			"itemList"=> $actualAllItemsArr,						//$itemsarr,
 			"EwbDtls"=>array(
 					"VehType"=>"R",									// HardCoded - R
-					"VehNo"=>$new_sales_data[0]->vehicle_number,	
-					"TransMode"=>$new_sales_data[0]->mode,			
-					"Distance"=>$new_sales_data[0]->distance		
+					"VehNo"=> $new_sales_data[0]->vehicle_number,	
+					"TransMode"=> $new_sales_data[0]->mode,
+					"Distance"=> $new_sales_data[0]->distance,
+					"Transname"=> $transporter_data[0]->name,
+					"Transid"=> $transporter_data[0]->transporter_id
 			)
         );
 		
-		$this->echoToTriage("<br><br><b>Dynamic Request Data: </b><br>" . json_encode($dynamicData) ."<br><br>");
+		$this->echoToTriage("<br><br><b>Dynamic Request Data: </b><br><pre>" . json_encode($dynamicData, JSON_PRETTY_PRINT) . "</pre><br><br>");
 		$requestData = json_encode($dynamicData);    
-		
-		//echo "requestData: ".$requestData;
-		//exit();
-
 		$result = null;
 	    $this->load->model('NewEInvoice');
 		$result=$this->NewEInvoice->execute($url,$requestData,$action,$Authorization); 
-		$this->echoToTriage("<br><br><b>Response :</b><br>" .json_encode($result) . "<br>");
-
-		if($hardCoded) {
+		$this->echoToTriage("<br><br><b>GST Response :</b><br><pre>" . json_encode($result, JSON_PRETTY_PRINT) . "</pre><br>");
+		
+		//HARD CODED RESPONSE FOR PDF TESTING 
+		if($hardCodedResp) {
 			//****************** HardCoded Response for WAGH TO TEST PDF REPORT ************************* :
 				$WithoutEwayjsonData = '{
 							"success": true,
@@ -402,13 +460,21 @@ class NewEInvoiceController extends CommonController {
 				$testArrayData = json_decode($result, true);
 				$result = $testArrayData;
 			}
-		echo "<br><br>API Result : ".$result;
-			 
+		
+		//echo "<br><br>API Result : ".print_r($result);
 		$isSuccess = false;
 		$isDuplicateIRNError = false;
-		echo "<br>isSuccess?".$result['success'];
-		if(isset($result['success']) && $result['success'] == false) {
-			$this->echoToTriage("API error occured...");
+		if(isset($result['success']) && $result['success'] === false) {
+			$isSuccess = false;
+			echo "<br>Error response";
+		} else {
+			$isSuccess = true;
+			echo "<br>Successful response";
+		}
+		
+
+		if(isset($result['success']) && $isSuccess === false) {
+			//$this->echoToTriage("API error occured...");
 			$errorDet = $result['message'];
 			$this->echoToTriage( "<br><br><u>Errors:</u><br>");
 			
@@ -420,12 +486,10 @@ class NewEInvoiceController extends CommonController {
 						echo $alertCode;
 						$this->addWarningMessage("GST Error Response: <br> ErrorMsg: " .$errorDet." <br>Use 'Get E-invoice Details' button to refresh Einvoice details");
 			} else {
-						$this->echoToTriage("\n GST Error Response: 
-							   \n ErrorMsg: " .$errorDet);
-						$alertCode = "<script>
-							alert('\\n GST Error Response: \\n ErrorMsg: " .$errorDet."');
-							</script>";
+						$this->echoToTriage("\n GST Error Response: <br> ErrorMsg: " .$errorDet);
 						echo $alertCode;
+						//$this->addWarningMessage("GST Error Response: <br> ErrorMsg: " . $errorDet);
+						exit();
 			}
 
 			$this->load->model('NewEInvoice');
@@ -440,9 +504,8 @@ class NewEInvoiceController extends CommonController {
 							'new_sales_id' => $new_sales_id,
 							'Irn' => $info['Desc']['Irn']
 						);
-						$insert = $this->Common_admin_model->insert('einvoice_res', $response_data);
+						$insert = $this->checkEinvoiceAndInsert($new_sales_id,$response_data);
 					}
-					
 				}
 			}
 			echo '<script>window.close();</script>';
@@ -470,6 +533,7 @@ class NewEInvoiceController extends CommonController {
 				}
 			} 
 		
+	
 	if($isSuccess == true) {
 		  $gstResponse = $result['result'];
 		  $AckNo = $gstResponse['AckNo'];
@@ -477,7 +541,6 @@ class NewEInvoiceController extends CommonController {
 		  $IrnNo=$gstResponse['Irn'];
 		  $SignedQRCode = $gstResponse['SignedQRCode'];
 	      $SignedInvoice = $gstResponse['SignedInvoice'];
-		  
 		  $EwbNo= $gstResponse['EwbNo'];
 		  $EwbDt= $gstResponse['EwbDt'];
 		  $EwbValidTill = $gstResponse['EwbValidTill'];
@@ -502,9 +565,8 @@ class NewEInvoiceController extends CommonController {
 				'info' => $gstResponse['info'],
 				'statuscode' => $gstResponse['status']
 			);
-			$insert = $this->Common_admin_model->insert('einvoice_res', $response_data);
-    	
- 			
+
+		$insert = $this->checkEinvoiceAndInsert($new_sales_id , $response_data);
 		$this->echoToTriage("<br><br>IRN information from Response: <br><b>IRN: ". $IrnNo ." ,<br>Ack No: " .$AckNo ." ,<br>AckDt: " . $AckDt."<br><br>");
 
 		$final_total = 0;
@@ -562,11 +624,9 @@ class NewEInvoiceController extends CommonController {
    
     // Sort the multidimensional array by the 'hsn_code' column in ascending order
 	$this->Crud->sort_by_column($unsortedHSNCodes, 'hsn_code');
-	$hsn_code_table_html = $this-> NewEInvoice -> getHSNTableData($unsortedHSNCodes);
-    
-	//$all_final_final_amount = $all_final_totals + $all_cgst_amounts + $all_sgst_amounts + $all_igst_amounts + $all_tcs_amounts;
-
-	$transportMode = $this-> NewEInvoice -> getModeOfTransport ($new_sales_data[0]->mode);
+	$this->load->model('NewEInvoice');
+	$hsn_code_table_html = $this->NewEInvoice->getHSNTableData($unsortedHSNCodes);
+	$transportMode = $this->NewEInvoice->getModeOfTransport($new_sales_data[0]->mode);
     $html_content = '
 	    <!DOCTYPE html>
         <head>
@@ -652,7 +712,6 @@ class NewEInvoiceController extends CommonController {
 				});
 			  </script>
 			</tr>
-			
 			<!-- <tr> 
 				  <td colspan="6" >IRN No.'.$IrnNo.'</td>      
 				  <td colspan="6" rowspan="3" ><img colspan="" src="' . base_url('Logo.jpg') . '" style="float:left;" "></td> 
@@ -693,50 +752,42 @@ class NewEInvoiceController extends CommonController {
 			</td>
         </tr>
         <tr  style="font-size:14px">
-        <td colspan="6">
-        
-        <b>PO Number  :</b>' . $po_parts_data[0]->po_number . '     
-        
-
-        <b style="margin-left:10px">PO Date  :</b>' . $po_parts_data[0]->po_date . '
-        </td>
-        <td colspan="6">
-        <b>Vendor Code  . :</b>' . $customer_data[0]->vendor_code . '<br>
-        </td>
-        </tr>
+			<td colspan="6">
+				<b>PO Number  :</b>' . $po_parts_data[0]->po_number . '     
+				<b style="margin-left:10px">PO Date  :</b>' . $po_parts_data[0]->po_date . '
+			</td>
+			<td colspan="6">
+				<b>Vendor Code  . :</b>' . $customer_data[0]->vendor_code . '<br>
+			</td>
+		</tr>
         <tr style="font-size:12px;text-align:center">
           <th style="width:20px;">Sr No</th>
-		  <th style="width:70px;" >Part Number </th>
-		  <th colspan="3" style="width:200px;">Part Description </th>
-		  <th style="width:50px;" >HSN / SAC </th>
-		  <th style="width:20px;">UOM </th>
-		  <th style="width:20px;">QTY </th>
+		  <th style="width:70px;">Part Number</th>
+		  <th colspan="3" style="width:200px;">Part Description</th>
+		  <th style="width:50px;">HSN / SAC</th>
+		  <th style="width:20px;">UOM</th>
+		  <th style="width:20px;">QTY</th>
 		  <th style="width:20px;">Rate/Unit  </th>
 		  <th style="width:20px;">Disc. %</th>
 		  <th colspan="2">Amount</th>
         </tr>
           ' . $parts_html . '
-          <tr>
+        <tr>
             <td colspan="12" style="height:' . $height . '"></td>
-          </tr>
-
-          <tr style="font-size:12px">
+        </tr>
+		<tr style="font-size:12px">
             <td rowspan="3" colspan="7">
-
-            <b>
-            Mode Of Transport : ' . $transportMode . ' <br> <br> 
-            Transporter : ' . $transporter_data[0]->transporter_id . ' <br> <br>
-            Vehicle No : ' . $new_sales_data[0]->vehicle_number . ' <br> <br>
-            L.R No : ' . $new_sales_data[0]->lr_number . ' <br> <br>
-            </b>
-
-            </td>
-          
-            <th colspan="3" style="text-align:right">SUB TOTAL </th>
-            <th colspan="2">'  . number_format((float)$all_final_totals, 2, '.', '') . '</th>
-          </tr>
-
-          <tr style="font-size:12px">
+				<b>
+				Mode Of Transport : ' . $transportMode . ' <br> <br> 
+				Transporter : ' . $transporter_data[0]->transporter_id . ' <br> <br>
+				Vehicle No : ' . $new_sales_data[0]->vehicle_number . ' <br> <br>
+				L.R No : ' . $new_sales_data[0]->lr_number . ' <br> <br>
+				</b>
+            </td>         
+            <th colspan="3" style="text-align:right">TAXABLE VALUE </th>
+            <th colspan="2">'  . number_format((float)$final_basic_total, 2, '.', '') . '</th>
+        </tr>
+        <tr style="font-size:12px">
             <th colspan="3" style="text-align:right">CGST Amt' . $cgst . '</th>
             <th colspan="2">' .  number_format((float)$all_cgst_amounts, 2, '.', '') . '</th>
           </tr>
@@ -759,7 +810,6 @@ class NewEInvoiceController extends CommonController {
             <th colspan="3" style="text-align:right">TCS Amt' . $tcs . '</th>
             <th colspan="2">' .  number_format((float)$all_tcs_amounts, 2, '.', '') . '</th>
           </tr>
-          
           <tr style="font-size:12px">
             <th colspan="3" style="text-align:right">GRAND TOTAL (Rs) </th>
             <th colspan="2">' . number_format((float)$final_final_amount, 2, '.', '') . '</th>
@@ -928,7 +978,7 @@ class NewEInvoiceController extends CommonController {
 			<tr style="font-size:14px;text-align:center;">
 				<th>HSN Code</th>
 				<th>Product Name</th>
-				<td colspan="6" style="text-align:left;">Product Description</th>
+				<th colspan="6" style="text-align:left;">Product Description</th>
 				<th>Quantity </th>
 				<th>Taxable Amt</th>
 				<th colspan="2">Rate</th>
@@ -966,7 +1016,6 @@ class NewEInvoiceController extends CommonController {
 					Date<br>
 				  </td> -->
 			</tr>
-			
 			<tr>
 				<td colspan="12" style="text-align:left; font-size:16px"><b>5. Vehicle Details</b></th>
 			</tr>
@@ -981,7 +1030,6 @@ class NewEInvoiceController extends CommonController {
 					CEWB No : <br>
 				</td>
 			</tr>
-			
 		</table>
 		</div>
         </body>
@@ -1274,7 +1322,7 @@ class NewEInvoiceController extends CommonController {
    * TESTED WITH NEW GST 3RD PARTY - Get EInvoice - from Local DB 
    */
   public function view_E_invoice() {
-		$this->echoToTriage("<br><u><b>view_E_invoice</b></u>");
+		$this->echoToTriage("<br><u><b>View E Invoice</b></u>");
 		
 		$downloadPDF = false;
 		
@@ -1311,183 +1359,93 @@ class NewEInvoiceController extends CommonController {
 		$sortedHSNCodesTCSAmt = 0;
 		$previousHSNCode;
 
+		// Main processing loop
 		$i = 1;
+		$final_basic_total = 0;
+		$final_po_amount = 0;
+		$all_final_totals = 0;
+		$total_assAmt = 0;
+		$total_igstAmt = 0;
+		$total_cgstAmt = 0;
+		$total_sgstAmt = 0;
+		$total_tcsAmt = 0;
+
+		if($new_sales_data[0]->discountType == "Percentage") {
+			$itemDiscount = true;
+		}
+
+		$discount = $new_sales_data[0]->discount;
+
 		foreach ($po_parts_data as $ps) {
-					  $actualIemsArr = array();
-					 
-					  $child_part_datas = $this->Crud->get_data_by_id("customer_part", $ps->part_id, "id");
-					  $gst_structure_datas = $this->Crud->get_data_by_id("gst_structure", $ps->tax_id, "id");
-					  $hsn_codes = $child_part_datas[0]->hsn_code;
+					// Get necessary data				 
+					$child_part_data = $this->Crud->get_data_by_id("customer_part", $ps->part_id, "id")[0];
+					$gst_structure = $this->Crud->get_data_by_id("gst_structure", $ps->tax_id, "id")[0];
 					  
-					  $unsortedHSN = array();
-					  $hsn_codes = $child_part_datas[0]->hsn_code;
-					  $isServc = $child_part_datas[0]->isservice;
-					  $isInterState = false; //means only IGST is applicable so show it accordingly
-					  if ((int)$gst_structure_datas[0]->igst === 0) {
-							$gsts = (int)$gst_structure_datas[0]->cgst + (int)$gst_structure_datas[0]->sgst;
-							$cgsts = (int)$gst_structure_datas[0]->cgst;
-							$sgsts = (int)$gst_structure_datas[0]->sgst;
-							$tcss = (float)$gst_structure_datas[0]->tcs;
-							$igsts = 0;
-							$total_gst_percentages = $cgsts + $sgsts;
-					  } else {
-							$gsts = (int)$gst_structure_datas[0]->igst;
-							$tcss = (float)$gst_structure_datas[0]->tcs;
-							$cgsts = 0; 
-							$sgsts = 0;
-							$igsts = $gsts;
-							$total_gst_percentages = $igsts;
-							$isInterState = true;
-					  }
+					// GST calculations
+					$gstData = $this->calculateGST($gst_structure);
 
-					  if($ps->basic_total > 0) {
-                           $subtotal = $ps->basic_total;
-                      }else{
-						   $subtotal = $ps->total_rate - $ps->gst_amount;
-					  }
+					// Calculate subtotal and rate
+					$subtotal = $this->calculateSubtotal($ps);
 
-					  if($ps->part_price > 0) {
-                           $rate = $ps->part_price;
-                      }else{
-						   $rate = round($subtotal / $ps->qty, 2);
-					  }
+					$discountAmt = $ps->discounted_amount; //$this->returnDiscount($subtotal,$itemDiscount,$new_sales_data[0]->discount);
 
-	                  $row_total =(float) $ps->total_rate+(float)$ps->tcs_amount;
-					  $final_po_amount = (float)$final_po_amount + (float)$row_total;
+					$rate = $this->calculateRate($ps, $subtotal);
 
-					  $gst_amounts = ($gsts * $rate) / 100;
-					  $final_amounts = $gst_amounts + $rate;
-					  $final_row_amounts = $final_amounts * $ps->qty;
+					//$subTotal = $subTotal - $discountAmt;
 
-					  // $final_total = $final_total + $final_row_amount;
-					  $actual_indv_totalAmt = $ps->qty * $rate;
-					  $all_final_totals = $all_final_totals + $actual_indv_totalAmt;
-				
-					  $all_cgst_amounts = $all_cgst_amounts + $ps->cgst_amount;
-					  $all_sgst_amounts = $all_sgst_amounts + $ps->sgst_amount;
-					  $all_igst_amounts = $all_igst_amounts + $ps->igst_amount;
-					  $all_tcs_amounts = $all_tcs_amounts + $ps->tcs_amount;
-					
-					  /*if ($gst_structure_datas[0]->tcs_on_tax == "no") {
-							$all_tcs_amounts =  $all_tcs_amounts + (($actual_indv_totalAmt * $tcss) / 100);
-					  } else {
-							//$all_tcs_amounts =  $all_tcs_amounts + ((($all_cgst_amounts + $all_sgst_amounts + $all_igst_amounts + $actual_indv_totalAmt) * $tcss) / 100);
-							$all_tcs_amounts =  $all_tcs_amounts + ((((float)(($actual_indv_totalAmt * $cgsts) / 100) + (float)(($actual_indv_totalAmt * $sgsts) / 100) + (float)$all_igst_amounts + (float)$actual_indv_totalAmt) * $tcss) / 100);
-					  }*/
-					  
-					    $discount = 0; //Not defined as of now
-						$totAmt = round((float)$actual_indv_totalAmt, 2);	
-						//AssAmt: Taxable Value (Total Amount -Discount)
-						$assAmt =  round((float)($actual_indv_totalAmt - $discount), 2);
-						$igstAmt = round($ps->igst_amount,2); 
-						$cgstAmt = round($ps->cgst_amount,2); 
-						$sgstAmt = round($ps->sgst_amount,2);
-						$tcsAmt = round($ps->tcs_amount,2); 
-						
-						$total_assAmt = $total_assAmt + $assAmt;
-						$total_igstAmt = $total_igstAmt + $igstAmt;
-						$total_cgstAmt = $total_cgstAmt + $cgstAmt;
-						$total_sgstAmt = $total_sgstAmt + $sgstAmt;
-						$total_tcsAmt = $total_tcsAmt + $tcsAmt;
-						
-						$actualIemsArr['slNo'] = $i;
-						$actualIemsArr['prdDesc'] = $child_part_datas[0]->part_description;
-						$actualIemsArr['isServc'] = $isServc;
-						$actualIemsArr['hsnCd'] = $child_part_datas[0]->hsn_code; 		
-						$actualIemsArr['qty'] = $ps->qty;								
-						$actualIemsArr['unit'] = $ps->uom_id;							
-						$actualIemsArr['unitPrice'] = $rate;
-						$actualIemsArr['totAmt'] = $totAmt;
-						$actualIemsArr['discount'] = $discount;				
-						$actualIemsArr['preTaxVal'] = 0;
-						$actualIemsArr['assAmt'] = $assAmt;
-						$actualIemsArr['gstRt'] = $total_gst_percentages;
-						//gstRt: The GST rate, represented as percentage that applies to the invoiced item. It will IGST rate only
-						$actualIemsArr['igstAmt'] = $igstAmt;				
-						$actualIemsArr['cgstAmt'] = $cgstAmt;					
-						$actualIemsArr['sgstAmt'] = $sgstAmt;
-						//$actualIemsArr['othChrg'] = $tcsAmt;  
-						
-						//NOTE: We don't need to pass individual other charges but that should be added to totalvalue 
-						
-						$totItemVal = round(($assAmt + $igstAmt + $cgstAmt + $sgstAmt ), 2); 
-						$total_totItemVal = $total_totItemVal + $totItemVal + $tcsAmt; //adding other charges(tcs) here to totalvalue 
-						$actualIemsArr['totItemVal'] = $totItemVal; 
-						$actualIemsArr['orgCntry'] = "IN";
-						
-						//get this for HSN sorting
-						$unsortedHSN['hsn_code'] = $hsn_codes;
-						$unsortedHSN['assAmt'] = $assAmt;
-						$unsortedHSN['cgstRate'] = $cgsts;
-						$unsortedHSN['cgstAmt'] = $cgstAmt;
-						$unsortedHSN['sgstRate'] = $sgsts;
-						$unsortedHSN['sgstAmt'] = $sgstAmt;
-						$unsortedHSN['igstAmt'] = $igstAmt;
-						$unsortedHSN['igstRate'] = $igsts;
-						$unsortedHSN['igstAmt'] = $igstAmt;
-						//$unsortedHSN['othChrg'] = $tcsAmt;
-						
-						//$unsortedHSN['total'] = $totItemVal;
-						//echo var_dump($unsortedHSN);
-						$sortedHSNCodesAssAmt = $sortedHSNCodesAssAmt +  $assAmt;
-						$sortedHSNCodesCgstAmt = $sortedHSNCodesCgstAmt +  $cgstAmt;
-						$sortedHSNCodesSgstAmt = $sortedHSNCodesSgstAmt +  $sgstAmt;
-						$sortedHSNCodesIgstAmt = $sortedHSNCodesIgstAmt +  $igstAmt;
-						$sortedHSNCodesTCSAmt = $sortedHSNCodesTCSAmt +  $tcsAmt;
-						$sortedHSNCodesTCSAmt  = round((float)$sortedHSNCodesTCSAmt, 2);
-						//$sortedHSNCodesTotal = $sortedHSNCodesTotal +  $totItemVal;
-						
-						array_push($unsortedHSNCodes,$unsortedHSN);
-						array_push($actualAllItemsArr,$actualIemsArr);
+					// Calculate amounts
+					$amounts = $this->calculateAmounts($gstData['total_gst_percentages'], $rate, $ps->qty);
 
-						$heights = "150px";
+					// Update totals
+					$totals = $this->updateTotals($totals, [
+						'subtotal' => $subtotal,
+						'row_total' => $ps->total_rate + $ps->tcs_amount,
+						'actual_indv_totalAmt' => $ps->qty * $rate,
+						'cgst_amount' => $ps->cgst_amount,
+						'sgst_amount' => $ps->sgst_amount,
+						'igst_amount' => $ps->igst_amount,
+						'tcs_amount' => $ps->tcs_amount,
+					]);
+
+					// Create part array for further processing
+					$actualIemsArr = $this->createPartArray($ps, $child_part_data, $rate, $gstData, $amounts, $gstData['isInterState'], $i, $discountAmt);
+					array_push($actualAllItemsArr, $actualIemsArr);
+
+					//get this for HSN sorting
+					$unsortedHSN['hsn_code'] = $actualIemsArr['hsnCd'];
+					$unsortedHSN['assAmt'] = $actualIemsArr['assAmt'];
+					$unsortedHSN['cgstRate'] = $gstData['cgst'];
+					$unsortedHSN['cgstAmt'] = $actualIemsArr['cgstAmt'];
+					$unsortedHSN['sgstRate'] = $gstData['sgst'];
+					$unsortedHSN['sgstAmt'] = $actualIemsArr['sgstAmt'];
+					$unsortedHSN['igstRate'] = $gstData['igst'];
+					$unsortedHSN['igstAmt'] = $actualIemsArr['igstAmt'];
+					$sortedHSNCodesAssAmt = $sortedHSNCodesAssAmt + $actualIemsArr['assAmt'];
+					$sortedHSNCodesCgstAmt = $sortedHSNCodesCgstAmt + $actualIemsArr['cgstAmt'];
+					$sortedHSNCodesSgstAmt = $sortedHSNCodesSgstAmt + $actualIemsArr['sgstAmt'];
+					$sortedHSNCodesIgstAmt = $sortedHSNCodesIgstAmt + $actualIemsArr['igstAmt'];
+					$sortedHSNCodesTCSAmt = $sortedHSNCodesTCSAmt + round($ps->tcs_amount, 2);
+					$sortedHSNCodesTCSAmt = round((float) $sortedHSNCodesTCSAmt, 2);
+					array_push($unsortedHSNCodes, $unsortedHSN);
+
+
+					$heights = "150px";
 			
-						$parts_html .= '
-							<tr style="font-size:14px;text-align:right;"">
-								<td style="width:20px;">' . $i . '</td>
-							<td>' . $child_part_datas[0]->part_number .  '</td>
-							<td colspan="3" style="width:200px;text-align:left;">' . $child_part_datas[0]->part_description . '</td>
-							<td>' .  $hsn_codes . '</td>
-							<td>' . $ps->uom_id . '</td>
-							<td>' . $ps->qty . '</td>
-							<td>' . $rate . '</td>
-							<td></td>
-							<td colspan="2" style="text-align:center;">' . number_format((float)$actual_indv_totalAmt, 2, '.', '') . '</td>
-						</tr>
-						';
-						
-						if($isInterState==true) {
-							$eway_parts_html .= '
-							<tr style="font-size:14px;text-align:center;">
-							<td>' .  $hsn_codes . '</td>
-							<td>' .  $child_part_datas[0]->part_number.'</td>
-							<td colspan="6" style="text-align:left;" >'.$child_part_datas[0]->part_description.'</td>
-							<td>' . $ps->qty . ' '.$ps->uom_id.'</td>
-							<td>' . number_format((float)$actual_indv_totalAmt, 2, '.', '') . '</td>
-							<td colspan="2"> IGST: '.$igsts.'%</td>
-						</tr>';
-						}else{
-							$eway_parts_html .= '
-							<tr style="font-size:14px;text-align:center;">
-							<td>' .  $hsn_codes . '</td>
-							<td>' .  $child_part_datas[0]->part_number.'</td>
-							<td colspan="6" style="text-align:left;">'.$child_part_datas[0]->part_description.'</td>
-							<td>' . $ps->qty . ' '.$ps->uom_id.'</td>
-							<td>' . number_format((float)$actual_indv_totalAmt, 2, '.', '') . '</td>
-							<td colspan="2"> SGST: '.$sgsts .'%<br> CGST: ' .$cgsts .'</td>
-						</tr>';
-						}
-						
-			 $i++;
+					// Create HTML rows
+				[$parts_html, $eway_parts_html] = $this->createHtmlRow($child_part_data, $child_part_data->hsn_code, $ps, $rate, $ps->qty * $rate, $i, $gstData['isInterState'], $gstData['igst'], $gstData['cgst'], $gstData['sgst'], $discount);
+				$i++;
 		}
 	
-	//API details:
-	$this -> load-> model('NewEInvoice');
-	$einvoice_res_id = $this->uri->segment('2');
-	$einvoice_res_data = $this->Crud->get_data_by_id("einvoice_res", $einvoice_res_id, "new_sales_id");
+		$final_basic_total = $totals['final_basic_total'];
+		$all_final_totals = $totals['all_final_totals'];
+		$all_cgst_amounts = $totals['all_cgst_amounts'];
+		$all_sgst_amounts = $totals['all_sgst_amounts'];
+		$all_igst_amounts = $totals['all_igst_amounts'];
+		$all_tcs_amounts = $totals['all_tcs_amounts'];
 
-		$issdata = $einvoice_res_data[0]->iss; //TO-DO : what to do with this ?
-
+		//API details:
+		$einvoice_res_id = $this->uri->segment('2');
+		$einvoice_res_data = $this->Crud->get_data_by_id("einvoice_res", $einvoice_res_id, "new_sales_id");
 		$IrnNo=$einvoice_res_data[0]->Irn;
 		$AckNo=$einvoice_res_data[0]->AckNo;
 		$AckDt=$einvoice_res_data[0]->AckDt;
@@ -1495,17 +1453,7 @@ class NewEInvoiceController extends CommonController {
 		$EwbDt= $einvoice_res_data[0]->EwbDt;
 		$SignedQRCode= $einvoice_res_data[0]->SignedQRCode;
 		$EwbValidTill = $einvoice_res_data[0]->EwbValidTill;
-
-		$sellrgstn=$einvoice_res_data[0]->SellerGstin;
-		$buyergstin=$einvoice_res_data[0]->BuyerGstin;
-		$DocNo= $einvoice_res_data[0]->DocNo;
-		$DocTyp=$einvoice_res_data[0]->DocTyp;
-		$DocDt=$einvoice_res_data[0]->DocDt;
-		$TotInvVal=$einvoice_res_data[0]->TotInvVal;
-		$ItemCnt=$einvoice_res_data[0]->ItemCnt;
-		$MainHsnCode=$einvoice_res_data[0]->MainHsnCode;
-		$IrnDt=$einvoice_res_data[0]->IrnDt; 
-    
+		
 		$this->echoToTriage("<br><br>IRN information from Get Invoice: <br><b>IRN: ". $IrnNo ." ,<br>Ack No: " .$AckNo ." ,<br>AckDt: " . $AckDt."<br><br>");
 
 		$final_total = 0;
@@ -1515,37 +1463,37 @@ class NewEInvoiceController extends CommonController {
 		$tcs_amount = 0;
 		$height = "280px";
 
-    if ($i == 2) {
-      $height = "240px";
-    }
-    if ($i == 3) {
-      $height = "220px";
-    }
-    if ($i == 4) {
-      $height = "180px";
-    }
-    if ($i == 5) {
-      $height = "140px";
-    }
-    if ($i == 6) {
-      $height = "100px";
-    }
-    if ($i == 7) {
-      $height = "80px";
-    }
-    if ($i == 8) {
-      $height = "40px";
-    }
+		if ($i == 2) {
+		$height = "240px";
+		}
+		if ($i == 3) {
+		$height = "220px";
+		}
+		if ($i == 4) {
+		$height = "180px";
+		}
+		if ($i == 5) {
+		$height = "140px";
+		}
+		if ($i == 6) {
+		$height = "100px";
+		}
+		if ($i == 7) {
+		$height = "80px";
+		}
+		if ($i == 8) {
+		$height = "40px";
+		}
     
     $all_totalOther = $all_cgst_amounts + $all_sgst_amounts + $all_igst_amounts + $all_tcs_amounts;
     $final_final_amount = $all_final_totals + $all_cgst_amounts + $all_sgst_amounts + $all_igst_amounts + $all_tcs_amounts;
 	// Sort the multidimensional array by the 'hsn_code' column in ascending order
 	$this->Crud->sort_by_column($unsortedHSNCodes, 'hsn_code');
-	$hsn_code_table_html = $this->NewEInvoice -> getHSNTableData($unsortedHSNCodes);
-	$transportMode = $this->NewEInvoice -> getModeOfTransport ($new_sales_data[0]->mode);
+	$this->load->model('NewEInvoice');
+	$hsn_code_table_html = $this->NewEInvoice->getHSNTableData($unsortedHSNCodes);
+	$transportMode = $this->NewEInvoice->getModeOfTransport ($new_sales_data[0]->mode);
 
-	$html_content = '
-    
+	$html_content = '    
 	<!DOCTYPE html>
 	<head>
 			<style> html { margin: 1px}
@@ -1628,7 +1576,7 @@ class NewEInvoiceController extends CommonController {
 		  </td>
 		  <script>
 			var qrData ="'.$SignedQRCode.'"; 
-			var qrcode = new QRCode(document.querySelector("qrcode"), {
+			var qrcode = new QRCode(document.querySelector(".qrcode"), {
 				text: qrData,
 				width: 128,
 				height: 128,
@@ -1705,8 +1653,8 @@ class NewEInvoiceController extends CommonController {
               <b>&nbsp;Mode Of Transport : </b>' . $transportMode . '&nbsp;&nbsp;&nbsp;&nbsp;<b>&nbsp;Vehicle No : </b>' . $new_sales_data[0]->vehicle_number . '&nbsp;&nbsp;&nbsp;&nbsp;<b>&nbsp;L.R No : </b>' . $new_sales_data[0]->lr_number . '
               <br><b>&nbsp;Transporter : </b>' . $transporter_data[0]->transporter_id . '<br>
             </td>
-            <td colspan="2" style="text-align:center;margin-left:10px;">SUB TOTAL </td>
-            <td colspan="2" style="text-align:center">' . number_format((float) $all_final_totals, 2, '.', '') . '</td>
+            <td colspan="2" style="text-align:center;margin-left:10px;">TAXABLE VALUE1 </td>
+            <td colspan="2" style="text-align:center">' . number_format((float) $final_basic_total, 2, '.', '') . '</td>
           </tr>
           <tr style="font-size:10px">
             <td colspan="2" style="text-align:center">IGST Amt</td>
@@ -1764,12 +1712,8 @@ class NewEInvoiceController extends CommonController {
 			  <th>Amount</th>
 			  <th>Amount</th>
 			</tr>
-			
-			'
-			
-			.$hsn_code_table_html.'
+			'.$hsn_code_table_html.'
 			<tr style="font-size:15px;text-align:right">
-			
 			  <td colspan="2"><b>Total</b></td>
 			  <td colspan="2"><b>Rs.'.$sortedHSNCodesAssAmt.'</b></td>
 			  <td colspan="2"><b>Rs.'.$sortedHSNCodesCgstAmt.'</b></td>
@@ -1907,7 +1851,7 @@ Subject To Pune Jurisdiction</p>
 		<tr style="font-size:14px;text-align:center;">
 		  <th>HSN Code</th>
 		  <th>Product Name</th>
-		  <td colspan="6" style="text-align:left;">Product Description</th>
+		  <th colspan="6" style="text-align:left;">Product Description</th>
 		  <th>Quantity </th>
 		  <th>Taxable Amt</th>
 		  <th colspan="2">Rate</th>
@@ -1976,6 +1920,21 @@ Subject To Pune Jurisdiction</p>
 		}
   }
   
+  /**
+   * Check if the record exists for einvoice and if not then insert else just need to update the data.
+   */
+  function checkEinvoiceAndInsert($new_sales_id,$data) {
+	//this should be checked before inserting...
+	$einv_salesRecord = $this->Crud->get_data_by_id("einvoice_res", $new_sales_id, "new_sales_id");
+	if (isset($einv_salesRecord) && isset($einv_salesRecord[0]->new_sales_id)) {
+		$recordSuccess = $this->Common_admin_model->update("einvoice_res", $data, "new_sales_id", $new_sales_id);
+	} else {
+		$recordSuccess = $this->Common_admin_model->insert('einvoice_res', $data);
+	}
+	return $recordSuccess;
+
+  }
+
 
   /**
    * Get Currency

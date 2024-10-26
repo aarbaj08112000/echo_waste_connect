@@ -769,4 +769,12 @@ a.nav-active-link {
     width: 10%;
 }
 
+.navbar-classic li a{
+    text-transform: uppercase !important;
+}
 
+
+/* modal scroll bar */
+.modal-body {
+    max-height: 800px; overflow-y: auto;
+}

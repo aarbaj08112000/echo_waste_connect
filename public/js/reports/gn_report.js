@@ -4,8 +4,8 @@ var pdf_title = "GRN Report";
 // var myModal = new bootstrap.Modal(document.getElementById('child_part_update'))
 const page = {
     init: function(){
-        this.dataTable();
         this.filter();
+        this.dataTable();
         this.formValidation();
         $(document).on("click",".edit-part",function(){
             var data = $(this).attr("data-value");
@@ -108,9 +108,12 @@ const page = {
         $('.dataTables_length').find('label').contents().filter(function() {
             return this.nodeType === 3; // Filter out text nodes
         }).remove();
-        $(".dataTables_length select").select2({
-            minimumResultsForSearch: Infinity
+        table.on('init.dt', function() {
+            $(".dataTables_length select").select2({
+                minimumResultsForSearch: Infinity
+            });
         });
+
         
         $('#serarch-filter-input').on('keyup', function() {
             table.search(this.value).draw();
@@ -123,6 +126,17 @@ const page = {
         let that = this;
         $('#months').select2();
         $('#year').select2();
+        $('#date_range_filter').daterangepicker({
+            singleDatePicker: false,
+            showDropdowns: true,
+            autoApply: true,
+            locale: {
+                format: 'YYYY/MM/DD' // Change this format as per your requirement
+            }
+        });
+        dateRangePicker = $('#date_range_filter').data('daterangepicker');
+        dateRangePicker.setStartDate(start_date);
+        dateRangePicker.setEndDate(end_date);
         $(".search-filter").on("click",function(){
             table.destroy(); 
             that.dataTable();
@@ -135,12 +149,15 @@ const page = {
     serachParams: function(){
         var month_number = $("#months").val();
         var year = $("#year").val();
-        var params = {month_number:month_number,year:year};
+        var date_range = $("#date_range_filter").val();
+        var params = {month_number:month_number,year:year,date_range:date_range};
         return params;
     },
     resetFilter: function(){
         $("#months").val('').trigger('change');
         $("#year").val('');
+        dateRangePicker.setStartDate(start_date);
+        dateRangePicker.setEndDate(end_date);
         table.destroy(); 
         this.dataTable();
     }

@@ -335,9 +335,13 @@ class ReportsController extends CommonController
             'public/assets/images/images/no_data_found_new.png" height="150" width="150"><br> No Employee data found..!</div>';
         $data["is_top_searching_enable"] = true;
         $data["sorting_column"] = json_encode([]);
-        $data["page_length_arr"] = [[10,50,100,200], [10,50,100,200]];
+        $data["page_length_arr"] = [[10,50,100,200,500,1000], [10,50,100,200,500,1000]];
         $data["admin_url"] = base_url();
         $data["base_url"] = base_url();
+        $date_filter = date("Y/m/01") ." - ". date("Y/m/d");
+        $date_filter =  explode((" - "),$date_filter);
+        $data['start_date'] = $date_filter[0];
+        $data['end_date'] = $date_filter[1];
 		
 		$data['showDocRequestDetails'] = $this->showMaterialRequestDetails();
 		$this->getPage('reports/reports_grn', $data);	
@@ -364,8 +368,6 @@ class ReportsController extends CommonController
         $base_url = $this->config->item("base_url");
 		$data = $this->SupplierParts->getGNRepotData($condition_arr,$post_data["search"]);
 		
-        
-
 		foreach($data as $k=>$v){
 			$data[$k]['po_date']= defaultDateFormat($v['po_date']);
 			$data[$k]['invoice_date'] = defaultDateFormat($v['invoice_date']);
@@ -380,12 +382,12 @@ class ReportsController extends CommonController
 				$tcs_amount = $g->tcs_amount;
 			}
 			$data[$k]['gst_amount'] = $gst_amount;
-			$data[$k]['total_with_gst'] = $total_with_gst;
+			$data[$k]['total_with_gst'] = number_format($total_with_gst,2,".","");
 			$data[$k]['tcs_amount'] = $tcs_amount;
 		}
+
 		$data["data"] = $data;
         $total_record = $this->SupplierParts->getGNRepotDataCount($condition_arr, $post_data["search"]);
-		
         $data["recordsTotal"] = $total_record['tot_record'];
         $data["recordsFiltered"] = $total_record['tot_record'];
         echo json_encode($data);

@@ -25,7 +25,7 @@ CREATE TABLE `inhouse_parts_stock` (
   `inhouse_parts_id` int(11) NOT NULL,
   `clientId` int(11) NOT NULL,
   `stock` DECIMAL(15,2) NOT NULL,
-  `safty_buffer_stk` DECIMAL(15,2) NOT NULL,		-- CURRENTLY NOT USED FROM HERE	BUT FROM MASTER inhouse_parts
+  `safty_buffer_stk` DECIMAL(15,2) NOT NULL,    -- CURRENTLY NOT USED FROM HERE BUT FROM MASTER inhouse_parts
   `onhold_stock` DECIMAL(15,2) NOT NULL,
   `production_qty` DECIMAL(15,2) NOT NULL,
   `rejection_prodcution_qty` DECIMAL(15,2) NOT NULL,
@@ -55,16 +55,11 @@ ADD UNIQUE `unique_inhouse_parts_stock` (`inhouse_parts_id`, `clientId`);
 COMMIT;
 
 -- Migration of existing stock
-INSERT INTO inhouse_parts_stock (inhouse_parts_id, stock, safty_buffer_stk, onhold_stock,production_qty ,rejection_prodcution_qty ,sub_con_stock  ,rejection_stock  ,sharing_qty ,machine_mold_issue_stock ,production_scrap  ,production_rejection, created_id, date, time, timestamp)
-SELECT id, stock, safty_buffer_stk, onhold_stock,production_qty ,rejection_prodcution_qty, sub_con_stock, rejection_stock, sharing_qty,machine_mold_issue_stock, production_scrap, production_rejection, created_id, date, time, timestamp
+INSERT INTO inhouse_parts_stock (clientId,inhouse_parts_id, stock, safty_buffer_stk, onhold_stock,production_qty ,rejection_prodcution_qty ,sub_con_stock  ,rejection_stock  ,sharing_qty ,machine_mold_issue_stock ,production_scrap  ,production_rejection, created_id, date, time, timestamp)
+SELECT 1, id, stock, safty_buffer_stk, onhold_stock,production_qty ,rejection_prodcution_qty, sub_con_stock, rejection_stock, sharing_qty,machine_mold_issue_stock, production_scrap, production_rejection, created_id, date, time, timestamp
 FROM inhouse_parts
 
-
 COMMIT;
-
-UPDATE inhouse_parts_stock
-SET clientId = 1
-WHERE clientId = 0;
 
 ALTER TABLE `inhouse_parts` 
 CHANGE `ppap_document` `ppap_document` TEXT CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL, 
@@ -86,9 +81,9 @@ COMMIT;
   `id` int(11) NOT NULL,
   `part_number` varchar(255) NOT NULL,
   `part_description` varchar(250) NOT NULL,
-  `supplier_id` int(30) DEFAULT NULL,									
-  `part_rate` int(11) DEFAULT NULL,										 
-  `revision_date` varchar(50) DEFAULT NULL,								 
+  `supplier_id` int(30) DEFAULT NULL,                 
+  `part_rate` int(11) DEFAULT NULL,                    
+  `revision_date` varchar(50) DEFAULT NULL,                
   `revision_no` varchar(50) DEFAULT NULL,
   `revision_remark` varchar(20) DEFAULT NULL,
   `uom_id` int(11) NOT NULL,

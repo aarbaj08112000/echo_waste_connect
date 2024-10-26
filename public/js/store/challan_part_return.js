@@ -37,7 +37,8 @@ const page = {
     			$(this).val(value);
     		}
     	})
-    	$(document).on('keypress','.onlyNumericInput', function(event) {
+    	$(document).on('keypress,change','.onlyNumericInput', function(event) {
+        alert("ok")
 	        var charCode = (event.which) ? event.which : event.keyCode;
 	        // Allow only digits (0-9) and some specific control keys
 	        if (charCode > 31 && (charCode < 48 || charCode > 57)) {

@@ -263,256 +263,64 @@ class PdfControllertulsi extends CommonController
         }
     }
 
-    public function view_generate_sales_invoice()
+    public function view_original_sales_invoice()
     {
         $new_sales_id = $this->uri->segment('2');
-        $copy = $this->uri->segment('3');
-        $new_sales_data = $this->Crud->get_data_by_id("new_sales", $new_sales_id, "id");
-        $customer_data = $this->Crud->get_data_by_id("customer", $new_sales_data[0]->customer_id, "id");
-        //get client data based on unit selection
-        $client_data = $this->Crud->get_data_by_id("client", $new_sales_data[0]->clientId, "id");
-        //get shipping details based on new sales data like customer or consignee address..
-        $shipping_data = $this->getShippingDetails($new_sales_data, $customer_data);
-
-        $transporter_data = $this->Crud->get_data_by_id("transporter", $new_sales_data[0]->transporter_id, "id");
-        $po_parts_data = $this->Crud->get_data_by_id("sales_parts", $new_sales_id, "sales_id");
-
-        $parts_html = "";
-
-        $final_total = 0;
-        $cgst_amount = 0;
-        $sgst_amount = 0;
-        $igst_amount = 0;
-        $tcs_amount = 0;
-        $height = "350px";
-
-        $i = 1;
-        foreach ($po_parts_data as $p) {
-            $child_part_data = $this->Crud->get_data_by_id("customer_part", $p->part_id, "id");
-            $gst_structure_data = $this->Crud->get_data_by_id("gst_structure", $p->tax_id, "id");
-            $payment_terms = "";
-            $hsn_code = $child_part_data[0]->hsn_code;
-            $packaging_qty = $child_part_data[0]->packaging_qty;
-
-            //for display only
-            if ((int) $gst_structure_data[0]->igst === 0) {
-                $gst = (float) $gst_structure_data[0]->cgst + (float) $gst_structure_data[0]->sgst;
-                $cgst = (float) $gst_structure_data[0]->cgst;
-                $sgst = (float) $gst_structure_data[0]->sgst;
-                $tcs = (float) $gst_structure_data[0]->tcs;
-                $igst = 0;
-                $total_gst_percentage = $cgst + $sgst;
-            } else {
-                $gst = (float) $gst_structure_data[0]->igst;
-                $tcs = (float) $gst_structure_data[0]->tcs;
-                $cgst = 0;
-                $sgst = 0;
-                $igst = $gst;
-                $total_gst_percentage = $igst;
-            }
-
-            //$db_part_price = $p->basic_total;
-
-            /* if ($db_part_price > 0) {
-                $rate = $db_part_price;
-            }*/
-
-            $subtotal = $p->total_rate - $p->gst_amount;       
-            $rate = round($subtotal / $p->qty, 2);
-            $db_part_price = $p->part_price;
-            if ($db_part_price > 0) {
-                $rate = $db_part_price;
-            }
-
-            $row_total = (float) $p->total_rate + (float) $p->tcs_amount;
-            $final_po_amount = (float) $final_po_amount + (float) $row_total;         
-            $gst_amount = ($gst * $rate) / 100;
-            $final_amount = $gst_amount + $rate;
-            $final_row_amount = $final_amount * $p->qty;
-
-            $total_amount = $p->qty * $rate;
-            $final_total = $final_total + $total_amount;
-
-            $cgst_amount = $cgst_amount + $p->cgst_amount;
-            $sgst_amount = $sgst_amount + $p->sgst_amount;
-            $igst_amount = $igst_amount + $p->igst_amount;
-            $tcs_amount = $tcs_amount + $p->tcs_amount;      
-            
-            $parts_html .= '
-            <tr style="font-size:14px">
-                <td style="width:20px;">' . $i . '</td>
-                <td>' . $child_part_data[0]->part_number . '</td>
-                <td colspan="4" style="width:300px;">' . $child_part_data[0]->part_description . '</td>
-                <td>' . $hsn_code . '</td>
-                <td>' . $p->uom_id . '</td>
-                <td>' . $p->qty . '</td>
-                <td>' . $rate . '</td>
-                <td colspan="2">' . number_format((float) $subtotal, 2, '.', '') . '</td>
-            </tr>';
-            $i++;
-        }
-
-        if ($i == 2) {
-            $height = "260px";
-        } elseif ($i == 3) {
-            $height = "220px";
-        } elseif ($i == 4) {
-            $height = "200px";
-        } elseif ($i == 5) {
-            $height = "140px";
-        } elseif ($i == 6) {
-            $height = "100px";
-        } elseif ($i == 7) {
-            $height = "80px";
-        } elseif ($i == 8) {
-            $height = "50px";
-        }
-
+        $configuration = $this->Crud->get_data_by_id_multiple_condition("global_configuration",$criteria);
+        $configuration = array_column($configuration, "config_value","config_name");
         
 
+        
+        $html_content_header = '
+            <html>
+            <head>
+            <style>
+                html { margin: 15px }
+                th, td {
+                    border: 1px solid black;
+                    border-collapse: collapse;
+                    padding-top: 1px;
+                    padding-bottom: 1px;
+                    padding-left: 5px;
+                    //padding-right: 4px;
+                    font-family: Poppins, sans-serif; 
+                    line-height: 1 
+                }
+                tr.part-box th,tr.part-box td {
+                    padding: 2px;
+                }
+            </style>
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" >
 
-        if ($new_sales_data[0]->mode == '1') {
-            $md = 'Road';
-        } elseif ($new_sales_data[0]->mode == '2') {
-            $md = 'Rail';
-        } elseif ($new_sales_data[0]->mode == '3') {
-            $md = 'Air';
-        } elseif ($new_sales_data[0]->mode == '4') {
-            $md = 'Ship';
-        }
+            </head>
+            <body>
+            ';
+                $html_content_full = $html_content_header;
+                echo $html_content_full;
 
-        $html_content = '<html>
-        <head>
-        <style>
-        html { margin: 37.8px;}
-        </style></head>
-        <body>
-        <table cellspacing="0" border="1px">
-        <tr>
-          <th colspan="12" style="text-align:right; font-size:10px">' . $copy . ' </th>
-        </tr>
-        <tr>
-             <th colspan="12" style="text-align:center; font-size:16px">TAX INVOICE</th>
-        </tr>
-        <tr style="font-size:12px;text-align:center">
-            <th colspan="12">
-                <b style="margin-top:-100px;font-size:25px">' . $client_data[0]->client_name . '
-                </b>
-            </th>
-        </tr>
-        <tr style="font-size:14px">
-             <td colspan="6" >
-                <b>PAN NO :</b ' . $client_data[0]->pan_no . '<br>
-                <b>GST NO :</b>' . $client_data[0]->gst_number . '<br>
-                <b>STATE</b>  : ' . $client_data[0]->state . '<br>
-                <b>STATE CODE </b>: ' . $client_data[0]->state_no . '<br>
-            </td>
-            <td colspan="6">
-                <span style="font-size:15px;"> <b>INVOICE NO :' . $new_sales_data[0]->sales_number . '</b></span><br>
-                <b>INVOICE DATE . :</b>' . $new_sales_data[0]->created_date . '<br>
-                <b>TIME OF SUPPLY </b> . :' . $new_sales_data[0]->created_time . '<br>
-                <span style="font-size:8px;">WHETHER TAX ON REVERSE CHARGE: NO</span>
-            </td>
-        </tr>
-        <tr style="font-size:14px">
-            <td colspan="6">
-                <b>Details of Receiver (Billed To)</b><br>
-                <b>' . $customer_data[0]->customer_name . '</b><br>
-                ' . $customer_data[0]->billing_address . '<br>
-                <b>STATE </b>: ' . $customer_data[0]->state . '<br>
-                <b>STATE CODE </b>: ' . $customer_data[0]->state_no . '<br>
-                <b>PAN NO : </b>' . $customer_data[0]->pan_no . '<br>
-                <b>GST NO </b>: ' . $customer_data[0]->gst_number . '
-            </td>
-            <td colspan="6">
-                <b>Details of Consignee (Shipped to)</b>,<br>
-                <b>' . $shipping_data['shipping_name'] . '</b><br>
-                ' . $shipping_data['ship_address'] . '<br>
-                <b>STATE : </b>' . $shipping_data['state'] . '<br>
-                <b>STATE CODE :</b> ' . $shipping_data['state_no'] . '<br>
-                <b> PAN NO :</b> ' . $shipping_data['pan_no'] . '<br>
-                <b>GST NO :</b> ' . $shipping_data['gst_number'] . '
-            </td>
-        </tr>
-        <tr style="font-size:14px">
-            <td colspan="6">
-                <b>PO Number  :</b>' . $po_parts_data[0]->po_number . '
-                <b style="margin-left:10px">PO Date  :</b>' . $po_parts_data[0]->po_date . '
-                </td>
-                <td colspan="6">
-                <b>Vendor Code  . :</b>' . $customer_data[0]->vendor_code . '<br>
-            </td>
-        </tr>
-        <tr style="font-size:12px;text-align:center">
-              <th style="width:20px;">Sr No</th>
-              <th style="width:90px;" >Part Number </th>
-              <th colspan="4" style="width:240px;">Part Description </th>
-              <th style="width:70px;" >HSN / SAC </th>
-              <th style="width:40px;">UOM </th>
-              <th style="width:40px;">QTY </th>
-              <th style="width:20px;">Rate/Unit</th>
-              <th colspan="2">Amount (Rs)</th>
-        </tr>
-          ' . $parts_html . '
-          <tr>
-            <td colspan="12" VALIGN="BOTTOM" style="font-size:15px;height:' . $height . '">Remark: ' . $new_sales_data[0]->remark . '</td>
-          </tr>
-
-          <tr style="font-size:12px">
-            <td rowspan="3" colspan="7">
-            <b>
-            Mode Of Transport : ' . $md . ' <br> <br>
-            Transporter : ' . $transporter_data[0]->transporter_id . ' <br> <br>
-            Vehicle No : ' . $new_sales_data[0]->vehicle_number . ' <br> <br>
-            L.R No : ' . $new_sales_data[0]->lr_number . ' <br> <br>
-            </b>
-            </td>
-            <th colspan="3" style="text-align:center;margin-left:10px;">SUB TOTAL </th>
-            <th colspan="2" style="text-align:center">' . number_format((float) $final_total, 2, '.', '') . '</th>
-          </tr>
-
-          <tr style="font-size:12px">
-            <th colspan="3" style="text-align:center;margin-left:10px;">CGST ' . $cgst . '%</th>
-            <th colspan="2" style="text-align:center">' . number_format((float) $cgst_amount, 2, '.', '') . '</th>
-          </tr>
-
-          <tr style="font-size:12px">
-            <th colspan="3" style="text-align:center;margin-left:10px;">SGST  ' . $sgst . '%</th>
-            <th colspan="2" style="text-align:center">' . number_format((float) $sgst_amount, 2, '.', '') . '</th>
-          </tr>
-          <tr style="font-size:12px">
-          <td rowspan="3" colspan="7">
-            <b>Payment Terms : ' . $customer_data[0]->payment_terms . '</b> <br><br>
-            <span><b>Bank Details :</b> ' . $client_data[0]->bank_details . '</span><br> <br>
-            <b>Electronic Reference No.</b> <br> <br>
-            <span> <b>Invoice Value (In Words):</b> ' . $this->getIndianCurrency(number_format((float) $final_po_amount, 2, '.', '')) . '</span>
-            </td>
-
-            <th colspan="3" style="text-align:center">IGST ' . $igst . '%</th>
-            <th colspan="2" style="text-align:center">' . number_format((float) $igst_amount, 2, '.', '') . '</th>
-          </tr>
-          <tr style="font-size:12px">
-            <th colspan="3" style="text-align:center">TCS ' . $tcs . '%</th>
-            <th colspan="2" style="text-align:center">' . number_format((float) $tcs_amount, 2, '.', '') . '</th>
-          </tr>
-
-          <tr style="font-size:12px">
-            <th colspan="3" style="text-align:center">GRAND TOTAL (Rs) </th>
-            <th colspan="2" style="text-align:center">' . number_format((float) $final_po_amount, 2, '.', '') . '</th>
-          </tr>';
-        $html_content = $html_content . $this->getFooterWithSignature();
-        echo $html_content;
+                $new_sales_data = $this->Crud->get_data_by_id("new_sales", $new_sales_id, "id");
+                $html_content_full .= $this->for_print_download_generate_sales_invoice(null, $new_sales_id, $new_sales_data, $configuration);
+                
+                $html_content_full .= $this->getFooter();
+                echo $html_content_full;
     }
+
 
     public function download_po()
     {
         $new_po_id = $this->uri->segment('2');
         $client_data = $this->Unit->getClientUnitDetails();
         $new_po_data = $this->Crud->get_data_by_id("new_po", $new_po_id, "id");
-        // print_r($new_po_data);
+        $po_discount_type = $new_po_data[0]->po_discount_type;
+        $discount_type = $new_po_data[0]->discount_type;
+        $discount_value = $new_po_data[0]->discount;
+        // pr($new_po_data['po_number'],1);
         // echo "<br>";
         $supplier_data = $this->Crud->get_data_by_id("supplier", $new_po_data[0]->supplier_id, "id");
         // print_r($supplier_data);
+        // 
+        $discount = ($discount_value != null && $discount_value != "") ? $discount_value : "";
+
         // echo "<br>";
         $po_parts_data = $this->Crud->get_data_by_id("po_parts", $new_po_data[0]->id, "po_id");
         // print_r($po_parts_data);
@@ -547,23 +355,29 @@ class PdfControllertulsi extends CommonController
             $igst_amount = $igst_amount + $freight_igst_cgst;
         }
 
-        foreach ($po_parts_data as $p) {
 
+
+        $part_arr = [];
+        // pr($po_parts_data,1);
+        foreach ($po_parts_data as $p) {
+            // pr($po_parts_data,1);
             $data = array(
                 'supplier_id' => $supplier_data[0]->id,
                 "child_part_id" => $p->part_id,
             );
-
             $part_data_new = $this->Crud->get_data_by_id_multiple_condition("child_part_master", $data);
             $with_in_state = $supplier_data[0]->with_in_state;
+            // pr($with_in_state,1);
             $uom_data = $this->Crud->get_data_by_id("uom", $p->uom_id, "id");
             $gst_structure_data = $this->Crud->get_data_by_id("gst_structure", $p->tax_id, "id");
 
             $part_data_new2 = $this->SupplierParts->getSupplierPartOnlyById($p->part_id);
 
             $payment_terms = "";
+            $payment_days = 0;
             if ($supplier_data) {
                 $payment_terms = $supplier_data[0]->payment_terms;
+                $payment_days = $supplier_data[0]->payment_days;
             }
 
             if ($part_data_new2) {
@@ -573,14 +387,14 @@ class PdfControllertulsi extends CommonController
             }
 
             if ((int) $gst_structure_data[0]->igst === 0) {
-                $gst = (int) $gst_structure_data[0]->cgst + (int) $gst_structure_data[0]->sgst;
-                $cgst = (int) $gst_structure_data[0]->cgst;
-                $sgst = (int) $gst_structure_data[0]->sgst;
+                $gst = (float) $gst_structure_data[0]->cgst + (float) $gst_structure_data[0]->sgst;
+                $cgst = (float) $gst_structure_data[0]->cgst;
+                $sgst = (float) $gst_structure_data[0]->sgst;
                 $tcs = (float) $gst_structure_data[0]->tcs;
                 $tcs_on_tax = $gst_structure_data[0]->tcs_on_tax;
                 $igst = 0;
             } else {
-                $gst = (int) $gst_structure_data[0]->igst;
+                $gst = (float) $gst_structure_data[0]->igst;
                 $cgst = 0;
                 $sgst = 0;
                 $tcs = (float) $gst_structure_data[0]->tcs;
@@ -599,57 +413,111 @@ class PdfControllertulsi extends CommonController
             $final_row_amount = $final_amount * $p->qty;
 
             // $final_total = $final_total + $final_row_amount;
+
             $total_amount = $p->qty * $part_rate_new;
+            $total_amount_with_discount = ($total_amount * $p->discount/100) > 0 ?  ($total_amount * $p->discount/100) : 0 ;
+            $total_amount = $total_amount - $total_amount_with_discount;
             $final_total = $final_total + $total_amount;
+            if($po_discount_type != "PO Level"){
+                $cgst_amount = $cgst_amount + (($total_amount * $cgst) / 100);
+                $sgst_amount = $sgst_amount + (($total_amount * $sgst) / 100);
+                $igst_amount = $igst_amount + (($total_amount * $igst) / 100);
 
-            $cgst_amount = $cgst_amount + (($total_amount * $cgst) / 100);
-            $sgst_amount = $sgst_amount + (($total_amount * $sgst) / 100);
-            $igst_amount = $igst_amount + (($total_amount * $igst) / 100);
-
-            if ($gst_structure_data[0]->tcs_on_tax == "no") {
-                $tcs_amount = $tcs_amount + (($total_amount * $tcs) / 100);
-            } else {
-                //$tcs_amount =  $tcs_amount + ((($cgst_amount + $sgst_amount + $igst_amount + $total_amount) * $tcs) / 100);
-                $tcs_amount = $tcs_amount + ((((float) (($total_amount * $cgst) / 100) + (float) (($total_amount * $sgst) / 100) + (float) $igst_amount + (float) $total_amount) * $tcs) / 100);
+                if ($gst_structure_data[0]->tcs_on_tax == "no") {
+                    $tcs_amount = $tcs_amount + (($total_amount * $tcs) / 100);
+                } else {
+                    //$tcs_amount =  $tcs_amount + ((($cgst_amount + $sgst_amount + $igst_amount + $total_amount) * $tcs) / 100);
+                    $tcs_amount = $tcs_amount + ((((float) (($total_amount * $cgst) / 100) + (float) (($total_amount * $sgst) / 100) + (float) $igst_amount + (float) $total_amount) * $tcs) / 100);
+                }
             }
 
             if ($with_in_state == "yes") {
-                $parts_html .= '
-        <tr>
-            <td>' . $i . '</td>
-            <td colspan="3">' . $part_data_new[0]->part_number . ' / ' . $part_data_new[0]->part_description . '</td>
-            <td>' . $hsn_code . '</td>
-            <td>' . $part_rate_new . '</td>
-            <td>' . $p->qty . '</td>
-            <td>' . $uom_data[0]->uom_name . '</td>
-            <td>' . $cgst . '</td>
-            <td>' . $sgst . '</td>
-            <td>' . number_format((float) $total_amount, 2, '.', '') . '</td>
+                $part_arr[] = [
+                    "part_number" =>$part_data_new[0]->part_number,
+                    "part_description" => $part_data_new[0]->part_description,
+                    "hsn_code" => $hsn_code,
+                    "part_rate_new" => $part_rate_new,
+                    "qty" => $p->qty,
+                    "uom_name" =>$uom_data[0]->uom_name,
+                    "cgst" => $cgst,
+                    "sgst" => $sgst,
+                    "total_amount" => number_format((float) $total_amount, 2, '.', ''),
+                    "discount_amount" => ($part_rate_new * $p->discount/100) > 0 ?  $part_rate_new - ($part_rate_new * $p->discount/100) : 0 
+                ];
+                // $parts_html .= '
+                //     <tr>
+                //         <td>' . $i . '</td>
+                //         <td colspan="3">' . $part_data_new[0]->part_number . ' / ' . $part_data_new[0]->part_description . '</td>
+                //         <td>' . $hsn_code . '</td>
+                //         <td>' . $part_rate_new . '</td>
+                //         <td>' . $p->qty . '</td>
+                //         <td>' . $uom_data[0]->uom_name . '</td>
+                //         <td>' . $cgst . '</td>
+                //         <td>' . $sgst . '</td>
+                //         <td>' . number_format((float) $total_amount, 2, '.', '') . '</td>
 
-        </tr>
-        ';
+                //     </tr>
+                //     ';
             } else {
-                $parts_html .= '
-        <tr>
-            <td>' . $i . '</td>
-            <td colspan=" 4 ">' . $part_data_new[0]->part_number . ' / ' . $part_data_new[0]->part_description . '</td>
-            <td>' . $hsn_code . '</td>
-            <td>' . $part_rate_new . '</td>
-            <td>' . $p->qty . '</td>
-            <td>' . $uom_data[0]->uom_name . '</td>
-            <td>' . $igst . '</td>
-            <td>' . number_format((float) $total_amount, 2, '.', '') . '</td>
+                // $parts_html .= '
+                //     <tr>
+                //         <td>' . $i . '</td>
+                //         <td colspan=" 4 ">' . $part_data_new[0]->part_number . ' / ' . $part_data_new[0]->part_description . '</td>
+                //         <td>' . $hsn_code . '</td>
+                //         <td>' . $part_rate_new . '</td>
+                //         <td>' . $p->qty . '</td>
+                //         <td>' . $uom_data[0]->uom_name . '</td>
+                //         <td>' . $igst . '</td>
+                //         <td>' . number_format((float) $total_amount, 2, '.', '') . '</td>
 
-        </tr>
-        ';
+                //     </tr>
+                //     ';
+                $part_arr[] = [
+                    "part_number" =>$part_data_new[0]->part_number,
+                    "part_description" => $part_data_new[0]->part_description,
+                    "hsn_code" => $hsn_code,
+                    "part_rate_new" => $part_rate_new,
+                    "qty" => $p->qty,
+                    "uom_name" =>$uom_data[0]->uom_name,
+                    "cgst" => $cgst,
+                    "sgst" => $sgst,
+                    "total_amount" => number_format((float) $total_amount, 2, '.', ''),
+                    "igst" =>$igst,
+                    "discount_amount" => ($part_rate_new * $p->discount/100) > 0 ?  $part_rate_new - ($part_rate_new * $p->discount/100) : 0 
+                ];
             }
 
             $i++;
         }
 
-        $final_total = $final_total + $new_po_data[0]->loading_unloading + $new_po_data[0]->freight_amount;
+        // pr($final_total,1);
+        $configuration = $this->Crud->get_data_by_id_multiple_condition("global_configuration",$criteria);
+        $configuration = array_column($configuration, "config_value","config_name");
+        
 
-        $final_final_amount = $final_total + $cgst_amount + $sgst_amount + $igst_amount + $tcs_amount;
+        $po_formate_number = $configuration['PoFormateNumber'];
+        $po_rev_number = $configuration['PoRevNo'];
+        $po_rev_date = $configuration['PoRevDate'];
+        $data['with_in_state'] = $with_in_state;
+        $data['part_arr'] = $part_arr;
+        $part_chunks_arr = [];
+        $key_count = 0;
+        foreach ($data['part_arr'] as $key => $value) {
+           // pr(($key+1)%9 == 0);
+           $part_chunks_arr[$key_count][$key] = $value;
+            if(($key+1)%8 == 0){
+             $key_count++;
+           }
+        }
+         $data['part_arr'][0][] = $data['part_arr'][0][0];
+        $data['part_arr'][0][] = $data['part_arr'][0][0];
+        // pr($part_chunks_arr,1);
+        $data['total_product'] = count($data['part_arr']);
+        $data['part_arr'] = $part_chunks_arr;
+        // pr($data,1);
+      
+
+        // $final_final_amount = $final_total + $cgst_amount + $sgst_amount + $igst_amount + $tcs_amount;
 
         $billing_address = $new_po_data[0]->billing_address;
         $shipping_address = $new_po_data[0]->shipping_address;
@@ -660,36 +528,105 @@ class PdfControllertulsi extends CommonController
         if (empty($shipping_address)) {
             $shipping_address = $client_data[0]->shifting_address;
         }
+        $sub_total_amount = $final_total;
+        // pr($sub_total_amount);
+        $discount_amount = 0;
+        $discount_amount_after_subtotal = "";
+        
+        if($po_discount_type == "PO Level"){
+            if($discount != ""){
+                if($discount_type == "Percentage"){
+                    $discount_amount = $final_total * $discount/100;
+                    $discount .="%"; 
+                }else{
+                    $discount_amount = $discount;
+                    $discount = number_format((float) $discount, 2, '.', '');
+                }
+            }
 
-        if ($with_in_state == "yes") {
-            $tax = '
-                <th>CGST % </th>
-                <th>SGST % </th>
-                ';
+            $part_val = $po_parts_data[0];
+            
+            $final_total = $final_total - $discount_amount;
+            // $final_final_amount = $final_final_amount - $discount_amount;
+            $gst_structure_data = $this->Crud->get_data_by_id("gst_structure", $part_val->tax_id, "id");
 
-            $colspan1 = 10;
-            $description_colspan = 3;
-            $footer_gst = ' <tr>
-      <th colspan="' . $colspan1 . '" style="text-align:right">CGST </th>
-      <th>' . number_format((float) $cgst_amount, 2, '.', '') . '</th>
-    </tr>
-    <tr>
-      <th colspan="' . $colspan1 . '" style="text-align:right">SGST </th>
-      <th>' . number_format((float) $sgst_amount, 2, '.', '') . '</th>
-    </tr>';
-        } else {
-            $tax = '
-      <th>IGST % </th>
-      ';
-            $colspan1 = 10;
-            $description_colspan = 4;
-            $footer_gst = '
-      <tr>
-      <th colspan="' . $colspan1 . '" style="text-align:right">IGST </th>
-      <th>' . number_format((float) $igst_amount, 2, '.', '') . '</th>
-    </tr>
-    ';
+            if ((int) $gst_structure_data[0]->igst === 0) {
+                $gst = (int) $gst_structure_data[0]->cgst + (int) $gst_structure_data[0]->sgst;
+                $cgst = (int) $gst_structure_data[0]->cgst;
+                $sgst = (int) $gst_structure_data[0]->sgst;
+                $tcs = (float) $gst_structure_data[0]->tcs;
+                $tcs_on_tax = $gst_structure_data[0]->tcs_on_tax;
+                $igst = 0;
+            } else {
+
+                $gst = (int) $gst_structure_data[0]->igst;
+                $cgst = 0;
+                $sgst = 0;
+                $tcs = (float) $gst_structure_data[0]->tcs;
+                $tcs_on_tax = $gst_structure_data[0]->tcs_on_tax;
+                $igst = $gst;
+            }
+
+            $cgst_amount +=  (($final_total * $cgst) / 100);
+            $sgst_amount += (($final_total * $sgst) / 100);
+            $igst_amount += (($final_total * $igst) / 100);
+            if ($gst_structure_data[0]->tcs_on_tax == "no") {
+                $tcs_amount += (($final_total * $tcs) / 100);
+            } else {
+                //$tcs_amount =  $tcs_amount + ((($cgst_amount + $sgst_amount + $igst_amount + $total_amount) * $tcs) / 100);
+                $tcs_amount +=  ((((float) (($final_total * $cgst) / 100) + (float) (($final_total * $sgst) / 100) + (float) $igst_amount + (float) $final_total) * $tcs) / 100);
+            }
+            $final_total = $final_total + $new_po_data[0]->loading_unloading + $new_po_data[0]->freight_amount;
+            $discount_amount_after_subtotal = ' 
+                    <tr>
+                        <td width="26.3%" style="text-align:center;font-size:10.3px;" >Sub Total After Discount (' . $discount . ')</td>
+                            <td width="18.7%" style="text-align:center;font-size:10.3px;" >' . number_format((float) $final_total, 2, '.', '') . '</td>
+                        </tr>';
+            // pr($igst_amount,1);
+        }else{
+            $final_total = $final_total + $new_po_data[0]->loading_unloading + $new_po_data[0]->freight_amount;
         }
+        
+        $final_final_amount = $final_total + $cgst_amount + $sgst_amount + $igst_amount + $tcs_amount;
+
+        // pr($discount_amount,1);
+
+        
+        
+        $footer_gst = '
+                <tr>
+                    <td width="26.3%" style="text-align:center;font-size:10.3px;" >CGST Amount</td>
+                    <td width="18.7%" style="text-align:center;font-size:10.3px;" ></td>
+                </tr>
+                <tr>
+                    <td width="26.3%" style="text-align:center;font-size:10.3px;" >SGST Amount</td>
+                    <td width="18.7%" style="text-align:center;font-size:10.3px;" ></td>
+                </tr>';
+        $gst_block_html = "";
+        if ($with_in_state == "yes") {
+            $footer_gst = '
+                <tr>
+                    <td width="26.3%" style="text-align:center;font-size:10.3px;" >CGST Amount</td>
+                    <td width="18.7%" style="text-align:center;font-size:10.3px;" >' . number_format((float) $cgst_amount, 2, '.', '') . '</td>
+                </tr>
+                <tr>
+                    <td width="26.3%" style="text-align:center;font-size:10.3px;" >SGST Amount</td>
+                    <td width="18.7%" style="text-align:center;font-size:10.3px;" >' . number_format((float) $sgst_amount, 2, '.', '') . '</td>
+                </tr>';
+                } else {
+                    
+            $footer_gst = '
+                <tr>
+                    <td width="26.3%" style="text-align:center;font-size:10.3px;" >IGST Amount</td>
+                    <td width="18.7%" style="text-align:center;font-size:10.3px;" >' . number_format((float) $igst_amount, 2, '.', '') . '</td>
+                </tr>
+                ';
+                $gst_block_html = '<br><br>';
+            ;
+
+        }
+
+        
 
         $notes = "  1.PDIR & MTC Required with each lot. Pls mention PO No. on Invoice.
           <br>
@@ -700,146 +637,277 @@ class PdfControllertulsi extends CommonController
           <b> Delivery :</b>   Door Delivery. <br>
 
           <b> Validity :</b>  30 Days from date of purchase order <br>";
-
+        // pr($new_po_data,1);
         if (!empty($new_po_data[0]->notes)) {
             $notes = $new_po_data[0]->notes;
+        }   
+        ob_start();
+        // pr($new_po_data[0]->po_number,1);
+
+        if($with_in_state == "yes"){
+            $part_titel = ' <td width="6.333333333%" style="text-align:center;font-size:8.8px;">
+                        <b>CGST 
+                        <br>%</b>
+                    </td>
+                    <td width="6.333333333%" style="text-align:center;font-size:8.8px;">
+                        <b>SGST<br> %</b>
+                    </td>';
+        }else{
+            $part_titel = '<td width="12.666666666%" style="text-align:center;font-size:8.8px;">
+                        <b>IGST<br> %</b>
+                    </td>';
+        }
+        $discount_title = "";
+        $data['po_discount_type'] = $po_discount_type;
+        if($po_discount_type == "Part Level"){
+            $part_titel = "";
+            $discount_title = '<td width="12.666666666%" style="text-align:left;font-size:8.8px;" >
+                            <b>DISCOUNT RATE</b>
+                        </td>';
         }
 
-        $html_content = '
 
-    <html>
-    <head>
-    <style>
-    html { margin: 0px}
-    table.fixed { table-layout:fixed; }
-    table.fixed td { overflow: hidden; }
-    </style></head>
-    <body>
-    <table style="width:100%" border="1px">
-    <tr>
-       </tr>
-        <tr>
-            <th colspan="11" style="text-align:center">Purchase Order</th>
-        </tr>
-        <tr>
-            <th colspan="11" style="text-align:center">' . $client_data[0]->client_name . '</th>
-        </tr>
+       $header_html =  '
+       <style>
+             
+            th, td ,b{ 
+                font-family: "Poppins", sans-serif;
+                line-height: 1.8
+            }
+           </style>
+       <table cellspacing="0" cellpadding="4.4" border="1">
+            <tbody>
+                <tr>
+                    <td width="80%" style="text-align:center;font-size:20.8px;" rowspan="2" colspan="2"><b>PURCHASE ORDER</b></td>
+                    <td width="20%" style="text-align:left;font-size:10.6px;"><b>&nbsp;Format No : '.$po_formate_number.'</b></td>
+                </tr>
+                <tr>
+                    
+                    <td width="20%" style="text-align:left;font-size:10.6px;"><b>&nbsp;Rev No : '.$po_rev_number.'</b></td>
+                </tr>
+                <tr>
+                    <td width="40%" style="text-align:left;font-size:10.6px;"  colspan="2"><b>&nbsp;PO. NO.:</b>&nbsp;<span style="font-size:12.6px">' . $new_po_data[0]->po_number . '</span></td>
+                    <td width="40%" style="text-align:left;font-size:10.6px;"  colspan="2"><b>&nbsp;PO DATE:</b> '.$new_po_data[0]->created_date.'</td>
+                    <td width="20%" style="text-align:left;font-size:11.6px;"><b>&nbsp;Rev Date : '.$po_rev_date.'</b></td>
+                </tr>
+                <tr>
+                    <td width="50%" style="text-align:left;font-size:10.6px;"><b>&nbsp;SUPPLIER:</b> ' . $supplier_data[0]->supplier_name . '</td>
+                    <td width="16%" style="text-align:center;font-size:10.6px;"><b>&nbsp;PO TYPE </b></td>
+                    <td width="18%" style="text-align:left;font-size:10.6px;"><b>&nbsp;PO Amendment No:</b></td>
+                    <td width="16%" style="text-align:left;font-size:10.6px;"><b>&nbsp;' . $new_po_data[0]->amendment_no . '</b></td>
+                </tr> 
+                <tr>
+                    <td width="50%" style="text-align:left;font-size:10.6px;height:85px;" rowspan="2">
+                    <table cellspacing="0" cellpadding="0" border="0">
+                                    <tr>
+                                        <td width="100%" style="text-align:left;font-size:10.6px;" >' . $supplier_data[0]->location . '</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="100%" style="text-align:left;font-size:10.6px;" ><b>GSTIN- </b>' . $supplier_data[0]->gst_number . '</td>
+                                    </tr>
+                                   
+                                    <tr>
+                                        <td width="100%" style="text-align:left;font-size:10.6px;" ><b>CONTACT No: </b>  ' . $supplier_data[0]->mobile_no  . '</td>
+                                    </tr>
+                                    
 
-   <tr>
-        <td colspan="3"><b> To,</b></td>
-    <td colspan="6">
-    <b> PO NO.:- </b>
-   ' . $new_po_data[0]->po_number . '</td>
+                    </table>
 
-   <td colspan="2"   style="text-align:right; font-size:10px">
-   <b> Format No. </b> TUH-PUR-F-02
-   <br>
-   Rev.No. : 1.0, Rev.Date:21-06-2022
-   </td>
-    </tr>
-    <tr>
-    <td colspan="7">
-    ' . $supplier_data[0]->supplier_name . ' <br>
-    ' . $supplier_data[0]->location . ' <br>
-   <b> GSTIN- </b>' . $supplier_data[0]->gst_number . ' <br>
-   <b>TELEPHONE No:  </b> ' . $supplier_data[0]->mobile_no . ' <br></td>
-    <td colspan="4">
-    <b> PO Date : </b>
-   ' . $new_po_data[0]->po_date . '
-    <br>
-    <b>Po Amendment No :</b> ' . $new_po_data[0]->amendment_no . '
-    <br>
-    <b>Po Amendment Date:</b> ' . $new_po_data[0]->amendment_date . '
-    <br>
-    <b>Po Expiry  Date :</b> ' . $new_po_data[0]->expiry_po_date . '
-    <br>
-       </td>
-       </tr>
-    <tr>
-    <td colspan="7">
-       <b>Billing Address:</b> <br>
-          ' . $billing_address . '
-        <b>GSTIN -</b>' . $client_data[0]->gst_number . '
-        <b>Mob No: </b>  ' . $client_data[0]->phone_no . '
-          </td>
-          <td  colspan="4">
-          <b> Shipping Address:</b>
-          <br>
-          ' . $shipping_address . '
-          </td>
-    </tr>
-    <tr>
-          <th>Sr No</th>
-          <th colspan="' . $description_colspan . '">Description Of Goods </th>
-          <th>HSN Code </th>
-          <th>Rate/Unit  </th>
-          <th>QTY </th>
-          <th>UOM </th>
-          ' . $tax . '
-          <th>Total Amount (Rs)</th>
-    </tr>
-      ' . $parts_html . '
+ </td>
+                    <td width="16%" style="text-align:left;font-size:10.6px;" rowspan="2"><b></b></td>
+                    <td width="18%" style="text-align:left;font-size:10.6px;"><b>&nbsp;PO Amendment Date:</b></td>
+                    <td width="16%" style="text-align:left;font-size:10.6px;">' . $new_po_data[0]->amendment_date . '</td>
+                </tr>  
+                <tr>
+                    <td width="18%" style="text-align:left;font-size:10.8px;"><b>&nbsp;&nbsp;PO Expiry  Date:</b></td>
+                    <td width="16%" style="text-align:left;font-size:10.8px;">' . $new_po_data[0]->expiry_po_date . '</td>
+                </tr> 
+                <tr>
+                    <td width="50%" style="text-align:center;font-size:10.8px;" ><b>&nbsp;&nbsp;BILLING ADDRESS:  </b></td>
+                    <td width="50%" style="text-align:center;font-size:10.8px;"><b>&nbsp;&nbsp;SHIPPING ADDRESS:</b></td>
+                </tr> 
+                <tr>
+                    <td width="50%" style="text-align:left;font-size:10.8px;" >
+                        <table cellspacing="0" cellpadding="0" border="0">
+                                    <tr>
+                                        <td width="100%" style="text-align:left;font-size:10.6px;" >' . $billing_address . ' </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="100%" style="text-align:left;font-size:10.6px;" ><b>GSTIN- </b>' . $supplier_data[0]->gst_number . '</td>
+                                    </tr>
+                                   
+                                    <tr>
+                                        <td width="100%" style="text-align:left;font-size:10.6px;" ><b>STATE: </b>  ' . $client_data[0]->state . '</td>
+                                    </tr>
+                                    
 
-      </table>
-      <footer style="">
-      <table style="width:100%" border="1px">
-      <tr>
-      <th colspan="' . $colspan1 . '" style="text-align:right">Loading Unloading Charges </th>
-      <th>' . number_format((float) $new_po_data[0]->loading_unloading, 2, '.', '') . '</th>
-    </tr>
-      <tr>
-      <th colspan="' . $colspan1 . '" style="text-align:right">Freight Charges </th>
-      <th>' . number_format((float) $new_po_data[0]->freight_amount, 2, '.', '') . '</th>
-    </tr>
-      <tr>
-      <th colspan="' . $colspan1 . '" style="text-align:right">Subtotal </th>
-      <th>' . number_format((float) $final_total, 2, '.', '') . '</th>
-    </tr>
+                        </table>
+                       
+                    </td>
+                    <td width="50%" style="text-align:left;font-size:10.8px;">
+                    <table cellspacing="0" cellpadding="0" border="0">
+                                    <tr>
+                                        <td width="100%" style="text-align:left;font-size:10.6px;" >' . $shipping_address . ' </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="100%" style="text-align:left;font-size:10.6px;" ><b>GSTIN- </b>' . $supplier_data[0]->gst_number . '</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="100%" style="text-align:left;font-size:10.6px;" ><b>STATE: </b>  ' . $client_data[0]->state . '</td>
+                                    </tr>
+                                    
 
-    ' . $footer_gst . '
+                        </table>
+                        
+                    </td>
+                </tr> 
+                <tr>
+                    <td width="4%" style="text-align:left;font-size:8.8px;" >
+                    <b>NO</b>
+                    </td>
+                    <td width="38%" style="text-align:left;font-size:8.8px;" >
+                        <b>DESCRIPTION OF GOODS</b>
+                    </td>
+                    <td width="8%" style="text-align:center;font-size:8.8px;" >
+                        <b>HSN</b>
+                    </td>
+                    <td width="10.333333333%" style="text-align:left;font-size:8.8px;" >
+                        <b>RATE / UNIT</b>
+                    </td>
+                    '.$discount_title.'
+                    
+                    <td width="7.333333333%" style="text-align:center;font-size:8.8px;">
+                    <b>QTY</b>
+                    </td>
+                    <td width="7.333333333%" style="text-align:center;font-size:8.8px;">
+                    <b>UOM</b>
+                    </td>
 
-    <tr>
-    <th colspan="' . $colspan1 . '" style="text-align:right">TCS </th>
-    <th>' . number_format((float) $tcs_amount, 2, '.', '') . '</th>
-      </tr>
-        <tr>
-          <th colspan="' . $colspan1 . '" style="text-align:right">Grand Total (Rs) </th>
-          <th>' . number_format((float) $final_final_amount, 2, '.', '') . '</th>
-        </tr>
+                    '.$part_titel.'
+                    <td width="12.333333333%" style="text-align:center;font-size:8.8px;">
+                        <b>TOTAL AMOUNT (Rs)</b>
+                    </td>
+                </tr>    
+            </tbody>
+        </table>';
+            $footer_html  = '
+            <style>
+             
+            th, td {
+                    
+                font-family: "Poppins", sans-serif;
+                line-height: 1.4
+            }
+           </style>
+            <table cellspacing="0" cellpadding="4" border="1">
+                        <tr>
+                            <td width="55%" style="text-left:center;font-size:10.3px;" rowspan="2">&nbsp;&nbsp;<b> Payment Days : </b> ' . $payment_days . ' days after GRN clearance <br>
+                                <b> Payment Terms : </b> ' . $payment_terms . ' days after GRN clearance </td>
+                            <td width="26.3%" style="text-align:center;font-size:10.3px;" >Sub Total</td>
+                            <td width="18.7%" style="text-align:center;font-size:10.3px;" >' . number_format((float) $sub_total_amount, 2, '.', '') . '</td>
+                        </tr>
+                        <tr>
+                            <td width="26.3%" style="text-align:center;font-size:10.3px;" >Loading / Unloading charges</td>
+                            <td width="18.7%" style="text-align:center;font-size:10.3px;" >' . number_format((float) $new_po_data[0]->loading_unloading, 2, '.', '') . '</td>
+                        </tr>
+                        <tr>
+                            <td width="55%" style="text-align:left;font-size:10.6px;" rowspan="11">'.$notes.' </td>
+                             <td width="26.3%" style="text-align:center;font-size:10.3px;" >Freight Charges</td>
+                            <td width="18.7%" style="text-align:center;font-size:10.3px;" >' . number_format((float) $new_po_data[0]->freight_amount, 2, '.', '') . '</td>
+                        </tr>
+                        
+                        '.$discount_amount_after_subtotal.$footer_gst.'
+                        <tr>
+                            
+                            <td width="26.3%" style="text-align:center;font-size:10.3px;" >TCS Amount</td>
+                            <td width="18.7%" style="text-align:center;font-size:10.3px;" >' . number_format((float) $tcs_amount, 2, '.', '') . '</td>
+                        </tr>
+                       
+                        <tr>
+                            <td width="26.3%" style="text-align:center;font-size:10.3px;" ><b>GRAND TOTAL</b></td>
+                            <td width="18.7%" style="text-align:center;font-size:10.3px;" >' . number_format((float) $final_final_amount, 2, '.', '') . '</td>
+                        </tr>
+                        '.$gst_block_html.'
+                        <tr>
+                            <td width="45%" style="text-align:center;font-size:10.3px;" >
+                                <table cellspacing="0" cellpadding="0" border="0">
+                                    <tr>
+                                        <td width="100%" style="text-align:center;font-size:10.6px;" ><b>'.$this->getCustomerNameDetails().' </b></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="100%" style="text-align:center;font-size:10.6px;" >&nbsp;&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="100%" style="text-align:center;font-size:10.6px;" >&nbsp;&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="100%" style="text-align:center;font-size:10.6px;" >&nbsp;&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="100%" style="text-align:center;font-size:10.6px;" >&nbsp;&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="100%" style="text-align:center;font-size:10.6px;" >&nbsp;&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="100%" style="text-align:center;font-size:10.6px;" >Authorised Signatory </td>
+                                    </tr>
 
-        <tr>
-          <td colspan="11"><b>Note :</b> <br>
+                                </table>
+                            </td>
+                            
+                        </tr>
+            </table>
+            ';
+            // pr($data,1);
+            // unset($data['part_arr'][0][1]);
+            $html_content = $this->smarty->fetch('purchase/po_generate_pdf.tpl', $data, TRUE);
+            // pr($html_content,1);
+            // $pdf = new Pdf1(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+        $pdf = new Pdf1('P', 'mm', 'A4', true, 'UTF-8', false,'',$header_html,$footer_html,4,-85.8);
 
-          ' . $notes . '
-          <b> Payment Terms : </b> ' . $payment_terms . ' days after GRN clearance <br>
+            $pdf->SetMargins(5, 103.6, 5, 5);
 
-          <h4 style="text-align: right ;margin-right:10px"> For, ' . $this->getCustomerNameDetails() . '</h4>
-          <h6 style="text-align: right">  </h6>
-          <h6 style="text-align: right">  </h6>
-          <h6 style="text-align: right">  </h6>
-          <h6 style="text-align: right">  </h6>
-          <h6 style="text-align: right">  </h6>
-          <h4 style="text-align: right ;margin-right:25px"> Authorized Signature </h4>
+        // set document information
 
-          <b> Remark : </b> ' . $new_po_data[0]->remark . ' <br>
-          <br>
-          <b>This is computer generated document. No signature required.</b>
-        </td>
-       </tr>
-          </footer>
-          </table>
-        </body>
-        </html>
+        $pdf->SetCreator(PDF_CREATOR);
 
+        // set default header data
+        $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE.' 006', PDF_HEADER_STRING);
 
+        // set header and footer fonts
+        $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+        $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
 
+        // set default monospaced font
+        $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
 
-       ';
+        // set margins
+        // $pdf->SetMargins(PDF_MARGIN_LEFT, 15, PDF_MARGIN_RIGHT,0);
+        $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+        $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 
-        $this->pdf->loadHtml($html_content);
-        $this->pdf->render();
-        $this->pdf->stream("PO-Order.pdf", array("Attachment" => 1));
+        // set auto page breaks
+        $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+        // set image scale factor
+        $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+        // add a page
+        $pdf->AddPage();
+
+        // set some text to print
+        // $html = file_get_contents('path_to_html_file.html'); // Load your HTML content
+
+        // output the HTML content
+        $pdf->writeHTML($html_content, true, false, true, false, '');
+
+        //Close and output PDF document
+        $pdf->Output('po-'.$new_po_data[0]->po_number.'.pdf', 'D');
+        ob_end_flush();
+        
     }
+
 
     public function download_my_pdf_inspection_report()
     {
@@ -1240,6 +1308,8 @@ TECHNIQUE </td>
             }
 
             $subtotal = $p->total_rate - $p->gst_amount;
+            $final_basic_total = $final_basic_total + $subtotal;
+
             $rate = round($subtotal / $p->qty, 2);
             $db_part_price = $p->part_price;
             if ($db_part_price > 0) {
@@ -1249,6 +1319,7 @@ TECHNIQUE </td>
             $final_po_amount = (float) $final_po_amount + (float) $row_total;
 
             $gst_amount = ($gst * $rate) / 100;
+            $part_total = $rate * $p->qty;
             $final_amount = $gst_amount + $rate;
             $final_row_amount = $final_amount * $p->qty;
 
@@ -1267,20 +1338,48 @@ TECHNIQUE </td>
                 }
             }
 
+            $custItemCd = $child_part_data[0]->itemCode;
+            if(!empty($custItemCd)) {
+                $custItemCd = "<b><u><span style='background-color: lightgray;'>Item Code - ".$custItemCd."</span></u></b>";
+                $itemCdPresent = true;
+            }
+
+
             $parts_html .= '
         <tr style="font-size:11px;" class="part-box">
          <td style="text-align:center;">' . $i . '</td>
-         <td colspan="4" style="max-width:28px;word-wrap: break-word;text-align:left;">' . substr($child_part_data[0]->part_description, 0, 50) . '<br><b>' . wordwrap($child_part_data[0]->part_number, 12, "\n", true) . '</b></td>
+         <td colspan="4" style="max-width:28px;word-wrap: break-word;text-align:left;">'.substr($child_part_data[0]->part_description, 0,100) . '<br><b>Part No - ' . wordwrap($child_part_data[0]->part_number, 12, "\n", true) .'<br>'.$custItemCd.'</b></td>
          <td style="text-align:center;">' . $hsn_code . '</td>
          <td style="text-align:center;"><span style="text-size:small">' . $packagingQtyFactors . '</span></td>
          <td style="text-align:center;">' . $p->uom_id . '</td>
          <td style="text-align:center;">' . $p->qty . '</td>
          <td style="text-align:center;">' . $rate . '</td>
-         <td colspan="2" style="text-align:center;">' . number_format((float) $subtotal, 2, '.', '') . '</td>
+         <td colspan="2" style="text-align:center;">' . number_format($part_total, 2, '.', '') . '</td>
        </tr>
      ';
             $i++;
         }
+
+        //discount related things
+        $isDiscount = false;
+        
+        if($new_sales_data[0]->discountType!='NA'){
+                $isDiscount = true;
+                $discountDetails = "";
+                if($new_sales_data[0]->discountType==='Percentage'){
+                    $discountDetails = $new_sales_data[0]->discount . " %";
+                }              
+        }
+
+        $sales_total = $this->Crud->tax_calcuation($gst_structure_data[0], $final_basic_total, $new_sales_data[0]->discount_amount);
+        $defaultColumns = "2";
+        if ($isDiscount==true){
+            $defaultColumns = "3";
+            $discountSection =
+            '<td colspan="3" style="text-align:center;margin-left:10px;">DISCOUNT '.$discountDetails.'</td>
+             <td colspan="2" style="text-align:center"> (-) ' . $new_sales_data[0]->discount_amount . '</td>';
+        }
+
 
         if ($i == 2) {
             $height = 260;
@@ -1296,8 +1395,7 @@ TECHNIQUE </td>
             $height = 80;
         } elseif ($i == 8) {
             $height = 30;
-        }
-         elseif ($i == 9) {
+        } elseif ($i == 9) {
             $height = 30;
         }
 
@@ -1338,6 +1436,7 @@ TECHNIQUE </td>
                 $height = 30;
             }
         }
+        
         $height = $height."px";
         // pr($height,1);
         if ($isEinvoicePresent == true) {
@@ -1355,6 +1454,7 @@ TECHNIQUE </td>
             // End and clean the buffer
             ob_end_clean();
         }
+        
         $company_logo = "";
         $company_logo_enable = "No";
         $row_col_span = '12';
@@ -1464,7 +1564,7 @@ TECHNIQUE </td>
          </tr>
          <tr style="font-size:11px;text-align:center;" class="part-box">
           <th style="width:20px;">Sr No</th>
-          <th colspan="4" style="width:350px;text-align:left;">Part Description <br><i> Part Number</i></th>
+          <th colspan="4" style="width:350px;text-align:left;">Part Description</th>
           <th>HSN / SAC </th>
           <th>&nbsp;Packaging&nbsp;</th>
           <th>&nbsp;UOM&nbsp;</th>
@@ -1477,43 +1577,50 @@ TECHNIQUE </td>
           <td colspan="12" VALIGN="BOTTOM" style="font-size:10px;height:' . $height . '">Remark: ' . $new_sales_data[0]->remark . '</td>
         </tr>
            <tr style="font-size:10px">
-           <td rowspan="2" colspan="7">
-            <b>&nbsp;Mode Of Transport : </b>' . $md . '&nbsp;&nbsp;&nbsp;&nbsp;<b>&nbsp;Vehicle No : </b>' . $new_sales_data[0]->vehicle_number . '&nbsp;&nbsp;&nbsp;&nbsp;<b>&nbsp;L.R No : </b>' . $new_sales_data[0]->lr_number . '
-            <br><b>&nbsp;Transporter : </b>' . $transporter_data[0]->transporter_id . '<br>
-           </td>
-           <td colspan="2" style="text-align:center;margin-left:10px;">SUB TOTAL </td>
-           <td colspan="3" style="text-align:center">' . number_format((float) $final_total, 2, '.', '') . '</td>
+                <td rowspan="'.$defaultColumns.'" colspan="7">
+                    <b>&nbsp;Mode Of Transport : </b>' . $md . '&nbsp;&nbsp;&nbsp;&nbsp;<b>&nbsp;Vehicle No : </b>' . $new_sales_data[0]->vehicle_number . '&nbsp;&nbsp;&nbsp;&nbsp;<b>&nbsp;L.R No : </b>' . $new_sales_data[0]->lr_number . '
+                    <br><b>&nbsp;Transporter : </b>' . $transporter_data[0]->transporter_id . '<br>
+                </td>';
+        
+            if($isDiscount==true) {
+                 $html_content = $html_content.$discountSection.'
+                 </tr><tr style="font-size:10px">';
+            }
+           
+            $html_content = $html_content.'
+                    <td colspan="3" style="text-align:center;margin-left:10px;">TAXABLE VALUE</td>
+                    <td colspan="2" style="text-align:center">' . $final_basic_total . '</td>
            </tr>
            <tr style="font-size:10px">
-            <td colspan="2" style="text-align:center">IGST ' . $igst . '%</td>
-            <td colspan="3" style="text-align:center">' . number_format((float) $igst_amount, 2, '.', '') . '</td>
+                <td colspan="3" style="text-align:center">IGST ' . $igst . '%</td>
+                <td colspan="2" style="text-align:center">' . number_format($sales_total['sales_igst'],2) . '</td>
            </tr>
            <tr style="font-size:10px">
-          <td rowspan="5" colspan="7">
+           <td rowspan="5" colspan="7">
             <b> &nbsp;Payment Terms : ' . $customer_data[0]->payment_terms . '</b> <br>
             <span><b> &nbsp;Bank Details : </b> ' . $client_data[0]->bank_details . '</span><br>
             <b> &nbsp;Electronic Reference No.</b> <br>
-            <span> <b> &nbsp;GST Value (In Words) : </b> ' . $this->numberToWords(number_format((float) $final_gst_value, 2, '.', '')) . '</span><br>
-            <span> <b> &nbsp;Invoice Value (In Words) : </b> ' . $this->numberToWords(number_format((float) $final_po_amount, 2, '.', '')) . '</span>
+            <span> <b> &nbsp;GST Value (In Words) : </b> ' . $this->numberToWords($sales_total['sales_gst']) . '</span><br>
+            <span> <b> &nbsp;Invoice Value (In Words) : </b> ' . $this->numberToWords($sales_total['sales_total']) . '</span>
             </td>
-            <td colspan="2" style="text-align:center;margin-left:10px;">CGST ' . $cgst . '%</td>
-            <td colspan="3" style="text-align:center">' . number_format((float) $cgst_amount, 2, '.', '') . '</td>
+            <td colspan="3" style="text-align:center;margin-left:10px;">CGST ' . $cgst . '%</td>
+            <td colspan="2" style="text-align:center">' . number_format($sales_total['sales_cgst'],2). '</td>
           </tr>
           <tr style="font-size:10px">
-            <td colspan="2" style="text-align:center;margin-left:10px;">SGST  ' . $sgst . '%</td>
-            <td colspan="3" style="text-align:center">' . number_format((float) $sgst_amount, 2, '.', '') . '</td>
+            <td colspan="3" style="text-align:center;margin-left:10px;">SGST  ' . $sgst . '%</td>
+            <td colspan="2" style="text-align:center">' . number_format($sales_total['sales_sgst'],2) . '</td>
           </tr>
           <tr style="font-size:10px">
-            <td colspan="2" style="text-align:center">TCS ' . $tcs . '%</td>
-            <td colspan="3" style="text-align:center">' . number_format((float) $tcs_amount, 2, '.', '') . '</td>
+            <td colspan="3" style="text-align:center">TCS ' . $tcs . '%</td>
+            <td colspan="2" style="text-align:center">' . number_format($sales_total['sales_tcs'],2). '</td>
           </tr>
           <tr style="font-size:10px">
-            <td colspan="2" style="text-align:center;margin-left:10px;">Freight Charges</td>
-            <td colspan="3" style="text-align:center">' . '0.00' . '</td>
+            <td colspan="3" style="text-align:center;margin-left:10px;">Freight Charges</td>
+            <td colspan="2" style="text-align:center">' . '0.00' . '</td>
           </tr>
           <tr style="font-size:10px">
-            <th colspan="2" style="text-align:center">GRAND TOTAL(Rs) </th>
-            <th colspan="3" style="text-align:center;font-size:10px">' . number_format((float) $final_po_amount, 2, '.', '') . '</th>
+            <th colspan="3" style="text-align:center">GRAND TOTAL(Rs) </th>
+            <th colspan="2" style="text-align:center;font-size:10px">' . number_format($sales_total['sales_total'],2) . '</th>
           </tr>';
         $digitalSignature = "No";
         $signatureImageEnable = "No";
@@ -1546,10 +1653,7 @@ TECHNIQUE </td>
                 been effected by me/us and it shall be accounted for in the turnover of sales while filling
                 of return and the due tax. If any, payable on the sale has been paid or shall be paid
                 <br>
-                Certified that the particulars given above are true and correct and the amount indicated
-                represents the price actully charged and that there is no flow of additional consideration
-    directly or indirectly from byuer.
-    Interest @24% P.A. will be charged on all overdue invoices.<br>
+                Certified that the particulars given above are true.Interest @24% P.A. will be charged on all overdue invoices.<br>
     Subject To Pune Jurisdiction
     </p><p><br><br>
     <b>This is computer generated document. No signature required.</b>
@@ -1840,7 +1944,7 @@ TECHNIQUE </td>
                 </td>
               </tr>
               <tr>
-                <td colspan="12" style="font-size:11px;">
+                <td colspan="12" style="font-size:11px;padding-top: 4px;">
                   <span><b>&nbsp;IRN No:</b> ' . $einvoice_data[0]->Irn . '<br>  </span>
                   <span><b>&nbsp;ACK No:</b> ' . $einvoice_data[0]->AckNo . '</span>
                   <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b> &nbsp;ACK Date/Time :</b> ' . $einvoice_data[0]->AckDt . '</span>
@@ -1868,7 +1972,7 @@ TECHNIQUE </td>
         }
 
         $html_content = $html_content . $html_invoice_details .
-        '<tr style="font-size:11px;" >
+        '<tr style="font-size:11px;" style="padding-top: 4px;">
             <td colspan="5">
                 <b>&nbsp;Details of Receiver (Billed To)</b><br>
                 &nbsp;<b>' . $customer_data[0]->customer_name . '</b><br>
@@ -2802,10 +2906,7 @@ TECHNIQUE </td>
                 been effected by me/us and it shall be accounted for in the turnover of sales while filling
                 of return and the due tax. If any, payable on the sale has been paid or shall be paid
                 <br>
-                Certified that the particulars given above are true and correct and the amount indicated
-                represents the price actully charged and that there is no flow of additional consideration
-    directly or indirectly from byuer.
-    Interest @24% P.A. will be charged on all overdue invoices.<br>
+                Certified that the particulars given above are true.Interest @24% P.A. will be charged on all overdue invoices.<br>
     Subject To Pune Jurisdiction
     </p><p><br><br>
     <b>This is computer generated document. No signature required.</b>

@@ -64,7 +64,7 @@
                  <div class="col-lg-6 ">
                   <div class="form-group mb-3">
                      <label for="po_num" class="form-label">Part Price </label><span class="text-danger">*</span>
-                     <input type="text"  name="upart_rate"  class="form-control" placeholder="Enter Part Price" value="<%$child_part_data['part_rate']%>">
+                     <input type="text"  name="upart_rate"  class="form-control onlyNumericInput" placeholder="Enter Part Price" value="<%$child_part_data['part_rate']%>">
                   </div>
                  </div>
                  <div class="col-lg-6 ">

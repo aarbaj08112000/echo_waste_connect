@@ -220,6 +220,16 @@ class InhouseParts extends CI_Model {
                 );
             
             $result = $this->Crud->insert_data("inhouse_parts_stock", $stockData);
+            //add entries for this newly inhouse part for other clients too
+            $result = $this->Crud->customQueryUpdate("INSERT INTO inhouse_parts_stock (inhouse_parts_id, clientId, created_id, date, time, timestamp)
+                SELECT ip.inhouse_parts_id, c.id, ip.created_id, ip.date, ip.time, ip.timestamp
+                FROM (SELECT DISTINCT inhouse_parts_id, created_id, date, time, timestamp FROM inhouse_parts_stock) ip
+                CROSS JOIN client c
+                LEFT JOIN inhouse_parts_stock stock
+                ON ip.inhouse_parts_id = stock.inhouse_parts_id
+                AND c.id = stock.clientId
+                WHERE stock.inhouse_parts_id IS NULL AND ip.inhouse_parts_id = " . $inhousePartId);
+
             
         return $result;
     }

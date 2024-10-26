@@ -58,10 +58,10 @@ FROM customer_parts_master;
 COMMIT;
 
 -- Migration of existing stock to second unit
-INSERT INTO customer_parts_master_stock (clientId, customer_parts_master_id, fg_stock, fg_rate, molding_production_qty, production_rejection ,production_scrap  ,semi_finished_location  ,deflashing_assembly_location ,final_inspection_location)
+/*INSERT INTO customer_parts_master_stock (clientId, customer_parts_master_id, fg_stock, fg_rate, molding_production_qty, production_rejection ,production_scrap  ,semi_finished_location  ,deflashing_assembly_location ,final_inspection_location)
 SELECT 2, id,fg_stock2, fg_rate, molding_production_qty, production_rejection ,production_scrap  ,semi_finished_location  ,deflashing_assembly_location ,final_inspection_location
 FROM customer_parts_master;
-
+*/
 
 COMMIT;
 

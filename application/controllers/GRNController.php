@@ -455,7 +455,8 @@ class GRNController extends CommonController
 				}
 
 				$inwarding_price = (float)$inwarding_price + (float)$cgst_amount + (float)$sgst_amount + (float)$igst_amount + (float)$tcs_amount;
-
+				$success = 0;
+        		$messages = "Something went wrong";
 				$data = array(
 					"inwarding_id" => $inwarding_id,
 					"po_number" => $po_number,
@@ -482,13 +483,22 @@ class GRNController extends CommonController
 					$result = $this->Crud->update_data("po_parts", $data, $po_part_id);
 
 					if ($result) {
-						echo "<script>alert('Successfully Added');document.location='" . base_url('inwarding_details/') . $inwarding_id . "/" . $po_number . "'</script>";
+						$messages = "Successfully Added";
+						$success = 1;
+						// echo "<script>alert('Successfully Added');document.location='" . base_url('inwarding_details/') . $inwarding_id . "/" . $po_number . "'</script>";
 					} else {
-						echo "none error po_parts update not found";
+						$messages = "none error po_parts update not found";
 					}
 				} else {
-					echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+					// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+					$messages = "Unable to Add";
 				}
+				$return_arr = [
+					"messages" =>$messages,
+					"success" => $success
+				];
+				echo json_encode($return_arr);
+				exit();
 			}
 
 			public function edit_grn_qty()

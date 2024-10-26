@@ -132,7 +132,15 @@
                                                         <td><%$c->sales_number%></td>
                                                         <td><%$c->customer_name%></td>
                                                         <td>
-                                                            <a class="" href="<%$base_url%>view_new_sales_by_id/<%$c->id%>"><i class="ti ti-eye"></i></i></a>
+                                                            <%if empty($c->customer_name)%>
+                                                             <form action="<%base_url('new_sales') %>" method="POST">
+                                                                    <input type="hidden" name="reused_sales_no" value="<%$c->sales_number %>">
+                                                                    <button style="border: none;background: white;" class="" type="submit" title="Reuse Sales Invoice"><i class="ti ti-eye"></i></button>
+                                                                </form>
+
+                                                            <%else%>
+                                                            <a title="View" class="" href="<%$base_url%>view_new_sales_by_id/<%$c->id%>"><i class="ti ti-eye"></i></i></a>
+                                                            <%/if%>
                                                         </td>
                                                         <td>
                                                             <a class="" href="<%$base_url%>view_PDI_inspection_report/<%$c->id%>"><i class="ti ti-eye"></i></a>
@@ -148,7 +156,7 @@
                                                         <td><%if isset($c->Status)%><%$c->EwbStatus%><%/if%></td>
                                                         <%assign var="sales_id" value=$c->id%>
                                                         
-                                                        <td><%number_format($final_po_amount[$sales_id], 2)%></td>
+                                                        <td><%number_format($c->sales_total, 2)%></td>
                                                         <td>
                                                             
                                                             <%if $c->status != "Cancelled" && (empty($c->Status) || $c->Status == "CANCELLED")%>

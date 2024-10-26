@@ -65,7 +65,7 @@ class SalesModel extends CI_Model {
 
     public function getSalesReportViewData($condition_arr = [], $search_params = "") {
         $clientId = $this->Unit->getSessionClientId();
-        $this->db->select('cp.part_number, cp.part_description, c.customer_name, sales.status, sales.sales_number as salesNumber, sales.created_date AS sales_date, parts.*');
+        $this->db->select('cp.part_number, cp.part_description, c.customer_name, sales.status, sales.sales_number as salesNumber, sales.created_date AS sales_date, parts.*,sales.discount as sales_discount');
         $this->db->from('new_sales AS sales');
         $this->db->join('sales_parts AS parts', 'sales.id = parts.sales_id', 'inner');
         $this->db->join('customer AS c', 'parts.customer_id = c.id', 'inner');

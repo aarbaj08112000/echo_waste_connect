@@ -53,7 +53,7 @@ $(document).ready(function($) {
           if (data.success == 1) {
               toastr.success(data.messages);
               setTimeout(function () {
-                window.location.href = "dashboard";
+                window.location.href = base_url+"dashboard";
             }, 2000);
           }else{
             toastr.error(data.messages);

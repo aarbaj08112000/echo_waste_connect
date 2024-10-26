@@ -70,20 +70,37 @@ class SalesController extends CommonController
 
 		
 		if($data['new_sales']){
-			foreach ($data['new_sales'] as $c) {
+			foreach ($data['new_sales'] as $key=>$c) {
 				$sales_id = $c->id;
 				$po_parts = $this->Crud->get_data_by_id("sales_parts", $sales_id, "sales_id");
 				$final_po_amount = 0;
+				$gst_structure ;
+				$final_basic_total = 0;
 				if ($po_parts) {
 					foreach ($po_parts as $p) {
 						$subtotal +=  $p->total_rate - $p->gst_amount;
 						$row_total =(float) $p->total_rate+(float)$p->tcs_amount;
+						$final_basic_total = $final_basic_total + $subtotal;
 						$final_po_amount = (float)$final_po_amount + (float)$row_total;
+						if(empty($gst_structure)){
+		                    $gst_structure = $this->Crud->get_data_by_id("gst_structure", $p->tax_id, "id");
+		                }
 					}
 				}
 				$data['subtotal'][$sales_id] = $subtotal;
 				$data['row_total'][$sales_id] = $row_total;
-				$data['final_po_amount'][$sales_id] = $final_po_amount;
+				$discountValue = 0;
+				if($c->discountType!='NA') {
+					if (isset($c->discount) && is_numeric($c->discount) && $c->discount > 0) {
+						$discountValue = $c->discount;
+						if ($c->discountType != 'Amount') {
+						$discountValue = number_format($final_basic_total * ($c->discount / 100),2);
+						}
+					}
+				}
+				$sales_total = $this->Crud->tax_calcuation($gst_structure[0], $final_basic_total, $discountValue);
+				// pr($sales_total);
+				$data['new_sales'][$key]->sales_total = $final_po_amount;
 	
 			}
 		}
@@ -97,8 +114,13 @@ class SalesController extends CommonController
 		$this->loadView('sales/sales_invoice_released', $data);
 	}
 
-	public function new_sales()
+	public function new_sales($reused_sales_no=null)
 	{
+		if(!empty($reused_sales_no)){
+			$data['reused_sales_no'] = $reused_sales_no;
+		}else{
+			$data['reused_sales_no'] = $this->input->post('reused_sales_no');
+		}
 
 		$data['id'] = $this->uri->segment('2');
 		// $data['customer'] = $this->Crud->get_data_by_id("customer_part", $data['id'], "id");
@@ -132,21 +154,25 @@ class SalesController extends CommonController
 
 		$ship_addressType = $this->input->post('ship_addressType');
 		$consignee_id = $this->input->post('consignee');
-
-		$data['new_sales'] = $this->Crud->read_data("new_sales");
-
-		$data = array(
-			"customer_id" => $customer_id,
-		);
-
-		$sql = "SELECT sales_number FROM new_sales WHERE sales_number like '" . $this->getSalesNoFormat(true,true). "'
-				 order by id desc LIMIT 1";
-		$latestTempSeqFormat = $this->Crud->customQuery($sql);
-		foreach ($latestTempSeqFormat as $p) {
-			$currentSaleNo = $p->sales_number;
+		if(!empty($this->input->post('reused_sales_no'))){
+			$reused_sales_no = $this->input->post('reused_sales_no');
 		}
-		$sales_num = $this->getCompleteSalesNumber(true,$currentSaleNo); 
+	
 		$cretd_dt = date('d/m/Y', strtotime($this->current_date));
+		$customer_data = $this->Crud->get_data_by_id("customer", $customer_id, "id");
+
+		//if we don't have reused id then generate the new sales number
+		if(empty($reused_sales_no)){
+			$sql = "SELECT sales_number FROM new_sales WHERE sales_number like '" . $this->getSalesNoFormat(true, true) . "'
+				 order by id desc LIMIT 1";
+			$latestTempSeqFormat = $this->Crud->customQuery($sql);
+			foreach ($latestTempSeqFormat as $p) {
+				$currentSaleNo = $p->sales_number;
+			}
+			$sales_num = $this->getCompleteSalesNumber(true, $currentSaleNo);
+		}else{
+			$sales_num = $reused_sales_no;
+		}
 
 		$data = array(
 			"clientId" => $clientUnit,
@@ -160,6 +186,8 @@ class SalesController extends CommonController
 			"mode" => $mode,
 			"transporter_id" => $transporter,
 			"vehicle_number" => $vehicle_number,
+			"discount" => $customer_data[0]->discount,
+			"discountType" => $customer_data[0]->discountType,
 			"lr_number" => $lr_number,
 			"created_by" => $this->user_id,
 			"created_date" => $cretd_dt,
@@ -170,13 +198,23 @@ class SalesController extends CommonController
 			"created_year" => $this->year
 		);
 
+		if(empty($reused_sales_no)){
+			$result = $this->Crud->insert_data("new_sales", $data);
+			if ($result) {
+				$new_sales_id = $result;
+			}
+		} else {
+			$result = $this->Crud->update_data_column("new_sales", $data, $sales_num, "sales_number");
+			if ($result) {
+				$sales_data = $this->Crud->get_data_by_id("new_sales", $sales_num, "sales_number");
+				$new_sales_id = $sales_data[0]->id;
+			}	
+		}
 
-		$result = $this->Crud->insert_data("new_sales", $data);
-		$ret_arr = [];
-		if ($result) {
+		if ($new_sales_id) {
 			// $this->addSuccessMessage('Sales invoice created.');
 			// $this->redirectMessage('view_new_sales_by_id/' . $result);
-			$ret_arr['url'] = 'view_new_sales_by_id/' . $result;
+			$ret_arr['url'] = 'view_new_sales_by_id/' . $new_sales_id;
 			$ret_arr['sucess'] = 1;
 		} else {
 			// $this->addErrorMessage('Unable to create sales invoice.');
@@ -197,17 +235,46 @@ class SalesController extends CommonController
 		$vehicle_number = $this->input->post('vehicle_number');
 		$lr_number = $this->input->post('lr_number');
 		$distance = $this->input->post('distance');
-
+		
+		$final_basic_total = $this->input->post('final_basic_total');
+		$discountType = $this->input->post('discountType');
+		$discount = $this->input->post('discount');
+		$isDiscount = $this->input->post('isDiscount');
+		$discountValue = $this->input->post('discount_amount');
+		
+		if($isDiscount === "Yes"){
+			$discountType = $this->input->post('discountType');
+			$discount = $this->input->post('discount');
+        	if (isset($discount) && is_numeric($discount) && $discount > 0) {
+                $discountValue = $discount;
+                if ($discountType != 'Amount') {
+                		$discountValue = number_format($final_basic_total * ($discount / 100),2);
+			    }
+            }
+		}else if($isDiscount === "No"){
+			$discountType = 'NA';
+			$discount = '0';
+		}
+		
 		$data = array(
 			"remark" => $remark,
-			"mode" => $mode,
-			"transporter_id" => $transporter_id,
+			//"mode" => $mode,
 			"vehicle_number" => $vehicle_number,
+			"transporter_id" => $transporter_id,
+			"discountType" => $discountType,
+			"discount" => $discount,
+			"discount_amount" => $discountValue,
 			"lr_number" => $lr_number,
 			"distance" => $distance,
 		);
+
 		$result = $this->Crud->update_data_column("new_sales", $data, $id, "id");
 		if ($result) {
+			//if($isDiscount === "Yes"){
+				//need to update the tax and other amount details based on discount applied. 
+				$this->load->model('Sales');
+				$this->Sales->update_sales_parts_amountsForDiscounts($id);
+			///}
 			$this->addSuccessMessage('Sales invoice updated.');
 		} else {
 			$this->addErrorMessage('Sales invoice not updated.');
@@ -316,149 +383,158 @@ class SalesController extends CommonController
 		$part_id = $this->input->post('part_id');
 		$sales_number = $this->input->post('sales_number');
 		$qty = $this->input->post('qty');
-
+		$discountType = $this->input->post('discountType');
+		$discount = $this->input->post('discount');
 		$salesdata = $this->db->query('SELECT sales_id FROM `sales_parts` where sales_id = ' . $sales_id . ' ');
 		$salesdata_result = $salesdata->result();
 		$added_saled_count = count($salesdata_result);
 		$ret_arr = [];
-
+		$sucess = 0;
+		$msg = "Something went wrong";
 		if ($added_saled_count == '7') {
+			$msg = "Already 7 Parts Added.";
 			// echo "<script>alert('Already 7 Parts Added.');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
-			$msg = 'Already 7 Parts Added.';
-			$sucess = 0;
 		}
-
-		$customer_part = $this->Crud->get_data_by_id("customer_part", $part_id, "id");
-		$customer_parts_master_data = $this->CustomerPart->getCustomerPartByPartNumber($customer_part[0]->part_number);
-		$job_card_data = $this->Crud->get_data_by_id("job_card", $part_id, "customer_part_id");
-
-		/**
-		 * PO Balance qty should be more than requested qty to be added.
-		 */
-		$po_part_criteria = array(
-			'customer_po_tracking_id' => $po_id,
-			'part_id' => $part_id
+		
+		$data = array(
+			"part_id" => $part_id,
+			"sales_number" => $sales_number,
 		);
+		$check = $this->Crud->read_data_where("sales_parts", $data);
+		if ($check) {
+				$msg = "Part Already Exists To This Invoice Number , Enter Different Part";
+				// $this->addErrorMessage("Part Already Exists To This Invoice Number , Enter Different Part");
+				// $this->redirectMessage();
+				// exit();
+			} else {
+			
+			$customer_part = $this->Crud->get_data_by_id("customer_part", $part_id, "id");
+			$customer_parts_master_data = $this->CustomerPart->getCustomerPartByPartNumber($customer_part[0]->part_number);
+			$job_card_data = $this->Crud->get_data_by_id("job_card", $part_id, "customer_part_id");
 
-		$po_part_details = $this->Crud->get_data_by_id_multiple_condition("parts_customer_trackings", $po_part_criteria);
-		if ($qty > $po_part_details[0]->qty) {
-			// $this->addErrorMessage("Insufficient PO Part balance qty. PO Part balance qty is " . $po_part_details[0]->qty);
-			// $this->redirectMessage();
-			$msg = "Insufficient PO Part balance qty. PO Part balance qty is " . $po_part_details[0]->qty;
-			$sucess = 0;
-		}
+			
+			/**
+			 * PO Balance qty should be more than requested qty to be added.
+			 */
+			$po_part_criteria = array(
+				'customer_po_tracking_id' => $po_id,
+				'part_id' => $part_id
+			);
 
-		$prod_qty_new = 0;
-		if ($job_card_data) {
-			foreach ($job_card_data as $j) {
-				$job_card_prod_qty_ = $this->db->query('SELECT DISTINCT operation_id FROM `job_card_prod_qty` where job_card_id = ' . $j->id . ' ORDER BY operation_id ASC ');
-				$job_card_prod_qty_data = $job_card_prod_qty_->result();
-				if ($job_card_prod_qty_data) {
-					$array_count = count($job_card_prod_qty_data);
+			$po_part_details = $this->Crud->get_data_by_id_multiple_condition("parts_customer_trackings", $po_part_criteria);
+			if ($qty > $po_part_details[0]->qty) {
+				$msg = "Insufficient PO Part balance qty. PO Part balance qty is " . $po_part_details[0]->qty;
+				// $this->addErrorMessage("Insufficient PO Part balance qty. PO Part balance qty is " . $po_part_details[0]->qty);
+				// $this->redirectMessage();
+				// exit();
+			}
 
-					$operation_id_prod = $job_card_prod_qty_data[$array_count - 1]->operation_id;
-					$array_main = array(
-						"operation_id" => $operation_id_prod,
-						"job_card_id" => $j->id,
+			$prod_qty_new = 0;
+			if ($job_card_data) {
+				foreach ($job_card_data as $j) {
+					$job_card_prod_qty_ = $this->db->query('SELECT DISTINCT operation_id FROM `job_card_prod_qty` where job_card_id = ' . $j->id . ' ORDER BY operation_id ASC ');
+					$job_card_prod_qty_data = $job_card_prod_qty_->result();
+					if ($job_card_prod_qty_data) {
+						$array_count = count($job_card_prod_qty_data);
+
+						$operation_id_prod = $job_card_prod_qty_data[$array_count - 1]->operation_id;
+						$array_main = array(
+							"operation_id" => $operation_id_prod,
+							"job_card_id" => $j->id,
+						);
+
+						$job_card_prod_qty_prod = $this->Crud->get_data_by_id_multiple_condition("job_card_prod_qty", $array_main);
+
+						if ($job_card_prod_qty_prod) {
+							foreach ($job_card_prod_qty_prod as $jcp) {
+								$prod_qty_new = $prod_qty_new + $jcp->production_qty;
+							}
+						}
+					
+					} 
+				}
+			}
+			
+			if ($qty > $customer_parts_master_data[0]->fg_stock) {
+				// $this->addErrorMessage("Please check FG stock");
+				// $this->redirectMessage();
+				// exit();
+				$msg = "Please check FG stock";
+			} else {
+				$customer_part_rate = $this->Crud->get_data_by_id("customer_part_rate", $part_id, "customer_master_id");
+				$total_rate_old = $customer_part_rate[0]->rate * $qty;
+				$this->load->model('Sales');
+				$discountValue = $this->Sales->isSalesItemDiscount($total_rate_old, $discountType, $discount);
+				if($discountValue > 0) {
+					$total_rate_old = $total_rate_old - $discountValue;
+				}
+				$gst_structure2 = $this->Crud->get_data_by_id("gst_structure", $customer_part[0]->gst_id, "id");
+				$taxData = $this->Sales->getSalesPartTaxDetails($total_rate_old, $gst_structure2[0]);
+				
+				/*
+					$cgst_amount = ($total_rate_old * $gst_structure2[0]->cgst) / 100;
+					$sgst_amount = ($total_rate_old * $gst_structure2[0]->sgst) / 100;
+					$igst_amount = ($total_rate_old * $gst_structure2[0]->igst) / 100;
+
+					if ($gst_structure2[0]->tcs_on_tax == "no") {
+						$tcs_amount =   (($total_rate_old * $gst_structure2[0]->tcs) / 100);
+					} else {
+						$tcs_amount =  ((($cgst_amount + $sgst_amount + $igst_amount + $total_rate_old) * $gst_structure2[0]->tcs) / 100);
+					}
+					$gst_amount = $cgst_amount + $sgst_amount + $igst_amount;
+					$total_rate = $total_rate_old + $cgst_amount + $sgst_amount + $igst_amount;
+				*/
+		
+				$customer_po_tracking_data = $this->Crud->get_data_by_id("customer_po_tracking", $po_id, "id");
+
+					$data = array(
+						"sales_id" => $sales_id,
+						"sales_number" => $sales_number,
+						"customer_id" => $customer_id,
+						"part_id" => $part_id,
+						"tax_id" => $customer_part[0]->gst_id,
+						"uom_id" => $customer_part[0]->uom,
+						"hsn_code" => $customer_part[0]->hsn_code,
+						"part_price" => $customer_part_rate[0]->rate,
+						"basic_total" => $total_rate_old,
+						"total_rate" => $taxData['total_rate'],
+						"gst_amount" => $taxData['gst_amount'],
+						"tcs_amount" => $taxData['tcs_amount'],
+						"cgst_amount" => $taxData['cgst_amount'],
+						"sgst_amount" => $taxData['sgst_amount'],
+						"igst_amount" => $taxData['igst_amount'],
+						"discounted_amount" => $discountValue,
+						"qty" => $this->input->post('qty'),
+						"pending_qty" => $this->input->post('qty'),
+						"invoice_number" => $this->input->post('invoice_number'),
+						"created_by" => $this->user_id,
+						"created_date" => $this->current_date,
+						"created_time" => $this->current_time,
+						"created_day" => $this->date,
+						"created_month" => $this->month,
+						"created_year" => $this->year,
+						"po_number" => $customer_po_tracking_data[0]->po_number,
+						"po_date" => $customer_po_tracking_data[0]->po_start_date,
 
 					);
 
-					$job_card_prod_qty_prod = $this->Crud->get_data_by_id_multiple_condition("job_card_prod_qty", $array_main);
-
-					if ($job_card_prod_qty_prod) {
-						foreach ($job_card_prod_qty_prod as $jcp) {
-							$prod_qty_new = $prod_qty_new + $jcp->production_qty;
-						}
+					$result = $this->Crud->insert_data("sales_parts", $data);
+					if ($result) {
+						$msg = "Part added successfully.";
+						$sucess = 1;
+						// $this->addSuccessMessage("Part added successfully.");
+					} else {
+						$msg = "Unable to add part. Please try again.";
+						// $this->addErrorMessage("Unable to add part. Please try again.");
 					}
-				
-				} 
-			}
-		}
-		
-		if ($qty > $customer_parts_master_data[0]->fg_stock) {
-			// $this->addErrorMessage("Please check FG stock");
-			// $this->redirectMessage();
-			$msg = 'Please check FG stock';
-			$sucess = 0;
-		
-		} else {
-			$customer_part_rate = $this->Crud->get_data_by_id("customer_part_rate", $part_id, "customer_master_id");
-			$total_rate_old = $customer_part_rate[0]->rate * $qty;
-
-			$gst_structure2 = $this->Crud->get_data_by_id("gst_structure", $customer_part[0]->gst_id, "id");
-			$cgst_amount = ($total_rate_old * $gst_structure2[0]->cgst) / 100;
-			$sgst_amount = ($total_rate_old * $gst_structure2[0]->sgst) / 100;
-			$igst_amount = ($total_rate_old * $gst_structure2[0]->igst) / 100;
-
-			if ($gst_structure2[0]->tcs_on_tax == "no") {
-				$tcs_amount =   (($total_rate_old * $gst_structure2[0]->tcs) / 100);
-			} else {
-				$tcs_amount =  ((($cgst_amount + $sgst_amount + $igst_amount + $total_rate_old) * $gst_structure2[0]->tcs) / 100);
-			}
-			$gst_amount = $cgst_amount + $sgst_amount + $igst_amount;
-			$total_rate = $total_rate_old + $cgst_amount + $sgst_amount + $igst_amount;
-
-	
-			$data = array(
-				"part_id" => $part_id,
-				"sales_number" => $sales_number,
-			);
-			$check = $this->Crud->read_data_where("sales_parts", $data);
-			if ($check) {
-				// $this->addErrorMessage("Part Already Exists To This Invoice Number , Enter Different Part");
-				// $this->redirectMessage();
-				$msg = 'Part Already Exists To This Invoice Number , Enter Different Part';
-				$sucess = 0;
-				
-			} else {
-				$customer_po_tracking_data = $this->Crud->get_data_by_id("customer_po_tracking", $po_id, "id");
-
-				$data = array(
-					"sales_id" => $sales_id,
-					"sales_number" => $sales_number,
-					"customer_id" => $customer_id,
-					"part_id" => $part_id,
-					"tax_id" => $customer_part[0]->gst_id,
-					"uom_id" => $customer_part[0]->uom,
-					"hsn_code" => $customer_part[0]->hsn_code,
-					"part_price" => $customer_part_rate[0]->rate,
-					"basic_total" => $total_rate_old,
-					"total_rate" => round($total_rate, 2),
-					"gst_amount" => $gst_amount,
-					"tcs_amount" => $tcs_amount,
-					"cgst_amount" => $cgst_amount,
-					"sgst_amount" => $sgst_amount,
-					"igst_amount" => $igst_amount,
-					"qty" => $this->input->post('qty'),
-					"pending_qty" => $this->input->post('qty'),
-					"invoice_number" => $this->input->post('invoice_number'),
-					"created_by" => $this->user_id,
-					"created_date" => $this->current_date,
-					"created_time" => $this->current_time,
-					"created_day" => $this->date,
-					"created_month" => $this->month,
-					"created_year" => $this->year,
-					"po_number" => $customer_po_tracking_data[0]->po_number,
-					"po_date" => $customer_po_tracking_data[0]->po_start_date,
-				);
-
-				$result = $this->Crud->insert_data("sales_parts", $data);
-				if ($result) {
-					// $this->addSuccessMessage("Part added successfully.");
-					$msg = 'Part added successfully.';
-					$sucess = 1;
-				} else {
-					// $this->addErrorMessage("Unable to add part. Please try again.");
-					$msg = 'Unable to add part. Please try again.';
-					$sucess = 1;
+					// $this->redirectMessage();
 				}
-				// $this->redirectMessage();
-			}
 		}
 		$ret_arr['msg'] = $msg;
 		$ret_arr['sucess'] = $sucess;
 		
 		echo json_encode($ret_arr);
+		exit();
 	}
 
 	public function lock_invoice()
@@ -467,6 +543,10 @@ class SalesController extends CommonController
 		$id = $this->input->post('id');
 		$status = $this->input->post('status');
 		$po_parts  = $this->Crud->get_data_by_id("sales_parts", $id, "sales_id");
+		$discount_amount = $this->input->post('discount_amount');
+		$total_sales_amount = $this->input->post('sales_amount');
+		$total_gst_amount = $this->input->post('sales_gst_amount');			
+		
 		$isLocked = false;
 
 		if (!isset($id) || !isset($po_parts[0]->sales_number)) {
@@ -481,7 +561,8 @@ class SalesController extends CommonController
 				$isLocked = true;
 			}
 		} 
-		
+		$messages = "Something went wrong!.";
+		$success =0;
 		if ($isLocked == false) {
 			$sql = "SELECT actualSalesNo FROM new_sales WHERE status!='pending' AND sales_number like'" . $this->getSalesNoFormat(false,true) . "' order by actualSalesNo  desc LIMIT 1";
 			$latestSalesNo = $this->Crud->customQuery($sql);
@@ -497,6 +578,9 @@ class SalesController extends CommonController
 			$data = array(
 				"actualSalesNo" => $new_lockCount,
 				"status" => $status,
+				"total_sales_amount" => $total_sales_amount,
+				"total_gst_amount" => $total_gst_amount,
+				"discount_amount" => $discount_amount,
 				"sales_number" => $new_sales_number,
 				"created_date" => $cretd_dt
 			);
@@ -518,8 +602,9 @@ class SalesController extends CommonController
 			if ($this->db->trans_status() === FALSE) {
 				//if something went wrong, rollback everything
 				$this->db->trans_rollback();
-				$this->addErrorMessage('Error 410 :  Not Updated');
-				$this->redirectMessage();
+				// $this->addErrorMessage('Error 410 :  Not Updated');
+				// $this->redirectMessage();
+				$messages = "Error 410 :  Not Updated";
 			} else {
 				//if everything went right, commit the data to the database
 				$this->db->trans_commit();
@@ -538,16 +623,98 @@ class SalesController extends CommonController
 						$result2 = $this->CustomerPart->updateStockById($data_update, $customer_parts_master_data[0]->id);
 					}
 				}
-				$this->addSuccessMessage('Updated Sucessfully');
-				$this->redirectMessage();
+				$messages = "Updated Sucessfully";
+				$success = 1;
+				// $this->addSuccessMessage('Updated Sucessfully');
+				// $this->redirectMessage();
 			}
 		} else {
-			$this->addWarningMessage('Invoice already locked.');
-			$this->redirectMessage("sales_invoice_released");
+			// $this->addWarningMessage('Invoice already locked.');
+			// $this->redirectMessage("sales_invoice_released");
+			$messages = "Invoice already locked.";
 		}
+		$ret_arr['messages'] = $messages;
+		$ret_arr['success'] = $success;
+		
+		echo json_encode($ret_arr);
+		exit();
 	}
 
+	public function invoice_unlock(){
+		$messages = "Something went wrong.";
+		$success = 0;
+		$id = $this->input->post('sales_id');
+		$sales_number = $this->input->post('sales_number');
+		$unlock_data = array(
+			"status" => 'unlocked'
+		);
+		$result = $this->Crud->update_data("new_sales", $unlock_data, $id);
+		if ($result) {
+			$this->load->model('Sales');
+			$this->Sales->updateFGStockForSales($id, $this->Unit->getSessionClientId(), "unlock");
+			// $this->addSuccessMessage('Sales invoice unlocked.');
+			$messages = "Sales invoice unlocked.";
+			$success = 1;
+		} else {
+			$messages = 'Failed to unlock Sales invoice ' . $sales_number;
+			// $this->addErrorMessage('Failed to unlock Sales invoice ' . $sales_number);
+		}
+		// $this->redirectMessage();
+		$ret_arr['messages'] = $messages;
+		$ret_arr['success'] = $success;
+		
+		echo json_encode($ret_arr);
+		exit();
+	}
 
+	public function reuse_invoice() {
+		$sales_id = $this->input->post('sales_id');
+		$sales_number = $this->input->post('sales_number');
+
+		$removeData = array(
+			"status" => 'pending',
+			"customer_part_id" => 0,
+			"customer_id" => 0,
+			"consignee_id" => 0,
+			"mode" => NULL,
+			"transporter" => NULL,
+			"transporter_id" => 0,
+			"vehicle_number" => NULL,
+			"discount_amount" => 0,
+			"discount" => 0,
+			"discountType" => 'NA',
+			"total_sales_amount" => 0,
+			"total_gst_amount" => 0,
+			"lr_number" => NULL,
+			"remark" => NULL,
+			"distance" => NULL
+		);
+		$messages = "Something went wrong.";
+		$success = 0;
+		$result = $this->Crud->update_data("new_sales", $removeData, $sales_id);
+		if ($result) {
+			$sales_part_data = array("sales_id" => $sales_id);
+			$result = $this->Crud->delete_data("sales_parts", $sales_part_data);
+			if ($result) {
+				$messages = 'Sales invoice details removed from '.$sales_number.'. You may reuse sales invoice by using View Details icon.';
+				$success = 1;
+				// $this->addSuccessMessage('Sales invoice details removed from '.$sales_number.'. You may reuse sales invoice by using View Details icon.');
+			}else{
+				$messages = 'Failed to remove part details from Sales invoice ' . $sales_number;
+				// $this->addErrorMessage('Failed to remove part details from Sales invoice ' . $sales_number);	
+			}
+		} else {
+			$messages = 'Failed to remove details from Sales invoice ' . $sales_number;
+			// $this->addErrorMessage('Failed to remove details from Sales invoice ' . $sales_number);
+		}
+		// $this->redirectMessage("sales_invoice_released");
+		$ret_arr['messages'] = $messages;
+		$ret_arr['success'] = $success;
+		$ret_arr['redirect_url'] = base_url("sales_invoice_released");
+		
+		echo json_encode($ret_arr);
+		exit();
+	}
 	public function cancel_sale_invoice()
 	{
 
@@ -562,14 +729,19 @@ class SalesController extends CommonController
 			"sgst_amount" => 0,
 			"igst_amount" => 0,
 			"tcs_amount" => 0,
-			"gst_amount" => 0
+			"gst_amount" => 0,
+			"discounted_amount" => 0
+			
 		);
 
 		$cancel_parts = $this->Crud->update_data_column("sales_parts", $sales_part_data, $sales_id,"sales_id");
 
 		if($cancel_parts){
 			$cancel_data = array(
-				"status" => 'Cancelled'
+				"status" => 'Cancelled',
+				"total_sales_amount" => 0,
+				"total_gst_amount" => 0,
+				"discount_amount" => 0
 			);
 
 			$result = $this->Crud->update_data("new_sales", $cancel_data, $sales_id);
@@ -580,15 +752,13 @@ class SalesController extends CommonController
 				} else {
 					$this->addSuccessMessage('Sales invoice ' . $sales_number . ' cancelled.');
 				}
-				$this->redirectMessage('view_new_sales_by_id/' . $sales_id);
 			} else {
 				$this->addErrorMessage('Failed to cancel Sales invoice ' . $sales_number);
-				$this->redirectMessage('view_new_sales_by_id/' . $sales_id);
 			}
 		} else {
 			$this->addErrorMessage('Failed to cancel Sales invoice ' . $sales_number);
-			$this->redirectMessage('view_new_sales_by_id/' . $sales_id);
 		}	
+		$this->redirectMessage('sales_invoice_released');
 	}
 
 
@@ -608,7 +778,8 @@ class SalesController extends CommonController
 			"id" => $sales_id,
 			"status" => 'pending'
 		);
-
+		$messages = "Something went wrong!.";
+		$success =0;
 		//transaction management - as of now not working
 		$this->db->trans_start();
 		$result = $this->Crud->delete_data("sales_parts", $sales_part_data);
@@ -619,20 +790,26 @@ class SalesController extends CommonController
 		if ($this->db->trans_status() === FALSE) {
 			//if something went wrong, rollback everything
 			$this->db->trans_rollback();
-			$this->addErrorMessage('Failed to delete Sales invoice ' . $sales_number);
-			$this->redirectMessage('sales_invoice_released');
+			$messages = 'Failed to delete Sales invoice ' . $sales_number;
+			// $this->addErrorMessage('Failed to delete Sales invoice ' . $sales_number);
+			// $this->redirectMessage('sales_invoice_released');
 		} else {
 			//if everything went right, commit the data to the database
 			$this->db->trans_commit();
-			$this->addSuccessMessage('Sales invoice ' . $sales_number . ' deleted.');
-			$this->redirectMessage('sales_invoice_released');
+			$messages = 'Sales invoice ' . $sales_number . ' deleted.';
+			$success = 1;
+			// $this->addSuccessMessage('Sales invoice ' . $sales_number . ' deleted.');
+			// $this->redirectMessage('sales_invoice_released');
 		}
+		$ret_arr['messages'] = $messages;
+		$ret_arr['success'] = $success;
+		$ret_arr['redirect_url'] = base_url("sales_invoice_released");
+		
+		echo json_encode($ret_arr);
 	}
 
 	public function sales_report()
 	{
-
-		
 		if (isset($_POST['export'])) {
 			$success = 0;
 	        $message = '';
@@ -778,8 +955,6 @@ class SalesController extends CommonController
 			$created_month = $this->month;
 		}
 
-		$data['sales_parts'] = 
-
 		$data['created_year'] = $created_year;
 		$data['created_month'] = $created_month;
 		$data['fincYears'] = $this->Common_admin_model->getFinancialYears();
@@ -856,10 +1031,17 @@ class SalesController extends CommonController
             "className" => "dt-center",
         ];
         $column[] = [
-            "data" => "subtotal",
-            "title" => "Subtotal",
+            "data" => "sales_discount",
+            "title" => "Discount",
             "width" => "7%",
             "className" => "dt-center",
+        ];
+        $column[] = [
+            "data" => "subtotal",
+            "title" => "Taxable Amount",
+            "width" => "7%",
+            "className" => "dt-center",
+            'orderable' => false
         ];
         
         $column[] = [
@@ -889,13 +1071,13 @@ class SalesController extends CommonController
         ];
 		$column[] = [
             "data" => "gst_amount",
-            "title" => "GST TOTAL AMOUNT",
+            "title" => "TOTAL GST",
             "width" => "7%",
             "className" => "dt-center",
         ];
 		$column[] = [
             "data" => "row_total",
-            "title" => "TOTAL AMOUNT WITH GST",
+            "title" => "TOTAL WITH GS",
             "width" => "7%",
             "className" => "dt-center",
         ];
@@ -940,12 +1122,14 @@ class SalesController extends CommonController
         $base_url = $this->config->item("base_url");
 		$data = $this->SalesModel->getSalesReportViewData($condition_arr,$post_data["search"]);
 		// pr($data,1);
+		$total_balance_amount = 0;
 		foreach ($data as $key => $val) {
 			if ($val['basic_total'] > 0) {
 				$subtotal = $val['basic_total'];
 			} else {
 				$subtotal = round($val['total_rate'] - $val['gst_amount'], 2);
 			}
+			$total_balance_amount += $subtotal;
 			
 			if ($val['part_price'] > 0) {
 				$rate = $val['part_price'];
@@ -955,6 +1139,7 @@ class SalesController extends CommonController
 			$row_total =  round($val['total_rate'], 2) + round($val['tcs_amount'], 2);
 			$data[$key]['subtotal'] = $subtotal;
 			$data[$key]['rate'] =  $rate;
+			$data[$key]['sales_discount'] =  ($val['sales_discount'] > 0) ? $val['sales_discount']." %": display_no_character();
 			$data[$key]['row_total'] = $row_total;
 			
 		}
@@ -1738,6 +1923,32 @@ class SalesController extends CommonController
 		
 		if($isCreate == true) {
 			$this->inoviceExportForCreate($sales_details,$voucher_child ,$customer_name,$guid);
+			//Inventory type data
+			$isInvExport = $this->GlobalConfig->readConfiguration("isSalesExportWithInventory", "No");
+			if (strcasecmp($isInvExport, "Yes") == 0) {
+
+				//There would be multiple entries here for INVENTORYENTRIES
+				$inventory_details = $this->Crud->customQuery("select cp.part_number, part.uom_id, part.qty, part.part_price,
+												(part.total_rate - part.gst_amount) as part_amount
+												FROM sales_parts part
+												INNER JOIN customer_part cp ON cp.id = part.part_id
+												WHERE part.sales_id = " . $sales_details->sales_id);
+
+				if ($inventory_details) {
+					foreach ($inventory_details as $inventory_part) {
+						$inventory = $voucher_child->addChild('INVENTORYENTRIES.LIST');
+
+						$inventory->addChild('STOCKITEMNAME', $inventory_part->part_number);
+						$inventory->addChild('ISDEEMEDPOSITIVE', 'No'); //Hard Coded
+						$inventory->addChild('RATE', $inventory_part->part_price);
+						$inventory->addChild('AMOUNT', $inventory_part->part_amount);
+						$inventory->addChild('ACTUALQTY', $inventory_part->qty);
+						$inventory->addChild('BILLEDQTY', $inventory_part->qty);
+						$inventory->addChild('UOM', $inventory_part->uom_id);
+					}
+				}
+			} 
+			//Inventory ends
 		}else {
 			$this->inoviceExportForCancel($voucher_child,$guid);
 	  }

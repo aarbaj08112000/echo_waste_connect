@@ -133,32 +133,67 @@ class GlobalConfigController extends CommonController
 	        }else{
 	        	$value = $this->input->post("old_val");
 	        }
+
+	        if($this->input->post("config_name") == "SignatureImage"){
+				if($_FILES['SignatureImage']['name'] != ""){
+		            $profileImageData =
+		                $_FILES["SignatureImage"]["name"] != ""
+		                    ? $_FILES["SignatureImage"]
+		                    : [];
+		            $config["upload_path"] = "dist/img/signature_image/";
+		            $config["allowed_types"] = "jpg|png|jpeg|png";
+		            $this->load->library("upload", $config);
+		            $upload_error_msg = "";
+		            if (!empty($profileImageData)) {
+		                if (!$this->upload->do_upload("SignatureImage")) {
+		                    $upload_error_msg = $error = [
+		                        "error" => $this->upload->display_errors(),
+		                    ];
+		                    $upload_error = 1;
+		                } else {
+		                    $upload_data = $this->upload->data();
+		                }
+		            }
+
+		        }
+
+		        if($upload_error == 0){
+		        	$value = $upload_data['file_name'];
+		        }else{
+		        	$value = $this->input->post("old_val");
+		        }
+		    }
+
 	        
 		}
         	
-        	
-		if($forArom=='on' || $forArom==1) { $forArom = 1; } else { $forArom = 0;}
-		if($canModify=='on' || $canModify==1) { $canModify = 1; } else { $canModify = 0;}
+        if($upload_error == 0){
+			if($forArom=='on' || $forArom==1) { $forArom = 1; } else { $forArom = 0;}
+			if($canModify=='on' || $canModify==1) { $canModify = 1; } else { $canModify = 0;}
 
-		$data = array(
-			"displayLabel" => $label,
-			"config_value" => $value,
-			"note" => $note,
-			"updated_user" => $this->user_name,
-			"ARMUserOnly" => $forArom,
-			"canModify" => $canModify
-		);
+			$data = array(
+				"displayLabel" => $label,
+				"config_value" => $value,
+				"note" => $note,
+				"updated_user" => $this->user_name,
+				"ARMUserOnly" => $forArom,
+				"canModify" => $canModify
+			);
 
-		$result = $this->Crud->update_data_column("global_configuration", $data, $id, "id");
-		if ($result) {
-			// $this->addSuccessMessage('Configuration updated successfully.');
-			$msg = 'Configuration updated successfully.';
-		} else {
-			// $this->addErrorMessage('Unable to update configuration. Please try again.');
-			$msg = 'Unable to update configuration. Please try again.';
+			$result = $this->Crud->update_data_column("global_configuration", $data, $id, "id");
+			if ($result) {
+				// $this->addSuccessMessage('Configuration updated successfully.');
+				$msg = 'Configuration updated successfully.';
+			} else {
+				// $this->addErrorMessage('Unable to update configuration. Please try again.');
+				$msg = 'Unable to update configuration. Please try again.';
+				$success = 0;
+			}
+			$data['isAromAdmin'] = $this->isAromAdmin;
+		}else{
+			$msg = "File type not valid.";
 			$success = 0;
 		}
-		$data['isAromAdmin'] = $this->isAromAdmin;
 		$ret_arr['msg'] = $msg;
 		$ret_arr['success'] = $success;
 		// $this->redirectMessage();

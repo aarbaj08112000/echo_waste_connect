@@ -121,12 +121,38 @@
                         </div>
                      </div>
                      <div class="col-lg-6 ">
+                     <div class="form-group mb-3">
+                        <label for="payment_terms" class="form-label">Payment Days</label>
+                        <span class="text-danger">*</span>
+                        <input type="text" step="any" min="0" name="paymentDays" 
+                                                                class="form-control onlyNumericInput" id="exampleInputEmail1"
+                                                                aria-describedby="emailHelp"
+                                                                placeholder="Payment Days" value="<%$payment_days%>">
+                     </div>
+                     </div>
+                     <div class="col-lg-6 ">
                         <div class="form-group mb-3">
                            <label for="payment_terms" class="form-label">Payment Terms</label><span
                               class="text-danger">*</span>
                            <input type="text" step="any"  name="paymentTerms" value="<%$payment_terms%>"
-                              class="form-control" 
+                              class="form-control onlyNumericInput" 
                               placeholder="Payment Terms">
+                        </div>
+                     </div>
+                     <div class="col-lg-6 ">
+                        <div class="form-group mb-3">
+                           <label class="form-label">Discount Type </label><span class="text-danger">*</span>
+                           <select class="form-control select2 discount_type" name="discount_type" style="width: 100%;" id="discount_type">
+                              <option value="">Select Discount Type</option>
+                              <option value="Percentage" <%if $discount_type == 'Percentage'%>selected<%/if%>>Percentage</option>
+                              <option value="Number" <%if $discount_type == 'Number'%>selected<%/if%>>Number</option>
+                           </select>
+                        </div>
+                     </div>
+                     <div class="col-lg-6 ">
+                        <div class="form-group">
+                           <label class="form-label" >Discount</label><span class="text-danger">*</span>
+                           <input type="text" step="any"  name="discount" class="form-control  onlyNumericInput" aria-describedby="emailHelp" placeholder="Payment Days" id="discount_val" value="<%$discount%>">
                         </div>
                      </div>
                      <div class="col-lg-6 ">
@@ -147,7 +173,7 @@
                      </div>
                      <div class="col-lg-6 ">
                         <div class="form-group mb-3">
-                           <label for="machine_name" class="form-labelorm">Upload Registration
+                           <label for="machine_name" class="form-label">Upload Registration
                            Document</label>
                            <input type="file" name="registration_document"
                               class="form-control" 
