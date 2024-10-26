@@ -183,7 +183,8 @@
     .dataTables_info, .dataTables_length {
        margin-top: 6px !important;
         padding-top: 8px;
-        margin-right: 5px !important;
+        margin-right: 14px !important;
+        
     }
     .dataTables_length .select2-container--default .select2-selection--single {
         border-radius: 16px;

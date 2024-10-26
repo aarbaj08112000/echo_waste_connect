@@ -124,7 +124,7 @@
                                                         <div class="col-lg-6">
                                                             <div class="form-group">
                                                                 <label for="customer_location">State No </label><span class="text-danger">*</span>
-                                                                <input type="text" name="cstate_no" required class="form-control" id="state_num" aria-describedby="emailHelp" placeholder="State No">
+                                                                <input type="text" name="cstate_no" required class="form-control onlyNumericInput" id="state_num" aria-describedby="emailHelp" placeholder="State No">
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-6">
@@ -286,7 +286,7 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="customer_location">State No </label><span class="text-danger">*</span>
-                                <input type="text" name="ustate_no" value="<%$t->state_no%>"  class="form-control" id="ustate_num" aria-describedby="emailHelp" placeholder="State No">
+                                <input type="text" name="ustate_no" value="<%$t->state_no%>"  class="form-control onlyNumericInput" id="ustate_num" aria-describedby="emailHelp" placeholder="State No">
                             </div>
                         </div>
                         <div class="col-lg-6">

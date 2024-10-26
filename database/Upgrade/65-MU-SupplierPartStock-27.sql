@@ -116,11 +116,11 @@ FROM child_part
 COMMIT;
 
 -- Migration of existing stock for 2nd Unit
-INSERT INTO child_part_stock (clientId,`childPartId`,`stock`,`store_stock_rate`,`safty_buffer_stk`,`onhold_stock`,`production_qty`,`rejection_prodcution_qty`,`sub_con_stock`,`rejection_stock`,`sharing_qty` ,`machine_mold_issue_stock`,`production_scrap`,`production_rejection`,`deflashing_stock`, created_id, date, time, timestamp)
+/* INSERT INTO child_part_stock (clientId,`childPartId`,`stock`,`store_stock_rate`,`safty_buffer_stk`,`onhold_stock`,`production_qty`,`rejection_prodcution_qty`,`sub_con_stock`,`rejection_stock`,`sharing_qty` ,`machine_mold_issue_stock`,`production_scrap`,`production_rejection`,`deflashing_stock`, created_id, date, time, timestamp)
 SELECT 2, `id`,`stock2`,`store_stock_rate`,`safty_buffer_stk`,`onhold_stock`,`production_qty2`,`rejection_prodcution_qty`,`sub_con_stock`,`rejection_stock`,`sharing_qty` ,`machine_mold_issue_stock2`,`production_scrap`,`production_rejection`,
 `deflashing_stock`, created_id, date, time, timestamp
 FROM child_part
-
+*/
 
 COMMIT;
 

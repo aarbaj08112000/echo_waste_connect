@@ -9,7 +9,7 @@ $(document).ready(function() {
         var data = $(this).attr("data-value");
         configData = JSON.parse(atob(data)); 
       
-        
+        $(".companyLogo,.signatureLogo,.regularValue").hide();
         $('#updateConfigForm input[name="display_label"]').val(configData.displayLabel);
         $('#updateConfigForm input[name="config_name"]').val(configData.config_name);
         $('#updateConfigForm input[name="configID"]').val(configData.id);
@@ -17,8 +17,13 @@ $(document).ready(function() {
     
         // Handling the config value field
         if (configData.config_name === "companyLogo") {
+            $(".companyLogo").show();
             $('#updateConfigForm input[name="companyLogo"]').val(configData.config_value);
+        }else if (configData.config_name === "SignatureImage") {
+            $(".signatureLogo").show();
+            $('#updateConfigForm input[name="SignatureImage"]').val(configData.config_value);
         } else {
+            $(".regularValue").show();
             $('#updateConfigForm input[name="config_value"]').val(configData.config_value);
         }
     
@@ -146,16 +151,16 @@ $(document).ready(function() {
                     contentType: false,
                     success: function(response) {
                         // Handle successful response
-                        $(form).closest('.modal').modal('hide');
                         if(response != '' && response != null && typeof response != 'undefined'){
                             let res = JSON.parse(response);
+                            console.log(res['success'])
                             if(res['success'] == 1){
                                 toastr.success(res['msg']);
                                 setTimeout(() => {
                                     window.location.reload();
-                                   
                                     // Optionally, refresh the table or perform other actions
                                 }, 1000);
+                                $(form).closest('.modal').modal('hide');
                             }else{
                                 toastr.error(res['msg']);
                             }

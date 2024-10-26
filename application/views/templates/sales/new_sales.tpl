@@ -13,7 +13,7 @@
             <em >Sales Invoice</em></a>
         </h1>
         <br>
-        <span >Generate Sales Invoics</span>
+        <span >Generate Sales Invoics <%if !empty($reused_sales_no)%>(<%$reused_sales_no%>) <%/if%></span>
       </div>
     </nav>
 
@@ -140,8 +140,10 @@
                                         </div>
                                     </div>
                                     <br>
+                                    <input type="hidden" name="reused_sales_no" id="reused_sales_no" value="<%$reused_sales_no %>" required class="form-control"/>   
                                     <div class="col-lg-5">
                                         <div class="form-group">
+
                                             <button type="submit" class="btn btn-danger mt-4">Generate</button>
                                         </div>
                                     </div>

@@ -81,11 +81,12 @@ class PlanningController extends CommonController
 					$customers_data[$customer_part_data[0]->customer_id] = $this->Crud->get_data_by_id("customer", $customer_part_data[$t->customer_part_id][0]->customer_id, "id");
 					$planing_data_val= $this->Crud->get_data_by_id("planing_data", $t->id, "planing_id");
 					// pr($planing_data_val[count($planing_data_val)-1]);
-					$data['planing_data'][$key]->planing_data[0] = $planing_data_val[count($planing_data_val)-1];
+					$data['planing_data'][$key]->planing_data[0] = $planing_data_val[0];
 					$month_number = $this->Common_admin_model->get_month_number($month);
 					$year_number = substr($financial_year, 3, strlen($financial_year));
 					$data['sales_invoice'][$t->customer_part_id] = $this->Crud->customQuery('SELECT sum(p.qty) as dispatched_qty FROM new_sales s, sales_parts p
-							WHERE s.created_year = "' . $year_number . '"
+							WHERE s.clientId = '.$this->Unit->getSessionClientId().'
+							AND s.created_year = "' . $year_number . '"
 							AND s.created_month = "'.$month_number.'" 
 							AND s.status = "lock"
 							AND p.part_id = '.$t->customer_part_id.'

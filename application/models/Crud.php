@@ -360,9 +360,7 @@ class Crud extends CI_Model
             $query = $this->db->get_where($table_name, array($column_name => $id))->result();
 	    }
 		$this->logSQLExecuted($dateTime);
-		if($try == 1){
-			pr($this->db->last_query(),1);
-		}
+		
 		
         if ($query) {
             return $query;
@@ -494,6 +492,20 @@ class Crud extends CI_Model
 			}
 		}
 		
+		$this->logSQLExecuted($dateTime);
+		return false;
+   }
+   public function customQueryUpdate($customQuery){
+		$dateTime = time();
+		if($this->db->query($customQuery)){
+			$queryResult = $this->db->query($customQuery);
+			$this->logSQLExecuted($dateTime);
+			if ($queryResult) {
+				return $queryResult;
+			} else {
+				return false;
+			}
+		}
 		$this->logSQLExecuted($dateTime);
 		return false;
    }

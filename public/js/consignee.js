@@ -110,7 +110,11 @@ const validationFunc = () => {
             ulocation: "required",
             uaddress: "required",
             ustate: "required",
-            ustate_no: "required",
+            ustate_no: {
+                required: true,
+                maxlength: 2
+                // pattern: /^\d{2}$/
+            },
             upin_code: "required",
             ugst_number: "required",
             upan_no: "required",
@@ -121,7 +125,11 @@ const validationFunc = () => {
             ulocation: "Please enter the location",
             uaddress: "Please enter the address",
             ustate: "Please enter the state",
-            ustate_no: "Please enter the state number",
+            ustate_no: {
+                required: "Please enter the state number",
+                maxlength: "State number length should be less than or equal to 2",
+                // pattern: "Please enter exactly two digits"
+            },
             upin_code: "Please enter the PIN code",
             ugst_number: "Please enter the GST number",
             upan_no: "Please enter the PAN number",
@@ -129,6 +137,7 @@ const validationFunc = () => {
         },
         submitHandler: function(form) {
             // Custom submit handler
+            debugger;
             $.ajax({
                 url: form.action,
                 type: form.method,
@@ -164,7 +173,11 @@ const validationFunc = () => {
             clocation: "required",
             caddress: "required",
             cstate: "required",
-            cstate_no: "required",
+            cstate_no: {
+                required: true,
+                maxlength: 2
+                // pattern: /^\d{2}$/
+            },
             cpin_code: "required",
             gst_number: "required",
             cpan_no: "required",
@@ -175,7 +188,11 @@ const validationFunc = () => {
             clocation: "Please enter the location",
             caddress: "Please enter the address",
             cstate: "Please enter the state",
-            cstate_no: "Please enter the state number",
+            cstate_no: {
+                required: "Please enter the state number",
+                maxlength: "State number length should be less than or equal to 2",
+                // pattern: "Please enter exactly two digits"
+            },
             cpin_code: "Please enter the PIN code",
             gst_number: "Please enter the GST number",
             cpan_no: "Please enter the PAN number",

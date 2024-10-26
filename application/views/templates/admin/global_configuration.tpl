@@ -161,11 +161,15 @@
                   </div>
                   <div class="form-group">
                      <label for="on click url">Config Value<span class="text-danger">*</span></label> <br>
-                     <%if ($config->config_name == "companyLogo") %>
-                     <input required type="file" name="companyLogo" placeholder="Config Value" class="form-control" value="<%$config->config_value %>">
-                     <%else%>
-                     <input required type="text" name="config_value" placeholder="Config Value" class="form-control" value="<%$config->config_value %>">
-                     <%/if%>
+                     <div class="companyLogo">
+                        <input required type="file" name="companyLogo" placeholder="Config Value" class="form-control" value="<%$config->config_value %>">
+                     </div>
+                     <div class="signatureLogo">
+                         <input required type="file" name="SignatureImage" placeholder="Config Value" class="form-control" value="<?php echo $config->config_value; ?>">
+                     </div>
+                     <div class="regularValue">
+                        <input required type="text" name="config_value" placeholder="Config Value" class="form-control" value="<%$config->config_value %>">
+                     </div>
                   </div>
                   <div class="form-group">
                      <label for="on click url">Note<span class="text-danger">*</span></label> <br>

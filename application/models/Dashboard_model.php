@@ -32,14 +32,14 @@ class Dashboard_model extends CI_Model
 
 	// Sales tab
 
-	// pie chart
+	// pie chart - customer sales amount
 	public function get_customer_sales($year = '',$month_arr = '')
 	{
 		$unit_condition = '';
 		if($this->unit > 0){
 			$unit_condition = "AND ns.clientId = $this->unit";
 		}
-	    $this->db->select('SUM(sp.basic_total) as basic_total,c.customer_name as customer');
+	    $this->db->select('SUM(sp.basic_total) as basic_total, SUM(ns.discount_amount) as total_discount, c.customer_name as customer');
 	    $this->db->from('sales_parts as sp');
 	    $this->db->join('new_sales as ns', 'ns.id = sp.sales_id AND ns.status = "lock" AND ns.sales_number != "%TEMP%" '.$unit_condition);
 	    $this->db->join('customer as c', 'c.id = sp.customer_id', 'left');
@@ -57,11 +57,43 @@ class Dashboard_model extends CI_Model
 	    		$this->db->where("sp.created_year = ".$month_arr['start_year']." AND sp.created_month >= ".$month_arr['start_month']."");
 		    	$this->db->or_where("sp.created_year = ".$month_arr['end_year']." AND sp.created_month <= ".$month_arr['end_month']."");	
 	    	}
-		    
 	   	}
+		//$this->db->group_by('ns.id');
+
 	    $result_obj = $this->db->get();
 	    $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
-	    // pr($this->db->last_query(),1);
+	    //pr($this->db->last_query(),1);
+	    return $ret_data;
+	}
+
+	// Manoj block data including discount
+	public function get_sales_sum($date = '',$month = '',$year = '',$month_arr = '')
+	{
+		$unit_condition = '';
+		if($this->unit > 0){
+			$unit_condition = "AND ns.clientId = $this->unit";
+		}
+	    $this->db->select('SUM(sp.basic_total) as basic_total, SUM(sp.gst_amount) as gst_amount, SUM(DISTINCT ns.discount_amount) as total_discount,  
+				SUM(DISTINCT `ns`.`total_sales_amount`) as total_sales_amount , sp.created_date as created_date');
+	    $this->db->from('sales_parts as sp');
+	    $this->db->join('new_sales as ns', 'ns.id = sp.sales_id AND ns.status = "lock" AND ns.sales_number != "%TEMP%" '.$unit_condition);
+	    if($date != ""){
+	    	$this->db->where("sp.created_date",$date);
+	    }
+	    if($month != ""){
+	    	$this->db->where("sp.created_month",$month);
+	    	$this->db->where("sp.created_year",date("Y"));
+	    }
+	    if($year != ""){
+			$this->db->where("sp.created_year = ".$month_arr['start_year']." AND sp.created_month >= ".$month_arr['start_month']."");
+			$this->db->or_where("sp.created_year = ".$month_arr['end_year']." AND sp.created_month <= ".$month_arr['end_month']."");
+		}
+		$this->db->group_by('ns.id');
+
+	    $result_obj = $this->db->get();
+		//pr($this->db->last_query(), 1);
+
+	    $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
 	    return $ret_data;
 	}
 
@@ -72,7 +104,7 @@ class Dashboard_model extends CI_Model
 		if($this->unit > 0){
 			$unit_condition = "AND ns.clientId = $this->unit";
 		}
-	    $this->db->select('sp.basic_total as basic_total,sp.gst_amount as gst_amount,sp.created_date as created_date');
+	    $this->db->select('sp.basic_total as basic_total,sp.gst_amount as gst_amount, ns.discount_amount as total_discount, sp.created_date as created_date');
 	    $this->db->from('sales_parts as sp');
 	    $this->db->join('new_sales as ns', 'ns.id = sp.sales_id AND ns.status = "lock" AND ns.sales_number != "%TEMP%" '.$unit_condition);
 	    if($date != ""){
@@ -87,6 +119,8 @@ class Dashboard_model extends CI_Model
 	    $this->db->or_where("sp.created_year = ".$month_arr['end_year']." AND sp.created_month <= ".$month_arr['end_month']."");
 	   	}
 	    $result_obj = $this->db->get();
+		//pr($this->db->last_query(), 1);
+
 	    $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
 	    return $ret_data;
 	}
@@ -98,7 +132,7 @@ class Dashboard_model extends CI_Model
 		if($this->unit > 0){
 			$unit_condition = "AND ns.clientId = $this->unit";
 		}
-	    $this->db->select('sp.basic_total as basic_total,sp.created_date as created_date,c.id as customer_id,c.customer_name as customer_name');
+	    $this->db->select('sp.basic_total as basic_total, ns.discount_amount as total_discount, sp.created_date as created_date,c.id as customer_id,c.customer_name as customer_name');
 	    $this->db->from('sales_parts as sp');
 	    $this->db->join('new_sales as ns', 'ns.id = sp.sales_id AND ns.status = "lock" AND ns.sales_number != "%TEMP%" '.$unit_condition);
 	    $this->db->join('customer as c', 'c.id = sp.customer_id', 'left');
@@ -146,13 +180,12 @@ class Dashboard_model extends CI_Model
 	    $this->db->where("pl.financial_year = '".$month_arr['year']."' AND pl.month = '".$month_arr['month']."'".$unit_condition);
 	    $result_obj = $this->db->get();
 	    $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
-	    // pr($this->db->last_query(),1);
+	   // pr($this->db->last_query(),1);
 	    return $ret_data;
 	}
 
 
 	// Business Analytics tab
-
     public function get_receivable_due_data($year = '',$month_arr = [])
 	{
 		$unit_condition = '';
@@ -168,18 +201,23 @@ class Dashboard_model extends CI_Model
 	    $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
 	    return $ret_data;
 	}
+
+	//sales_vs_purchase_grn
 	public function get_sales_purchase_grn($year = '',$month_arr = [])
 	{
 		$unit_condition = '';
 		if($this->unit > 0){
 			$unit_condition = "AND ns.clientId = $this->unit";
 		}
-	    $this->db->select('sp.basic_total as basic_total,sp.created_date as created_date');
+	    $this->db->select('SUM(sp.basic_total) as basic_total, sp.created_date as created_date, SUM(distinct ns.discount_amount) as total_discount'); 
 	    $this->db->from('sales_parts as sp');
 	    $this->db->join('new_sales as ns', 'ns.id = sp.sales_id AND ns.status = "lock" AND ns.sales_number != "%TEMP%" '.$unit_condition);
 	    $this->db->where("sp.created_year = ".$month_arr['start_year']." AND sp.created_month >= ".$month_arr['start_month']."");
 	    $this->db->or_where("sp.created_year = ".$month_arr['end_year']." AND sp.created_month <= ".$month_arr['end_month']."");
+		$this->db->group_by("sp.created_month");
+
 	    $result_obj = $this->db->get();
+		//pr($this->db->last_query(), 1);
 	    $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
 	    return $ret_data;
 	}
@@ -276,12 +314,14 @@ class Dashboard_model extends CI_Model
 		if($this->unit > 0){
 			$unit_condition = "AND ns.clientId = $this->unit";
 		}
-	    $this->db->select('sp.gst_amount as total_gst_amount,sp.created_date as created_date');
+	    $this->db->select('ns.total_gst_amount as total_gst_amount, sp.created_date as created_date');
 	    $this->db->from('sales_parts as sp');
 	    $this->db->join('new_sales as ns', 'ns.id = sp.sales_id AND ns.status = "lock" AND ns.sales_number != "%TEMP%" '.$unit_condition);
 	    $this->db->where("sp.created_year = ".$month_arr['start_year']." AND sp.created_month >= ".$month_arr['start_month']."");
 	    $this->db->or_where("sp.created_year = ".$month_arr['end_year']." AND sp.created_month <= ".$month_arr['end_month']."");
+		$this->db->group_by('ns.id');
 	    $result_obj = $this->db->get();
+		//pr($this->db->last_query(),1);
 	    $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
 	    return $ret_data;
 	}

@@ -18,7 +18,6 @@ const page = {
             $("#transection_detail_modal").val(data.transaction_details);
             $("#tds_val").val(data.tds_amount);
             $("#remark").val(data.remark_val);
-            console.log(data)
             myModal.show();
         })
         $('#updateReceivableForm').on('submit', function(e){

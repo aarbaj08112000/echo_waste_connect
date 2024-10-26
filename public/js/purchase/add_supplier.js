@@ -12,6 +12,16 @@ const page = {
     },
     formValidation: function(){
         let that = this;
+        $.validator.addMethod("lessThan100", function(value, element) {
+            
+            let discount_type = $("#discount_type").val();
+            let discount_val = parseFloat($("#discount_val").val());
+            let validate = true;
+            if(discount_type == "Percentage" && discount_val > 100){
+                validate = false;
+            }
+        return validate;
+        }, "Discount should be less than 100.");
         $("#addsupplier").validate({
             rules: {
                 supplierName: {
@@ -50,6 +60,24 @@ const page = {
                 // nda_document: {
                 //     required: true
                 // },
+                paymentDays: {
+                    required:true,
+                    minlength:0
+                },
+                discount_type:{
+                    required:true
+                },
+                discount:{
+                    'required': function(element) {
+                        let form_type = $("#discount_type").val();
+                        let validate = false;
+                        if(form_type != "" ){
+                            validate = true;
+                        }
+                        return validate;
+                    },
+                    lessThan100: true
+                }
                 
             },
             messages: {
@@ -72,6 +100,17 @@ const page = {
                 },
                 pan_card: "Please enter Supplier Pan",
                 paymentTerms: "Please enter Payment Terms",
+                paymentDays: {
+                    required: "Please enter Payment Days",
+                    minlength: "Payment Days must be greater than 0"
+                },
+                discount_type:{
+                    required: "Please select Discount Type",
+                },
+                discount: {
+                    required: "Please enter Discount",
+                    maxlength:"Discount should be less than or equal to 100"
+                },
                 // nda_document: "Please upload Upload NDA Document"
             },
             errorPlacement: function(error, element)

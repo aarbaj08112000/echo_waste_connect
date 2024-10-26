@@ -25,11 +25,13 @@
                 <div class="input-group">
                   <select name="part_id" class="form-control select2" id="search_part_name">
                           <option value="">Select Part</option>
+                          <%if $customer_part_list%>
                           <%foreach from=$customer_part_list item=c %>
                             <option <%if ($filter_part_id == $c->id) %>selected <%/if%>
                                value="<%$c->part_number %>"><%$c->part_number %>
                             </option>
                           <%/foreach%>
+                          <%/if%>
                        </select>
                 </div>
               </li>

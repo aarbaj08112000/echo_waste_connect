@@ -377,9 +377,9 @@
          </ul>
       </aside>
 
-     <!--  <div class="main-wrap main-wrap--white main-loader-box" style="display: none;">
+      <div class="main-wrap main-wrap--white main-loader-box" style="display: none;">
          <div class="loader-div"></div>
-      </div> -->
+      </div>
 
       <!-- / Menu -->
       <!-- Layout container -->
@@ -763,6 +763,10 @@
                            <li><a class="dropdown-item" href="#">Master</a></li> -->
                         <li><a class="dropdown-item" href="<%base_url('erp_users')%>">User</a></li>
                         <li><a class="dropdown-item" href="<%base_url('configs')%>">Configurations</a></li>
+                        <li><a class="dropdown-item" href="<%base_url('group_master')%>">Group Master</a></li>
+                        <%if ($role == "Admin") %>
+                                <li><a href="<%base_url('global_formate_config') %>" class="dropdown-item">Formate Configurations</a></li>
+                            <%/if%>
                      </ul>
                            </li>
                            <%/if%>

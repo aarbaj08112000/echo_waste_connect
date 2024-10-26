@@ -182,7 +182,7 @@ jelly-o tart brownie jelly.
               <div class="col-lg-6">
                 <div class="form-group mb-3">
                   <label for="po_num" class="form-label">Store Stock Rate</label>
-                  <input type="number" step="any" name="store_stock_rate" class="form-control" id="exampleInputEmail1" placeholder="Enter Store Stock Rate" aria-describedby="emailHelp">
+                  <input type="text" step="any" name="store_stock_rate" class="form-control onlyNumericInput" id="exampleInputEmail1" placeholder="Enter Store Stock Rate" aria-describedby="emailHelp">
                 </div>
               </div>
                 <%if ($entitlements['isSheetMetal']!=null) %>
@@ -220,7 +220,7 @@ jelly-o tart brownie jelly.
                 <div class="col-lg-6">
                   <div class="form-group mb-3">
                     <label for="po_num" class="form-label">Max PO Quantity </label><span class="text-danger">*</span>
-                    <input  type="number" step="any" name="max_uom" class="form-control" id="hsn_code" placeholder="Enter Max UOM" aria-describedby="emailHelp">
+                    <input  type="text" step="any" name="max_uom" class="form-control onlyNumericInput" id="hsn_code" placeholder="Enter Max UOM" aria-describedby="emailHelp">
                   </div>
                 </div>
                 <div class="col-lg-6">

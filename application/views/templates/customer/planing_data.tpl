@@ -391,6 +391,7 @@
                                     <%foreach from=$planing_data item=t%>
                                         <%if $month == $t->month%>
                                             <%assign var="planing_data_val" value=$t->planing_data%>
+                                            
                                             <%assign var="issued" value=0%>
                                             <%assign var="closed" value=0%>
                                             <%assign var="main_qty" value=$planing_data_val[0]->schedule_qty%>
@@ -415,6 +416,7 @@
                                             <%/if%>
                                             <%assign var="balance_s_qty" value= $planing_data_val[0]->schedule_qty - $total_dispatched_qty%>
                                 <tr>
+
 
                                     <td><%$i%></td>
                                     <td><%$customer_part_data[$t->customer_part_id][0]->part_number%></td>

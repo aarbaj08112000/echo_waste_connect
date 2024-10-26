@@ -20,7 +20,7 @@ data-template="vertical-menu-template-free"
   <meta name="description" content="" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="public/assets/img/favicon/favicon.png" />
+  <link rel="icon" type="image/x-icon" href="<%$base_url%>public/assets/img/favicon/favicon.png" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -31,10 +31,10 @@ data-template="vertical-menu-template-free"
   />
 
   <!-- Icons. Uncomment required icon fonts -->
-  <link rel="stylesheet" href="public/assets/vendor/fonts/boxicons.css" />
+  <link rel="stylesheet" href="<%$base_url%>public/assets/vendor/fonts/boxicons.css" />
 
   <!-- Core CSS -->
-  <link rel="stylesheet" href="public/assets/vendor/css/core.css" class="template-customizer-core-css" />
+  <link rel="stylesheet" href="<%$base_url%>public/assets/vendor/css/core.css" class="template-customizer-core-css" />
   <!-- <link rel="stylesheet" href="public/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" /> -->
   <!-- <link rel="stylesheet" href="public/assets/css/demo.css" /> -->
 
@@ -42,16 +42,16 @@ data-template="vertical-menu-template-free"
   <!-- <link rel="stylesheet" href="public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" /> -->
 
   <!-- Page CSS -->
-  <link rel="stylesheet" href="public/css/common.css" />
+  <link rel="stylesheet" href="<%$base_url%>public/css/common.css" />
   <!-- Page -->
-  <link rel="stylesheet" href="public/assets/vendor/css/pages/page-auth.css" />
+  <link rel="stylesheet" href="<%$base_url%>public/assets/vendor/css/pages/page-auth.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
   <!-- Helpers -->
-  <script src="public/assets/vendor/js/helpers.js"></script>
+  <script src="<%$base_url%>public/assets/vendor/js/helpers.js"></script>
 
   <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
   <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
-  <script src="public/assets/js/config.js"></script>
+  <script src="<%$base_url%>public/assets/js/config.js"></script>
 </head>
 
 <body>
@@ -67,7 +67,7 @@ data-template="vertical-menu-template-free"
             <div class="container text-center">
               <div class="row justify-content-center">
                 <div class="col-md-auto">
-                  <img src="public/img/logo.png" alt="" width="100">
+                  <img src="<%$base_url%>public/img/logo.png" alt="" width="100">
                 </div>
               </div>
               <div class="row justify-content-center">
@@ -154,9 +154,9 @@ data-template="vertical-menu-template-free"
   <!-- Core JS -->
   <!-- build:js assets/vendor/js/core.js -->
   <script src="<%$base_url%>public/js/admin/plugin/jquery.min.js"></script>
-  <script src="public/assets/vendor/libs/popper/popper.js"></script>
-  <script src="public/assets/vendor/js/bootstrap.js"></script>
-  <script src="public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+  <script src="<%$base_url%>public/assets/vendor/libs/popper/popper.js"></script>
+  <script src="<%$base_url%>public/assets/vendor/js/bootstrap.js"></script>
+  <script src="<%$base_url%>public/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 
   <!-- endbuild -->
 
@@ -168,7 +168,10 @@ data-template="vertical-menu-template-free"
   <link rel="stylesheet" href="<%$base_url%>plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js" integrity="sha512-WMEKGZ7L5LWgaPeJtw9MBM4i5w5OSBlSjTjCtSnvFJGSVD26gE5+Td12qN5pvWXhuWaWcVwF++F7aqu9cvqP0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-<script src="public/js/login.js"></script>
+<script type="text/javascript">
+  var base_url = <%$base_url|@json_encode%>;
+</script>
+<script src="<%$base_url%>public/js/login.js"></script>
 <style>
 .select2.select2-container .select2-selection--single{
   border-color: #c7cdd4;

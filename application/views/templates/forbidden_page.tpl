@@ -7,7 +7,7 @@
                 text-align: center;
             }
             .no_page_found_dib img {
-                width: 50%;
+                width: 63%;
                 mix-blend-mode: multiply;
                 filter: contrast(1);
                 height: 95%;
@@ -26,8 +26,8 @@
                     class="mt-5"/>
                 <br>
                 <br>
-                <a type="button" class="btn btn-outline-info" href="<%base_url('dashboard')%>">
-        				Back To Home
+                <a type="button" class="btn btn-outline-info" href="<%$previous_page%>">
+        				Back To Previous Page
         		</a>
 
             </div>

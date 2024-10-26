@@ -64,7 +64,8 @@ class Newcontroller extends CommonController
 
 	public function generate_new_po()
 	{
-		// pr($this->input->post(),1);
+		
+		$po_discount_type = $this->input->post("discount_type");
 		$notes = $this->input->post('notes');
 		$shipping_address = $this->input->post('shipping_address');
 		$billing_address = $this->input->post('billing_address');
@@ -78,94 +79,117 @@ class Newcontroller extends CommonController
 		$freight_amount = $this->input->post('freight_amount');
 		$freight_amount_gst = $this->input->post('freight_amount_gst');
 		//$data['new_po'] = $this->Crud->read_data("new_po");
-
-		if (empty($process_id)) {
-			$sql = "SELECT po_number FROM new_po WHERE po_number like '" . $this->getPOSerialNo() . "%' order by id desc LIMIT 1";
-			$latestSeqFormat = $this->Crud->customQuery($sql);
-			foreach ($latestSeqFormat as $p) {
-				$currentPONo = $p->po_number;
+		$supplier_data = $this->Crud->get_data_by_id("supplier", $supplier_id, "id");
+		
+		$discount_type_blanck = "No";
+		$discount_type = "";
+		$discount = "";
+		if($po_discount_type == "PO Level"){
+			$discount_type = $supplier_data[0]->discount_type;
+			$discount = $supplier_data[0]->discount;
+			if($supplier_data[0]->discount_type == "" || $supplier_data[0]->discount == "" ||$supplier_data[0]->discount_type == null || $supplier_data[0]->discount == null){
+				$discount_type_blanck = "Yes";
 			}
-
-			$po_number = substr($currentPONo, strlen($this->getPOSerialNo())) + 1;
-			$po_number = $this->getPOSerialNo() . $po_number;
-
-		} else {
-			$isSubPO = true; // we don't have other loading, unloading or freight amount there..
-			$sql = "SELECT po_number FROM new_po WHERE po_number like '" . $this->getSUBPOSerialNo() . "%' order by id desc LIMIT 1";
-			$latestSeqFormat = $this->Crud->customQuery($sql);
-			foreach ($latestSeqFormat as $p) {
-				$currentSubPONo = $p->po_number;
-			}
-			$po_number = substr($currentSubPONo, strlen($this->getSUBPOSerialNo())) + 1;
-			$po_number = $this->getSUBPOSerialNo() . $po_number;
 		}
-
-		if($isSubPO == false) { // needed only for regular PO
-			$loading_unloading_gst_data = $this->Crud->get_data_by_id("gst_structure", $loading_unloading_gst, "id");
-			$freight_amount_gst_data = $this->Crud->get_data_by_id("gst_structure", $freight_amount_gst, "id");
-
-			$cgst_amount = 0;
-			$sgst_amount = 0;
-			$igst_amount = 0;
-
-			if (!empty($loading_unloading_gst_data)) {
-				$loading_cgst_amount = ($loading_unloading_gst_data[0]->cgst * $loading_unloading) / 100;
-				$loading_sgst_amount = ($loading_unloading_gst_data[0]->sgst * $loading_unloading) / 100;
-				$loading_igst_amount = ($loading_unloading_gst_data[0]->igst * $loading_unloading) / 100;
-
-				$cgst_amount = $loading_cgst_amount;
-				$sgst_amount = $loading_sgst_amount;
-				$igst_amount = $loading_igst_amount;
-			}
-			if (!empty($freight_amount_gst_data)) {
-				$freight_cgst_amount_ = ($freight_amount_gst_data[0]->cgst * $freight_amount) / 100;
-
-				$freight_sgst_cgst = ($freight_amount_gst_data[0]->sgst * $freight_amount) / 100;
-
-				$freight_igst_cgst = ($freight_amount_gst_data[0]->igst * $freight_amount) / 100;
-
-				$cgst_amount = $cgst_amount + $freight_cgst_amount_;
-				$sgst_amount = $sgst_amount + $freight_sgst_cgst;
-				$igst_amount = $igst_amount + $freight_igst_cgst;
-			}
-			$final_amount = $loading_unloading + $freight_amount + $cgst_amount + $sgst_amount + $igst_amount;
-		}
-
-		$data = array(
-			"final_amount" => $final_amount,
-			"supplier_id" => $supplier_id,
-			"po_number" => $po_number,
-			"loading_unloading_gst" => $loading_unloading_gst,
-			"loading_unloading" => $loading_unloading,
-			"freight_amount" => $freight_amount,
-			"freight_amount_gst" => $freight_amount_gst,
-			"po_date" => $po_date,
-			"expiry_po_date" => $expiry_po_date,
-			"remark" => $remark,
-			"created_by" => $this->user_id,
-			"created_date" => $this->current_date,
-			"created_time" => $this->current_time,
-			"created_by" => $this->current_date,
-			"created_day" => $this->date,
-			"created_month" => $this->month,
-			"created_year" => $this->year,
-			"process_id" => $process_id,
-			"notes" => $notes,
-			"billing_address" => $billing_address,
-			"shipping_address" => $shipping_address,
-			"clientId" => $this->Unit->getSessionClientId()
-		);
-
 		$success = 0;
 		$message = "Something went wrong";
-		$result = $this->Crud->insert_data("new_po", $data);
-		$redirect_url ='';
-		if ($result) {
-			$success = 1;
-			$message = "PO generated successfully.";
-			$redirect_url =  base_url('view_new_po_by_id/'). $result;
-		}
+		$redirect_url = "";
+		if($discount_type_blanck == "No"){
+			if (empty($process_id)) {
+				$sql = "SELECT po_number FROM new_po WHERE po_number like '" . $this->getPOSerialNo() . "%' order by id desc LIMIT 1";
+				$latestSeqFormat = $this->Crud->customQuery($sql);
+				foreach ($latestSeqFormat as $p) {
+					$currentPONo = $p->po_number;
+				}
 
+				$po_number = substr($currentPONo, strlen($this->getPOSerialNo())) + 1;
+				$po_number = $this->getPOSerialNo() . $po_number;
+
+			} else {
+				$isSubPO = true; // we don't have other loading, unloading or freight amount there..
+				$sql = "SELECT po_number FROM new_po WHERE po_number like '" . $this->getSUBPOSerialNo() . "%' order by id desc LIMIT 1";
+				$latestSeqFormat = $this->Crud->customQuery($sql);
+				foreach ($latestSeqFormat as $p) {
+					$currentSubPONo = $p->po_number;
+				}
+				$po_number = substr($currentSubPONo, strlen($this->getSUBPOSerialNo())) + 1;
+				$po_number = $this->getSUBPOSerialNo() . $po_number;
+			}
+
+			if($isSubPO == false) { // needed only for regular PO
+				$loading_unloading_gst_data = $this->Crud->get_data_by_id("gst_structure", $loading_unloading_gst, "id");
+				$freight_amount_gst_data = $this->Crud->get_data_by_id("gst_structure", $freight_amount_gst, "id");
+
+				$cgst_amount = 0;
+				$sgst_amount = 0;
+				$igst_amount = 0;
+
+				if (!empty($loading_unloading_gst_data)) {
+					$loading_cgst_amount = ($loading_unloading_gst_data[0]->cgst * $loading_unloading) / 100;
+					$loading_sgst_amount = ($loading_unloading_gst_data[0]->sgst * $loading_unloading) / 100;
+					$loading_igst_amount = ($loading_unloading_gst_data[0]->igst * $loading_unloading) / 100;
+
+					$cgst_amount = $loading_cgst_amount;
+					$sgst_amount = $loading_sgst_amount;
+					$igst_amount = $loading_igst_amount;
+				}
+				if (!empty($freight_amount_gst_data)) {
+					$freight_cgst_amount_ = ($freight_amount_gst_data[0]->cgst * $freight_amount) / 100;
+
+					$freight_sgst_cgst = ($freight_amount_gst_data[0]->sgst * $freight_amount) / 100;
+
+					$freight_igst_cgst = ($freight_amount_gst_data[0]->igst * $freight_amount) / 100;
+
+					$cgst_amount = $cgst_amount + $freight_cgst_amount_;
+					$sgst_amount = $sgst_amount + $freight_sgst_cgst;
+					$igst_amount = $igst_amount + $freight_igst_cgst;
+				}
+				$final_amount = $loading_unloading + $freight_amount + $cgst_amount + $sgst_amount + $igst_amount;
+			}
+
+			$data = array(
+				"final_amount" => $final_amount,
+				"supplier_id" => $supplier_id,
+				"po_number" => $po_number,
+				"loading_unloading_gst" => $loading_unloading_gst,
+				"loading_unloading" => $loading_unloading,
+				"freight_amount" => $freight_amount,
+				"freight_amount_gst" => $freight_amount_gst,
+				"po_date" => $po_date,
+				"expiry_po_date" => $expiry_po_date,
+				"remark" => $remark,
+				"created_by" => $this->user_id,
+				"created_date" => $this->current_date,
+				"created_time" => $this->current_time,
+				"created_by" => $this->current_date,
+				"created_day" => $this->date,
+				"created_month" => $this->month,
+				"created_year" => $this->year,
+				"process_id" => $process_id,
+				"notes" => $notes,
+				"billing_address" => $billing_address,
+				"shipping_address" => $shipping_address,
+				"clientId" => $this->Unit->getSessionClientId(),
+				"po_discount_type" => $po_discount_type,
+				"discount_type" => $discount_type,
+				"discount" => $discount
+			);
+
+
+			$result = $this->Crud->insert_data("new_po", $data);
+			if ($result) {
+				$success = 1;
+				$message = "PO generated successfully.";
+				$redirect_url =  base_url('view_new_po_by_id/'). $result;
+				// echo "<script>alert('Successfully Added');document.location='" . base_url('view_new_po_by_id/') . $result . "'</script>";
+			} else {
+				$message = "Unable to Add";
+				// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			}
+		}else{
+			$message = "Add discount in supplier master";
+			// echo "<script>alert('Add discount in supplier master');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		}
 		$return_arr = [
 			"message" => $message,
 			"success" => $success,
@@ -174,6 +198,7 @@ class Newcontroller extends CommonController
 		echo json_encode($return_arr);
 		exit();
 	}
+
 
 
 	public function generate_challan_subcon()
@@ -366,7 +391,144 @@ class Newcontroller extends CommonController
 		$new_po_id = $this->uri->segment('2');
 		$data['process'] = $this->Crud->read_data("process");
 
+		$new_po = $data['new_po'] = $this->Crud->get_data_by_id("new_po", $new_po_id, "id");
+		$supplier = $data['supplier'] = $this->Crud->get_data_by_id("supplier", $data['new_po'][0]->supplier_id, "id");
+		$data['po_parts'] = $this->Crud->get_data_by_id("po_parts", $new_po_id, "po_id");
+		$po_parts = array_column($data['po_parts'], "id");
+		$grn_part_arr = [];
+		if(count($po_parts) > 0){
+			$po_parts = implode(",",$po_parts);
+			$grn_details = $this->Crud->customQuery('
+				SELECT  g.id, g.po_part_id
+				FROM `inwarding` as i 
+				LEFT JOIN grn_details as g ON i.id = g.inwarding_id 
+				where  g.po_part_id in (' . $po_parts . ') AND i.status != "pending" AND i.status != ""  AND g.po_number = '.$new_po_id);
+			// pr($,1);
+			$grn_part_arr = array_column($grn_details,"po_part_id");
+		}
+		$data['grn_part_arr'] = $grn_part_arr;
+		// pr($grn_part_arr,1);
+		$data['child_part'] = $this->Crud->customQuery('SELECT DISTINCT part_number, supplier_id FROM `child_part_master` where supplier_id = ' . $data['supplier'][0]->id . '');
+
+		$data['gst_structure'] = $this->Crud->read_data("gst_structure");
+		$process_id = $data['new_po'][0]->process_id;
+		if (empty($process_id)) {
+			$isSubPO = false;
+		}else{
+			$isSubPO = true;
+		}
+		$data['isSubPO'] = $isSubPO;
+		$final_po_amount = 0;
+		$po_part = $data['po_parts'];
+
+		foreach ($po_part as $key=>$p) {
+			$data_arr = array(
+            	'supplier_id' => $supplier[0]->id,
+                "child_part_id" => $p->part_id,
+            );
+            $child_part_data = $this->Crud->get_data_by_id_multiple_condition("child_part_master", $data_arr);
+            $po_part[$key]->child_part_data = $child_part_data;               
+            $part_rate_new = 0;
+            if (empty($p->rate)) {
+            	$part_rate_new = $child_part_data[0]->part_rate;
+            } else {
+            	$part_rate_new = $p->rate;
+            }
+            $po_part[$key]->part_rate_new = $part_rate_new;
+            $uom_data = $this->Crud->get_data_by_id("uom", $p->uom_id, "id");
+            $po_part[$key]->uom_data = $uom_data;  
+            $total_rate_old = $part_rate_new * $p->qty;
+            $gst_structure = $this->Crud->get_data_by_id("gst_structure", $p->tax_id, "id");
+            $po_part[$key]->gst_structure = $gst_structure;  
+            $po_part[$key]->total_rate_old = $total_rate_old;  
+            $po_part[$key]->cgst_amount = $cgst_amount = ($total_rate_old * $gst_structure[0]->cgst) / 100;
+            $po_part[$key]->sgst_amount= $sgst_amount  = ($total_rate_old * $gst_structure[0]->sgst) / 100;
+            $po_part[$key]->igst_amount= $igst_amount  = ($total_rate_old * $gst_structure[0]->igst) / 100;
+            $po_part[$key]->gst_amount= $gst_amount  = $cgst_amount + $sgst_amount + $igst_amount;
+            $po_part[$key]->total_rate = $total_rate = $total_rate_old + $cgst_amount + $sgst_amount + $igst_amount;
+            $final_po_amount = $final_po_amount + $total_rate;
+        }
+        // pr($po_part,1);
+
+        $data['po_parts'] = $po_part;
+        $data['final_po_amount'] = $final_po_amount;
+        $po_parts_opt = '';
+        foreach ($data['child_part'] as $c) {
+			$array = array(
+			"part_number" => $c->part_number,
+			"supplier_id" =>  $supplier[0]->id,
+			"admin_approve" => "accept"
+			);
+			$array23 = array(
+			"part_number" => $c->part_number,
+			);
+			$c = $this->Crud->get_data_by_id_multiple_condition("child_part_master", $array);
+			if ($c) {
+				$c2 = $this->Crud->get_data_by_id_multiple_condition("child_part", $array23);
+				$gst_structure = $this->Crud->get_data_by_id("gst_structure", $c[0]->gst_id, "id");
+				if (empty($new_po[0]->process_id)) {
+					$type = "normal";
+				} else {
+					$type = "Subcon grn";
+				}
+				if ($type == "normal") {
+					if ($c2[0]->sub_type != "Subcon grn") {
+						$po_parts_opt .= "
+					<option value='".$c2[0]->id."'> ".$c2[0]->part_number . " // " . $c2[0]->part_description . " // " . $supplier[0]->supplier_name . "//" . $c[0]->part_rate . " // " . $gst_structure[0]->code . "//" . $c2[0]->max_uom ."
+					</option>";
+					}
+				} else {
+				   if ($c2[0]->sub_type == "Subcon grn" || $c2[0]->sub_type == "Subcon Regular") {
+				   	$po_parts_opt .= "
+					<option value='".$c2[0]->id."'>
+					 ".$c2[0]->part_number . " // " . $c2[0]->part_description . " // " . $supplier[0]->supplier_name . "//" . $c[0]->part_rate . " // " . $gst_structure[0]->code . "//" . $c2[0]->max_uom ."
+					</option>";
+					}
+				}
+			}
+		}
+		$data['po_parts_opt'] = $po_parts_opt;
+		$data['user_type'] = $this->session->userdata['type'];
+		$expired = "no";
+        if ($new_po[0]->expiry_po_date > date('Y-m-d')) {
+        	$expired =  "yes";
+       	}
+        if (empty($new_po[0]->process_id)) {
+        	$type = "normal";
+        } else {
+        	$type = "Subcon grn";
+        }
+        $data['type'] = $type;
+        $data['expired'] = $expired;
+        $statusNew = "";
+        $status_value = "";
+        if ($expired == "no") {
+        	$status_value = $statusNew  = "Expired";
+        } else if ($new_po[0]->status == "accept") {
+        	$status_value = $statusNew  = "Released";
+        } else {
+        	$status_value = $new_po[0]->status;
+        }
+        $data['status_value'] = $status_value;
+        $data['statusNew'] = $statusNew;
+		// pr($data['new_po'],1);
+		// $this->load->view('header');
+		// $this->load->view('view_new_po_by_id', $data);
+		// $this->load->view('footer');
+		$this->loadView('purchase/view_new_po_by_id', $data);
+	}
+	public function view_new_po_by_id1()
+	{
+		$new_po_id = $this->uri->segment('2');
+		$data['process'] = $this->Crud->read_data("process");
+
 		$data['new_po'] = $this->Crud->get_data_by_id("new_po", $new_po_id, "id");
+		$data['expired'] = 'no';
+		if (isset($data['new_po'][0]->expiry_po_date) && strtotime($data['new_po'][0]->expiry_po_date) < time()) {
+		    $data['expired'] = 'yes';
+		}
+		// pr($data['expired'],1);
+		
 		$data['supplier'] = $this->Crud->get_data_by_id("supplier", $data['new_po'][0]->supplier_id, "id");
 
 		$data['po_parts'] = $this->Crud->get_data_by_id("po_parts", $new_po_id, "po_id");
@@ -404,7 +566,7 @@ class Newcontroller extends CommonController
 			$data['po_parts'][$key]->gst_structure = $gst_structure;
 
 		}
-		// pr($data['child_part'],1);
+		// pr($data,1);
 		// $this->load->view('header');
 		// $this->load->view('view_new_po_by_id',$data);
 		$this->loadView('purchase/view_new_po_by_id', $data);
@@ -563,7 +725,6 @@ public function view_po_by_supplier_id()
 			SELECT np.*,s.supplier_name as supplier_name FROM new_po as np
 			LEFT JOIN supplier as s ON s.id = np.supplier_id 
 			WHERE np.clientId = ".$this->Unit->getSessionClientId()." AND np.status ='pending'");
-		$data['supplier'] = $this->Crud->read_data("supplier");
 		$data['base_url'] = base_url();
 		// $this->load->view('header');
 		$this->loadView('purchase/pending_po', $data);
@@ -627,6 +788,7 @@ public function rejected_po()
 	public function update_po_parts()
 	{
 		$id = $this->input->post('id');
+		$discount_value = $this->input->post("discount_value") > 0 ? $this->input->post("discount_value") : 0;
 		$uom_id = $this->input->post('uom_id');
 		$delivery_date = $this->input->post('delivery_date');
 		$qty = $this->input->post('qty');
@@ -637,25 +799,31 @@ public function rejected_po()
 
 		$message ="Something went wrong!";
 		$success = 0;
-		if($max_po_qty < $qty)
-		{
-			$message ="Max PO Qty must be less than actual qty , please enter diff qty";
-		}
-		else{
+			if($max_po_qty < $qty)
+			{
+			// echo "<script>alert('Max PO Qty must be less than actual qty , please enter diff qty');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$message = "Max PO Qty must be less than actual qty , please enter diff qty";
+
+			}
+			else
+			{
 			$data = array(
 				"qty" => $qty,
 				"pending_qty" => $qty,
+				"discount" => $discount_value
 			);
 			$result = $this->Crud->update_data("po_parts", $data, $id);
 			if ($result) {
-				$message ="Updated Sucessfully";
+				$message = "Updated Sucessfully";
 				$success = 1;
+				// echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			} else {
-				$message = 'Error 410 :  Not Updated';
+				$message = "Error 410 :  Not Updated'";
+				// echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
 		$return_arr = [
-			"message" =>$message,
+			"messages" =>$message,
 			"success" => $success
 		];
 		echo json_encode($return_arr);
@@ -730,7 +898,7 @@ public function rejected_po()
 		//}
 
 		$return_arr = [
-			"message" =>$message,
+			"messages" =>$message,
 			"success" => $success
 		];
 		echo json_encode($return_arr);
@@ -781,7 +949,7 @@ public function rejected_po()
 			$message ="Updated Sucessfully";
 		}
 		$return_arr = [
-			"message" =>$message,
+			"messages" =>$message,
 			"success" => $success
 		];
 		echo json_encode($return_arr);
@@ -1084,22 +1252,269 @@ public function rejected_po()
 	{
 		$id = $this->input->post('id');
 		$status = $this->input->post('status');
-		$data = array(
-			"status" => $status
-		);
-		$result = $this->Crud->update_data("new_po", $data, $id);
+		$new_po_data = $this->Crud->get_data_by_id("new_po", $id, "id");
+		$supplier_data = $this->Crud->get_data_by_id("supplier", $new_po_data[0]->supplier_id, "id");
+        $po_parts_data = $this->Crud->get_data_by_id("po_parts", $new_po_data[0]->id, "po_id");
+        $parts_html = "";
+        $final_total = 0;
+        $cgst_amount = 0;
+        $sgst_amount = 0;
+        $igst_amount = 0;
+        $tcs_amount = 0;
+        $with_in_state = "";
+        $i = 1;
+
+        $loading_unloading_gst = $this->Crud->get_data_by_id("gst_structure", $new_po_data[0]->loading_unloading_gst, "id");
+        $freight_amount_gst = $this->Crud->get_data_by_id("gst_structure", $new_po_data[0]->freight_amount_gst, "id");
+
+        if (!empty($loading_unloading_gst)) {
+            $loading_cgst_amount = ($loading_unloading_gst[0]->cgst * $new_po_data[0]->loading_unloading) / 100;
+            $loading_sgst_amount = ($loading_unloading_gst[0]->sgst * $new_po_data[0]->loading_unloading) / 100;
+            $loading_igst_amount = ($loading_unloading_gst[0]->igst * $new_po_data[0]->loading_unloading) / 100;
+
+            $cgst_amount = $loading_cgst_amount;
+            $sgst_amount = $loading_sgst_amount;
+            $igst_amount = $loading_igst_amount;
+        }
+        if (!empty($freight_amount_gst)) {
+            $freight_cgst_amount_ = ($freight_amount_gst[0]->cgst * $new_po_data[0]->freight_amount) / 100;
+            $freight_sgst_cgst = ($freight_amount_gst[0]->sgst * $new_po_data[0]->freight_amount) / 100;
+            $freight_igst_cgst = ($freight_amount_gst[0]->igst * $new_po_data[0]->freight_amount) / 100;
+            $cgst_amount = $cgst_amount + $freight_cgst_amount_;
+            $sgst_amount = $sgst_amount + $freight_sgst_cgst;
+            $igst_amount = $igst_amount + $freight_igst_cgst;
+        }
+        $messages = "Something went wrong!";
+		$success = 0;
+        $part_arr = [];
+        foreach ($po_parts_data as $p) {
+            $data = array(
+                'supplier_id' => $supplier_data[0]->id,
+                "child_part_id" => $p->part_id,
+            );
+
+            $part_data_new = $this->Crud->get_data_by_id_multiple_condition("child_part_master", $data);
+            $with_in_state = $supplier_data[0]->with_in_state;
+            $uom_data = $this->Crud->get_data_by_id("uom", $p->uom_id, "id");
+            $gst_structure_data = $this->Crud->get_data_by_id("gst_structure", $p->tax_id, "id");
+
+            $part_data_new2 = $this->SupplierParts->getSupplierPartOnlyById($p->part_id);
+
+            $payment_terms = "";
+            $payment_days = 0;
+            if ($supplier_data) {
+                $payment_terms = $supplier_data[0]->payment_terms;
+                $payment_days = $supplier_data[0]->payment_days;
+            }
+
+            if ($part_data_new2) {
+                $hsn_code = $part_data_new2[0]->hsn_code;
+            } else {
+                $hsn_code = "";
+            }
+
+            if ((int) $gst_structure_data[0]->igst === 0) {
+                $gst = (int) $gst_structure_data[0]->cgst + (int) $gst_structure_data[0]->sgst;
+                $cgst = (int) $gst_structure_data[0]->cgst;
+                $sgst = (int) $gst_structure_data[0]->sgst;
+                $tcs = (float) $gst_structure_data[0]->tcs;
+                $tcs_on_tax = $gst_structure_data[0]->tcs_on_tax;
+                $igst = 0;
+            } else {
+                $gst = (int) $gst_structure_data[0]->igst;
+                $cgst = 0;
+                $sgst = 0;
+                $tcs = (float) $gst_structure_data[0]->tcs;
+                $tcs_on_tax = $gst_structure_data[0]->tcs_on_tax;
+                $igst = $gst;
+            }
+
+            $part_rate_new = 0;
+            if (empty($p->rate)) {
+                $part_rate_new = $part_data_new[0]->part_rate;
+            } else {
+                $part_rate_new = $p->rate;
+            }
+            $gst_amount = ($gst * $part_rate_new) / 100;
+            $final_amount = $gst_amount + $part_rate_new;
+            $final_row_amount = $final_amount * $p->qty;
+
+            // $final_total = $final_total + $final_row_amount;
+            $total_amount = $p->qty * $part_rate_new;
+            /* discount amount minus */
+            $discount = $p->discount != "" && $p->discount != null ? $p->discount : 0;
+            $discount_amount = $total_amount*$p->discount/100;
+            $total_amount = $total_amount - $discount_amount;
+			/* discount amount minus */            
+
+            $final_total = $final_total + $total_amount;
+            $cgst_amount = $cgst_amount + (($total_amount * $cgst) / 100);
+            $sgst_amount = $sgst_amount + (($total_amount * $sgst) / 100);
+            $igst_amount = $igst_amount + (($total_amount * $igst) / 100);
+
+            if ($gst_structure_data[0]->tcs_on_tax == "no") {
+                $tcs_amount = $tcs_amount + (($total_amount * $tcs) / 100);
+            } else {
+                //$tcs_amount =  $tcs_amount + ((($cgst_amount + $sgst_amount + $igst_amount + $total_amount) * $tcs) / 100);
+                $tcs_amount = $tcs_amount + ((((float) (($total_amount * $cgst) / 100) + (float) (($total_amount * $sgst) / 100) + (float) $igst_amount + (float) $total_amount) * $tcs) / 100);
+            }
+
+        }
+        $final_total = $final_total + $new_po_data[0]->loading_unloading + $new_po_data[0]->freight_amount;
+        $discount = $new_po_data[0]->discount;
+        $discount_type = $new_po_data[0]->discount_type;
+        if($discount != "" && $new_po_data[0]->po_discount_type == "PO Level"){
+            if($discount_type == "Percentage"){
+                $discount_amount = $final_total * $discount/100;
+                $discount .="%"; 
+            }else{
+                $discount_amount = $discount;
+                $discount = number_format((float) $discount, 2, '.', '');
+            }
+        }
+       	
+        if($discount_amount > $final_total){
+        	$messages = "Discount amount should not be greater than Subtotal";
+        	// echo "<script>alert('Discount amount should not be greater than Subtotal');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+        }else{
+        	
+        	$data = array(
+				"status" => $status
+			);
+			$result = $this->Crud->update_data("new_po", $data, $id);
+			if ($result) {
+				$messages = "Updated Sucessfully";
+				$success = 1;
+				// echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			} else {
+				$messages = "Error 410 :  Not Updated";
+				// echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			}
+        }
+        $result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
+		
+	}
+	public function update_po()
+	{
+		$post_data = $this->input->post();
+		// pr($post_data,1);
+		$loading_unloading_gst = $post_data['loading_unloading_gst'];
+		$loading_unloading = $post_data['loading_unloading'];
+		$freight_amount_gst = $post_data['freight_amount_gst'];
+		$freight_amount = $post_data['freight_amount'];
+		$loading_unloading_gst_data = $this->Crud->get_data_by_id("gst_structure", $loading_unloading_gst, "id");
+		$freight_amount_gst_data = $this->Crud->get_data_by_id("gst_structure", $freight_amount_gst, "id");
+		$cgst_amount = 0;
+		$sgst_amount = 0;
+		$igst_amount = 0;
 		$message = "Something went wrong!";
-		$success = 1;
+		$success = 0;
+		if (!empty($loading_unloading_gst_data)) {
+			$loading_cgst_amount = ($loading_unloading_gst_data[0]->cgst * $loading_unloading) / 100;
+			$loading_sgst_amount = ($loading_unloading_gst_data[0]->sgst * $loading_unloading) / 100;
+			$loading_igst_amount = ($loading_unloading_gst_data[0]->igst * $loading_unloading) / 100;
+
+			$cgst_amount = $loading_cgst_amount;
+			$sgst_amount = $loading_sgst_amount;
+			$igst_amount = $loading_igst_amount;
+		}
+		if (!empty($freight_amount_gst_data)) {
+			$freight_cgst_amount_ = ($freight_amount_gst_data[0]->cgst * $freight_amount) / 100;
+
+			$freight_sgst_cgst = ($freight_amount_gst_data[0]->sgst * $freight_amount) / 100;
+
+			$freight_igst_cgst = ($freight_amount_gst_data[0]->igst * $freight_amount) / 100;
+
+			$cgst_amount = $cgst_amount + $freight_cgst_amount_;
+			$sgst_amount = $sgst_amount + $freight_sgst_cgst;
+			$igst_amount = $igst_amount + $freight_igst_cgst;
+		}
+		$final_amount = $loading_unloading + $freight_amount + $cgst_amount + $sgst_amount + $igst_amount;
+		$discount_value = $this->input->post('discount_value');
+		
+		$data = array(
+			"final_amount" => $final_amount,
+			"freight_amount" => $freight_amount,
+			"freight_amount_gst" => $freight_amount_gst,
+			"loading_unloading" => $loading_unloading,
+			"loading_unloading_gst" => $loading_unloading_gst,
+			"discount" => $discount_value
+		);
+		$result = $this->Crud->update_data("new_po", $data, $post_data['po_id']);
 		if ($result) {
 			$message = "Updated Sucessfully";
 			$success = 1;
+			// echo "<script>alert('Updated Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
-			$message ="Error 410 :  Not Updated";
+			$message = "Error 410 :  Not Updated";
+			// echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		}
+		$result = [];
+        $result['messages'] = $message;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
+	}
+	public function unlock_po()
+	{
+		$id = $this->input->post('id');
+		$status = $this->input->post('status');
+		$data = array(
+			"status" => $status,
+			"is_unlock" => "Yes"
+		);
+		$messages = "Something went wrong!";
+		$success = 0;
+		$result = $this->Crud->update_data("new_po", $data, $id);
+		if ($result) {
+			$messages = "Po Unlock Sucessfully";
+			$success = 1;
+			// echo "<script>alert('Po Unlock Sucessfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		} else {
+			$messages = "Error 410 :  Not Updated";
+			// echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		}
+		$result = [];
+        $result['messages'] = $messages;
+        $result['success'] = $success;
+        echo json_encode($result);
+        exit();
+	}
+	public function AmendQty()
+	{
+		$part_id = $this->input->post("id");
+		$po_parts = $this->Crud->get_data_by_id("po_parts", $part_id, "id");
+		$child_part = $this->Crud->customQuery('
+			SELECT DISTINCT gst_id, part_rate,child_part_id
+			FROM `child_part_master` 
+			where supplier_id = ' .$po_parts[0]->supplier_id. ' AND child_part_id = '.$po_parts[0]->part_id.'
+			ORDER BY id desc LIMIT 1'
+		);
+		$message = "Something went wrong!";
+		$success = 0;
+		$update_arr = [
+			"rate" => $child_part[0]->part_rate > 0 ?  $child_part[0]->part_rate : 0,
+			"tax_id" => $child_part[0]->gst_id > 0 ?  $child_part[0]->gst_id : 0
+		];
+		$result = $this->Crud->update_data("po_parts", $update_arr, $part_id);
+		if ($result) {
+			$message = "Amend Price/tax successfully";
+			$success = 1;
+			// echo "<script>alert('Amend Price/tax successfully');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		} else {
+			$message = "Error 410 :  Not Updated";
+			// echo "<script>alert('Error 410 :  Not Updated');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		}
 		$return_arr = [
-			"message" =>$message,
+			"messages" =>$message,
 			"success" => $success
 		];
+
+
 		echo json_encode($return_arr);
 		exit();
 	}
@@ -1112,7 +1527,7 @@ public function rejected_po()
 		);
 		$result = $this->Crud->update_data("customer_po_tracking", $data, $id);
 		$message = "Something went wrong!";
-		$success = 1;
+		$success = 0;
 		if ($result) {
 			$message = "Updated Sucessfully";
 			$success = 1;
@@ -1306,6 +1721,7 @@ public function rejected_po()
 	// add new
 	public function add_po_parts()
 	{
+		// pr("ok",1);
 		$supplier_id = $this->input->post('supplier_id');
 		$process = $this->input->post('process');
 		$po_date = $this->input->post('po_date');
@@ -1315,7 +1731,9 @@ public function rejected_po()
 		$invoice_number = $this->input->post('invoice_number');
 		$qty = $this->input->post('qty');
 		$type = $this->input->post('type');
-
+		$message = "Something went wrong";
+		$success = 0;
+		$discount_value = $this->input->post('discount_value') != "" && $this->input->post('discount_value') != null ? $this->input->post('discount_value')  : 0;
 		$array_main = array(
 			"supplier_id" => $supplier_id,
 			"child_part_id" => $part_id,
@@ -1331,15 +1749,34 @@ public function rejected_po()
 		);
 		$check = $this->Crud->read_data_where("po_parts", $data);
 		$routing_data = $this->Crud->get_data_by_id("routing", $part_id, "part_id");
-		$message = "Something went wrong!";
-		$success = 0;
+		$po_discount_type = $this->input->post("po_discount_type");
+		$tax_diff = "No";
+		if($po_discount_type != "N/A"){
+			$po_parts = $this->Crud->get_data_by_id("po_parts", $po_id, "po_id");
+			$po_parts_tax = $po_parts[0]->tax_id;
+			if($po_parts_tax != "" || $po_parts_tax != null){
+				if($po_parts_tax != $child_part_data[0]->gst_id){
+					$tax_diff = "Yes";
+				}
+			}
+		}
+
 		if ($type != "normal" && empty($routing_data)) {
-			$message ="Error 403 : Routing Not Found please Add Routing for this part !!!";
+			$message = "Error 403 : Routing Not Found please Add Routing for this part !!!  ";
+			// echo "<script>alert('Error 403 : Routing Not Found please Add Routing for this part !!!  ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else if ($qty > $max_uom) {
-			$message ="Error 401 : Quantity should be less than MAX PO QTY. Please check";
+			$message = "Error 401 : Quantity should be less than MAX PO QTY. Please check  ";
+			// echo "<script>alert('Error 401 : Quantity should be less than MAX PO QTY. Please check  ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else if ($check) {
-			$message = "Error 403 : Part  Already Exists To This PO Number , Enter Different Part ";
+			$message = "Error 403 : Part  Already Exists To This PO Number , Enter Different Part";
+			// echo "<script>alert('Error 403 : Part  Already Exists To This PO Number , Enter Different Part ');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+		} else if ($tax_diff == "Yes") {
+			$message = "Please add same tax structure parts";
+			// echo "<script>alert('Please add same tax structure parts');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
+
+
+
 			$data = array(
 				"po_id" => $po_id,
 				"po_number" => $po_number,
@@ -1360,16 +1797,21 @@ public function rejected_po()
 				"created_day" => $this->date,
 				"created_month" => $this->month,
 				"created_year" => $this->year,
+				"discount" => $discount_value
 			);
+
 			$result = $this->Crud->insert_data("po_parts", $data);
 			if ($result) {
-				$message ="Part added successfully.";
+				$message = "Successfully Added";
 				$success = 1;
+				// echo "<script>alert('Successfully Added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			} else {
+				$message = "Unab le to Add";
+				// echo "<script>alert('Unab le to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		}
-
 		$return_arr = [
-			"message" =>$message,
+			"messages" =>$message,
 			"success" => $success
 		];
 		echo json_encode($return_arr);
@@ -1378,12 +1820,16 @@ public function rejected_po()
 
 	public function add_challan_parts_history()
 	{
+
 		$child_part_id = $this->input->post('child_part_id');
 		$subcon_po_inwarding_parts_id = $this->input->post('subcon_po_inwarding_parts_id');
 		$challan_id = $this->input->post('challan_id');
+		$message = "Something went wrong";
+		$success = 0;
 		if($challan_id == 0)
 		{
-			echo "<script>alert('please select challan Id');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+			$message = "please select challan Id";
+			// echo "<script>alert('please select challan Id');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 
 		}
 		$challan_part_id = $this->input->post('challan_part_id');
@@ -1412,12 +1858,12 @@ public function rejected_po()
 
 			$req_qty = $req_qty - $rec_qty;
 			$challan_qty = $challan_parts_data[0]->remaning_qty;
-			echo "<br>challan_qty: " . $challan_qty;
+			// echo "<br>challan_qty: " . $challan_qty;
 
 			$challan_diff = $challan_qty - $req_qty;
 
 			if ($rec_qty == 0) {
-				echo "<br>rec is zero";
+				// echo "<br>rec is zero";
 				if ($challan_diff >= 0) {
 					$rec_qty = $req_qty;
 					$challan_history = $challan_qty - $req_qty;
@@ -1429,22 +1875,22 @@ public function rejected_po()
 				}
 				$history = $rec_qty;
 			} else {
-				echo "<br>challan Diff :" . $challan_diff;
+				// echo "<br>challan Diff :" . $challan_diff;
 				if ($challan_diff >= 0) {
-					echo "<br>received is not zero dif >= 0";
+					// echo "<br>received is not zero dif >= 0";
 					$new_req_qty = $req_qty;
-					echo "<br>new_req_qty :" . $new_req_qty;
+					// echo "<br>new_req_qty :" . $new_req_qty;
 					$rec_qty = $rec_qty + $new_req_qty;
-					echo "<br>rec_qty :" . $rec_qty;
+					// echo "<br>rec_qty :" . $rec_qty;
 					$challan_history = $challan_qty - $new_req_qty;
-					echo "<br>challan_history :" . $challan_history;
+					// echo "<br>challan_history :" . $challan_history;
 					$new_sub_con = $sub_con_stock - $new_req_qty;
-					echo "<br>new_sub_con :" . $new_sub_con;
+					// echo "<br>new_sub_con :" . $new_sub_con;
 				} else {
 					$new_req_qty = $challan_qty;
 					$rec_qty = $new_req_qty + $rec_qty;
-					echo "<br> new_req_qty: ".$new_req_qty;
-					echo "<br> rec_qty: " . $rec_qty;
+					// echo "<br> new_req_qty: ".$new_req_qty;
+					// echo "<br> rec_qty: " . $rec_qty;
 					$challan_history = $challan_qty - $new_req_qty;
 					$new_sub_con = $sub_con_stock - $new_req_qty;
 				}
@@ -1485,14 +1931,24 @@ public function rejected_po()
 				$result1 = $this->Crud->update_data("subcon_po_inwarding_parts", $subcon_po_inwarding_parts_update_array, $subcon_po_inwarding_parts_id);
 				$result2 = $this->Crud->update_data("challan_parts", $challan_parts_update_array, $challan_parts_data[0]->id);
 				$result3 = $this->SupplierParts->updateStockById($child_part_update_array, $part_id);
-				echo "<script>alert('Successfully Added');document.location='" . base_url('grn_subcon_view/') . $child_part_id . "/" . $new_po_id ."/" .$inwarding_id. "/" .$child_part_id."'</script>";
+				// echo "<script>alert('Successfully Added');document.location='" . base_url('grn_subcon_view/') . $child_part_id . "/" . $new_po_id ."/" .$inwarding_id. "/" .$child_part_id."'</script>";
+				$message = "'Successfully Added";
+				$success = 1;
 
 			} else {
-				echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+				$message = "Unable to Add";
+				// echo "<script>alert('Unable to Add');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 			}
 		} else {
-			echo "challan parts not found !";
+			$message = "challan parts not found !";
+			// echo "challan parts not found !";
 		}
+		$return_arr = [
+			"messages" =>$message,
+			"success" => $success
+		];
+		echo json_encode($return_arr);
+		exit();
 	}
 	public function add_challan_parts_history_subcon()
 	{

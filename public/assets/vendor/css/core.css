@@ -29440,6 +29440,9 @@ a.bg-vimeo:hover,a.bg-vimeo:focus {
     overflow-x: auto; /* Enables horizontal scrolling */
     border: 1px solid #ddd; /* Optional: for visual separation */
 }
+.dataTables_scrollBody table {
+    /*min-height: 581px !important;*/
+}
 table.dataTable.no-footer {
     border-bottom: 0px solid #111 !important;
 }

@@ -243,7 +243,7 @@ class Welcome extends CommonController
             "className" => "dt-center",
         ];
         $column[] = [
-            "data" => "grn_number",
+            "data" => "grn_number_val",
             "title" => "GRN No",
             "width" => "10%",
             "className" => "dt-center",
@@ -329,6 +329,7 @@ class Welcome extends CommonController
 				$order_by .=
 				"," . $column_index[$val["column"]] . " " . $val["dir"];
             }
+
         }
 
         $condition_arr["order_by"] = $order_by;
@@ -338,9 +339,12 @@ class Welcome extends CommonController
 
 		$data = $this->SupplierParts->getInspectionsReportView($condition_arr,$post_data["search"]);
 
+
 		foreach ($data as $key => $value) {
 
 			$data[$key]['po_date'] = defaultDateFormat($value['po_date']);
+            $inwarding = $this->Crud->get_data_by_id("inwarding", $value['inwarding_id'], "id");
+            $data[$key]['grn_number_val'] = $inwarding[0]->grn_number;
 		}
 
 		$data["data"] = $data;
@@ -832,18 +836,16 @@ class Welcome extends CommonController
 	{
 		$subcon_po_inwarding_history_id = $this->uri->segment('2');
 		// $data['tool_list'] =  $this->Crud->read_data("tools");
-		$data['subcon_po_inwarding_history'] = $this->Crud->get_data_by_id("subcon_po_inwarding_history", $subcon_po_inwarding_history_id, 'subcon_po_inwarding_parts_id');
+		$subcon_po_inwarding_history = $this->Crud->get_data_by_id("subcon_po_inwarding_history", $subcon_po_inwarding_history_id, 'subcon_po_inwarding_parts_id');
+        foreach ($subcon_po_inwarding_history as $p) {
+            $challan_data = $this->Crud->get_data_by_id("challan", $p->challan_id, "id");
+            $subcon_po_inwarding_history->challan_data = $challan_data;
+        }
+        $data['subcon_po_inwarding_history'] = $subcon_po_inwarding_history;
 
-		// $data['bill_tracking_details']  = $this->Crud->read_data("bill_tracking");
-		// $data['tool_list'] =  $this->Crud->read_data("tools");
-		// $data['customer_name'] = $this->Crud->get_data_by_id("customer");
-
-
-
-		// print_r($data['tool_list']);
-		$this->load->view('header');
-		$this->load->view('subcon_po_inwarding_history', $data);
-		$this->load->view('footer');
+		// $this->load->view('header');
+		$this->loadView('store/subcon_po_inwarding_history', $data);
+		// $this->load->view('footer');
 	}
 	public function billing()
 	{
@@ -1166,13 +1168,14 @@ class Welcome extends CommonController
 		$data['invoice_number'] = $inwarding_data[0]->invoice_number;
 		$invoice_amount = $inwarding_data[0]->invoice_amount;
 
-		$data['new_po'] = $this->Crud->get_data_by_id("new_po", $new_po_id, "id");
+		$new_po = $data['new_po'] = $this->Crud->get_data_by_id("new_po", $new_po_id, "id");
 		$data['supplier'] = $this->Crud->get_data_by_id("supplier", $data['new_po'][0]->supplier_id, "id");
 		$data['uom'] = $this->Crud->read_data("uom");
 		$arr = array(
 			'supplier_id' => $data['supplier'][0]->id
 		);
-		$data['po_parts'] = $this->Crud->get_data_by_id("po_parts", $new_po_id, "po_id");
+		$po_parts = $data['po_parts'] = $this->Crud->get_data_by_id("po_parts", $new_po_id, "po_id");
+
 		foreach ($data['po_parts'] as $key => $p) {
 			$data_where = array(
 				"child_part_id" => $p->part_id,
@@ -1197,21 +1200,27 @@ class Welcome extends CommonController
                 "invoice_number" => $inwarding_data[0]->invoice_number
             );
             $subcon_po_inwarding_master = $this->Crud->get_data_by_id_multiple("subcon_po_inwarding", $subcon_po_inwarding_data);
-             $data['po_parts'][$key]->subcon_po_inwarding_master = $subcon_po_inwarding_master;
+            $data['po_parts'][$key]->subcon_po_inwarding_master = $subcon_po_inwarding_master;
+            $gst_structure_data = $this->Crud->get_data_by_id("gst_structure", $child_part_data[0]->gst_id, "id");
+            $data['po_parts'][$key]->gst_structure_data = $gst_structure_data;
 		}
 
 		$arr = array(
 	       'inwarding_id' => $inwarding_data[0]->id,
 	       'invoice_number' => $inwarding_data[0]->invoice_number,
 	   );
-	   $invoice_amount = $inwarding_data[0]->invoice_amount;
-	   $grn_details_data = $this->Crud->get_data_by_id_multiple("grn_details", $arr);
+        
+        $invoice_amount = $inwarding_data[0]->invoice_amount;
+        $grn_details_data = $this->Crud->get_data_by_id_multiple("grn_details", $arr);
+        $actual_price = 0;
+        foreach ($grn_details_data as $g) {
+            $actual_price = $actual_price + $g->inwarding_price;
+        }
+       
+        $actual_price = $actual_price + $new_po[0]->final_amount;
+    
+        // pr($actual_price,1);
 
-	   $actual_price = 0;
-	   foreach ($grn_details_data as $g) {
-	       $actual_price = $actual_price + $g->inwarding_price;
-	   }
-	   $actual_price = $actual_price + $data['new_po'][0]->final_amount;
 	   $minus_price = $actual_price - 1;
 	   $plus_price = $actual_price + 1;
 
@@ -1232,6 +1241,7 @@ class Welcome extends CommonController
 	   $data['minus_price'] = $minus_price;
 	   $data['plus_price'] = $plus_price;
 	   $data['status'] = $status;
+          // pr($data['po_parts'],1);
 	   // pr($status,1);
 		// $this->load->view('header');
 		$this->loadView('store/inwarding_details', $data);
@@ -1240,7 +1250,7 @@ class Welcome extends CommonController
 
 	public function add_grn_qty_subcon_view()
 	{
-		echo "hello add_grn_qty_subcon_view";
+		// echo "hello add_grn_qty_subcon_view";
 		$invoice_number = $this->input->post('invoice_number');
 		$data['child_part_id'] = $this->input->post('part_id');
 		$data['invoice_number'] = $this->input->post('invoice_number');
@@ -1266,6 +1276,8 @@ class Welcome extends CommonController
 			'main_sub_con_part_id' => $data['part_id_new'],
 			'invoice_number' => $data['invoice_number'],
 		);
+        $success = 0;
+        $messages = "Something went wrong";
 		$data['subcon_po_inwarding_master'] = $this->Crud->get_data_by_id_multiple("subcon_po_inwarding", $subcon_po_inwarding_data_new);
 
 		if ($data['subcon_po_inwarding_master']) {
@@ -1296,8 +1308,11 @@ class Welcome extends CommonController
 
 								$subcon_po_inwarding_parts_insert = $this->Common_admin_model->insert('subcon_po_inwarding_parts', $subcon_po_inwarding_parts_insert);
 							}
+                            $success = 1;
+                            $messages = "Added successfully";
 						} else {
-							echo "no Routing Found";
+                            $messages = "no Routing Found";
+							// echo "no Routing Found";
 						}
 					}
 				}
@@ -1305,65 +1320,10 @@ class Welcome extends CommonController
 		}
 
 
-
-
-		$arr = array(
-			'id' => $inwarding_id,
-
-		);
-
-
-		$inwarding_data = $this->Crud->get_data_by_id_multiple("inwarding", $arr);
-		$data['inwarding_data'] = $this->Crud->get_data_by_id_multiple("inwarding", $arr);
-
-
-		$ar2 = array(
-			'inwarding_id' => $inwarding_id,
-			'invoice_number' => $invoice_number,
-
-		);
-		$invoice_amount = $inwarding_data[0]->invoice_amount;
-
-
-		$grn_details_data = $this->Crud->get_data_by_id_multiple("grn_details", $arr);
-		$arr = array(
-			'id' => $new_po_id,
-			'invoice_number' => $invoice_number,
-
-		);
-
-		$data['supplier'] = $this->Crud->get_data_by_id("supplier", $data['new_po'][0]->supplier_id, "id");
-		$data['gst_structure'] = $this->Crud->read_data("gst_structure");
-		$data['uom'] = $this->Crud->read_data("uom");
-		$data['challan'] = $this->Crud->read_data("challan");
-		$data['challan_number'] = $this->input->post('challan_number');
-		$data['challan_data'] = $this->Crud->get_data_by_id("challan", $data['challan_number'], "id");
-		$arr = array(
-			'supplier_id' => $data['supplier'][0]->id,
-		);
-		$data['child_part'] = $this->Crud->get_data_by_id_multiple("child_part_master", $arr);
-		$subcon_po_inwarding_data = array(
-			'po_id' => $new_po_id,
-			'main_sub_con_part_id' => $data['part_id_new'],
-			'invoice_number' => $data['invoice_number']
-		);
-
-		$data['subcon_po_inwarding_master'] = $this->Crud->get_data_by_id_multiple("subcon_po_inwarding", $subcon_po_inwarding_data);
-		$arr3123123123 = array(
-			'po_id' => $new_po_id,
-			'invoice_number' => $invoice_number,
-		);
-
-		$po_parts_array = array(
-			'po_id' => $new_po_id,
-			'part_id' => $data['part_id_new']
-		);
-
-		$data['po_parts'] = $this->Crud->get_data_by_id_multiple("po_parts", $po_parts_array);
-
-		$this->load->view('header');
-		$this->load->view('add_grn_qty_subcon_view', $data);
-		$this->load->view('footer');
+        $return_arr['success']=$success;
+        $return_arr['messages']=$messages;
+        echo json_encode($return_arr);
+        exit;
 	}
 	public function add_grn_qty_subcon_view_customer_challan()
 	{
@@ -1430,16 +1390,92 @@ class Welcome extends CommonController
 			'invoice_number' => $data['invoice_number']
 		);
 
-		$data['subcon_po_inwarding_master'] = $this->Crud->get_data_by_id_multiple("subcon_po_inwarding", $subcon_po_inwarding_data);
+		$data['subcon_po_inwarding_master'] = $subcon_po_inwarding_master= $this->Crud->get_data_by_id_multiple("subcon_po_inwarding", $subcon_po_inwarding_data);
 		$po_parts_array = array(
 			'po_id' => $new_po_id,
 			'part_id' => $data['part_id_new']
 		);
 
 		$data['po_parts'] = $this->Crud->get_data_by_id_multiple("po_parts", $po_parts_array);
-		$this->load->view('header');
-		$this->load->view('add_grn_qty_subcon_view', $data);
-		$this->load->view('footer');
+        $po_parts = $data['po_parts'];
+        foreach ($po_parts as $key=>$p) {
+            $child_part_data = $this->Crud->get_data_by_id("child_part_master", $p->part_id, "child_part_id");
+            $po_parts[$key]->child_part_data = $child_part_data;
+            $uom_data = $this->Crud->get_data_by_id("uom", $p->uom_id, "id");
+            $po_parts[$key]->uom_data = $uom_data;
+
+            $arr = array('inwarding_id' => $inwarding_id, 'part_id' => $p->part_id, 'po_number' => $new_po_id, 'invoice_number' => $inwarding_data[0]->invoice_number,);
+            $grn_details_data = $this->Crud->get_data_by_id_multiple("grn_details", $arr);
+            if ($grn_details_data) {
+                $data_present = "yes";
+            }
+            else {
+                $data_present = "no";
+            }
+            $po_parts[$key]->data_present = $data_present;
+            if($subcon_po_inwarding_master){
+                $subcon_po_inwarding_parts = $this->Crud->get_data_by_id("subcon_po_inwarding_parts", $subcon_po_inwarding_master[0]->id, "subcon_po_inwarding_id");
+                foreach ($subcon_po_inwarding_parts as $key_val=>$r) {
+                    $child_part_new_new = $this->Crud->get_data_by_id("child_part", $r->input_part_id, "id");
+                    $subcon_po_inwarding_parts[$key_val]->child_part_new_new = $child_part_new_new;
+                    $challan_parts_array = array(
+                        'part_id' => $r->child_part_new_new[0]->id,
+                        'qty' => 1,
+                    );
+                    $role_management_data2 = $this->db->query('SELECT * FROM `challan_parts` WHERE part_id = ' . $r->child_part_new_new[0]->id . ' AND remaning_qty > 0 ');
+                    $challan_parts_data = $role_management_data2->result();
+                    foreach ($r->challan_parts_data as $key_v=>$ch_parts) {
+                        $challan_parts_data['$key']->challan_data = $this->Crud->get_data_by_id("challan", $ch_parts->challan_id, "id");
+                                                           
+                    }
+                    $subcon_po_inwarding_parts[$key_val]->challan_parts_data = $challan_parts_data;
+                }
+                $po_parts[$key]->subcon_po_inwarding_parts = $subcon_po_inwarding_parts;
+            }
+
+        }
+
+          $arr = array(
+          'inwarding_id' => $inwarding_data[0]->id,
+          'invoice_number' => $inwarding_data[0]->invoice_number,
+          );
+          
+          $invoice_amount = $inwarding_data[0]->invoice_amount;
+          $grn_details_data_main = $this->Crud->get_data_by_id_multiple("grn_details", $arr);
+          
+          $actual_price = 0;
+          foreach ($grn_details_data_main as $g) {
+              $actual_price = $actual_price + $g->inwarding_price;
+          }
+          
+          // $cgst_amount = ($actual_price*$gst_structure[0]->cgst)/100;
+          // $sgst_amount = ($actual_price*$gst_structure[0]->sgst)/100;
+          // $igst_amount = ($actual_price*$gst_structure[0]->igst)/100;
+          
+          // $actual_price = $actual_price + $cgst_amount +$sgst_amount+$igst_amount;
+          $minus_price = $actual_price - 1;
+          $plus_price = $actual_price + 1;
+          
+          if ($actual_price != 0) {
+              if ($invoice_amount >= $minus_price) {
+                  if ($invoice_amount <= $plus_price) {
+                      $status = "verifed";
+                  } else {
+                      $status = "not-verifed";
+                  }
+              } else {
+                  $status = "not-verifed";
+              }
+          } else {
+              $status = "not-verifed";
+          }
+        $data['status'] = $status;
+        $data['po_parts'] = $po_parts;
+        $data['actual_price'] = $actual_price;
+
+		// $this->load->view('header');
+		$this->loadView('store/add_grn_qty_subcon_view', $data);
+		// $this->load->view('footer');
 	}
 
 
@@ -4496,9 +4532,9 @@ class Welcome extends CommonController
 	public function update_production_qty()
 	{
 		$part_number  = $this->input->post('part_number');
-		$production_qty  = (int)$this->input->post('production_qty');
+		$production_qty  = $this->input->post('production_qty');
 		$child_part = $this->SupplierParts->getSupplierPartByPartNumber($part_number);
-		$old_stock = (int)$child_part[0]->stock;
+		$old_stock = $child_part[0]->stock;
 		$new_stock = $old_stock + $production_qty;
 
 		$data_update_child_part = array(
@@ -4507,7 +4543,7 @@ class Welcome extends CommonController
 
 		$query = $this->SupplierParts->updateStockById($data_update_child_part, $child_part[0]->id);
 		$inhouse_parts_data = $this->InhouseParts->getInhousePartByPartNumber($part_number);
-		$old_stock_inhouse = (int)$inhouse_parts_data[0]->production_qty;
+		$old_stock_inhouse = $inhouse_parts_data[0]->production_qty;
 		$new_stock_inhouse = $old_stock_inhouse - $production_qty;
 		$data_update_child_part_inhouse = array(
 			"production_qty" => $new_stock_inhouse,
@@ -4682,7 +4718,12 @@ class Welcome extends CommonController
 
 		$role_management_data = $this->db->query('SELECT *  FROM `customer_part` ');
 		$data['customer_part'] = $role_management_data->result();
-		$role_management_data = $this->db->query('SELECT *  FROM `customer_parts_master` ');
+		$role_management_data = $this->db->query('
+            SELECT c.*,cp.final_inspection_location as final_inspection_location
+            FROM `customer_parts_master` as c 
+            LEFT JOIN customer_parts_master_stock as cp ON c.id = cp.customer_parts_master_id
+            WHERE cp.clientId = "'.$this->Unit->getSessionClientId().'"
+            ');
 		$data['customer_parts_master'] = $role_management_data->result();
 		$data['final_inspection_request'] = $this->Crud->customQuery("
 			SELECT fi.*,cp.part_number as part_number,cp.part_description as part_description,cp.final_inspection_location as final_inspection_location
@@ -5003,7 +5044,8 @@ class Welcome extends CommonController
 
 	public function addRoutingParts()
 	{
-
+        $success = 0;
+        $message = "Something went wrong!";
 		$data = array(
 			'part_id' => $this->input->post('part_id'),
 			'routing_part_id' => $this->input->post('routing_part_id'),
@@ -5022,20 +5064,32 @@ class Welcome extends CommonController
 		// echo "<br>";
 		// print_r($routing_data);
 		if ($routing_data) {
-			echo "<script>alert('already present');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+            $message = "already present";
+			// echo "<script>alert('already present');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 		} else {
 			$inser_query = $this->Crud->insert_data("routing", $data2);
 
 			if ($inser_query) {
 				if ($inser_query) {
-					echo "<script>alert('successfully added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                    $message = "successfully added";
+                    $success = 1;
+					// echo "<script>alert('successfully added');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 				} else {
-					echo "<script>alert('Error IN User  Adding ,try again');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
+                    $message = "Error IN User  Adding ,try again";
+					// echo "<script>alert('Error IN User  Adding ,try again');document.location='" . $_SERVER['HTTP_REFERER'] . "'</script>";
 				}
 			} else {
-				echo "Error";
+                $message = "Error";
+				// echo "Error";
 			}
 		}
+        $return_arr = [
+            "success" => $success,
+            "messages" => $message
+        ];
+
+        echo json_encode($return_arr);
+        exit;
 	}
 	public function addRoutingParts_subcon()
 	{
@@ -5172,14 +5226,14 @@ class Welcome extends CommonController
 		$id = $this->input->post('id');
 		$p_q_main_data = $this->Crud->get_data_by_id("p_q", $id, "id");
 
-		$qty = (int)$this->input->post('qty');
+		$qty = $this->input->post('qty');
 		$accepted_qty = $this->input->post('accepted_qty');
 		$rejection_reason = $this->input->post('rejection_reason');
 		$rejection_remark = $this->input->post('rejection_remark');
 		$output_part_id = $this->input->post('output_part_id');
 
-		$onhold_qty = (int)$this->input->post('onhold_qty');
-		$scrap_factor = (int)$this->input->post('scrap_factor');
+		$onhold_qty = $this->input->post('onhold_qty');
+		$scrap_factor = $this->input->post('scrap_factor');
 
         $success = 0;
         $messages = "Something went wrong.";
@@ -5312,7 +5366,7 @@ class Welcome extends CommonController
 	{
 
 		$id = $this->input->post('id');
-		$qty = (int)$this->input->post('qty');
+		$qty = $this->input->post('qty');
 		$accepted_qty = $this->input->post('accepted_qty');
 		$rejection_reason = $this->input->post('rejection_reason');
 		$rejection_remark = $this->input->post('rejection_remark');
@@ -7073,9 +7127,9 @@ class Welcome extends CommonController
 		$id = $this->input->post('id');
 		$lot_qty = $this->input->post('lot_qty');
 		$operation_id = $this->input->post('operation_id');
-		$production_qty_calculated = (int) $this->input->post('qfinal_qty') + $req_qty;
+		$production_qty_calculated =  $this->input->post('qfinal_qty') + $req_qty;
 
-		$max_qty = (int) $this->input->post('max_qty');
+		$max_qty = $this->input->post('max_qty');
 
 		// echo "<br>" . $req_qty;
 		if ($max_qty < $production_qty_calculated) {
@@ -7268,8 +7322,8 @@ class Welcome extends CommonController
 						$child_part_master = $this->Crud->get_data_by_id("child_part_master", $child_part_data[0]->part_number, "part_number");
 						// $data['toolList'] = $this->Crud->get_data_by_id("tools", "insert", "type");
 						$req_qty = 0;
-						$stock =  (int)$child_part_master[0]->stock;
-						$req_qty = (int)$job_card[0]->req_qty * $b->quantity;
+						$stock =  $child_part_master[0]->stock;
+						$req_qty = $job_card[0]->req_qty * $b->quantity;
 
 						$new_stock = $stock - $req_qty;
 						$onhold_stock = $req_qty;
@@ -7355,9 +7409,9 @@ class Welcome extends CommonController
 						$child_part_master = $this->Crud->get_data_by_id("child_part_master", $child_part_data[0]->part_number, "part_number");
 						// $data['toolList'] = $this->Crud->get_data_by_id("tools", "insert", "type");
 						$req_qty = 0;
-						$stock =  (int)$child_part_master[0]->stock;
-						$prev_onhold =  (int)$child_part_master[0]->onhold_stock;
-						$req_qty = (int)$job_card[0]->req_qty * $b->quantity;
+						$stock =  $child_part_master[0]->stock;
+						$prev_onhold =  $child_part_master[0]->onhold_stock;
+						$req_qty = $job_card[0]->req_qty * $b->quantity;
 						$new_onhold = $prev_onhold - $req_qty;
 
 						$new_stock = $stock - $req_qty;
@@ -8411,6 +8465,8 @@ class Welcome extends CommonController
 		$address1 = $this->input->post('address1');
 		$location = $this->input->post('location');
 		$pin = $this->input->post('pin');
+        $discount = $this->input->post('discount');
+        $discountType = $this->input->post('discountType');
 
 		$data = array(
 			"customer_code" => $customerCode,
@@ -8445,6 +8501,8 @@ class Welcome extends CommonController
 				"address1" => $address1,
 				"location" => $location,
 				"pin" => $pin,
+                "discount" => $discount,
+                "discountType" => $discountType,
 				// "bank_details" => $bank_details,
 				"payment_terms" => $paymentTerms,
 				"created_id" => $this->user_id,
@@ -8479,7 +8537,9 @@ class Welcome extends CommonController
 		$pos = $this->input->post('pos');
 		$address1 = $this->input->post('address1');
 		$location = $this->input->post('location');
-		$pin = $this->input->post('upin');
+		$pin = $this->input->post('pin');
+        $discount = $this->input->post('discount');
+        $discountType = $this->input->post('discountType');
 		// pr($_POST,1);	
 		$data = array(	
 			"customer_name" => $customerName,
@@ -8497,7 +8557,8 @@ class Welcome extends CommonController
 			"address1" => $address1,
 			"location" => $location,
 			"pin" => $pin,
-
+            "discount" => $discount,
+            "discountType" => $discountType
 		);
 		
 		$result = $this->Crud->update_data("customer", $data, $id);
@@ -8524,8 +8585,10 @@ class Welcome extends CommonController
 		$pan_card = $this->input->post('pan_card');
 		$gst_no = $this->input->post('gst_no');
 		$paymentTerms = $this->input->post('paymentTerms');
+        $paymentDays = $this->input->post('paymentDays');
 		$with_in_state = $this->input->post('with_in_state');
-
+        $discount_type = $this->input->post('discount_type');
+        $discount = $this->input->post('discount');
 		$supplier = $this->Crud->read_data("supplier");
 		$supplier_count = $this->Crud->read_data_num("supplier") + 1;
 		// print_r($supplier);
@@ -8654,6 +8717,7 @@ class Welcome extends CommonController
 				'supplier_number' => $number,
 				'email' => $email,
 				"payment_terms" => $paymentTerms,
+                "payment_days" => $paymentDays,
 				"state" => $state,
 				"gst_number" => $gst_no,
 				'location' => $location,
@@ -8668,6 +8732,8 @@ class Welcome extends CommonController
 				"other_document_2" => $picture7,
 				"other_document_3" => $picture8,
 				"with_in_state" => $with_in_state,
+                "discount" => $discount,
+                "discount_type" => $discount_type
 			);
 
 			$result = $this->Crud->insert_data("supplier", $data);
@@ -8682,6 +8748,7 @@ class Welcome extends CommonController
 				'supplier_name' => $name,
 				'email' => $email,
 				"payment_terms" => $paymentTerms,
+                "payment_days" => $paymentDays,
 				"state" => $state,
 				"gst_number" => $gst_no,
 				'location' => $location,
@@ -8693,7 +8760,9 @@ class Welcome extends CommonController
 				"other_document_2" => $picture7,
 				"other_document_3" => $picture8,
 				"with_in_state" => $with_in_state,
-				"admin_approve"=>$admin_approve
+				"admin_approve"=>$admin_approve,
+                "discount" => $discount,
+                "discount_type" => $discount_type
 			);
 			$supplier_id = $this->input->post('supplier_id');
 			$result = $this->welcome_model->update_supplier_data($data,$supplier_id);
@@ -9052,7 +9121,7 @@ class Welcome extends CommonController
 		$so_desc = $this->input->post('so_desc');
 		$so_line = $this->input->post('so_line');
 		$advance_amt = $this->input->post('advance_amt');
-		$advance_amt = (int)$advance_amt;
+		$advance_amt = $advance_amt;
 		$bank_name = null;
 		$cheque_date = null;
 		$payment_mode = null;
@@ -9121,7 +9190,7 @@ class Welcome extends CommonController
 		$so_desc = $this->input->post('uso_desc');
 		$so_line = $this->input->post('uso_line');
 		$advance_amt = $this->input->post('uadvance_amt');
-		$advance_amt = (int)$advance_amt;
+		$advance_amt = $advance_amt;
 		$bank_name = null;
 		$cheque_date = null;
 		$payment_mode = null;
@@ -9184,7 +9253,7 @@ class Welcome extends CommonController
 		$id = $this->input->post('idd');
 
 		$advance_amt = $this->input->post('uadvance_amt');
-		$advance_amt = (int)$advance_amt;
+		$advance_amt = $advance_amt;
 		$bank_name = null;
 		$cheque_date = null;
 		$payment_mode = null;
@@ -10766,6 +10835,15 @@ class Welcome extends CommonController
 		}
 	}
     public function forbidden_page(){
+     
+        $previous_page = $this->session->userdata("previous_page");
+        $data['previous_page'] = $previous_page != "" &&  $previous_page != null ? $previous_page : base_url('dashboard');
         $this->loadView('forbidden_page',$data);
+    }
+    public function page_not_found(){
+        $data = [];
+         $previous_page = $this->session->userdata("previous_page");
+        $data['previous_page'] = $previous_page != "" &&  $previous_page != null ? $previous_page : base_url('dashboard');
+        $this->loadView('page_not_found',$data);
     }
 }

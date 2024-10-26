@@ -25,7 +25,7 @@
                   <select name="part_id" id="selectPart" class="form-control select2" required id="">
                     <option value="ALL">All</option>
                     <%foreach from=$supplier_part_select_list item=c%>
-                      <option <%if ($filter_part_id==$c->childPartId)%>selected <%/if%> value="<%$c->childPartId%>">
+                      <option value="<%$c->childPartId%>">
                             <%$c->part_number%>
                       </option>
                       <%/foreach%>
@@ -131,7 +131,7 @@
             <div class="col-lg-12">
               <div class="form-group">
                 <label for="">Stock Qty <span class="text-danger">*</span></label>
-                <input type="text" step="any" class="form-control required-input" value="" data-max="<%$po->$stock_column_name %>" name="stock"  placeholder="Transfer Qty">
+                <input type="text" step="any" class="form-control required-input onlyNumericInput" value="" data-max="<%$po->$stock_column_name %>" name="stock"  placeholder="Transfer Qty">
                 <input type="hidden" class="form-control" value="<%$po->part_number%>" name="part_number" id="part_number">
                 <input type="hidden" class="form-control" value="<%$po->childPartId%>" name="child_part_id" id="part_id">
               </div>

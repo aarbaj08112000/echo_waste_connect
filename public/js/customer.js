@@ -36,6 +36,14 @@ const datatable = {
             $("#ulocation").val(data.location);
             $("#upin").val(data.pin);
             $('#customer_id').val(data.id)
+            $('#discount_val').val(data.discount);
+            $("#NA").prop('checked', false);
+            $("#Percentage").prop('checked', false);
+            if(data.discountType == "Percentage"){
+              $("#PercentageOpt").prop('checked', true);
+            }else{
+              $("#NA").prop('checked', true);
+            }
             myModal.show();
         })
     },

@@ -69,48 +69,54 @@ class Dashboard extends CommonController
 
     public function get_today_sales($year = '',$month_arr = []){
         $date = date("d-m-Y");
-        $sales_data = $this->dashboard_model->get_sales_block_count($date,'');
+        $sales_data = $this->dashboard_model->get_sales_sum($date,'');
         if(count($sales_data) >0){
             $total_amount = array_sum(array_column($sales_data, "basic_total"));
+           // $total_discount = array_sum(array_column($sales_data, "total_discount"));
         }else{
             $total_amount = 0;
         }
-        $count_arr['count'] = $total_amount;
+        $count_arr['count'] = $total_amount;// - $total_discount;
         return $count_arr;
     }
     public function get_yesterdays_sales($year = '',$month_arr = []){
         $yesterday = new DateTime('yesterday');
         $date = $yesterday->format('d-m-Y');
-        $sales_data = $this->dashboard_model->get_sales_block_count($date,'');
+        $sales_data = $this->dashboard_model->get_sales_sum($date,'');
         if(count($sales_data) >0){
             $total_amount = array_sum(array_column($sales_data, "basic_total"));
+            //$total_discount = array_sum(array_column($sales_data, "total_discount"));
         }else{
             $total_amount = 0;
         }
-        $count_arr['count'] = $total_amount;
+        $count_arr['count'] = $total_amount;//- $total_discount;
+
         return $count_arr;
     }
     public function get_fy_total_sales($year = '',$month_arr = []){
 
-        $sales_data = $this->dashboard_model->get_sales_block_count('','',$year,$month_arr);
+        $sales_data = $this->dashboard_model->get_sales_sum('','',$year,$month_arr);
         if(count($sales_data) >0){
             $total_amount = array_sum(array_column($sales_data, "basic_total"));
+            //$total_discount = array_sum(array_column($sales_data, "total_discount"));
         }else{
             $total_amount = 0;
         }
-        $count_arr['count'] = $total_amount;
+        $count_arr['count'] = $total_amount;// - $total_discount;
+
         return $count_arr;
     }
     public function get_current_month_sale($year = '',$month_arr = []){
         $current_month = date("m");
-        $sales_data = $this->dashboard_model->get_sales_block_count('',$current_month);
+        $sales_data = $this->dashboard_model->get_sales_sum('',$current_month);
         // pr($sales_data,1);
         if(count($sales_data) >0){
             $total_amount = array_sum(array_column($sales_data, "basic_total"));
+            //$total_discount = array_sum(array_column($sales_data, "total_discount"));
         }else{
             $total_amount = 0;
         }
-        $count_arr['count'] = $total_amount;
+        $count_arr['count'] = $total_amount; //- $total_discount;
         return $count_arr;
     }
     public function get_current_month_plan($year = '',$month_arr = []){
@@ -148,10 +154,10 @@ class Dashboard extends CommonController
     /* pie chart */
     public function get_customer_sales($year = '',$month = []){
         $sales_data = $this->dashboard_model->get_customer_sales($year,$month);
-        $total_amount_arr = array_sum(array_column($sales_data, "basic_total"));
+        $total_amount_arr = array_sum(array_column($sales_data, "basic_total"));// - array_sum(array_column($sales_data, "total_discount"));
         $return_arr = [];
         foreach ($sales_data as $key => $value) {
-            $percentage = ($value['basic_total']/$total_amount_arr)*100;
+            $percentage = (($value['basic_total']) / $total_amount_arr)*100;
             $return_arr[] = ['name'=>$value['customer'],'y'=>$percentage,'x'=>$percentage,'drilldown'=>$value['customer']];
         }
         
@@ -159,22 +165,21 @@ class Dashboard extends CommonController
             "series_data"=>$return_arr,
             "show_legend" => false
         ];
-
-        // pr($)
         return $return_arr;
     }
+
     public function get_cutomer_sales_amount($year = '',$month_arr = []){
          $sales_data = $this->dashboard_model->get_customer_sales($year,$month_arr);
          $return_arr = [];
          foreach ($sales_data as $key => $value) {
-             array_push($return_arr,[$value['customer'],number_format($value['basic_total'],2)]);
+             array_push($return_arr,[$value['customer'],number_format(($value['basic_total']) ,2)]);
          }
         // $return_arr = [];
         return $return_arr;
     }
     /* single bar chart chart */
     public function get_month_wise_sales($year = '',$month_arr = []){
-        $sales_data = $this->dashboard_model->get_sales_block_count('','',$year,$month_arr);
+        $sales_data = $this->dashboard_model->get_sales_sum('','',$year,$month_arr);
         $month_wise_sales_data = [];
         if(is_array($sales_data) && count($sales_data) > 0){
             foreach ($sales_data as $key => $value) {
@@ -182,6 +187,7 @@ class Dashboard extends CommonController
                 $month_name = date("F", strtotime($value['created_date']));
                 $month_name = substr($month_name, 0, 3);
                 $month_wise_sales_data[$month_name] += $value['basic_total'];
+                //$month_wise_sales_data[$month_name] -= $value['total_discount'];
             }
         }
         // get month wise data
@@ -207,7 +213,7 @@ class Dashboard extends CommonController
     }
     /* double bar chart chart */
     public function get_paln_sales_data($year = '',$month_arr = []){
-        $sales_data = $this->dashboard_model->get_sales_block_count('','',$year,$month_arr);
+        $sales_data = $this->dashboard_model->get_sales_sum('','',$year,$month_arr);
         $month_wise_sales_data = [];
         if(is_array($sales_data) && count($sales_data) > 0){
             foreach ($sales_data as $key => $value) {
@@ -215,6 +221,7 @@ class Dashboard extends CommonController
                 $month_name = date("F", strtotime($value['created_date']));
                 $month_name = substr($month_name, 0, 3);
                 $month_wise_sales_data[$month_name] += $value['basic_total'];
+                //$month_wise_sales_data[$month_name] -= $value['total_discount'];
             }
         }
 
@@ -307,57 +314,33 @@ class Dashboard extends CommonController
         return $count_arr;
     }
     public function get_total_receivable_due($year = '',$month_arr = []){
-        $sales_data = $this->dashboard_model->get_sales_block_count('','',$year,$month_arr);
+        $sales_data = $this->dashboard_model->get_sales_sum('','',$year,$month_arr);
         if(count($sales_data) >0){
             $total_amount = array_sum(array_column($sales_data, "basic_total"));
+            //$total_discount = array_sum(array_column($sales_data, "total_discount"));
         }else{
             $total_amount = 0;
         }
-        $count_arr['count'] = $total_amount;
+        $count_arr['count'] = $total_amount;// - $total_discount;
         return $count_arr;
     }
     public function get_total_receivable_due_gst($year = '',$month_arr = []){
-
-        $sales_data = $this->dashboard_model->get_sales_block_count('','',$year,$month_arr);
-
+        $sales_data = $this->dashboard_model->get_sales_sum('','',$year,$month_arr);
         if(count($sales_data) >0){
-
-            $total_amount = array_sum(array_column($sales_data, "basic_total"));
-
-            $total_amount += array_sum(array_column($sales_data, "gst_amount"));
-
+            $total_amount = array_sum(array_column($sales_data, "total_sales_amount"));
         }else{
-
             $total_amount = 0;
-
         }
-
-
-
         //amount received so far should be deducted from sales... there is no provision to have one single call to get all data 
-
         //as of now so added this for that calculation
-
         $received_data = $this->dashboard_model->get_total_receivable_paid('','',$year,$month_arr);
-
          if(count($received_data) >0){
-
             $total_amount_recvd = array_sum(array_column($received_data, "amount_received"));
-
         }else{
-
             $total_amount_recvd = 0;
-
         }
-
-
-
-
-
         $count_arr['count'] = $total_amount - $total_amount_recvd;
-
         return $count_arr;
-
     }
     public function get_total_receivable_paid($year = '',$month_arr = []){
         $sales_data = $this->dashboard_model->get_total_receivable_paid($year,$month_arr);
@@ -378,6 +361,7 @@ class Dashboard extends CommonController
             foreach ($customer_receiver_due_data as $key => $value) {
                 $customer_name = $value['customer_id'];
                 $customer_receiver_due[$customer_name] += $value['basic_total'];
+                //$customer_receiver_due[$customer_name] -= $value['total_discount'];
             }
         }
         $total_amount_arr = array_sum($customer_receiver_due);
@@ -459,13 +443,31 @@ class Dashboard extends CommonController
         $customer_receiver_due_data = $this->dashboard_model->get_sales_block($year,$month_arr);
         $return_arr = [];
         foreach ($customer_receiver_due_data as $key => $value) {
-            array_push($return_arr,[$value['customer_name'],number_format($value['basic_total'],2)]);
+                $found = false;
+                foreach ($return_arr as &$item) {
+                    if ($item[0] === $value['customer_name']) {
+                        // If customer is already in the array, add the basic_total to the existing total
+                        $item[1] += $value['basic_total'];
+                        $found = true;
+                        break;
+                    }
+                }
+
+                // If the customer is not found, push a new array
+                if (!$found) {
+                    array_push($return_arr, [$value['customer_name'], $value['basic_total']]);
+                }
         }
+
+        // Optionally, format the numbers once all totals are calculated
+        foreach ($return_arr as &$item) {
+            $item[1] = number_format($item[1], 2);
+        }
+
         return $return_arr;
     }
 
     /* Purchase GRN Tab */
-
     public function get_caterory_purchse_amount($year = '',$month_arr = []){
         $customer_receiver_due_data = $this->dashboard_model->get_caterory_purchse_amount($year,$month_arr);
         
@@ -955,12 +957,14 @@ class Dashboard extends CommonController
     }
 
     /* Business Analytics */
+
     public function get_receivable_due_data($year = '',$month_arr = [],$unit = ''){
         $receivable_due = $this->dashboard_model->get_receivable_due_data($year,$month_arr,$unit);
         $total_amount_arr = array_sum(array_column($receivable_due, "basic_total"));
         $count_arr['count'] = $total_amount_arr > 0 ? $total_amount_arr : 0;
         return $count_arr;
     }
+
     public function get_payable_due_data(){
         $count_arr['count'] = 0;
         return $count_arr;
@@ -977,6 +981,7 @@ class Dashboard extends CommonController
                 $month_name = date("F", strtotime($value['created_date']));
                 $month_name = substr($month_name, 0, 3);
                 $month_wise_sales_data[$month_name] += $value['basic_total'];
+                //$month_wise_sales_data[$month_name] -= $value['total_discount'];
             }
         }
         // gete purchase data
@@ -1044,6 +1049,7 @@ class Dashboard extends CommonController
                 $month_name = date("F", strtotime($value['created_date']));
                 $month_name = substr($month_name, 0, 3);
                 $month_wise_sales_data[$month_name] += $value['basic_total'];
+                //$month_wise_sales_data[$month_name] -= $value['total_discount'];
             }
         }
         // gete Material Request data

@@ -344,7 +344,7 @@ class Welcome_model extends CI_Model
 
     public function getSubConReportView($condition_arr = [],$search_params = ""){
        
-       
+        $clientId = $this->Unit->getSessionClientId();
         $this->db->select('
         cp.id AS challan_part_id,cp.part_id,cp.challan_id, cp.qty,cp.remaning_qty,cp.process,chn.challan_number,
         cp.remaning_qty,chn.created_date,
@@ -352,13 +352,13 @@ class Welcome_model extends CI_Model
         chp.part_description,
         chn.supplier_id, 
         sup.supplier_name,
-        cpm.part_rate
+        cp.value as part_rate
         ');
         $this->db->from('challan_parts cp');
-        $this->db->join('child_part chp', 'cp.part_id = chp.id', 'left');
-        $this->db->join('challan chn', 'cp.challan_id = chn.id', 'left');
-        $this->db->join('supplier sup', 'chn.supplier_id = sup.id', 'left');
-        $this->db->join('child_part_master cpm', 'chp.part_number = cpm.part_number', 'left');
+        $this->db->join('child_part chp', 'cp.part_id = chp.id', 'inner');
+        $this->db->join('challan chn', 'cp.challan_id = chn.id', 'inner');
+        $this->db->join('supplier sup', 'chn.supplier_id = sup.id', 'inner');
+        $this->db->where('chn.clientId',$clientId);
         if (count($condition_arr) > 0) {
             $this->db->limit($condition_arr["length"], $condition_arr["start"]);
             if ($condition_arr["order_by"] != "") {
@@ -423,16 +423,16 @@ class Welcome_model extends CI_Model
     }
 
     public function getSubConReportViewCount( $condition_arr = [],$search_params = ""){
-       
+        $clientId = $this->Unit->getSessionClientId();
         
         $this->db->select('
         Count(cp.id)  as tot_count
         ');
         $this->db->from('challan_parts cp');
-        $this->db->join('child_part chp', 'cp.part_id = chp.id', 'left');
-        $this->db->join('challan chn', 'cp.challan_id = chn.id', 'left');
-        $this->db->join('supplier sup', 'chn.supplier_id = sup.id', 'left');
-        $this->db->join('child_part_master cpm', 'cp.part_id = cpm.child_part_id', 'left');
+        $this->db->join('child_part chp', 'cp.part_id = chp.id', 'inner');
+        $this->db->join('challan chn', 'cp.challan_id = chn.id', 'inner');
+        $this->db->join('supplier sup', 'chn.supplier_id = sup.id', 'inner');
+        $this->db->where('chn.clientId',$clientId);
         //$this->db->where('cpm.condition', $condition); // Replace $condition with the actual condition
         // $this->db->order_by('cp.id', 'desc');
         

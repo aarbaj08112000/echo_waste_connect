@@ -18,10 +18,28 @@ class ExportController extends CommonController
         $this->loadView($viewPage, $viewData);
     }
 
+    public function get_grnExport_heading($isGrnInvExport){
+        if ($isGrnInvExport == true) {
+                // Inventory details
+                $headings = ["Voucher Date", "Voucher Type Name", "Voucher Number", "Reference No.", "Reference Date", "Order No(s)", "Order - Date", "Bill Type of Ref", "Bill Name", "Bill Amount", "Bill Amount - Dr/Cr",
+                    "Bill Due Dt or Credit Days", "Buyer/Supplier - Address", "Buyer/Supplier - Country", "Buyer/Supplier - State", "Buyer/Supplier - Pincode", "Buyer/Supplier - GSTIN/UIN",
+                    "Buyer/Supplier - Place of Supply", "Consignee (ship to)", "Consignee - Mailing Name", "Consignee - Address", "Consignee - Country", "Consignee - State",
+                    "Consignee - Pincode", "Consignee - GSTIN/UIN", "Ledger Name", "Ledger Amount", "Ledger Amount Dr/Cr", "Item Name", "Billed Quantity", "Item Rate",
+                    "Item Rate per", "Item Amount", "Item Allocations - Order No.", "Item Allocations - Order Due on", "Accounting Allocation - Ledger",
+                    "Accounting Allocation - Amount", "Change Mode"];
+            } else {
+                //voucher details
+                $headings = ["Voucher Date", "Voucher Type Name", "Voucher Number", "Reference No.", "Reference Date", "Bill Type of Ref", "Bill Name", "Bill Date", "Bill Amount", "Bill Amount - Dr/Cr",
+                    "Bill Due Dt or Credit Days" , "Buyer/Supplier - Address", "Buyer/Supplier - Country", "Buyer/Supplier - State", "Buyer/Supplier - Pincode", "Buyer/Supplier - GSTIN/UIN",
+                    "Buyer/Supplier - Place of Supply", "Consignee (ship to)", "Consignee - Mailing Name", "Consignee - Address", "Consignee - Country", "Consignee - State",
+                    "Consignee - Pincode", "Consignee - GSTIN/UIN", "Ledger Name", "Ledger Amount", "Ledger Amount Dr/Cr", "Buyer/Supplier - Address", "Buyer/Supplier - Country", "Buyer/Supplier - State", "Buyer/Supplier - Pincode", "Buyer/Supplier - GSTIN/UIN",
+                    "Buyer/Supplier - Place of Supply", "Voucher Narration"];
+            }
+        return $headings;
+    }
+
     public function grn_excel_export()
     {
-        $success = 0;
-        $message = 'Data already exists.';
         $grn_detail_list = $this->get_grn_details();
 
         if (empty($grn_detail_list)) {
@@ -30,140 +48,176 @@ class ExportController extends CommonController
             exit();
         }
 
+        //Inventory type data
+        $isGrnInvExport = $this->GlobalConfig->readConfiguration("isGrnExportWithInventory", "Yes");
+        if (strcasecmp($isGrnInvExport, "Yes") == 0) {
+            $isGrnInvExport = true;
+        }else{
+            $isGrnInvExport = false;
+        }
+
         $this->load->library("excel");
         $object = new PHPExcel();
         $object->setActiveSheetIndex(0);
-		$sheet = $object->getActiveSheet();
-		$sheet->setTitle('Voucher');
+        $sheet = $object->getActiveSheet();
+        $sheet->setTitle('Voucher');
 
-		// Set heading values
-		$headings = ["Voucher Date", "Voucher Type Name", "Voucher Number", "Reference No.", "Reference Date", "Order No(s)", "Order - Date", "Bill Type of Ref", "Bill Name", "Bill Amount", "Bill Amount - Dr/Cr",
-            "Bill Due Dt or Credit Days", "Buyer/Supplier - Address", "Buyer/Supplier - Country", "Buyer/Supplier - State", "Buyer/Supplier - Pincode", "Buyer/Supplier - GSTIN/UIN",
-            "Buyer/Supplier - Place of Supply", "Consignee (ship to)", "Consignee - Mailing Name", "Consignee - Address", "Consignee - Country", "Consignee - State",
-            "Consignee - Pincode", "Consignee - GSTIN/UIN", "Ledger Name", "Ledger Amount", "Ledger Amount Dr/Cr", "Item Name", "Billed Quantity", "Item Rate",
-            "Item Rate per", "Item Amount", "Item Allocations - Order No.", "Item Allocations - Order Due on", "Accounting Allocation - Ledger",
-            "Accounting Allocation - Amount", "Change Mode"];
+        $headings = $this->get_grnExport_heading($isGrnInvExport); 
 
-		// Set heading row with colors
-		$sheet->fromArray([$headings], NULL, 'A1');
-		$headingsStyle = array(
-			'font' => array('bold' => true),
-			'fill' => array('type' => PHPExcel_Style_Fill::FILL_SOLID, 'startcolor' => array('rgb' => 'F9C40E')), 
-		);
-		$sheet->getStyle('A1:AL1')->applyFromArray($headingsStyle);
+        // Set heading row with colors
+        $sheet->fromArray([$headings], NULL, 'A1');
+        $headingsStyle = array(
+            'font' => array('bold' => true),
+            'fill' => array('type' => PHPExcel_Style_Fill::FILL_SOLID, 'startcolor' => array('rgb' => 'F9C40E')), 
+        );
+        $sheet->getStyle('A1:AL1')->applyFromArray($headingsStyle);
 
        
-		
+        
         if ($grn_detail_list) {
             $excel_row = 2;
             $rowNo = 1;
             foreach ($grn_detail_list as $grn_details) {
                 $grn_part_details = $this->getTAXQueryData($grn_details);
-			    $leger_arr = $this->getTaxDetailsUsingTaxQuery($grn_part_details);
+                $leger_arr = $this->getTaxDetailsUsingTaxQuery($grn_part_details);
 
 
-				/* Get the final amount */
-				foreach ($leger_arr as $leger_entry) {
-						$name = $leger_entry["name"];
-						if($name == "SUPPLIER_NAME") {
-							$ledger_value = round($leger_entry["value"],2);
-							$ledger_name = $leger_entry["supplier_name"];
-						}
-					}
-		
+                /* Get the final amount */
+                foreach ($leger_arr as $leger_entry) {
+                        $name = $leger_entry["name"];
+                        if($name == "SUPPLIER_NAME") {
+                            $ledger_value = round($leger_entry["value"],2);
+                            $ledger_name = $leger_entry["supplier_name"];
+                        }
+                    }
+        
                 $object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $this->getDateByFormat($grn_details->grn_date)); //grn date
                 $object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, "Purchase"); //HARD CODED
                 $object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $grn_details->grn_number); //grn number
-                $object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $grn_details->invoice_number); //invoice_number
-                $object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $this->getDateByFormat($grn_details->invoice_date)); //invoice_date
+                $object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $grn_details->invoice_number); //invoice_number - Reference No.
+                $object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $this->getDateByFormat($grn_details->invoice_date)); //invoice_date - Reference Date
 
-                $object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $grn_details->po_number); // po_number
-                $object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $this->getDateByFormat($grn_details->po_date)); // po_date
+                $dataRowNo = 5;
+                if($isGrnInvExport){
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $grn_details->po_number); // po_number - Order No(s)
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $this->getDateByFormat($grn_details->po_date)); // po_date - Order - Date
+                    $dataRowNo = 7;
+                }
+                $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, "New Ref"); // HARD CODED AS OF NOW - Bill Type of Ref
+                $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $grn_details->invoice_number); // grn_number - Bill Name
+                if($isGrnInvExport==false){
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $this->getDateByFormat($grn_details->grn_date)); // grn date - Bill Date
+                }
+                $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $ledger_value); // Complete AMOUNT - Bill Amount
+                $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, "cr"); // HARD CODED - Bill Amount - Dr/Cr - 
 
-                $object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, "New Ref"); // HARD CODED AS OF NOW
-                $object->getActiveSheet()->setCellValueByColumnAndRow(8, $excel_row, $grn_details->invoice_number); // grn_number
-                $object->getActiveSheet()->setCellValueByColumnAndRow(9, $excel_row, $ledger_value); // Complete AMOUNT
-                $object->getActiveSheet()->setCellValueByColumnAndRow(10, $excel_row, "cr"); // HARD CODED - Bill Amount - Dr/Cr
+                //Supplier details
+                $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $grn_details->credit_days." days"); //Bill Due Dt or Credit Days
+                    
+                $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $grn_details->supplier_address); //Supplier Address
+                $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, "India"); // HARD CODED
+                $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $grn_details->supplier_state); // Supplier STATE
+                $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, "PIN"); // Supplier PIN
+                $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $grn_details->supplier_gst); // Supplier GST
 
-				//Supplier details
-                $object->getActiveSheet()->setCellValueByColumnAndRow(11, $excel_row, $grn_details->credit_days." days"); //Bill Due Dt or Credit Days
-                $object->getActiveSheet()->setCellValueByColumnAndRow(12, $excel_row, $grn_details->supplier_address); //Supplier Address
-                $object->getActiveSheet()->setCellValueByColumnAndRow(13, $excel_row, "India"); // HARD CODED
-				$object->getActiveSheet()->setCellValueByColumnAndRow(14, $excel_row, $grn_details->supplier_state); // Supplier STATE
-                $object->getActiveSheet()->setCellValueByColumnAndRow(15, $excel_row, "PIN"); // Supplier PIN
-                $object->getActiveSheet()->setCellValueByColumnAndRow(16, $excel_row, $grn_details->supplier_gst); // Supplier GST
+                //buyers details
+                $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $grn_details->client_shifting_address); // Buyers address
 
-				//buyers details
-                $object->getActiveSheet()->setCellValueByColumnAndRow(17, $excel_row, $grn_details->client_shifting_address); // Buyers address
+                //Client details BASED ON delivery_unit or Default client
+                $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $grn_details->client_name); //Consignee (ship to)
+                $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $grn_details->client_name); //Consignee - Mailing Name
+                $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $grn_details->client_addr); // Consignee - Address
+                $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, "India"); // Consignee - Country
+                $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $grn_details->client_state); // Consignee - State
+                $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $grn_details->client_pin); // Consignee - Pincode
+                $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $grn_details->client_gst); // Consignee - GSTIN/UIN
 
-				//Client details BASED ON delivery_unit or Default client
-				$object->getActiveSheet()->setCellValueByColumnAndRow(18, $excel_row, $grn_details->client_name); //Consignee (ship to)
-				$object->getActiveSheet()->setCellValueByColumnAndRow(19, $excel_row, $grn_details->client_name); //Consignee - Mailing Name
-				$object->getActiveSheet()->setCellValueByColumnAndRow(20, $excel_row, $grn_details->client_addr); // Consignee - Address
-				$object->getActiveSheet()->setCellValueByColumnAndRow(21, $excel_row, "India"); // Consignee - Country
-				$object->getActiveSheet()->setCellValueByColumnAndRow(22, $excel_row, $grn_details->client_state); // Consignee - State
-				$object->getActiveSheet()->setCellValueByColumnAndRow(23, $excel_row, $grn_details->client_pin); // Consignee - Pincode
-				$object->getActiveSheet()->setCellValueByColumnAndRow(24, $excel_row, $grn_details->client_gst); // Consignee - GSTIN/UIN
+                $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $ledger_name); //Ledger Name
+                $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $ledger_value); //Ledger Amount
 
-                $object->getActiveSheet()->setCellValueByColumnAndRow(25, $excel_row, $ledger_name); //Ledger Name
-                $object->getActiveSheet()->setCellValueByColumnAndRow(26, $excel_row, $ledger_value); //Ledger Amount
-                $object->getActiveSheet()->setCellValueByColumnAndRow(27, $excel_row, "cr"); //Ledger Amount Dr/Cr
-                $object->getActiveSheet()->setCellValueByColumnAndRow(28, $excel_row, ""); //Item Name
-                $object->getActiveSheet()->setCellValueByColumnAndRow(29, $excel_row, ""); //Billed Quantity
-                $object->getActiveSheet()->setCellValueByColumnAndRow(30, $excel_row, ""); //Item Rate
-                $object->getActiveSheet()->setCellValueByColumnAndRow(31, $excel_row, ""); //Item Rate per
-                $object->getActiveSheet()->setCellValueByColumnAndRow(32, $excel_row, ""); //Item Amount
-                $object->getActiveSheet()->setCellValueByColumnAndRow(33, $excel_row, ""); //Item Allocations - Order No.
-                $object->getActiveSheet()->setCellValueByColumnAndRow(34, $excel_row, ""); //Item Allocations - Order Due on
-                $object->getActiveSheet()->setCellValueByColumnAndRow(35, $excel_row, ""); //Accounting Allocation - Ledger
-                $object->getActiveSheet()->setCellValueByColumnAndRow(36, $excel_row, ""); //Accounting Allocation - Amount
-                $object->getActiveSheet()->setCellValueByColumnAndRow(37, $excel_row, "Item Invoice"); //Change Mode
+                if($isGrnInvExport == true){
+                    //inventory details
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, "cr"); //Ledger Amount Dr/Cr
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, ""); //Item Name
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, ""); //Billed Quantity
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, ""); //Item Rate
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, ""); //Item Rate per
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, ""); //Item Amount
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, ""); //Item Allocations - Order No.
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, ""); //Item Allocations - Order Due on
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, ""); //Accounting Allocation - Ledger
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, ""); //Accounting Allocation - Amount
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, "Item Invoice"); //Change Mode
+                } else {
+                    //vocher details
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, "cr"); //Ledger Amount Dr/Cr
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $grn_details->supplier_address); //Supplier Address
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, "India"); // HARD CODED
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $grn_details->supplier_state); // Supplier STATE
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, "PIN"); // Supplier PIN
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $grn_details->supplier_gst); // Supplier GST
+                    //buyers details
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, $grn_details->client_shifting_address); // Buyers address
+                    $object->getActiveSheet()->setCellValueByColumnAndRow($dataRowNo++, $excel_row, " "); //Voucher Narration
+                }
 
-				//Details to be added to next rows
-				$excel_row++;
-				$rowNo++;
+                //Details to be added to next rows
+                $excel_row++;
+                $rowNo++;
+                
+
 
                 if ($grn_part_details) {
                     foreach ($grn_part_details as $grn_parts) {
-						$legerTypeName = "Purchase Ims";
-						if(empty($grn_parts->cgst)) {
-							$legerTypeName = "Purchase Oms";
-						}
-						
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(25, $excel_row, $legerTypeName); //Ledger Name
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(26, $excel_row, round($grn_parts->rate * $grn_parts->accept_qty, 2)); //Ledger Amount
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(27, $excel_row, "dr"); //Ledger Amount Dr/Cr
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(28, $excel_row, $grn_parts->part_number); //Item Name
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(29, $excel_row, $grn_parts->accept_qty); //Billed Quantity
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(30, $excel_row, $grn_parts->rate); //Item Rate
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(31, $excel_row, $grn_parts->uom_name); //Item Rate per
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(32, $excel_row, round($grn_parts->rate * $grn_parts->accept_qty, 2)); //Item Amount
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(33, $excel_row, $grn_parts->poNumber); //Item Allocations - Order No.
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(34, $excel_row, $this->getDateByFormat($grn_parts->expiry_po_date)); //Item Allocations - Order Due on PO Expiry date
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(35, $excel_row, $legerTypeName); //Accounting Allocation - Ledger
-                        $object->getActiveSheet()->setCellValueByColumnAndRow(36, $excel_row, round($grn_parts->rate * $grn_parts->accept_qty, 2)); //Accounting Allocation - Amount
-						
-						//Each individual item to be added to next rows
-						$excel_row++;
-						$rowNo++;
-					}
+                        $legerTypeName = "Purchase Ims";
+                        if(empty($grn_parts->cgst)) {
+                            $legerTypeName = "Purchase Oms";
+                        }
+                        $grnPartRowNo = 24;
+                        if($isGrnInvExport == true){
+                            $grnPartRowNo = 25;
+                        }
+
+                        $object->getActiveSheet()->setCellValueByColumnAndRow($grnPartRowNo++, $excel_row, $legerTypeName); //Ledger Name
+                        $object->getActiveSheet()->setCellValueByColumnAndRow($grnPartRowNo++, $excel_row, round($grn_parts->rate * $grn_parts->accept_qty, 2)); //Ledger Amount
+                        $object->getActiveSheet()->setCellValueByColumnAndRow($grnPartRowNo++, $excel_row, "dr"); //Ledger Amount Dr/Cr
+                        if($isGrnInvExport == true){
+                            $object->getActiveSheet()->setCellValueByColumnAndRow($grnPartRowNo++, $excel_row, $grn_parts->part_number); //Item Name
+                            $object->getActiveSheet()->setCellValueByColumnAndRow($grnPartRowNo++, $excel_row, $grn_parts->accept_qty); //Billed Quantity
+                            $object->getActiveSheet()->setCellValueByColumnAndRow($grnPartRowNo++, $excel_row, $grn_parts->rate); //Item Rate
+                            $object->getActiveSheet()->setCellValueByColumnAndRow($grnPartRowNo++, $excel_row, $grn_parts->uom_name); //Item Rate per
+                            $object->getActiveSheet()->setCellValueByColumnAndRow($grnPartRowNo++, $excel_row, round($grn_parts->rate * $grn_parts->accept_qty, 2)); //Item Amount
+                            $object->getActiveSheet()->setCellValueByColumnAndRow($grnPartRowNo++, $excel_row, $grn_parts->poNumber); //Item Allocations - Order No.
+                            $object->getActiveSheet()->setCellValueByColumnAndRow($grnPartRowNo++, $excel_row, $this->getDateByFormat($grn_parts->expiry_po_date)); //Item Allocations - Order Due on PO Expiry date
+                            $object->getActiveSheet()->setCellValueByColumnAndRow($grnPartRowNo++, $excel_row, $legerTypeName); //Accounting Allocation - Ledger
+                            $object->getActiveSheet()->setCellValueByColumnAndRow($grnPartRowNo++, $excel_row, round($grn_parts->rate * $grn_parts->accept_qty, 2)); //Accounting Allocation - Amount
+                        }
+                        //Each individual item to be added to next rows
+                        $excel_row++;
+                        $rowNo++;
+                    }
                 }
 
-				foreach ($leger_arr as $leger_entry) {
-						$name = $leger_entry["name"];
-						if($name != "SUPPLIER_NAME") {
-							$ledger_name = $leger_entry["name"];
-							$ledger_value = round($leger_entry["value"],2);
-							
-							$object->getActiveSheet()->setCellValueByColumnAndRow(25, $excel_row, $ledger_name); //Ledger Name
-							$object->getActiveSheet()->setCellValueByColumnAndRow(26, $excel_row, $ledger_value); //Ledger Amount
-							$object->getActiveSheet()->setCellValueByColumnAndRow(27, $excel_row, "dr"); //Ledger Amount Dr/Cr
-							//Each individual item to be added to next rows
-							$excel_row++;
-							$rowNo++;
+                foreach ($leger_arr as $leger_entry) {
+                        $name = $leger_entry["name"];
+                        if($name != "SUPPLIER_NAME") {
+                            $ledger_name = $leger_entry["name"];
+                            $ledger_value = round($leger_entry["value"],2);
+                            $grnPartRowNo = 24;
+                            if ($isGrnInvExport == true) {
+                                $grnPartRowNo = 25;
+                            }
 
-						}
-					}
+
+                            $object->getActiveSheet()->setCellValueByColumnAndRow($grnPartRowNo++, $excel_row, $ledger_name); //Ledger Name
+                            $object->getActiveSheet()->setCellValueByColumnAndRow($grnPartRowNo++, $excel_row, $ledger_value); //Ledger Amount
+                            $object->getActiveSheet()->setCellValueByColumnAndRow($grnPartRowNo++, $excel_row, "dr"); //Ledger Amount Dr/Cr
+                            //Each individual item to be added to next rows
+                            $excel_row++;
+                            $rowNo++;
+
+                        }
+                    }
                 $excel_row++;
                 $rowNo++;
             }
@@ -172,8 +226,8 @@ class ExportController extends CommonController
                 $object->getActiveSheet()->getColumnDimension($i)->setAutoSize(true);
             }
 
-			header('Content-Type: application/vnd.ms-excel');
-			$filename = 'Tally_GRN-' . $this->current_date_time;
+            header('Content-Type: application/vnd.ms-excel');
+            $filename = 'Tally_GRN-' . $this->current_date_time;
 
             header('Content-Disposition: attachment;filename="' . $filename . ".xls");
             header('Cache-Control: max-age=0');
@@ -186,6 +240,7 @@ class ExportController extends CommonController
         }
 
     }
+
 
     public function get_grn_details()
     {
@@ -995,4 +1050,371 @@ class ExportController extends CommonController
         $voucher_child->addChild('RESETIRNQRCODE', 'No'); //    HARD CODED
 
     }
+    public function operation_bom_template_excel_export()
+    {
+        $this->load->library("excel");
+        $object = new PHPExcel();
+        $object->setActiveSheetIndex(0);
+         $sheet = $object->getActiveSheet()
+        ->setCellValue('B1', 'Output Part Details') // This will be the common heading
+        ->setCellValue('E1', 'Input Part Details'); // Another common heading
+
+        // Merge cells for the common headings
+        $object->getActiveSheet()->mergeCells('B1:D1'); // Merge for Customer Details
+        $object->getActiveSheet()->mergeCells('E1:I1'); // Merge for Employee Details
+       
+        // Align the common headings to the center
+        $object->getActiveSheet()->getStyle('A1:I1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+        $sheet->setTitle('BOM Operation Template');
+
+        // Set heading values
+        $headings = ["Part Number", "Output Part Type", "Item Part Number", "Scrap Quantity", "Input Part Type" , "Input Item Part Number", "Qty(Number Only)", "Operation Number", "Operation Description"];
+
+        // Set heading row with colors
+        $sheet->fromArray([$headings], NULL, 'A2');
+        $headingsStyle = array(
+            'font' => array('bold' => true),
+            'fill' => array('type' => PHPExcel_Style_Fill::FILL_SOLID, 'startcolor' => array('rgb' => 'F9C40E')), 
+        );
+        $sheet->getStyle('A2:I2')->applyFromArray($headingsStyle);
+
+        //Output part headings
+        $headingsStyle1 = array(
+            'font' => array('bold' => true),
+            'fill' => array('type' => PHPExcel_Style_Fill::FILL_SOLID, 'startcolor' => array('rgb' => 'cce6ff')), 
+        );
+        $sheet->getStyle('B1:D1')->applyFromArray($headingsStyle1);
+
+        //Input part headings
+        $headingsStyle2 = array(
+            'font' => array('bold' => true),
+            'fill' => array('type' => PHPExcel_Style_Fill::FILL_SOLID, 'startcolor' => array('rgb' => 'fff2cc')),
+        );
+        $sheet->getStyle('E1:I1')->applyFromArray($headingsStyle2);
+
+        $object->getActiveSheet()->freezePane('A3'); // Freeze pane from row 3 (locks rows 1 and 2)
+      
+       //if ($grn_detail_list) {
+            $excel_row = 2;
+            $rowNo = 1;
+       
+            for ($i = 'A'; $i != $object->getActiveSheet()->getHighestColumn(); $i++) {
+                $object->getActiveSheet()->getColumnDimension($i)->setAutoSize(true);
+
+                
+            }
+
+            // Add data validation (dropdown) to the OuputPart type column
+                $objValidation = $object->getActiveSheet()->getCell('B3')->getDataValidation();
+                $objValidation->setType(PHPExcel_Cell_DataValidation::TYPE_LIST);
+                $objValidation->setErrorStyle(PHPExcel_Cell_DataValidation::STYLE_STOP);
+                $objValidation->setAllowBlank(false);
+                $objValidation->setShowInputMessage(true);
+                $objValidation->setShowErrorMessage(true);
+                $objValidation->setShowDropDown(true);
+                $objValidation->setFormula1('"Inhouse,Customer"'); // Setting the dropdown values
+
+                // Apply the same validation to the entire B column (from B3 onwards)
+                $object->getActiveSheet()->setDataValidation("B3:B100", $objValidation);
+
+            // Add data validation (dropdown) to the Input Part type column
+            $objValidation = $object->getActiveSheet()->getCell('E3')->getDataValidation();
+            $objValidation->setType(PHPExcel_Cell_DataValidation::TYPE_LIST);
+            $objValidation->setErrorStyle(PHPExcel_Cell_DataValidation::STYLE_STOP);
+            $objValidation->setAllowBlank(false);
+            $objValidation->setShowInputMessage(true);
+            $objValidation->setShowErrorMessage(true);
+            $objValidation->setShowDropDown(true);
+            $objValidation->setFormula1('"Inhouse,Child"'); // Setting the dropdown values
+            // Apply the same validation to the entire B column (from E3 onwards)
+            $object->getActiveSheet()->setDataValidation("E3:E100", $objValidation);
+
+                
+
+            header('Content-Type: application/vnd.ms-excel');
+            $filename = 'Operation_BOM_Customer_' . $this->current_date_time;
+
+            header('Content-Disposition: attachment;filename="' . $filename . ".xls");
+            header('Cache-Control: max-age=0');
+            $objWriter = PHPExcel_IOFactory::createWriter($object, 'Excel5');
+            ob_end_clean();
+            ob_start();
+            $objWriter->save('php://output');
+       // }
+
+    }
+
+
+    /**
+     *  Import operation BOM
+     */
+    public function import_operation_bom(){
+       $customer_id = $this->input->post('customer_id');
+       $uploadedDoc = $this->input->post('uploadedDoc');
+
+       //only valid types are allowed.
+       if($this->isValidUploadFileType()=="false"){
+            $this->addErrorMessage("Only Excel sheets are allowed.");
+       } else {
+        if (!empty($_FILES["uploadedDoc"]["name"])) {
+                $error;
+                $inputFileName = $_FILES["uploadedDoc"]["tmp_name"];
+                    try {
+                        $inputFileType = PHPExcel_IOFactory::identify($inputFileName);
+                        $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+                        $objPHPExcel = $objReader->load($inputFileName);
+                        $allDataInSheet = $objPHPExcel->getActiveSheet()->toArray(null, true, true, true);
+                        $flag = true;
+                        $i=1;
+
+                        $part_number = ""; 
+                        //$part_desc ="";
+                        $out_part_type = "";
+                        $out_part_no = "";
+                        $out_part_qty = "";
+
+
+                        foreach ($allDataInSheet as $rowNumber => $value) {
+                            // Check if the row is empty
+                            $rowNum = $i + 1;
+
+                            if ($rowNumber >=2) { // Skip the first two rows
+                                if (!empty(array_filter($value))) {
+                                if($flag) {
+                                    $flag =false;
+                                    continue;
+                                }
+                                
+                                $errorThisRow=null; 
+                        
+                                if(!$firstDone) { //not first done
+                                    //echo "if block with rowNum: " . $rowNum;
+                                    $part_number = empty($value['A']) ? $errorThisRow = $errorThisRow . " Main Part No. ," : trim($value['A']);
+                                    //$part_desc = empty($value['']) ? $errorThisRow = $errorThisRow . " Main Part Description ," : trim($value['D']);
+                                    $out_part_type = empty($value['B']) ? $errorThisRow = $errorThisRow . " Output Part Type ," : trim($value['B']);
+                                    $out_part_no = empty($value['C']) ? $errorThisRow = $errorThisRow . " Output Part Number ," : trim($value['C']);
+                                    $out_part_qty = !is_numeric($value['D']) ? $errorThisRow = $errorThisRow . " Output Part Scrap Qty ," : trim($value['D']);
+                                    $firstDone = true;
+                                }else{
+                                   // echo "else block with rowNum: ".$rowNum;
+                                    $part_number = empty($value['A']) ? $part_number : trim($value['A']);
+                                    //$part_desc = empty($value['A']) ? $part_desc : trim($value['D']);
+                                    $out_part_type = empty($value['B']) ? $out_part_type : trim($value['B']);
+                                    $out_part_no = empty($value['C']) ? $out_part_no : trim($value['C']);
+                                    $out_part_qty = !is_numeric($value['D']) ? $out_part_qty : trim($value['D']);
+                                }
+                               
+                                $input_part_type = $value['E'];
+                                $input_part_no = $value['F'];
+                                $input_part_qty = empty($value['G']) ? "" : (!is_numeric($value['G']) ? $invalidQty = "Invalid Input Part Qty ," : trim($value['G']));
+                                $input_op_name = $value['H'];
+                                $input_op_desc = $value['I'];
+                                
+                                if(!empty($errorThisRow)) {
+                                    $error = $error."<br>Row Number ".$rowNum." - Required Fields : ".$errorThisRow;
+                                }
+
+                                if (!empty($invalidQty)) {
+                                    $error = $error . "<br>Row Number " . $rowNum . " - Invalid Qty : " . $invalidQty;
+                                }
+
+                                
+                                $inserdata[$i]['row_no'] = $rowNum;
+                                $inserdata[$i]['part_number'] = $part_number;
+                                //$inserdata[$i]['part_desc'] = $part_desc;
+
+                                $inserdata[$i]['out_part_type'] = $out_part_type;
+                                $inserdata[$i]['out_part_no'] = $out_part_no;
+                                $inserdata[$i]['out_part_qty'] = $out_part_qty;
+
+                                $inserdata[$i]['input_part_type'] = $input_part_type;
+                                $inserdata[$i]['input_part_no'] = $input_part_no;
+                                $inserdata[$i]['input_part_qty'] = $input_part_qty;
+                                $inserdata[$i]['input_op_name'] = $input_op_name;
+                                $inserdata[$i]['input_op_desc'] = $input_op_desc;
+                               
+                            }
+                          }
+                          $i++;
+                        }
+
+                        foreach($inserdata as $bom_item) {
+                            //echo "<br> bom_item: ".$bom_item['out_part_no'];
+                        }
+
+                    
+                        if(empty($error)){
+                            //there are no errors so lets move ahead with executing the file.
+                                    foreach($inserdata as $bom_item) {
+                                        $oldtest  = $bom_item['part_number'];
+                                        $isOutputPartSame = true;
+                                       
+                                        if($oldMainPartNumber!=$bom_item['part_number']) {//Get it from DB if it is not same.
+                                            $oldMainPartNumber = $bom_item['part_number'];
+                                            $main_part = $this->Crud->customQuery("SELECT * FROM customer_part WHERE
+                                                    part_number = '" . $bom_item['part_number'] . "'");
+                                        }
+
+                                        if(empty($main_part)) {
+                                               $partMessage = '<br>Invalid Part details: Please check Column A from row : ' . $bom_item['row_no'];
+                                        } else {
+                                            $validPart = true;
+                                            //main part exists
+                                            //check output part details
+                                            if($oldOutptPartType!=$bom_item['out_part_type'] ||
+                                                    $oldOutptPartNo!=$bom_item['out_part_no']) {
+                                                       
+                                                $oldOutptPartType = $bom_item['out_part_type'];
+                                                $oldOutptPartNo = $bom_item['out_part_no'];
+
+                                                echo "<br>bom_item['out_part_no']: ".$bom_item['out_part_no'];
+
+                                                $isOutputPartSame = false;
+                                                if ('Inhouse' == $bom_item['out_part_type']) {
+                                                    $output_part = $this->InhouseParts->getInhousePartByPartNumber($bom_item['out_part_no']);
+                                                    $output_part_table_name = 'inhouse_parts';
+                                                } else if ('Customer' == $bom_item['out_part_type']) {
+                                                    $output_part = $this->Crud->customQuery("SELECT * FROM customer_part WHERE
+                                                                 part_number = '" . $bom_item['out_part_no'] . "'");
+                                                    $output_part_table_name = 'customer_part';
+                                                } else {
+                                                    $partMessage = "<br>Invalid Output Part Type, should be 'Inhouse' OR 'Customer' for row : " . $bom_item['row_no'];
+                                                }
+                                            }
+
+                                            
+                                            if (empty($output_part)) {
+                                                $partMessage = '<br>Invalid Ouput Part details in Item Part Number(Col F) for row : ' . $bom_item['row_no'];
+                                                $validPart = false;
+                                            }
+
+                                            if(!empty($bom_item['input_part_type'])) { // input part is not required so need to skip this step.
+                                                //check input part details
+                                                if($oldInputPartType!=$bom_item['input_part_type'] ||
+                                                        $oldInputPartNo!=$bom_item['input_part_no']) {
+                                                    $oldInputPartType = $bom_item['input_part_type'];
+                                                    $oldInputPartNo = $bom_item['input_part_no'];
+                                                    if ('Inhouse' == $bom_item['input_part_type']) {
+                                                        $input_part = $this->InhouseParts->getInhousePartByPartNumber($bom_item['input_part_no']);
+                                                        $input_part_table_name = 'inhouse_parts';
+                                                    } else if ('Child' == $bom_item['input_part_type']) {
+                                                        $input_part = $this->Crud->customQuery("SELECT * FROM child_part WHERE part_number = '" . $bom_item['input_part_no'] . "'");
+                                                        $input_part_table_name = 'child_part';
+                                                    } else {
+                                                        $partMessage = "<br>Invalid Input Part Type, should be 'Inhouse' OR 'Child' for row : " . $bom_item['row_no'];
+                                                    }
+                                                }
+
+                                                if (empty($input_part)) {
+                                                    $partMessage = '<br>Invalid Input Part details in Item Part Number(Col I) for row : ' . $bom_item['row_no'];
+                                                    $validPart = false;
+                                                }
+                                            }
+
+                                            //input and outpart is valid so move ahead
+                                            echo ", validPart: ".$validPart;
+
+                                            if($validPart == true) {
+                                                    $bom_data = array(
+                                                        "customer_part_number" => $bom_item['part_number'],
+                                                        "customer_id" => $customer_id,
+                                                        "output_part_id" => $output_part[0]->id,
+                                                        "output_part_table_name" => $output_part_table_name,
+                                                    );
+                                                    $bom_result = $this->Crud->get_data_by_id_multiple_condition("operations_bom", $bom_data);
+                                                    if($bom_result) {
+                                                        $bom_id = $bom_result[0]->id;
+                                                    }
+
+                                                    if ($isOutputPartSame == false) { //if it was not already checked then 
+                                                        if($bom_result == false) {
+                                                            $data = array(
+                                                                "customer_part_number" => $bom_item['part_number'],
+                                                                "output_part_id" => $output_part[0]->id,
+                                                                "output_part_table_name" => $output_part_table_name,
+                                                                "customer_id" => $customer_id,
+                                                                "scrap_factor" => $bom_item['out_part_qty'],
+                                                                "created_id" => $this->user_id,
+                                                                "created_date" => $this->current_date,
+                                                                "created_time" => $this->current_time,
+                                                                "day" => $this->date,
+                                                                "month" => $this->month,
+                                                                "year" => $this->year
+                                                            );
+
+                                                            $bom_id = $this->Crud->insert_data("operations_bom", $data);
+                                                            if (!$bom_id) {
+                                                                $partMessage = 'Unable to add BOM Operation for row : ' . $bom_item['row_no'];
+                                                            }
+                                                        }
+                                                    }
+                                                        
+                                                    if(!empty($bom_item['input_part_type'])) { // input part is not required so need to skip this step.
+                                                            $inputCheck = array(
+                                                                "operations_bom_id" => $bom_id,
+                                                                "input_part_id" => $input_part[0]->id,
+                                                                "input_part_table_name" => $input_part_table_name
+                                                            );
+                                                            
+                                                            $check = $this->Crud->read_data_where("operations_bom_inputs", $inputCheck);
+                                                            if ($check != 0) {
+                                                                $isErrorPresent = true;
+                                                                $failedCount = empty($failedCount) ? $bom_item['row_no'] : $failedCount . "," . $bom_item['row_no'];                                                        
+                                                            }else {
+                                                                $input_data = array(
+                                                                    "operations_bom_id" => $bom_id,
+                                                                    "input_part_id" => $input_part[0]->id,
+                                                                    "input_part_table_name" => $input_part_table_name,
+                                                                    "qty" => $bom_item['input_part_qty'],
+                                                                    "operation_number" => $bom_item['input_op_name'],
+                                                                    "operation_description" => $bom_item['input_op_desc'],
+                                                                    "created_id" => $this->user_id,
+                                                                    "created_date" => $this->current_date,
+                                                                    "created_time" => $this->current_time,
+                                                                    "day" => $this->date,
+                                                                    "month" => $this->month,
+                                                                    "year" => $this->year
+                                                                );
+
+                                                                $input_result = $this->Crud->insert_data("operations_bom_inputs", $input_data);
+                                                                if (!$input_result) {
+                                                                    $partMessage = 'Unable to add BOM Operation for input part for row : ' . $bom_item['row_no'];
+                                                                }else{
+                                                                    $successCount = empty($successCount) ? $bom_item['row_no'] : $successCount.",".$bom_item['row_no'];
+                                                                }
+                                                            }
+                                                    }
+                                            }
+                                        }
+                                        if (!empty($partMessage)) {
+                                            $error = $error . $partMessage;
+                                        }
+                                    }
+                                }
+                        
+                            if($error || $isErrorPresent){
+                                if(!empty($failedCount)){
+                                    $error = $error . "<br> Input Part already exists for rows : " . $failedCount;
+                                }
+                                if (!empty($successCount)) {
+                                    $error = $error . "<br> Successfully added records for rows :" . $successCount;
+                                }
+                                $this->addErrorMessage($error);
+                            }else{
+                                $this->addSuccessMessage("Data imported successfully.");
+                            }
+
+                    } catch (Exception $e) {
+                        die('Error loading file "' . pathinfo($inputFileName, PATHINFO_BASENAME). '": ' .$e->getMessage());
+                    }
+                
+                }
+                //for view pages
+                $data['customers'] = $this->Crud->read_data("customer");              
+            }
+            
+            $this->getPage('customer_master',$data);
+        }
+
 }

@@ -178,7 +178,9 @@ function checkGroupAccess($page_url = "",$type = "",$redirect ="Yes"){
 	$CI->load->model('GlobalConfigModel');
 	$acces = $CI->GlobalConfigModel->check_group_access($page_url,$type);
 	if(!$acces && $redirect == "Yes"){
+		$previous_page = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'No previous page';
 		$forbidden_page = base_url('forbidden_page');
+		$CI->session->set_userdata('previous_page', $previous_page);
 		header("Location: $forbidden_page");
 		die();
 	}

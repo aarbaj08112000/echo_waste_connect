@@ -16,12 +16,12 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 INSERT INTO `global_configuration` ( `displayLabel`, `config_name`, `config_value`, `isActive`, `ARMUserOnly`, `note`, `canModify`, `updated_user`) VALUES
-('Digital Signature Url', 'digital_signature_url', 'https://usgwstage.truecopy.in/api/tsm/v3/signpdfdoc', 1, 1, 'Digital signature URL', 1, 'Admin'),
-('Digital Signature Signer', 'signer', 'helpdesk+pocarominfotechapiuser@truecopy.com', 1, 1, 'Digital signature details', 1, 'Admin'),
-('Digital Signature Certificate Password', 'certpwd', 'Tc%9pxL7qYeGXW/KjN7GpkofKy22PQ==', 1, 1, 'Digital signature credentails', 1, 'Admin'),
-('Digital Signature Certificate Id', 'certid', 'john_doe_test_2_gcp', 1, 1, 'Digital signature certificate', 1, 'Admin'),
+('Digital Signature Url', 'digital_signature_url', 'https://usgwstage.truecopy.in/api/tsm/v3/signpdfdoc', 1, 1, 'Digital signature URL', 0, 'Admin'),
+('Digital Signature Signer', 'signer', 'helpdesk+pocarominfotechapiuser@truecopy.com', 1, 1, 'Digital signature details', 0, 'Admin'),
+('Digital Signature Certificate Password', 'certpwd', 'Tc%9pxL7qYeGXW/KjN7GpkofKy22PQ==', 1, 1, 'Digital signature credentails', 0, 'Admin'),
+('Digital Signature Certificate Id', 'certid', 'john_doe_test_2_gcp', 1, 1, 'Digital signature certificate', 0, 'Admin'),
 ('Digital Signature', 'digitalSignature', 'No', 1, 1, 'Enable/disable Digital signature. Config value should be Yes or No only.', 0, 'Admin'),
-('Company Logo Enalbe', 'companyLogoEnable', 'Yes', 1, 0, 'Enable logo for invoice.\r\nConfig value should be Yes or No only.', 1, 'Admin'),
+('Company Logo Enable', 'companyLogoEnable', 'Yes', 1, 0, 'Enable logo for invoice.\r\nConfig value should be Yes or No only.', 0, 'Admin'),
 ('Company Logo', 'companyLogo', 'favicona3.png', 1, 0, 'Logo details for invoice', 1, 'Admin');
 COMMIT;
 

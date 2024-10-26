@@ -155,6 +155,8 @@ $route['update_grn_qty_accept_reject'] = 'Newcontroller/update_grn_qty_accept_re
 $route['accept_inwarding_data'] = 'Newcontroller/accept_inwarding_data';
 $route['validate_invoice_amount'] = 'Newcontroller/validate_invoice_amount';
 $route['update_po_parts'] = 'Newcontroller/update_po_parts';
+$route['AmendQty'] = 'Newcontroller/AmendQty';
+$route['update_po'] = 'Newcontroller/update_po';
 $route['update_parts_customer_trackings'] = 'Newcontroller/update_parts_customer_trackings';
 $route['update_schedule_qty'] = 'Newcontroller/update_schedule_qty';
 $route['update_sales_parts_subcon'] = 'Newcontroller/update_sales_parts_subcon';
@@ -162,6 +164,7 @@ $route['update_parts_rejection_sales_invoice_qty'] = 'Newcontroller/update_parts
 $route['update_challan_parts'] = 'Newcontroller/update_challan_parts';
 $route['update_challan_parts_subcon'] = 'Newcontroller/update_challan_parts_subcon';
 $route['accept_po'] = 'Newcontroller/accept_po';
+$route['unlock_po'] = 'Newcontroller/unlock_po';
 $route['accept_customer_po_tracking'] = 'Newcontroller/accept_customer_po_tracking';
 $route['accept_po_sub'] = 'Newcontroller/accept_po_sub';
 $route['lock_invoice_subcon'] = 'Newcontroller/lock_invoice_subcon';
@@ -226,7 +229,7 @@ $route['planing_data/(:any)/(:any)/(:any)'] = 'PlanningController/planing_data';
 $route['get_customer_parts_for_planning'] = 'PlanningController/get_customer_parts_for_planning';
 $route['add_planning_data'] = 'PlanningController/add_planning_data';
 $route['add_planning_fg_stock'] = 'PlanningController/add_planning_fg_stock';
-$route['view_planing_data/(:any)'] = 'PlanningController/view_planing_data';
+$route['view_planing_data/(:any)/(:any)'] = 'PlanningController/view_planing_data';
 $route['update_planning_data'] = 'PlanningController/update_planning_data';
 $route['view_all_child_parts_schedule/(:any)/(:any)'] = 'PlanningController/view_all_child_parts_schedule';
 $route['update_schedule_qty'] = 'PlanningController/update_schedule_qty'; //NOT used due to schedule_qty2 not in use...
@@ -499,7 +502,7 @@ $route['update_job_card_status_lock'] = 'Welcome/update_job_card_status_lock';
 $route['update_job_card_status_close'] = 'Welcome/update_job_card_status_close';
 $route['delete'] = 'Welcome/delete';
 
-$route['404_override'] = '';
+$route['404_override'] = 'welcome/page_not_found';
 $route['translate_uri_dashes'] = false;
 
 #-------------- Customer part ----------------------------
@@ -584,12 +587,14 @@ $route['view_new_sales_by_id/(:any)'] = 'SalesController/view_new_sales_by_id';
 $route['get_customer_parts_for_sale'] = 'SalesController/get_customer_parts_for_sale';
 $route['add_sales_parts'] = 'SalesController/add_sales_parts';
 $route['lock_invoice'] = 'SalesController/lock_invoice';
+$route['invoice_unlock'] = 'SalesController/invoice_unlock';
+$route['reuse_invoice'] = 'SalesController/reuse_invoice';
 $route['cancel_sale_invoice'] = 'SalesController/cancel_sale_invoice';
 $route['delete_sale_invoice'] = 'SalesController/delete_sale_invoice';
 $route['sales_report'] = 'SalesController/sales_report';
 $route['receivable_report'] = 'SalesController/receivable_report';
 $route['update_receivable_report'] = 'SalesController/update_receivable_report';
-$route['view_generate_sales_invoice/(:any)'] = 'PdfControllertulsi/view_generate_sales_invoice';
+$route['view_original_sales_invoice/(:any)'] = 'PdfControllertulsi/view_original_sales_invoice';
 $route['print_packing_sticker'] = 'SalesController/print_packing_sticker';
 $route['getFactorsForSticker'] = 'SalesController/getFactorsForSticker';
 $route['getSalesPartPackaging_details'] = 'SalesController/getSalesPartPackaging_details';
@@ -723,7 +728,8 @@ $route['deflashing_bom/(:any)'] = 'P_Deflashing/deflashing_bom';
 $route['xml_extension'] = 'SalesController/xml_extension';
 $route['grn_export'] = 'ExportController/grn_export';
 $route['grn_excel_export'] = 'ExportController/grn_excel_export';
-
+$route['operation_bom_template_excel_export'] = 'ExportController/operation_bom_template_excel_export';
+$route['import_operation_bom'] = 'ExportController/import_operation_bom';
 
 
 

@@ -13,11 +13,11 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-ALTER TABLE `planning_shop_order` ADD `clientId` INT(11) NOT NULL AFTER `id`;
+ALTER TABLE `planing_shop_order` ADD `clientId` INT(11) NOT NULL AFTER `id`;
 
 COMMIT;
 
-UPDATE planning_shop_order
+UPDATE planing_shop_order
 SET clientId = 1
 WHERE clientId = 0;
 

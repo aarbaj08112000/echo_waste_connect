@@ -185,6 +185,27 @@
                                                      <input type="text" name="pin" class="form-control" id="pin" placeholder="Pin">
                                                   </div>
                                                </div>
+                                              <div class="col-lg-6">
+                                                <div class="form-group">
+                                                  <label>Discount</label><span class="text-danger"></span>
+                                                    <input type="text" step="any" value="0" name="discount" class="form-control onlyNumericInput" aria-describedby="emailHelp" placeholder="Discount">
+                                                </div>
+                                              </div>
+                                              <div class="col-lg-6">
+                                                <div class="form-group">
+                                                <label >Discount Type</label>
+                                                 <br>
+                                                 <div class="form-check form-check-inline mt-2">
+                                                  <input  class="form-check-input" type="radio" name="discountType" checked value="NA" label="NA">
+                                                  <label class="form-check-label" for="discountType">NA</label>
+                                                </div>
+                                                <div class="form-check form-check-inline mt-2">
+                                                   <input  class="form-check-input" type="radio" name="discountType" value="Percentage">
+                                                  <label class="form-check-label" for="discountType">Percentage</label>
+                                                </div>
+                                              </div>
+                                              </div>
+                                                             
                                             </div>
                                             <div class="modal-footer">
                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -272,7 +293,7 @@
             </button>
         </div>
         <form action="<%$base_url%>updateCustomer" id="updateCustomerForm" method="POST">
-        <div class="modal-body" style="max-height: 500px; overflow-y: auto;">>
+        <div class="modal-body" style="">
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="form-group">
@@ -365,6 +386,26 @@
                             <input type="text" value="<%$t->pin%>" name="upin"  class="form-control" aria-describedby="emailHelp" placeholder="Enter Pin" id = "pin">
                         </div>
                     </div>
+                    <div class="col-lg-6">
+                                                <div class="form-group">
+                                                  <label>Discount</label><span class="text-danger"></span>
+                                                    <input type="text" step="any" id="discount_val" value="0" name="discount" class="form-control onlyNumericInput" aria-describedby="emailHelp" placeholder="Discount">
+                                                </div>
+                                              </div>
+                                              <div class="col-lg-6">
+                                                <div class="form-group">
+                                                <label >Discount Type</label>
+                                                 <br>
+                                                 <div class="form-check form-check-inline mt-2">
+                                                  <input  class="form-check-input" type="radio" name="discountType"  value="NA" label="NA" id="NA">
+                                                  <label class="form-check-label" for="discountType">NA</label>
+                                                </div>
+                                                <div class="form-check form-check-inline mt-2">
+                                                   <input  id="PercentageOpt" class="form-check-input" type="radio" name="discountType" value="Percentage">
+                                                  <label  class="form-check-label" for="discountType">Percentage</label>
+                                                </div>
+                                              </div>
+                                              </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -375,4 +416,11 @@
     </div>
 </div>
 </div>
+<style type="text/css">
+  .form-check-input{
+    border: 1px solid #e1d5d5 !important;
+    border-radius: 50%;
+    border: 0px solid #d9dee3;
+  }
+</style>
 <script src="<%$base_url%>/public/js/customer.js"></script>

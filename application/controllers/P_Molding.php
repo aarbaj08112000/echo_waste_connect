@@ -76,20 +76,11 @@ class P_Molding extends CommonController
 		if ($other_units) {		
 			foreach ($other_units as $value) {
 				if($value->id == $client_id) { //as unit is same so need to show production unit for same
-					if($value->id == 1) {
-						$optValue = "production_qty";
-					}else {
-						$optValue = "production_qty"."/".$value->id;
-					}
+					$optValue = "production_qty"."/".$value->id;
 					echo '<option value='.$optValue.'>' . $value->client_unit."- Production".'</option>';
 				}else{
-					if($value->id == 1) {
-						$stockOptValue = "stock";
-						$prodOptValue = "production_qty";
-					}else{
-						$stockOptValue = "stock"."/".$value->id;
-						$prodOptValue = "production_qty"."/".$value->id;
-					}
+					$stockOptValue = "stock"."/".$value->id;
+					$prodOptValue = "production_qty"."/".$value->id;
 					echo '<option value='.$stockOptValue.'>' . $value->client_unit."- Stock".'</option>';
 					echo '<option value='.$prodOptValue.'>' . $value->client_unit."- Production".'</option>';
 				}
@@ -122,6 +113,10 @@ class P_Molding extends CommonController
 			$toUnit = $clientId;
 		}
 
+		if(empty($toStockType)){
+			$toStockType = "production_qty";
+		}
+		
 		if (empty($type)) {
 			$type = "addition";
 		}
@@ -270,18 +265,6 @@ class P_Molding extends CommonController
 	public function p_q_molding_production()
 
 	{
-
-		// $data['molding_production'] = $this->Crud->read_data("molding_production");
-
-		$criteria = array(
-
-					"status" => "pending",
-
-					"clientId" => $this->Unit->getSessionClientId()
-
-		);
-
-
 
 		$data['molding_production'] = $this->Crud->customQuery("SELECT mp.*,s.shift_type as shift_type,s.name as name,m.name as machine_name,op.name as operator_name,cp.part_number as part_number,cp.part_description as part_description,cp.production_target_per_shift as production_target_per_shift,mm.mold_name as mold_name
 			FROM molding_production as mp
@@ -532,12 +515,12 @@ class P_Molding extends CommonController
 		echo $customer_part_id = (int)$this->input->post('customer_part_id');
 
 		$id = $this->input->post('id');
-		$qty = (int)$this->input->post('qty');
+		$qty = $this->input->post('qty');
 		$accepted_qty = $this->input->post('accepted_qty');
 		$rejection_reason = $this->input->post('rejection_reason');
 		$rejection_remark = $this->input->post('rejection_remark');
-		$accepted_qty_old = (int)$this->input->post('accepted_qty_old');
-		$rejected_qty_old = (int)$this->input->post('rejected_qty_old');
+		$accepted_qty_old = $this->input->post('accepted_qty_old');
+		$rejected_qty_old = $this->input->post('rejected_qty_old');
 		$rejected_qty = $qty - $accepted_qty;
 
 

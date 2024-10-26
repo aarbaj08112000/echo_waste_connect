@@ -13,10 +13,6 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-ALTER TABLE `challan_subcon` ADD `clientId` INT(11) NOT NULL AFTER `id`;
-
-COMMIT;
-
 UPDATE `challan_subcon` 
 SET `clientId` = 1
 WHERE `clientId` = 0;
