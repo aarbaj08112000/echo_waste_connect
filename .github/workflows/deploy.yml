@@ -25,12 +25,13 @@ jobs:
       - name: Deploy changed files only
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}   # e.g., 93.127.208.22
+          server: ${{ secrets.FTP_SERVER }}   # just IP: 93.127.208.22
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /public_html/echoWasteConnect/
-          protocol: sftp
-          port: 22
+          protocol: ftp
+          port: 21
+          passive: true
           exclude: |
             **/.git*
             **/.github*
