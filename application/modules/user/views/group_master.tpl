@@ -28,7 +28,6 @@
             <i class="ti ti-plus"></i>
          </button>
         <%/if%>
-        
        
 
       </div>
