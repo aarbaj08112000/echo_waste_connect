@@ -19,8 +19,9 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /public_html/echoWasteConnect/
-          protocol: ftps
+          protocol: ftp
           port: 21
+          passive: true
           exclude: |
             **/.git*
             **/.github*
