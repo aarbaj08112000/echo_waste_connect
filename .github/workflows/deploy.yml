@@ -1,9 +1,9 @@
-name: Deploy to Hostinger via FTP
+name: Deploy to Hostinger via SFTP
 
 on:
   push:
     branches:
-      - dev   # or master
+      - dev   # or main
 
 jobs:
   ftp-deploy:
@@ -15,10 +15,12 @@ jobs:
       - name: Deploy files to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}
+          server: ${{ secrets.FTP_SERVER }}   # just IP: 93.127.208.22
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /public_html/echoWasteConnect/    # change if your site is in a subfolder
+          server-dir: /public_html/echoWasteConnect/
+          protocol: sftp
+          port: 22
           exclude: |
             **/.git*
             **/.github*
