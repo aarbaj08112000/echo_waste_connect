@@ -58,7 +58,11 @@ $autoload['packages'] = array();
 |
 |	$autoload['libraries'] = array('user_agent' => 'ua');
 */
-$autoload['libraries'] = array('database', 'session', 'form_validation', 'pdf','smartie' => 'smarty','phpmailer_lib');
+if($GLOBALS){
+    $autoload['libraries'] = array('database',"parser");
+}else{  
+    $autoload['libraries'] = array('database', 'session', 'form_validation', 'pdf','smartie' => 'smarty','phpmailer_lib');
+}
 
 /*
 | -------------------------------------------------------------------
@@ -132,4 +136,4 @@ $autoload['language'] = array();
 |
 |	$autoload['model'] = array('first_model' => 'first');
 */
-$autoload['model'] = array('Crud', 'Common_admin_model','Unit','CustomerPart','SupplierParts','InhouseParts','GlobalConfig');
+$autoload['model'] = array();
