@@ -1,29 +1,45 @@
-name: Deploy to Hostinger via SFTP
+name: 🚀 Deploy to Hostinger via SFTP (Incremental)
 
 on:
   push:
     branches:
-      - dev   # or main
+      - dev   # only deploy after merge to main
 
 jobs:
-  ftp-deploy:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy files to Hostinger
+      # 🔥 Cache previous deployment state
+      - name: Restore FTP state cache
+        uses: actions/cache@v4
+        with:
+          path: .ftp-deploy-sync-state.json
+          key: ${{ runner.os }}-ftp-${{ github.ref }}
+          restore-keys: |
+            ${{ runner.os }}-ftp-
+
+      - name: Deploy changed files only
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}   # just IP: 93.127.208.22
+          server: ${{ secrets.FTP_SERVER }}   # e.g., 93.127.208.22
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /public_html/echoWasteConnect/
-          protocol: ftp
-          port: 21
-          passive: true
+          protocol: sftp
+          port: 22
           exclude: |
             **/.git*
             **/.github*
             **/node_modules/*
             **/README.md
+
+      # ✅ Save sync state for next run
+      - name: Save FTP state cache
+        uses: actions/cache@v4
+        with:
+          path: .ftp-deploy-sync-state.json
+          key: ${{ runner.os }}-ftp-${{ github.sha }}
