@@ -4,6 +4,8 @@ class User extends MY_Controller {
 	public function __construct() {
         parent::__construct();
         $this->load->model('User_model');
+		print_r(312123);
+		exit;
     }
 	public function index() {
 		$data['base_url'] = base_url();

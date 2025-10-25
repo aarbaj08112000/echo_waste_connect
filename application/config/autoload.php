@@ -58,10 +58,11 @@ $autoload['packages'] = array();
 |
 |	$autoload['libraries'] = array('user_agent' => 'ua');
 */
+
 if($GLOBALS){
     $autoload['libraries'] = array('database',"parser");
 }else{  
-    $autoload['libraries'] = array('database', 'session', 'form_validation', 'pdf','smartie' => 'smarty','phpmailer_lib');
+    $autoload['libraries'] = array('database', 'session', 'form_validation', 'smartie' => 'smarty','phpmailer_lib');
 }
 
 /*
