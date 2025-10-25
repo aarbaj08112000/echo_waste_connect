@@ -176,11 +176,7 @@ function setHeaderFooterPath(){
 function smartyDefaultPath(){
     $current_route = $this->uri->segment(1);
     $routes = $this->router->routes;
-    foreach ($routes as $key => $value) {
-        $key_val = explode("/", $key);
-        $routes_arr[$key_val[0]] = $value;
-    }
-    $route_string = explode ('/',$routes_arr[$current_route]);
+    $route_string = explode ('/',$routes[$current_route]);
     $current_folder = $route_string[0];
     $this->setTemplateDir(APPPATH.'modules/'.$current_folder.'/views/');
   }

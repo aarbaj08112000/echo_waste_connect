@@ -2,6 +2,7 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 #------------ Login -----------------------------
+
 $route['default_controller'] = 'LogonDashboard/login';
 // $route['login'] = 'LogonDashboard/login';
 /* login & forgot password */
@@ -9,6 +10,7 @@ $route['login'] = 'user/login/index';
 $route['forgot_password/(:any)/(:any)'] = 'user/login/forgot_password/$1/$2';
 $route['logout'] = 'user/login/logout';
 $route['login1'] = 'login_old';
+
 
 /* admin */
 $route['sitemap'] = 'user/login/site_map';
