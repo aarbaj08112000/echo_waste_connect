@@ -112,6 +112,28 @@
                   </div>
                   <!-- /.card-body -->
                </div>
+               <%if count($process_images) > 0%>
+                <div class="col-12 mt-3">
+                  <div class="card">
+                     <div class="tabTitle borde-bottom-box">
+                           <h2 id="cc_sh_sys_static_field_3">
+                              <span>Process Images</span>
+                           </h2> 
+                                                  
+                        </div>
+                     <div class="card-header">
+                        <div class="d-flex gap-3">
+                            <%foreach from=$process_images item=image %>
+                              <div >
+                                  <img src="<%$image%>" width="62" height="62" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid rgb(204, 204, 204);"/>
+                              </div>
+                            <%/foreach%>
+                        </div>
+                  </div>
+                  <!-- /.card-body -->
+               </div>
+                </div>
+                <%/if%>
                <div class="col-12 mt-3">
                   <div class="card">
                      <div class="tabTitle borde-bottom-box">

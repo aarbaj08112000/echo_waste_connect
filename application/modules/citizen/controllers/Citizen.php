@@ -428,9 +428,15 @@ class Citizen extends MY_Controller {
 		$data = $this->Citizen_model->garbagePickupRequestDetails($id);
 		$status_log = $this->Citizen_model->getGarbagePickupRequestStatusLog($id);
 		$status_log_data = [];
+		$process_images = [];
 		foreach ($status_log as $key => $value) {
 			$status_log_data[$value['status']] = $value;
+			if($value['images'] != "" && $value['images'] != null){
+				$images = json_decode($value['images']);
+				$process_images = array_merge($process_images,$images);
+			}
 		}
+		$data['process_images'] = $process_images;
 		$data['status_log_data'] = $status_log_data;
 		
 		$timestamp = strtotime($data['added_date']);
