@@ -1,9 +1,9 @@
-name: 🚀 Deploy to Hostinger via SFTP (Incremental)
+name: 🚀 Deploy to Hostinger via FTPS (Incremental)
 
 on:
   push:
     branches:
-      - dev   # or main — choose which branch you want to deploy
+      - dev
 
 jobs:
   deploy:
@@ -13,7 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 🔥 Restore previous deployment state to detect changed files
       - name: Restore FTP state cache
         uses: actions/cache@v4
         with:
@@ -22,26 +21,25 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-ftp-
 
-      - name: 🚀 Deploy changed files only
+      - name: Deploy changed files only
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}   # e.g., 93.127.208.22
+          server: ${{ secrets.FTP_SERVER }}     # e.g., 93.127.208.22
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /public_html/echoWasteConnect/
-          protocol: sftp                      # ✅ use SFTP for stable connection
-          port: 22
+          protocol: ftps                         # ✅ valid protocol
+          port: 21
+          security: strict
+          passive: true
           exclude: |
             **/.git*
             **/.github*
             **/node_modules/*
             **/README.md
-          # Optional advanced settings:
-          state-name: .ftp-deploy-sync-state.json   # keeps track of changes
-          dangerous-clean-slate: false              # don’t delete missing files
-          log-level: standard
+          state-name: .ftp-deploy-sync-state.json
+          dangerous-clean-slate: false
 
-      # 💾 Save sync state for next run
       - name: Save FTP state cache
         uses: actions/cache@v4
         with:
