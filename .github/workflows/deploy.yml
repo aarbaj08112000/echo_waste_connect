@@ -1,4 +1,4 @@
-name: 🚀 Deploy to Hostinger via FTPS (Incremental)
+name: 🚀 Deploy ZIP to Hostinger
 
 on:
   push:
@@ -13,35 +13,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Restore FTP state cache
-        uses: actions/cache@v4
-        with:
-          path: .ftp-deploy-sync-state.json
-          key: ${{ runner.os }}-ftp-${{ github.ref }}
-          restore-keys: |
-            ${{ runner.os }}-ftp-
+      - name: Create ZIP file
+        run: |
+          zip -r deploy.zip . -x ".git/*" ".github/*" "node_modules/*"
 
-      - name: Deploy changed files only
+      - name: Upload ZIP via SFTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}     # e.g., 93.127.208.22
+          server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /public_html/echoWasteConnect/
           protocol: ftp                         # ✅ valid protocol
           port: 21
-          security: strict
-          passive: true
-          exclude: |
-            **/.git*
-            **/.github*
-            **/node_modules/*
-            **/README.md
-          state-name: .ftp-deploy-sync-state.json
+          server-dir: /public_html/echoWasteConnect/
+          exclude: ''
+          local-dir: .
           dangerous-clean-slate: false
 
-      - name: Save FTP state cache
-        uses: actions/cache@v4
+      - name: SSH and unzip (requires SSH access)
+        uses: appleboy/ssh-action@v1.2.0
         with:
-          path: .ftp-deploy-sync-state.json
-          key: ${{ runner.os }}-ftp-${{ github.sha }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            cd /home/youruser/public_html/echoWasteConnect
+            unzip -o deploy.zip
+            rm deploy.zip
