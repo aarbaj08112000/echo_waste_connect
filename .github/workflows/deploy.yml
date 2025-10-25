@@ -28,7 +28,6 @@ jobs:
           server-dir: /public_html/echoWasteConnect/
           exclude: ''
           local-dir: ./
-          exclude: ''
           dangerous-clean-slate: false
 
       - name: SSH and unzip (requires SSH access)
