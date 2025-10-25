@@ -334,7 +334,7 @@
                         <div data-rr-ui-dropdown-item="" class=" ">
                            <ul class="top-menu ps-0">
                               <li class="top-child-menu">
-                                    <a hijacked="yes" href="https://connect.hiddenbrains.info/admin/#user/admin/add|mode|View|id|2|tEditFP|true|hideCtrl|true" title="" class="top-menu-link">
+                                    <a hijacked="yes" href="javascript:void(0)" title="" class="top-menu-link">
                                         <span class="las la-user"></span>Forgot Password
                                     </a>
                               </li>
