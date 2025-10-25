@@ -1,4 +1,4 @@
-name: 🚀 Deploy ZIP to Hostinger
+name: 🚀 Fast Incremental Deploy to Hostinger
 
 on:
   push:
@@ -13,30 +13,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create ZIP file
-        run: |
-          zip -r deploy.zip . -x ".git/*" ".github/*" "node_modules/*"
-
-      - name: Upload ZIP via SFTP
+      - name: Deploy changed files only
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp                         # ✅ valid protocol
-          port: 21
           server-dir: /public_html/echoWasteConnect/
-          exclude: ''
-          local-dir: ./
+          protocol: ftp
+          port: 21
+          exclude: |
+            **/.git*
+            **/.github*
+            **/node_modules/*
+            **/README.md
           dangerous-clean-slate: false
-
-      - name: SSH and unzip (requires SSH access)
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          script: |
-            cd /home/youruser/public_html/echoWasteConnect
-            unzip -o deploy.zip
-            rm deploy.zip
+          log-level: minimal
