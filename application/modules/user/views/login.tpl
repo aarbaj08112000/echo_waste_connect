@@ -91,7 +91,7 @@
                                        <div class="clear"></div>
                                        <div class="error-msg login-error-msg" id="passwordErr"></div>
                                        <div class="normal-login-type">
-                                          <button type="submit" class="btn btn-info login-btn" id="loginBtn" >Login<span class="icon16 icomoon-icon-enter white right"></span></button>
+                                          <button type="submit" class="btn btn-info login-btn" id="loginBtn" >Login<i class="ti ti-refresh spin" style="display: none;"></i></button>
                                        </div>
                                        <div class="login-actions " >
                                           <div class="login-remember-me left">
@@ -126,6 +126,7 @@
                                         <form
                                        id="formRestePassword" class="mb-3" action="javascript:void(0)" method="POST"
                                        >
+                                          <input type="hidden" value="<%$user_type%>" name="user_type"/>
                                           <label for="username">Username</label>
                                           <div class="bmatter relative">
                                               <i class="ti ti-mail"></i>
@@ -133,7 +134,7 @@
                                               <div class="error-msg login-error-msg mt-3" id="usernameErr"></div>
                                           </div>
                                           <div class="forgot-pwd-btns normal-login-type">
-                                               <button type="submit" class="btn btn-info login-btn" id="loginBtn" >Send Password<span class="icon16 icomoon-icon-enter white right"></span></button>
+                                               <button type="submit" class="btn btn-info login-btn" id="loginBtn" >Send Password<i class="ti ti-refresh spin" style="display: none;"></i></button>
                                               <span id="loader_img" class="forgot-loader-img right" style="display: none;"><i class="fa fa-refresh fa-spin-light fa-2x fa-fw"></i></span>
                                           </div>
                                         </form>

@@ -217,6 +217,13 @@ function generateRequestCode($module ="",$id = "",$year = ""){
 
     return $request_code;
 }
+function formateTime($time = ""){
+    $return_data = display_no_character();
+    if($time != "" && $time != null){
+        $return_data = date("g:i A", strtotime($time));
+    }
+    return $return_data;
+}
 
 
 ?>

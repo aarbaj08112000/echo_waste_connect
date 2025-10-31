@@ -136,7 +136,7 @@ class Citizen_model extends CI_Model {
         return $ret_data;
     }
     public function garbagePickupRequestDetails($id = 0){
-        $this->db->select('g.*,IF(g.added_by_type = "Citizen",c.name,u.user_name) as added_by_name');
+        $this->db->select('g.*,IF(g.added_by_type = "Citizen",c.name,u.user_name) as added_by_name,IF(g.added_by_type = "Citizen",c.email,u.user_email) as email');
         $this->db->from('garbage_pickup_request as g');
         $this->db->join('userinfo as u','u.id = g.added_by AND g.added_by_type = "Staff"','left');
         $this->db->join('citizen as c','c.citizen_id = g.added_by AND g.added_by_type = "Citizen"','left');
@@ -171,6 +171,15 @@ class Citizen_model extends CI_Model {
         $this->db->where('u.garbage_pickup_request_id',$id);
         $result_obj = $this->db->get();
         $ret_data = is_object($result_obj) ? $result_obj->result_array() : [];
+        return $ret_data;
+    }
+    public function getStaffDetails($id = ""){
+        $this->db->select('u.*');
+        $this->db->from('userinfo as u');
+        $this->db->where('u.user_role',"staff");
+        $this->db->where('u.id',$id);
+        $result_obj = $this->db->get();
+        $ret_data = is_object($result_obj) ? $result_obj->row_array() : [];
         return $ret_data;
     }
     
