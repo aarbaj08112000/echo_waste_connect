@@ -97,17 +97,24 @@ class Login extends MY_Controller {
 		exit;
 	}
 	public function reset_password(){
+		$user_type = $this->input->post('user_type');
 		$username = $this->input->post('username');
-		$result = $this->Login_model->get_user_exist_check($username);	
+		if($user_type == "citizen"){
+			$result = $this->Login_model->get_citizen_exist_check($username);	
+		}else{
+			$result = $this->Login_model->get_user_exist_check($username);	
+		}
+		
 		if(is_valid_array($result)){
 	        $success = 1;
-			$messages = "Password sent successfully";
+			$messages = "Password reset link has been sent to your email successfully.";
 			$user_id = $result['id'];
 			$email_data = [
 				"time_stramp" => time(),
 				"user_id" => $user_id,
 				"email_name" => "Reset Password ",
-				"email_subject" => "Reset Password Of ".$this->config->item("company_name")
+				"email_subject" => "Reset Password Of ".$this->config->item("company_name"),
+				"user_type" => $user_type
 			];
 			$this->email_sender($email_data,$result['user_email'],"forgot_password");
 		}else{
@@ -122,23 +129,33 @@ class Login extends MY_Controller {
 	}
 	public function reset_password_action(){
 		$post_data = $this->input->post();
-		$update_data = array(
-	        'user_password' => $post_data['password']
-	    );
-	    $result = $this->Login_model->updateUserData($update_data, $post_data['user_id']);
+		$user_type = $post_data['user_type'];
+		if($user_type = "citizen"){
+			$update_data = array(
+				'password' => $post_data['password']
+			);
+			$result = $this->Login_model->updateCitizenData($update_data, $post_data['user_id']);
+		}else{
+			$update_data = array(
+				'user_password' => $post_data['password']
+			);
+			$result = $this->Login_model->updateUserData($update_data, $post_data['user_id']);
+		}
 	    $success = 0;
 		$messages = "Password not reset";
 	    if($result > 0){
 	    	$success = 1;
 			$messages = "Password reset successful!";
 	    }
-	    $return_arr['redirect_url'] = "login";
+	    $return_arr['redirect_url'] = $user_type = "citizen" ? "citizen_login" : "login";
 		$return_arr['success']=$success;
 		$return_arr['messages']=$messages;
 		echo json_encode($return_arr);
 		exit;
 	}
 	public function forgot_password($timestamp="",$user_id){
+		$get_data = $this->input->get();
+		$type = $get_data['type'];
 		$current_time = time();
 		$time_difference = $current_time - $timestamp;
 		$expiry_time = $this->config->item("password_link_expiry")*60;
@@ -146,6 +163,7 @@ class Login extends MY_Controller {
 		if ($time_difference <= $expiry_time) {
 		    $expired_link = "No";
 		}
+		$data['user_type'] = $type;
 		$data['base_url'] = base_url();
 		$data['user_id'] = $user_id;
 		$data['expired_link'] = $expired_link;

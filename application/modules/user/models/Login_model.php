@@ -45,6 +45,12 @@ class Login_model extends CI_Model {
         $affected_rows = $this->db->affected_rows() == 0 ? 1 : $this->db->affected_rows();
         return $affected_rows;
     }
+	public function updateCitizenData($update_date = array(),$user_id = 0){
+        $this->db->where('citizen_id', $user_id);
+        $this->db->update('citizen', $update_date);
+        $affected_rows = $this->db->affected_rows() == 0 ? 1 : $this->db->affected_rows();
+        return $affected_rows;
+    }
 	public function get_company_details($company_id)
 	{
 		$this->db->select('*');
@@ -74,6 +80,16 @@ class Login_model extends CI_Model {
 		$this->db->from('userinfo u');
 		$this->db->where('u.user_email', $usename);
 		$this->db->where('u.status', 'Active');
+		$query = $this->db->get();
+		$data = is_object($query) ? $query->row_array() : [];
+        return $data;
+	}
+	public function get_citizen_exist_check($usename="")
+	{
+		$this->db->select('u.citizen_id as id,u.email as user_email');
+		$this->db->from('citizen u');
+		$this->db->where('u.email', $usename);
+		$this->db->where('u.status', 'Approved');
 		$query = $this->db->get();
 		$data = is_object($query) ? $query->row_array() : [];
         return $data;

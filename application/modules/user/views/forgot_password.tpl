@@ -59,6 +59,7 @@
 	                                        <form
 	                                       id="formRestePassword" class="mb-3" action="javascript:void(0)" method="POST"
 	                                       >
+                                          <input type="hidden" value="<%$user_type%>" name="user_type"/>
 	                                       <input type="hidden" name="user_id" value="<%$user_id%>">
 	                                       	  <label for="passwd">Password </label>
 		                                       <div class="bmatter relative">

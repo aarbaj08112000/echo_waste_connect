@@ -210,6 +210,10 @@ class Citizen extends MY_Controller {
 		$success = 1;
 		$inser_id = $this->Citizen_model->insertGarbagePickupRequest($inser_data);
 		if ($inser_id > 0) {
+			$timestamp = strtotime($inser_data['added_date']);
+			$year_short = date('y',$timestamp);
+			$inser_data['request_code'] = generateRequestCode("garbage_pickup_request",$inser_id,$year_short);
+			$this->sendGarbagePickupRequestEmail($inser_data,"request_add");
 			$msg = 'Garbage pickup request added successfully.';
 			$success = 1;
 		}
@@ -501,9 +505,14 @@ class Citizen extends MY_Controller {
 					'garbage_pickup_request_id' => $garbage_pickup_request_id,
 					'images' => json_encode($process_image)
 				);
-				$this->Citizen_model->insertGarbagePickupRequestStatusLog($inser_data);
+				// $this->Citizen_model->insertGarbagePickupRequestStatusLog($inser_data);
 				$success = 1;
 				$msg = 'Garbage pickup request status has been changed to '.getStatusClass($post_data['status']).'.';
+				$email_data = $this->Citizen_model->garbagePickupRequestDetails($garbage_pickup_request_id);
+				$timestamp = strtotime($email_data['added_date']);
+				$year_short = date('y',$timestamp);
+				$email_data['request_code'] = generateRequestCode("garbage_pickup_request",$garbage_pickup_request_id,$year_short);
+				$this->sendGarbagePickupRequestEmail($email_data,"change_status");
 			} else {
 				$msg = 'Error in garbage pickup request status updating ,try again.';
 				$success = 0;
@@ -537,6 +546,15 @@ class Citizen extends MY_Controller {
 				$this->Citizen_model->insertGarbagePickupRequestStatusLog($inser_data);
 				$success = 1;
 				$msg = 'Staff assigned successfully for the garbage pickup request.';
+				$email_data = $this->Citizen_model->garbagePickupRequestDetails($garbage_pickup_request_id);
+				$staff_data = $this->Citizen_model->getStaffDetails($post_data['staff_id']);
+				$email_data['staff_name'] = $staff_data['user_name'];
+				$email_data['staff_email'] = $staff_data['user_email'];
+				$email_data['staff_phone_number'] = "--";
+				$timestamp = strtotime($email_data['added_date']);
+				$year_short = date('y',$timestamp);
+				$email_data['request_code'] = generateRequestCode("garbage_pickup_request",$garbage_pickup_request_id,$year_short);
+				$this->sendGarbagePickupRequestEmail($email_data,"change_status");
 			} else {
 				$msg = 'Error in staff assigned ,try again.';
 				$success = 0;
@@ -549,6 +567,64 @@ class Citizen extends MY_Controller {
         $ret_arr['success'] = $success;
         echo json_encode($ret_arr);
 	}
+	public function sendGarbagePickupRequestEmail($request_data = [],$type = "request_add"){
+		
+		$session_data = $this->session->userdata();
+		if($type == "request_add"){
+			$user_email =  $session_data['user_email'];
+			$data = [
+				"img" => base_url().$request_data['image'],
+				"request_code" => $request_data['request_code'],
+				"type_of_waste" => $request_data['type_of_waste'],
+				"user_name" => $session_data['user_name'],
+				"qty_vol" => $request_data['qty_vol'],
+				"date" => defaultDateFormat($request_data['pickup_date']),
+				"time" => formateTime($request_data['time_slot']),
+				"location" => $request_data['location'],
+				"email_name" => "Garbage Pickup Request",
+				"email_subject" => "Garbage Pickup Request",
+			];
+			$this->email_sender($data,$user_email,"garbadge_pickup_request");
+		}else if($type == "change_status"){
+			$user_email =  $request_data['email'];
+			$data = [
+				"img" => base_url().$request_data['image'],
+				"request_code" => $request_data['request_code'],
+				"type_of_waste" => $request_data['type_of_waste'],
+				"user_name" => $session_data['user_name'],
+				"qty_vol" => $request_data['qty_vol'],
+				"date" => defaultDateFormat($request_data['pickup_date']),
+				"time" => formateTime($request_data['time_slot']),
+				"location" => $request_data['location']
+			];
+			if($request_data['status'] == "UnderReview"){
+				$data['email_name'] = "Garbage Pickup Request Is Under Review";
+				$data['email_subject'] = "Garbage Pickup Request Is Under Review";
+				$this->email_sender($data,$user_email,"garbadge_pickup_request_under_review");
+			}else if($request_data['status'] == "Cancelled"){
+				$data['email_name'] = "Garbage Pickup Request Cancelled";
+				$data['email_subject'] = "Garbage Pickup Request Cancelled";
+				$this->email_sender($data,$user_email,"garbadge_pickup_request_cancelled");
+			}else if($request_data['status'] == "Assigned"){
+				$data['staff_name'] = $request_data['staff_name'];
+				$data['staff_email'] = $request_data['staff_email'];
+				$data['staff_phone_number'] = $request_data['staff_phone_number'];
+				$data['email_name'] = "Staff Assigned for Pickup";
+				$data['email_subject'] = "Staff Assigned for Pickup";
+				$this->email_sender($data,$user_email,"assign_staff_for_request");
+			}else if($request_data['status'] == "InProgress"){
+				$data['email_name'] = "Your Garbage Pickup Request Is In Progress";
+				$data['email_subject'] = "Your Garbage Pickup Request Is In Progress";
+				$this->email_sender($data,$user_email,"garbadge_pickup_request_inprogress");
+			}else if($request_data['status'] == "Completed"){
+				$data['email_name'] = "Your Garbage Pickup Has Been Successfully Completed";
+				$data['email_subject'] = "Your Garbage Pickup Has Been Successfully Completed";
+				$this->email_sender($data,$user_email,"garbadge_pickup_request_completed");
+			}
+			
+		}
+	}
+	
 	
 }
 

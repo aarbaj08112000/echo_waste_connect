@@ -35,6 +35,8 @@ $(document).ready(function($) {
     },
     submitHandler: function(form) {
       var formdata = new FormData(form);
+      $(".login-btn").prop("disabled", true);
+      $(".spin").show();
       $.ajax({
         url: "user/Login/signin",
         data:formdata,
@@ -47,10 +49,14 @@ $(document).ready(function($) {
           if (data.success == 1) {
               toaster("success",data.messages);
               setTimeout(function () {
-                window.location.href = base_url+data.redirect_url;
-            }, 2000);
+                  window.location.href = base_url+data.redirect_url;
+                  $(".login-btn").prop("disabled", false);
+                  $(".spin").hide();
+              }, 2000);
           }else{
             toaster("error",data.messages);
+            $(".login-btn").prop("disabled", false);
+                  $(".spin").hide();
           }
 
         }
@@ -82,11 +88,15 @@ $(document).ready(function($) {
     $("#login_div").hide();
     $("#forgot_div").show();
     $(".error-msg").html("");
+    $(".login-btn").prop("disabled", false);
+    $(".spin").hide();
  })
  $(document).on("click","#back_to_login",function(){
     $("#login_div").show();
     $("#forgot_div").hide();
     $(".error-msg").html("");
+    $(".login-btn").prop("disabled", false);
+    $(".spin").hide();
  })
 
  $("#formRestePassword").validate({
@@ -125,6 +135,8 @@ $(document).ready(function($) {
     },
     submitHandler: function(form) {
       var formdata = new FormData(form);
+      $(".login-btn").prop("disabled", true);
+      $(".spin").show();
       $.ajax({
         url: "user/Login/reset_password",
         data:formdata,
@@ -137,11 +149,16 @@ $(document).ready(function($) {
           if (data.success == 1) {
               toaster("success",data.messages);
               setTimeout(function () {
-               $("#back_to_login").trigger("click");
-            }, 2000);
+                $("#back_to_login").trigger("click");
+                $(".login-btn").prop("disabled", false);
+                $(".spin").hide();
+              }, 2000);
           }else{
             toaster("error",data.messages);
+            $(".login-btn").prop("disabled", false);
+            $(".spin").hide();
           }
+          
 
         }
       });

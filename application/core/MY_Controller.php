@@ -103,6 +103,7 @@ class MY_Controller extends MX_Controller
     $mail->Subject = $data['email_subject'];
     $template_path = $this->config->item("site_path")."views/email_template/".$template_name.".tpl";
     $html = $this->smarty->fetch($template_path,$data);
+    // pr($html,1);
     $mail->Body    = $html;
     $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
     // if($this->config->item("email_notification") == "Yes" || $email_notification){
