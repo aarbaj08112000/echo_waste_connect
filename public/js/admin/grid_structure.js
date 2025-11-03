@@ -42,6 +42,7 @@ const grid = {
 		    	if(row_data.length > 0){
 			        for (var i = 0; i < row_data.length; i++) {
 			        	var row_details = row_data[i]._aData;
+						console.log(row_details,"row_details")
 			        	var status = that.getStatusClass(row_details[7]);
 						var button = updateEnable ? `<a class="la-calendar  btn view-btn" href="javascript:void(0)" type="button" data-id="2" title="Edit" data-bs-toggle="modal" data-bs-target="#updatePromo${row_details[0]}">Edit</a>` : "";
 						var image_block = row_details[0] == "" || true ?
@@ -68,7 +69,7 @@ const grid = {
 										                    </div>
 										                </div>
 										            	<div class="grid-types">
-										                     <div class="request_type"><strong>Group Name</strong>${row_details[4]}</div>
+										                     <div class="request_type"><strong>Group Name</strong>${row_details[5]}</div>
 										                     <div class="other-actions-list-btn mt-0 mr-2">
 										                        ${button}
 										                        <div class="dropdown hide">
@@ -83,8 +84,9 @@ const grid = {
 										                     </div>
 										                </div>
 										                <div class="usage_type_box">
-										                     <div class="label_text"><span>Added Date</span><label class="trim-characters" title="${row_details[5]}">${row_details[5]}</label></div>
-															 <div class="label_text"><span>Added By</span><label class="trim-characters" title="${row_details[6]}">${row_details[6]}</label></div>
+														<div class="label_text"><span>Phone Number</span><label class="trim-characters" title="${row_details[4]}">${row_details[4]}</label></div>
+										                     <div class="label_text"><span>Added Date</span><label class="trim-characters" title="${row_details[6]}">${row_details[6]}</label></div>
+															 <div class="label_text"><span>Added By</span><label class="trim-characters" title="${row_details[7]}">${row_details[7]}</label></div>
 										                </div>
 										            </div>
 									          	</div>
