@@ -505,7 +505,7 @@ class Citizen extends MY_Controller {
 					'garbage_pickup_request_id' => $garbage_pickup_request_id,
 					'images' => json_encode($process_image)
 				);
-				// $this->Citizen_model->insertGarbagePickupRequestStatusLog($inser_data);
+				$this->Citizen_model->insertGarbagePickupRequestStatusLog($inser_data);
 				$success = 1;
 				$msg = 'Garbage pickup request status has been changed to '.getStatusClass($post_data['status']).'.';
 				$email_data = $this->Citizen_model->garbagePickupRequestDetails($garbage_pickup_request_id);

@@ -138,6 +138,11 @@ const user_app = {
                     required: true,
                     minlength: 6
                 },
+                user_mobile_number: {
+                    required: true,
+                    minlength: 10,
+                    maxlength: 10
+                },
                 user_role: {
                     required: true
                 },
@@ -161,6 +166,11 @@ const user_app = {
                     required: "Please enter the password",
                     minlength: "The password must be at least 6 characters long"
                 },
+                user_mobile_number: {
+                    required: "Please enter the phone number",
+                    minlength: "Please enter 10 digit valid phone number",
+                    maxlength: "Please enter 10 digit valid phone number"
+                },
                 user_role: {
                     required: "Please select a role"
                 },
@@ -172,7 +182,10 @@ const user_app = {
                 }
             },
             errorPlacement: function(error, element){
-                if(element.context.type == 'checkbox'){
+                console.log(element.context.name)
+                if(element.context.name == "user_mobile_number"){
+                    $(element).parents(".form-group").find(".input-group").after(error)
+                }else if(element.context.type == 'checkbox'){
                     $(element).parents(".form-group").find(".row").after(error)
                 }else{
                     error.insertAfter(element); 
@@ -277,6 +290,8 @@ const user_app = {
         let flag = false;
         $(".custom-form."+form_class+" .required-input").each(function( index ) {
           var value = $(this).val();
+          var InputName = $(this).attr("name");
+          value = InputName == "user_mobile_number" ? value.length : value;
           var dataMax = parseFloat($(this).attr('data-max'));
           var dataMin = parseFloat($(this).attr('data-min'));
           if(value == '' || value == null ){
@@ -307,7 +322,7 @@ const user_app = {
               label = ((label.toLowerCase()).replace("enter", "")).replace("select", "");
               label = (label.toLowerCase()).replace(/[^\w\s*]/gi, '');
               label = label.charAt(0).toUpperCase() + label.slice(1);
-              var validation_message =label +end;
+              var validation_message = InputName == "user_mobile_number" ? "Please enter 10 digit valid phone number" : label +end;
               var label_html = "<label class='error'>"+validation_message+"</label>";
               $(this).parents(".form-group").append(label_html)
             }
@@ -322,7 +337,7 @@ const user_app = {
                 label = ((label.toLowerCase()).replace("enter", "")).replace("select", "");
                 label = (label.toLowerCase()).replace(/[^\w\s*]/gi, '');
                 label = label.charAt(0).toUpperCase() + label.slice(1)
-                var validation_message =label +end;
+                 var validation_message = InputName == "user_mobile_number" ? "Please enter 10 digit valid phone number" : label +end;
                 var label_html = "<label class='error'>"+validation_message+"</label>";
                 $(this).parents(".form-group").append(label_html)
               }

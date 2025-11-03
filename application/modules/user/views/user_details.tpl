@@ -70,6 +70,15 @@
                                     <input required type="email" name="user_email" placeholder="Enter Email" class="form-control" value="" id="">
                                  </div>
                                  <div class="form-group">
+                                    <label for="on click url">Phone Number<span class="text-danger">*</span></label> <br>
+                                    <div class="input-group">
+                                       <div class="input-group-prepend">
+                                          <span class="input-group-text" style="border-radius: 5px 0px 0px 5px;">+91</span>
+                                       </div>
+                                       <input required type="text" name="user_mobile_number" placeholder="Enter Phone Number" class="form-control" value="" id="">
+                                    </div>
+                                 </div>
+                                 <div class="form-group">
                                     <label for="on click url">User Password<span class="text-danger">*</span></label> <br>
                                     <input required type="password" name="user_password" placeholder="Enter Password" class="form-control" value="" id="">
                                  </div>
@@ -125,6 +134,7 @@
                                  <th>Full Name</th>
                                  <th>Email</th>
                                  <th>Password</th>
+                                 <th>Phone Number</th>
                                  <th>Role</th>
                                  <th>Added Date</th>
                                  <th>Added By</th>
@@ -143,6 +153,7 @@
                                  <td><%$u['user_name'] %></td>
                                  <td><%$u['user_email'] %></td>
                                  <td><%$u['user_password'] %></td>
+                                 <td>+91 <%$u['mobile_number'] %></td>
                                  <td><%$u['group_name'] %></td>
                                  <td><%getDefaultDateTime($u['added_date']) %></td>
                                  <td><%display_no_character($u['added_by']) %></td>
@@ -172,6 +183,15 @@
                                                         <label for="on click url">User Email<span class="text-danger">*</span></label> <br>
                                                         <input  type="email" name="user_email" placeholder="Enter Email" class="form-control required-input" value="<%$u['user_email'] %>" disabled>
                                                      </div>
+                                                     <div class="form-group">
+                                                         <label for="on click url">Phone Number<span class="text-danger">*</span></label> <br>
+                                                         <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                               <span class="input-group-text" style="border-radius: 5px 0px 0px 5px;">+91</span>
+                                                            </div>
+                                                            <input  type="text" name="user_mobile_number" placeholder="Enter Phone Number" class="form-control required-input" data-max="11" data-min="9"  value="<%$u['mobile_number'] %>" value="" id="">
+                                                         </div>
+                                                      </div>
                                                      <!-- <div class="form-group">
                                                         <label for="on click url">User Password<span class="text-danger">*</span></label> <br>
                                                         <input required type="password" name="user_password" placeholder="Enter Password" class="form-control" value="" id="">
@@ -193,12 +213,12 @@
                                                            <option value="Sales">Sales</option>
                                                         </select>
                                                      </div>
-                                                     <div class="form-group unit-box">
+                                                     <div class="form-group unit-box" style="display: none;">
                                                         <label for="on click url">Unit<span class="text-danger">*</span></label> <br>
                                                         <div class="row">
                                                            <%foreach from=$client item='client_val' %>
                                                            <div class="col-4">
-                                                              <input type="checkbox" class="check-box required-input" name="client[]" value="<%$client_val['id'] %>" <%if in_array($client_val['id'],$units)%>checked<%/if%>>
+                                                              <input type="checkbox" class="check-box" name="client[]" value="<%$client_val['id'] %>" checked>
                                                               <label for="client" class="ms-1"><%$client_val['client_unit']%></label>
                                                            </div>
                                                            <%/foreach%>

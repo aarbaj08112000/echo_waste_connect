@@ -4,8 +4,6 @@ class User extends MY_Controller {
 	public function __construct() {
         parent::__construct();
         $this->load->model('User_model');
-		print_r(312123);
-		exit;
     }
 	public function index() {
 		$data['base_url'] = base_url();
@@ -36,6 +34,7 @@ class User extends MY_Controller {
     			'user_name' => $this->input->post('user_name'),
     			'user_email' => $this->input->post('user_email'),
     			'user_password' => $this->input->post('user_password'),
+				'mobile_number' => $this->input->post('user_mobile_number'),
     			'user_role' => $this->input->post('user_role'),
     			'added_date' => date("Y-m-d H:i:s"),
     			'added_by' => $this->session->userdata('user_id'),
@@ -83,6 +82,7 @@ class User extends MY_Controller {
             $data = array(
                 'user_name' => $this->input->post('user_name'),
                 'unit_ids' => implode(",", $client_arr),
+				'mobile_number' => $this->input->post('user_mobile_number'),
                 'groups' => implode(",", $groups),
                 'status' => $status
             );
