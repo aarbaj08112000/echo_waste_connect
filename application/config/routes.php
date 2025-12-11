@@ -45,3 +45,6 @@ $GLOBALS = false;
 if (($this->uri->segments[1] == "WS" )) {
 	$GLOBALS = true;
 }
+
+
+
